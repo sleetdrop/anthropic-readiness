@@ -5,6 +5,8 @@ import socket
 
 import pytest
 
+from tests.http_server import server as server
+
 
 @pytest.fixture(autouse=True)
 def prohibit_external_connections(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -31,3 +33,6 @@ def prohibit_external_connections(monkeypatch: pytest.MonkeyPatch) -> None:
 
     monkeypatch.setattr(socket.socket, "connect", guarded_connect)
     monkeypatch.setattr(socket.socket, "connect_ex", guarded_connect_ex)
+
+
+# The shared loopback fixture is imported once for every test directory.

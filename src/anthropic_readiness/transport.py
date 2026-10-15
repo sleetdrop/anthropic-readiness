@@ -30,11 +30,24 @@ class HttpTransport:
     ):
         self.clock = clock
         self.transport = transport
+        self._cancel: Callable[[], None] | None = None
+
+    def cancel(self) -> None:
+        if self._cancel is not None:
+            self._cancel()
 
     def send(self, request: RequestSpec, limits: Limits, deadline: float) -> Capture:
         return asyncio.run(self._send(request, limits, deadline))
 
     async def _send(self, request: RequestSpec, limits: Limits, deadline: float) -> Capture:
+        task = asyncio.current_task()
+        loop = asyncio.get_running_loop()
+
+        def cancel_current() -> None:
+            if task is not None:
+                loop.call_soon_threadsafe(task.cancel)
+
+        self._cancel = cancel_current
         started = self.clock()
         expires = min(deadline, started + limits.attempt_timeout_s)
         body = bytearray()
@@ -139,6 +152,7 @@ class HttpTransport:
         except (asyncio.CancelledError, KeyboardInterrupt):
             capture_end, error = "cancelled", "cancelled"
         tail = decoder.finish() if request.streaming and code == 200 else DecodeTail()
+        self._cancel = None
         return Capture(
             request,
             code,

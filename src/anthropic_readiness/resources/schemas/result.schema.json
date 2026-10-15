@@ -62,12 +62,39 @@
               },
               "required": {
                 "type": "boolean"
+              },
+              "assertions": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "version": {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "required": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "version",
+                    "required"
+                  ],
+                  "additionalProperties": false
+                }
               }
             },
             "required": [
               "id",
               "version",
-              "required"
+              "required",
+              "assertions"
             ],
             "additionalProperties": false
           }
@@ -84,11 +111,20 @@
               "version": {
                 "type": "integer",
                 "minimum": 1
+              },
+              "cases": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "uniqueItems": true
               }
             },
             "required": [
               "id",
-              "version"
+              "version",
+              "cases"
             ],
             "additionalProperties": false
           }

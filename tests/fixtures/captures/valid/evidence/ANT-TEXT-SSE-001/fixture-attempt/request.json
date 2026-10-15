@@ -1,10 +1,20 @@
 {
   "url": "http://127.0.0.1:8000/v1/messages",
   "headers": {
-    "content-type": "application/json"
+    "content-type": "application/json",
+    "accept": "text/event-stream",
+    "anthropic-version": "2023-06-01"
   },
   "body": {
-    "model": "example-model"
+    "model": "example-model",
+    "max_tokens": 512,
+    "stream": true,
+    "messages": [
+      {
+        "role": "user",
+        "content": "Say hello in one short sentence."
+      }
+    ]
   },
   "streaming": true
 }

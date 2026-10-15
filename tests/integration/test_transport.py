@@ -10,7 +10,7 @@ from anthropic_readiness.config import Limits
 from anthropic_readiness.models import CaseContract, RequestSpec, Status
 from anthropic_readiness.transport import HttpTransport
 from anthropic_readiness.validation.stream import StreamValidator
-from tests.integration.conftest import SyntheticServer
+from tests.http_server import SyntheticServer
 
 pytestmark = pytest.mark.integration
 

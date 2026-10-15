@@ -8,7 +8,7 @@ import pytest
 from anthropic_readiness.config import Limits
 from anthropic_readiness.models import RequestSpec
 from anthropic_readiness.transport import HttpTransport
-from tests.integration.conftest import SyntheticServer
+from tests.http_server import SyntheticServer
 
 pytestmark = pytest.mark.integration
 

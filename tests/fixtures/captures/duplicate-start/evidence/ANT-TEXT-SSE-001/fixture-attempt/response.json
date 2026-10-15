@@ -3,10 +3,20 @@
   "request": {
     "url": "http://127.0.0.1:8000/v1/messages",
     "headers": {
-      "content-type": "application/json"
+      "content-type": "application/json",
+      "accept": "text/event-stream",
+      "anthropic-version": "2023-06-01"
     },
     "body": {
-      "model": "example-model"
+      "model": "example-model",
+      "max_tokens": 512,
+      "stream": true,
+      "messages": [
+        {
+          "role": "user",
+          "content": "Say hello in one short sentence."
+        }
+      ]
     },
     "streaming": true
   },
@@ -33,7 +43,7 @@
   "files": [
     {
       "path": "request.json",
-      "sha256": "6a9436f5c8c1d51d574a3f3c9968c03b01103b74e4b50fbaf484b6898a438ef9",
+      "sha256": "4bfe1a367a1029d6a459b3d17994a1e10b2142900049a326ec6dd549e84f28fa",
       "event": null,
       "pointer": null
     },

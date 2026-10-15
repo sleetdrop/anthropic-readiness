@@ -49,8 +49,15 @@ def test_mixed_result_roundtrip_and_inconsistent_readiness() -> None:
         "readiness": "incomplete",
     }
     plan: JsonObject = {
-        "cases": [{"id": "example", "version": 1, "required": True}],
-        "profiles": [{"id": "basic", "version": 1}],
+        "cases": [
+            {
+                "id": "example",
+                "version": 1,
+                "required": True,
+                "assertions": [{"id": "TASK-COMPLETE", "version": 1, "required": True}],
+            }
+        ],
+        "profiles": [{"id": "basic", "version": 1, "cases": ["example"]}],
         "actual_requests": 0,
         "planned_requests": 1,
         "limits": {},

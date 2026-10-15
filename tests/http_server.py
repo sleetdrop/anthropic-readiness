@@ -23,7 +23,7 @@ class SyntheticServer:
 def server() -> Iterator[SyntheticServer]:
     state = SyntheticServer()
     body = (
-        Path(__file__).resolve().parents[1] / "fixtures/contracts/core-1.0.0/stream-valid.sse"
+        Path(__file__).resolve().parent / "fixtures/contracts/core-1.0.0/stream-valid.sse"
     ).read_bytes()
 
     class Handler(BaseHTTPRequestHandler):
@@ -44,7 +44,12 @@ def server() -> Iterator[SyntheticServer]:
                 self.end_headers()
                 return
             self.send_response(503 if self.path == "/http-error" else 200)
-            self.send_header("Content-Type", "text/event-stream")
+            content_type = (
+                "application/json"
+                if self.path == "/cases" and not json.loads(request_body).get("stream")
+                else "text/event-stream"
+            )
+            self.send_header("Content-Type", content_type)
             if self.path == "/gzip":
                 packed = gzip.compress(b"x" * 1000000)
                 self.send_header("Content-Encoding", "gzip")
@@ -82,6 +87,22 @@ def server() -> Iterator[SyntheticServer]:
                 data = json.dumps({"error": "synthetic unavailable"}).encode()
             else:
                 data = body
+            if self.path == "/cases":
+                payload = json.loads(request_body)
+                if payload.get("stream"):
+                    data = (
+                        body.replace(b"Hello.", b"1 2 3 4 5")
+                        if "Count" in payload["messages"][0]["content"]
+                        else body
+                    )
+                else:
+                    message = json.loads(
+                        (
+                            Path(__file__).resolve().parent
+                            / "fixtures/contracts/core-1.0.0/message-valid.json"
+                        ).read_bytes()
+                    )
+                    data = json.dumps(message).encode()
             self.send_header("Content-Length", str(len(data)))
             self.end_headers()
             self.wfile.write(data)

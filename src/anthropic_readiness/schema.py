@@ -7,8 +7,10 @@ from importlib.resources import files
 from jsonschema import Draft202012Validator
 
 from anthropic_readiness.models import (
+    EvidenceRef,
     JsonObject,
     JsonValue,
+    RunResult,
     Status,
     aggregate_required,
     object_value,
@@ -76,8 +78,15 @@ def validate_result_semantics(value: JsonObject) -> list[str]:
             if case_id not in ids:
                 errors.append(f"unplanned_case:{case_id}")
     attempt_ids: set[str] = set()
+    planned_cases = {str(c["id"]): c for c in _objects(plan.get("cases", []))}
     actual_requests = 0
     for case in cases:
+        expected_case = planned_cases.get(str(case.get("id")), {})
+        if expected_case and (
+            case.get("version") != expected_case.get("version")
+            or case.get("required") != expected_case.get("required")
+        ):
+            errors.append(f"case_contract:{case.get('id')}")
         statuses: list[Status] = []
         for attempt in _objects(case.get("attempts", [])):
             attempt_id = str(attempt.get("id"))
@@ -88,6 +97,16 @@ def validate_result_semantics(value: JsonObject) -> list[str]:
             if type(count) is int:
                 actual_requests += count
             assertions = _objects(attempt.get("assertions", []))
+            actual_by_id = {str(a["id"]): a for a in assertions}
+            for expected in _objects(expected_case.get("assertions", [])):
+                actual = actual_by_id.get(str(expected["id"]))
+                if actual is None:
+                    if expected.get("required") is True and attempt.get("status") == "PASS":
+                        errors.append(f"missing_assertion:{expected['id']}")
+                elif actual.get("required") != expected.get("required") or actual.get(
+                    "version"
+                ) != expected.get("version"):
+                    errors.append(f"assertion_contract:{expected['id']}")
             assertion_ids = [a.get("id") for a in assertions]
             if len(assertion_ids) != len({str(a) for a in assertion_ids}):
                 errors.append("duplicate_assertion_id")
@@ -97,6 +116,8 @@ def validate_result_semantics(value: JsonObject) -> list[str]:
                 errors.append(f"attempt_status:{attempt_id}")
             statuses.append(status)
         if not statuses:
+            if case.get("status") == "PASS":
+                errors.append("unexecuted_case_pass")
             statuses = [
                 Status(str(p["status"]))
                 for p in _objects(case.get("preconditions", []))
@@ -108,7 +129,17 @@ def validate_result_semantics(value: JsonObject) -> list[str]:
         errors.append("request_count")
     if value.get("mode") == "replay" and actual_requests != 0:
         errors.append("replay_request_count")
-    for profile in _objects(value.get("profiles", [])):
+    profile_records = _objects(value.get("profiles", []))
+    planned_profiles = {str(p["id"]): p for p in _objects(plan.get("profiles", []))}
+    if planned_profiles and (
+        len(profile_records) != len(planned_profiles)
+        or {str(p["id"]) for p in profile_records} != set(planned_profiles)
+    ):
+        errors.append("profile_inventory")
+    for profile in profile_records:
+        expected_profile = planned_profiles.get(str(profile.get("id")))
+        if expected_profile is not None and expected_profile.get("cases") != profile.get("cases"):
+            errors.append(f"profile_cases:{profile.get('id')}")
         required_ids = profile.get("cases", [])
         profile_statuses = (
             [
@@ -122,3 +153,49 @@ def validate_result_semantics(value: JsonObject) -> list[str]:
         if profile.get("readiness") != readiness(aggregate_required(profile_statuses)):
             errors.append(f"profile_readiness:{profile.get('id')}")
     return errors
+
+
+def result_from_document(document: JsonObject) -> RunResult:
+    """Rehydrate only after structural and relational validation."""
+    validate_document(document, load_schema("result"))
+    if errors := validate_result_semantics(document):
+        raise ValueError("result_semantics:" + ";".join(errors))
+
+    def text(value: JsonValue) -> str:
+        if not isinstance(value, str):
+            raise ValueError("expected_string")
+        return value
+
+    limitations = document["limitations"]
+    if not isinstance(limitations, list):
+        raise ValueError("invalid_limitations")
+    evidence: list[EvidenceRef] = []
+    for ref in _objects(document["evidence"]):
+        event = ref.get("event")
+        pointer = ref.get("pointer")
+        evidence.append(
+            EvidenceRef(
+                text(ref["path"]),
+                text(ref["sha256"]),
+                event if type(event) is int else None,
+                text(pointer) if pointer is not None else None,
+            )
+        )
+    return RunResult(
+        text(document["run_id"]),
+        text(document["assessment_id"]),
+        "live" if document["mode"] == "live" else "replay",
+        text(document["started_at"]),
+        text(document["finished_at"]),
+        object_value(document["tool"]),
+        object_value(document["execution_environment"]),
+        object_value(document["contract"]),
+        object_value(document["target"]),
+        object_value(document["plan"]),
+        tuple(_objects(document["profiles"])),
+        tuple(_objects(document["cases"])),
+        tuple(evidence),
+        object_value(document["report_context"]),
+        tuple(text(item) for item in limitations),
+        text(document["source_run_id"]) if document["source_run_id"] is not None else None,
+    )
