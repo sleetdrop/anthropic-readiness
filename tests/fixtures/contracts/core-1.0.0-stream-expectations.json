@@ -1,0 +1,11 @@
+{
+  "schema_version": "1.0",
+  "contract_id": "anthropic-messages-2023-06-01-core",
+  "revision": "1.0.0",
+  "fixtures": [
+    {"path": "core-1.0.0/stream-valid.sse", "status": "PASS", "assertion": null},
+    {"path": "core-1.0.0/stream-duplicate-start.sse", "status": "FAIL", "assertion": "STR-START"},
+    {"path": "core-1.0.0/stream-invalid-index.sse", "status": "FAIL", "assertion": "STR-LIFECYCLE"},
+    {"path": "core-1.0.0/stream-invalid-tail.sse", "status": "FAIL", "assertion": "SSE-FRAMING"}
+  ]
+}
