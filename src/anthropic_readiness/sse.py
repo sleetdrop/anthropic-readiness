@@ -25,6 +25,10 @@ class SSEDecoder:
         self._finished = False
         self._tail: DecodeTail | None = None
 
+    @property
+    def limit_kind(self) -> str | None:
+        return self._limit
+
     def _text(self, raw: bytes) -> str:
         if self._first_line:
             raw = raw.removeprefix(b"\xef\xbb\xbf")
