@@ -10,6 +10,7 @@ from pathlib import Path
 
 from anthropic_readiness.config import load_target
 from anthropic_readiness.contracts import SUPPORTED, resolve_contract, validate_target_contract
+from anthropic_readiness.reporting import render_from_file, write_reports
 from anthropic_readiness.runner import execute_run, plan_run, replay_run, result_exit_code
 from anthropic_readiness.transport import HttpTransport
 
@@ -37,8 +38,14 @@ def main(argv: Sequence[str] | None = None) -> int:
     replay.add_argument("--target", type=Path, required=True)
     replay.add_argument("--case", required=True)
     replay.add_argument("--out", type=Path, required=True)
+    report = commands.add_parser("report", help="Render an existing result offline")
+    report.add_argument("--input", type=Path, required=True)
+    report.add_argument("--out", type=Path, required=True)
     args = parser.parse_args(argv)
     try:
+        if args.command == "report":
+            render_from_file(args.input, args.out)
+            return 0
         if args.command == "contracts":
             if args.contract_command == "list":
                 print(
@@ -77,6 +84,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             result = execute_run(plan, HttpTransport(), args.out)
         else:
             result = replay_run(target, bundle, args.case, args.capture, args.out)
+        write_reports(result, args.out)
         print(
             json.dumps(
                 {

@@ -21,6 +21,7 @@ from typing import Literal
 from anthropic_readiness import __version__
 from anthropic_readiness.cases import CaseDefinition, build_request, list_cases, select_cases
 from anthropic_readiness.config import TargetConfig, fingerprint
+from anthropic_readiness.context import build_report_context
 from anthropic_readiness.contracts import ContractBundle, validate_target_contract
 from anthropic_readiness.evidence import (
     CaptureRefs,
@@ -515,13 +516,7 @@ def execute_run(
         tuple(profiles),
         tuple(cases),
         tuple(refs),
-        {
-            "version": "1.0",
-            "data_kind": "synthetic_or_user_capture" if plan.mode == "replay" else "live_endpoint",
-            "method": "Deterministic black-box assertions; no model judge.",
-            "request_count_semantics": "Initiated transport calls; no retries.",
-            "client": "not_evaluated",
-        },
+        build_report_context(plan.bundle.manifest, plan.mode),
         (
             "Only the declared core subset is assessed.",
             "Claude Code workflows are not evaluated.",
