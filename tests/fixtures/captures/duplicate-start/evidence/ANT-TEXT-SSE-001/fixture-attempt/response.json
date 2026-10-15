@@ -1,0 +1,59 @@
+{
+  "schema_version": "1.0",
+  "request": {
+    "url": "http://127.0.0.1:8000/v1/messages",
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body": {
+      "model": "example-model"
+    },
+    "streaming": true
+  },
+  "status_code": 200,
+  "headers": {
+    "content-type": "text/event-stream"
+  },
+  "protocol_end": "message_stop",
+  "capture_end": "eof",
+  "tail": {
+    "pending_data": false,
+    "encoding_errors": 0,
+    "limit_kind": null
+  },
+  "observed_bytes": 995,
+  "retained_bytes": 995,
+  "duration_ms": 2,
+  "headers_ms": null,
+  "error": null,
+  "transformed": false,
+  "transforms": [],
+  "original_sha256": "076198f3c97b08692c242971ff12085b9d96bb1625e5bd8d726d6b8448b403db",
+  "original_length": 995,
+  "files": [
+    {
+      "path": "request.json",
+      "sha256": "6a9436f5c8c1d51d574a3f3c9968c03b01103b74e4b50fbaf484b6898a438ef9",
+      "event": null,
+      "pointer": null
+    },
+    {
+      "path": "body.bin",
+      "sha256": "076198f3c97b08692c242971ff12085b9d96bb1625e5bd8d726d6b8448b403db",
+      "event": null,
+      "pointer": null
+    },
+    {
+      "path": "reads.json",
+      "sha256": "078d11e7d8af84e72e9db6edeca8ee7f5aadf6e817db6180697c760c16175276",
+      "event": null,
+      "pointer": null
+    },
+    {
+      "path": "events.jsonl",
+      "sha256": "9328ede4551b387bcbf08ae5c29bf425493b1213e279aa5d2fdc8a1755e996a4",
+      "event": null,
+      "pointer": null
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "schema_version": "1.0",
+  "data_kind": "synthetic",
+  "contract_id": "anthropic-messages-2023-06-01-core",
+  "revision": "1.0.0",
+  "captures": [
+    {
+      "id": "valid",
+      "capture": "valid/evidence/ANT-TEXT-SSE-001/fixture-attempt/response.json",
+      "expected_status": "PASS",
+      "expected_assertion": null
+    },
+    {
+      "id": "duplicate-start",
+      "capture": "duplicate-start/evidence/ANT-TEXT-SSE-001/fixture-attempt/response.json",
+      "expected_status": "FAIL",
+      "expected_assertion": "STR-START"
+    }
+  ]
+}

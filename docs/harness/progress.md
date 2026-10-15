@@ -5,7 +5,7 @@ Plan: `docs/superpowers/plans/2026-10-15-stage-a-implementation.md`.
 Execution method: native, sequential, approved on 2026-10-15.
 Baseline: `676f105` on `feat/stage-a`; current project directory was explicitly selected for this new repository.
 
-Task 1: in progress. Docker access confirmed with authorized execution; no product tests have passed yet.
+Current milestone: Tasks 1–7 complete; Task 8 in progress. Developer checks are recorded below. Stage A product/container acceptance remains incomplete.
 
 Ruling: use the dedicated new repository in place, on a feature branch — the approved plan selected this directory and no existing application checkout needs isolation.
 
@@ -24,3 +24,5 @@ Task 5 verified: 30 streaming tests and the 69-test bootstrap suite pass. Versio
 Task 6 verified: direct message/case tests 24/24 pass. Unknown stop reasons remain indeterminate, non-object tool input fails protocol structure, and max_tokens preserves protocol validity but fails short-task completion. Exactly four case/version definitions retain 3/4 request selection and explicit capability exclusions. The complete bootstrap suite passed (93 tests), including strict types and lint.
 
 Task 7 verified: 17 transport/deadline tests pass against loopback synthetic HTTP and injected transport seams. No retries/redirect following; exact headers and no-auth verified. Absolute deadlines stop active ping streams and preserve message_stop before timeout/reset. Incremental gzip decoding is bounded; observed read sizes remain distinct from retained bytes. Test socket guards reject external connections. Public transport stays synchronous; one internal async request enforces portable absolute cancellation without concurrent cases.
+
+Task 8 verified: nine redaction/evidence tests pass, strict types/lint/format and the bootstrap graph pass (119 tests). Versioned synthetic captures are stored for legal and duplicate-start replay. Files are exclusive, private and hashed; bad paths/hashes/event pointers are rejected. Transformed or partial captures are re-chunked on load. Updated continuation/spec/plan status text to remove obsolete approval-pending/no-code statements.

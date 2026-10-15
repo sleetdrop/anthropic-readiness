@@ -1,27 +1,47 @@
-# 继续工作入口
+# Continue Stage A
 
-更新时间：2026-10-15。
+The user approved the specification and the 12-task plan for sequential
+implementation in this chat. The earlier pause and planning approvals are
+resolved. Continue implementation without asking for another scope approval.
 
-## 当前状态
+Read `AGENTS.md`, `docs/harness/progress.md` and the current task brief in
+`.superpowers/sdd/2026-10-15-stage-a-implementation/`. The specification is
+`docs/superpowers/specs/2026-10-14-anthropic-readiness-design.md`; the approved
+plan is `docs/superpowers/plans/2026-10-15-stage-a-implementation.md`.
 
-2026-10-15 用户明确表示“暂时没有补充，可以推进实现”，先前暂停请求已解除。用户同时询问当前会话还是新会话实施更合适；当前建议留在本会话顺序实施，位置/执行方式与实施计划仍待其选择和审阅。本轮已进入阶段 A 规划，没有开始产品代码或基础设施配置。
+## Current implementation
 
-- [当前详细规格：修订 6](superpowers/specs/2026-10-14-anthropic-readiness-design.md)。以此为当前需求依据，不再使用聊天中的旧规格摘要作为平行要求。
-- [阶段 A 实施计划](superpowers/plans/2026-10-15-stage-a-implementation.md)：12 个待实施任务、失败测试/接口/检查/本地提交步骤，以及对规格的覆盖映射。先审阅计划，不把计划文件存在当成已开始或已完成实现。
-- [修订 5 的整体自审记录](reviews/2026-10-14-design-self-review.md)及[修订 6 的补充一致性审阅](reviews/2026-10-15-design-supplement-review.md)。均为同一 Agent 自审，不是独立评审或产品验收。
-- 当前只有规格、自审、交接与实施计划文档。尚未创建产品代码、AGENTS.md、依赖锁、质量门禁或容器文件，也未开始真实目标测试。
-- 本目录尚未初始化 Git，没有本地代码交付提交。
+- Branch: `feat/stage-a`. Tasks 1–7 have scoped local commits and passing
+  verification; Task 8 implements sanitized evidence and replayable captures.
+- The Linux Dev Container runs Python 3.12.15 and uv 0.13.1. Its container ID and
+  actual test commands are in the task ledger. Use the container-owned virtual
+  environment; do not substitute host Python for container acceptance.
+- Current checks cover strict config/results/contracts, SSE framing, message and
+  streaming validators, four case definitions and synthetic HTTP deadlines.
+  Bootstrap check success is not complete Stage A acceptance.
+- Next: finish Task 8, then runner/CLI (9), reports/package acceptance (10),
+  complete gates/runtime/CI/contribution files (11), and independent review (12).
+- Real targets have not been tested. No GitHub repository or image was published.
 
-## 执行入口
+## Persistent boundaries
 
-无论留在当前会话还是交给新实现会话，均读取本记录、当前规格及阶段 A 计划，确认计划与执行方式后按任务接续，不重新讨论已经明确的项目目标。若顺序执行，使用 executing-plans 流程；不要未经选择就为每项任务启动子 Agent。
+Implement Stage A only. B owns tool loops and version matrices; C owns real
+Claude Code workflows; D owns periodic protocol-update tooling/Agent command,
+comparison and release guidance. The first protocol bundle supports only the
+Messages 2023-06-01 core subset with an empty beta set.
 
-阶段 A 先搭最小可执行 harness，再实现配置/固定规则包、协议验证、证据/报告和运行镜像。采用 Dev Container 标准 Linux 环境、现代 Python src 工程和同一检查入口；保留错误样本与合法对照。
+Retain the read-only historical evaluation workspace. Keep private endpoints,
+models, logs and credentials outside source/build contexts. Local commits and
+synthetic testing are authorized; remote creation/push, Docker Hub publishing
+and real endpoint execution need their specific authorization.
 
-协议更新和版本评估是核心要求，但 A 只收录一个实际有实现的 Messages 核心规则包。版本矩阵在 B，固定 CLI 任务在 C，周期资料更新和重复比较在 D；不提前扩展全部功能。
+The user permits discussing design with the referenced evaluation chat. Read
+that chat again before relying on any new conclusions. Its advice is not real
+endpoint evidence. One independent whole-stage reviewer remains required.
 
-修订 6 规定：A 交付 GitHub 检查/构建定义、CONTRIBUTING 与 Issue/PR 模板、HTML/Markdown/JSON 一致的文档式报告；D 交付 update-anthropic-protocol 仓库技能和 Docker Hub 发布操作指南。GitHub 仓库/命名空间、Docker Hub 凭据、许可证及远端保护设置在对应接入/发布步骤由用户确认，不从“将来要开源”推导当前可直接创建或推送。
+## Network waiting
 
-此前环境探查发现 Docker CLI 存在，但当时本会话无权访问宿主 Docker socket；这不证明 daemon 未运行。恢复后应重新核对容器执行能力，必要时按正常权限流程处理。不要改用宿主 macOS Python 来冒充容器验收。
-
-历史评估目录保持只读，真实 endpoint/model/logs 不进入公开源码。原“排查代理兼容性测试失败”会话负责独立实测；相关参考已在本会话读取，后续若要依赖其新结论需再次读取。用户此前允许与该会话讨论，不意味着其意见能替代真实验收。
+The user explicitly reports a slow network and asks for patient waits with
+roughly ten-minute progress polling. Extend download timeouts and retain the
+original source; do not repeatedly probe or change download routes. Ordinary
+local checks do not need that delay.

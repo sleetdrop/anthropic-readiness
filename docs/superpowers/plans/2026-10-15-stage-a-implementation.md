@@ -10,7 +10,7 @@
 
 **Spec:** [Detailed design, revision 6](../specs/2026-10-14-anthropic-readiness-design.md).
 
-**Status:** Planned; no implementation or test result is implied. Recommended execution is native implementation in the current chat, task by task. Execution location/method and plan review remain to be confirmed by the user. Do not spawn implementation agents merely because the standard header mentions that option.
+**Status:** Approved by the user for native, sequential implementation in the current chat. Execution evidence lives in `docs/harness/progress.md` and the task ledger; unchecked plan steps are not evidence of acceptance. Do not spawn implementation agents merely because the standard header mentions that option.
 
 ## Global Constraints
 
