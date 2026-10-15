@@ -1,0 +1,305 @@
+{
+  "manifest_schema_version": "1.0",
+  "id": "anthropic-messages-2023-06-01-core",
+  "revision": "1.0.0",
+  "protocol": "anthropic.messages",
+  "api_version": "2023-06-01",
+  "beta_headers": [],
+  "spec_as_of": "2026-10-15",
+  "sources": [
+    {
+      "id": "versioning",
+      "url": "https://platform.claude.com/docs/en/api/versioning",
+      "retrieved_at": "2026-10-15T15:58:53.050670+00:00",
+      "normalized_sha256": "07fae2f05585aab87f2a9b2ae65c93d721ef323eac1510940070de3af30f1cd5",
+      "normalization": "html-visible-text-without-script-style-nav-footer+nfc+collapse-whitespace-v1",
+      "anchor": "version-history",
+      "characters": 2840,
+      "summary": "The API date selects an input/output compatibility contract; optional fields and new event variants may still be added."
+    },
+    {
+      "id": "messages",
+      "url": "https://platform.claude.com/docs/en/api/messages/create",
+      "retrieved_at": "2026-10-15T15:58:53.290208+00:00",
+      "normalized_sha256": "9d87e1b587c39f53da1b6012180cea3a59cba4895a731feda383582ae303766c",
+      "normalization": "html-visible-text-without-script-style-nav-footer+nfc+collapse-whitespace-v1",
+      "anchor": "response",
+      "characters": 29935,
+      "summary": "Messages return assistant content blocks, model identity, stop metadata and usage; tool inputs are JSON objects."
+    },
+    {
+      "id": "streaming",
+      "url": "https://platform.claude.com/docs/en/build-with-claude/streaming",
+      "retrieved_at": "2026-10-15T15:58:53.313357+00:00",
+      "normalized_sha256": "9619f452373a53466a5b878991f88443158d3c9f5a6b90b122dfd1b1e06403b9",
+      "normalization": "html-visible-text-without-script-style-nav-footer+nfc+collapse-whitespace-v1",
+      "anchor": "event-types",
+      "characters": 24574,
+      "summary": "Named JSON events describe message and indexed block lifecycles, cumulative usage and partial tool JSON."
+    },
+    {
+      "id": "sse",
+      "url": "https://html.spec.whatwg.org/multipage/server-sent-events.html",
+      "retrieved_at": "2026-10-15T15:58:53.706008+00:00",
+      "normalized_sha256": "3bd63281bc14e47ea618120849db81557fc2f30058c668b05d9b63209f144569",
+      "normalization": "html-visible-text-without-script-style-nav-footer+nfc+collapse-whitespace-v1",
+      "anchor": "parsing-an-event-stream",
+      "characters": 26337,
+      "summary": "UTF-8 lines dispatch an event at an empty line; incomplete data at EOF is not dispatched."
+    },
+    {
+      "id": "stop-reasons",
+      "url": "https://platform.claude.com/docs/en/build-with-claude/handling-stop-reasons",
+      "retrieved_at": "2026-10-15T15:58:53.245226+00:00",
+      "normalized_sha256": "008a86f0d5e9184fdd04fea0aa13c0d4505832bebf8db463f69d6abb1d32c8ff",
+      "normalization": "html-visible-text-without-script-style-nav-footer+nfc+collapse-whitespace-v1",
+      "anchor": "stop-reason-values",
+      "characters": 24327,
+      "summary": "A protocol-valid stop reason can still mean the controlled task did not complete."
+    }
+  ],
+  "rules": [
+    {
+      "id": "MSG-CORE",
+      "version": 1,
+      "implementation": "message-core-v1",
+      "parameters": {},
+      "source_ids": [
+        "messages"
+      ],
+      "api_version": "2023-06-01",
+      "beta_headers": [],
+      "positive_fixture": "message-valid.json",
+      "negative_fixture": "message-invalid-core.json"
+    },
+    {
+      "id": "MSG-MODEL",
+      "version": 1,
+      "implementation": "message-core-v1",
+      "parameters": {},
+      "source_ids": [
+        "messages"
+      ],
+      "api_version": "2023-06-01",
+      "beta_headers": [],
+      "positive_fixture": "message-valid.json",
+      "negative_fixture": "message-invalid-model.json"
+    },
+    {
+      "id": "MSG-TOOL-INPUT",
+      "version": 1,
+      "implementation": "case-behavior-v1",
+      "parameters": {},
+      "source_ids": [
+        "messages"
+      ],
+      "api_version": "2023-06-01",
+      "beta_headers": [],
+      "positive_fixture": "message-valid-tool.json",
+      "negative_fixture": "message-invalid-tool.json"
+    },
+    {
+      "id": "STR-START",
+      "version": 1,
+      "implementation": "stream-core-v1",
+      "parameters": {},
+      "source_ids": [
+        "streaming"
+      ],
+      "api_version": "2023-06-01",
+      "beta_headers": [],
+      "positive_fixture": "stream-valid.sse",
+      "negative_fixture": "stream-duplicate-start.sse"
+    },
+    {
+      "id": "STR-LIFECYCLE",
+      "version": 1,
+      "implementation": "stream-core-v1",
+      "parameters": {},
+      "source_ids": [
+        "streaming"
+      ],
+      "api_version": "2023-06-01",
+      "beta_headers": [],
+      "positive_fixture": "stream-valid.sse",
+      "negative_fixture": "stream-invalid-index.sse"
+    },
+    {
+      "id": "SSE-FRAMING",
+      "version": 1,
+      "implementation": "sse-framing-v1",
+      "parameters": {},
+      "source_ids": [
+        "sse"
+      ],
+      "api_version": "2023-06-01",
+      "beta_headers": [],
+      "positive_fixture": "stream-valid.sse",
+      "negative_fixture": "stream-invalid-tail.sse"
+    },
+    {
+      "id": "TASK-COMPLETE",
+      "version": 1,
+      "implementation": "case-behavior-v1",
+      "parameters": {},
+      "source_ids": [
+        "stop-reasons"
+      ],
+      "api_version": "2023-06-01",
+      "beta_headers": [],
+      "positive_fixture": "message-valid.json",
+      "negative_fixture": "message-invalid-task.json"
+    }
+  ],
+  "profiles": [
+    {
+      "id": "anthropic-basic",
+      "version": 1,
+      "cases": [
+        {
+          "id": "ANT-MESSAGE-001",
+          "version": 1,
+          "required": true,
+          "request_template": {
+            "prompt": "Say hello in one short sentence.",
+            "stream": false,
+            "max_tokens_policy": "min(512,target.limits.max_tokens)",
+            "capability_policy": "selected required cases remain SKIP when unavailable"
+          },
+          "request_sha256": "c434b5c51484ea593813bfba636a6b992dcc46bdaf75341f0ca821ee58870a1f"
+        },
+        {
+          "id": "ANT-TEXT-SSE-001",
+          "version": 1,
+          "required": true,
+          "request_template": {
+            "prompt": "Say hello in one short sentence.",
+            "stream": true,
+            "max_tokens_policy": "min(512,target.limits.max_tokens)",
+            "capability_policy": "selected required cases remain SKIP when unavailable"
+          },
+          "request_sha256": "825a1de120799b6db95723248a4c37ca9635604702b42f429dcbed35f76c86c4"
+        },
+        {
+          "id": "ANT-TEXT-SSE-002",
+          "version": 1,
+          "required": true,
+          "request_template": {
+            "prompt": "Count from 1 to 5, using digits.",
+            "stream": true,
+            "max_tokens_policy": "min(512,target.limits.max_tokens)",
+            "capability_policy": "selected required cases remain SKIP when unavailable"
+          },
+          "request_sha256": "5ef5c7b06fbcd4829e521208be1913b556f8a1d7e72749b91ee06eae5f7c2ba1"
+        }
+      ]
+    },
+    {
+      "id": "anthropic-tools-smoke",
+      "version": 1,
+      "cases": [
+        {
+          "id": "ANT-TOOL-FORCED-001",
+          "version": 1,
+          "required": true,
+          "request_template": {
+            "prompt": "Use get_weather to check the weather in Hanoi.",
+            "stream": false,
+            "max_tokens_policy": "min(512,target.limits.max_tokens)",
+            "capability_policy": "selected required cases remain SKIP when unavailable",
+            "tool": {
+              "name": "get_weather",
+              "input_schema": {
+                "type": "object",
+                "properties": {
+                  "location": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "location"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "tool_choice": {
+              "type": "tool",
+              "name": "get_weather"
+            }
+          },
+          "request_sha256": "15cf46960a90f857bcb17a6f622aaf30e63e99da3d4156323d46474f3c59946f"
+        }
+      ]
+    }
+  ],
+  "coverage": {
+    "covered": [
+      "core nonstream Messages",
+      "text SSE lifecycle",
+      "forced nonstream tool input",
+      "offline streaming tool reconstruction"
+    ],
+    "uncovered": [
+      "tool result loops",
+      "live streaming tools",
+      "thinking",
+      "parallel tools",
+      "beta APIs",
+      "Claude Code workflows",
+      "version semantics discrimination"
+    ]
+  },
+  "engine_compatibility": {
+    "validator_version": "1.0.0",
+    "tool_version": "0.1.0"
+  },
+  "resources": [
+    {
+      "path": "rules.json",
+      "sha256": "20b46404279ea79ecc56d06f570caf073e3e01a2956593fc05ad40b39c746bbe"
+    }
+  ],
+  "fixture_integrity": [
+    {
+      "path": "tests/fixtures/contracts/core-1.0.0/message-invalid-core.json",
+      "sha256": "d796329367679e930ce363bb366fd12579a73f71449c5c8bde28ac592cdfd23b"
+    },
+    {
+      "path": "tests/fixtures/contracts/core-1.0.0/message-invalid-model.json",
+      "sha256": "21c57713a8dd4df16b1f0b64c03dc629957f1cd257b2ec27804cfa4bbccabc32"
+    },
+    {
+      "path": "tests/fixtures/contracts/core-1.0.0/message-invalid-task.json",
+      "sha256": "960447208f0600fefbb7784a60c9d27a885034550160168316e83d6fb0c7339f"
+    },
+    {
+      "path": "tests/fixtures/contracts/core-1.0.0/message-invalid-tool.json",
+      "sha256": "f17b91ac62727d86d74e0184c76b4b566604c047b1198aeec777de0833cf7eac"
+    },
+    {
+      "path": "tests/fixtures/contracts/core-1.0.0/message-valid-tool.json",
+      "sha256": "133fa54c49e5c0d4a49fa59762d7dcbb70d35687bbcbdcef60ba2f52719122d1"
+    },
+    {
+      "path": "tests/fixtures/contracts/core-1.0.0/message-valid.json",
+      "sha256": "8f8dc052ad1b7d002c8e9e2e3f965a52b04acd609d545c3e310863ccce15e2a7"
+    },
+    {
+      "path": "tests/fixtures/contracts/core-1.0.0/stream-duplicate-start.sse",
+      "sha256": "076198f3c97b08692c242971ff12085b9d96bb1625e5bd8d726d6b8448b403db"
+    },
+    {
+      "path": "tests/fixtures/contracts/core-1.0.0/stream-invalid-index.sse",
+      "sha256": "2722ec7984080ddda8e839874aeb91c53694fece764a9b6a622688885bcc50cc"
+    },
+    {
+      "path": "tests/fixtures/contracts/core-1.0.0/stream-invalid-tail.sse",
+      "sha256": "70751d0ba435453bb5f003a62924cdcfd64398af9e9a5ecf43fa184895aa1f51"
+    },
+    {
+      "path": "tests/fixtures/contracts/core-1.0.0/stream-valid.sse",
+      "sha256": "3550ec593d853528f98807c6d7ac2d1d97485b3acb76702c8bf603f0eed528a9"
+    }
+  ],
+  "content_sha256": "6552cdcbc2d0ce4f3a05c45f75a7edbca5e6b8e7e53b7075a2c9da6d511691a3"
+}

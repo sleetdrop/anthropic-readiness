@@ -1,0 +1,96 @@
+{
+  "validator_version": "1.0.0",
+  "rules": [
+    {
+      "id": "MSG-CORE",
+      "version": 1,
+      "implementation": "message-core-v1",
+      "parameters": {},
+      "source_ids": [
+        "messages"
+      ],
+      "api_version": "2023-06-01",
+      "beta_headers": [],
+      "positive_fixture": "message-valid.json",
+      "negative_fixture": "message-invalid-core.json"
+    },
+    {
+      "id": "MSG-MODEL",
+      "version": 1,
+      "implementation": "message-core-v1",
+      "parameters": {},
+      "source_ids": [
+        "messages"
+      ],
+      "api_version": "2023-06-01",
+      "beta_headers": [],
+      "positive_fixture": "message-valid.json",
+      "negative_fixture": "message-invalid-model.json"
+    },
+    {
+      "id": "MSG-TOOL-INPUT",
+      "version": 1,
+      "implementation": "case-behavior-v1",
+      "parameters": {},
+      "source_ids": [
+        "messages"
+      ],
+      "api_version": "2023-06-01",
+      "beta_headers": [],
+      "positive_fixture": "message-valid-tool.json",
+      "negative_fixture": "message-invalid-tool.json"
+    },
+    {
+      "id": "STR-START",
+      "version": 1,
+      "implementation": "stream-core-v1",
+      "parameters": {},
+      "source_ids": [
+        "streaming"
+      ],
+      "api_version": "2023-06-01",
+      "beta_headers": [],
+      "positive_fixture": "stream-valid.sse",
+      "negative_fixture": "stream-duplicate-start.sse"
+    },
+    {
+      "id": "STR-LIFECYCLE",
+      "version": 1,
+      "implementation": "stream-core-v1",
+      "parameters": {},
+      "source_ids": [
+        "streaming"
+      ],
+      "api_version": "2023-06-01",
+      "beta_headers": [],
+      "positive_fixture": "stream-valid.sse",
+      "negative_fixture": "stream-invalid-index.sse"
+    },
+    {
+      "id": "SSE-FRAMING",
+      "version": 1,
+      "implementation": "sse-framing-v1",
+      "parameters": {},
+      "source_ids": [
+        "sse"
+      ],
+      "api_version": "2023-06-01",
+      "beta_headers": [],
+      "positive_fixture": "stream-valid.sse",
+      "negative_fixture": "stream-invalid-tail.sse"
+    },
+    {
+      "id": "TASK-COMPLETE",
+      "version": 1,
+      "implementation": "case-behavior-v1",
+      "parameters": {},
+      "source_ids": [
+        "stop-reasons"
+      ],
+      "api_version": "2023-06-01",
+      "beta_headers": [],
+      "positive_fixture": "message-valid.json",
+      "negative_fixture": "message-invalid-task.json"
+    }
+  ]
+}

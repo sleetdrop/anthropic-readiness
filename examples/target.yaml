@@ -1,0 +1,21 @@
+schema_version: "1.0"
+name: example-local-target
+delivery_id: example-build-001
+protocol: anthropic.messages
+messages_url: http://127.0.0.1:8000/v1/messages
+model: example-model
+api_version: "2023-06-01"
+beta_headers: []
+protocol_contract:
+  id: anthropic-messages-2023-06-01-core
+  revision: "1.0.0"
+auth:
+  mode: none
+capabilities:
+  streaming: true
+  tools: true
+  thinking: false
+  parallel_tools: false
+response_model_policy: request_or_alias
+response_model_aliases: []
+limits: {}

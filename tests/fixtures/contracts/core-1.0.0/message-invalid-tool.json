@@ -1,0 +1,20 @@
+{
+  "id": "synthetic-message",
+  "type": "message",
+  "role": "assistant",
+  "model": "example-model",
+  "content": [
+    {
+      "type": "tool_use",
+      "id": "synthetic-tool",
+      "name": "get_weather",
+      "input": {}
+    }
+  ],
+  "stop_reason": "tool_use",
+  "stop_sequence": null,
+  "usage": {
+    "input_tokens": 8,
+    "output_tokens": 2
+  }
+}
