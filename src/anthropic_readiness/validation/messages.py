@@ -76,6 +76,12 @@ def validate_message(value: object, contract: CaseContract) -> ValidationResult:
                     core = False
             elif block["type"] == "tool_use":
                 tools.append(block)
+                if (
+                    not isinstance(block.get("input"), dict)
+                    or not isinstance(block.get("name"), str)
+                    or not block.get("name")
+                ):
+                    core = False
             else:
                 unknown = True
     add("MSG-CORE", bool(core), "invalid_message_structure")
@@ -161,7 +167,8 @@ def validate_message(value: object, contract: CaseContract) -> ValidationResult:
         task_ok,
         "task_not_completed",
         "behavior",
-        uncertain=unknown and reason == ("tool_use" if contract.behavior == "tool" else "end_turn"),
+        uncertain=(isinstance(reason, str) and reason not in known)
+        or (unknown and reason == ("tool_use" if contract.behavior == "tool" else "end_turn")),
     )
     sightings = [
         {"tag": tag, "offset": match.start()}
