@@ -1,0 +1,92 @@
+{
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "scope": {
+      "type": "string"
+    },
+    "stage_readiness": {
+      "type": "string"
+    },
+    "started_at": {
+      "type": "string"
+    },
+    "source_fingerprint": {
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "passed",
+        "failed",
+        "blocked"
+      ]
+    },
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "check_id": {
+            "type": "string"
+          },
+          "argv": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "status": {
+            "enum": [
+              "passed",
+              "failed",
+              "blocked"
+            ]
+          },
+          "reason": {
+            "type": "string"
+          },
+          "returncode": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "duration_s": {
+            "type": "number",
+            "minimum": 0
+          },
+          "log": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "check_id",
+          "argv",
+          "required",
+          "status",
+          "reason",
+          "returncode",
+          "duration_s",
+          "log"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "schema_version",
+    "scope",
+    "stage_readiness",
+    "started_at",
+    "source_fingerprint",
+    "status",
+    "checks"
+  ],
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

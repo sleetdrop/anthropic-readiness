@@ -1,0 +1,187 @@
+{
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "delivery_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "protocol": {
+      "const": "anthropic.messages"
+    },
+    "messages_url": {
+      "type": "string",
+      "minLength": 1
+    },
+    "model": {
+      "type": "string",
+      "minLength": 1
+    },
+    "api_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "beta_headers": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "protocol_contract": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "revision": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "id",
+        "revision"
+      ],
+      "additionalProperties": false
+    },
+    "auth": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "mode": {
+              "const": "none"
+            }
+          },
+          "required": [
+            "mode"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "mode": {
+              "const": "api_key"
+            },
+            "credential_env": {
+              "type": "string",
+              "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+            }
+          },
+          "required": [
+            "mode",
+            "credential_env"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "capabilities": {
+      "type": "object",
+      "properties": {
+        "streaming": {
+          "type": "boolean"
+        },
+        "tools": {
+          "type": "boolean"
+        },
+        "thinking": {
+          "type": "boolean"
+        },
+        "parallel_tools": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "streaming",
+        "tools",
+        "thinking",
+        "parallel_tools"
+      ],
+      "additionalProperties": false
+    },
+    "response_model_policy": {
+      "enum": [
+        "structure_only",
+        "request_or_alias"
+      ]
+    },
+    "response_model_aliases": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "limits": {
+      "type": "object",
+      "properties": {
+        "connect_timeout_s": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "read_timeout_s": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "attempt_timeout_s": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "run_timeout_s": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "max_response_bytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_event_bytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_events": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_requests": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_tokens": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "schema_version",
+    "name",
+    "delivery_id",
+    "protocol",
+    "messages_url",
+    "model",
+    "api_version",
+    "beta_headers",
+    "protocol_contract",
+    "auth",
+    "capabilities",
+    "response_model_policy",
+    "response_model_aliases",
+    "limits"
+  ],
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

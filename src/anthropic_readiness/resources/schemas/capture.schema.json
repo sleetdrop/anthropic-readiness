@@ -1,0 +1,140 @@
+{
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "request": {
+      "type": "object"
+    },
+    "status_code": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 100,
+      "maximum": 599
+    },
+    "headers": {
+      "type": "object"
+    },
+    "protocol_end": {
+      "enum": [
+        "message_stop",
+        "error_event",
+        "none"
+      ]
+    },
+    "capture_end": {
+      "enum": [
+        "eof",
+        "timeout",
+        "read_error",
+        "capture_limit",
+        "cancelled",
+        "connection_error"
+      ]
+    },
+    "tail": {
+      "type": "object"
+    },
+    "observed_bytes": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "retained_bytes": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "duration_ms": {
+      "type": "number",
+      "minimum": 0
+    },
+    "headers_ms": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "error": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "transformed": {
+      "type": "boolean"
+    },
+    "transforms": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "original_sha256": {
+      "type": "string"
+    },
+    "original_length": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "event": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "pointer": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "path",
+          "sha256",
+          "event",
+          "pointer"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "schema_version",
+    "request",
+    "status_code",
+    "headers",
+    "protocol_end",
+    "capture_end",
+    "tail",
+    "observed_bytes",
+    "retained_bytes",
+    "duration_ms",
+    "headers_ms",
+    "error",
+    "transformed",
+    "transforms",
+    "original_sha256",
+    "original_length",
+    "files"
+  ],
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

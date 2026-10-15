@@ -1,0 +1,105 @@
+{
+  "type": "object",
+  "properties": {
+    "manifest_schema_version": {
+      "const": "1.0"
+    },
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "revision": {
+      "type": "string",
+      "minLength": 1
+    },
+    "protocol": {
+      "const": "anthropic.messages"
+    },
+    "api_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "beta_headers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "spec_as_of": {
+      "type": "string",
+      "minLength": 1
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "rules": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "profiles": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "coverage": {
+      "type": "object"
+    },
+    "engine_compatibility": {
+      "type": "object"
+    },
+    "resources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sha256": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "sha256"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "fixture_integrity": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "content_sha256": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "manifest_schema_version",
+    "id",
+    "revision",
+    "protocol",
+    "api_version",
+    "beta_headers",
+    "spec_as_of",
+    "sources",
+    "rules",
+    "profiles",
+    "coverage",
+    "engine_compatibility",
+    "resources",
+    "fixture_integrity",
+    "content_sha256"
+  ],
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}
