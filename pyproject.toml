@@ -1,0 +1,40 @@
+[build-system]
+requires = ["hatchling==1.27.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "anthropic-readiness"
+version = "0.1.0"
+description = "Evidence-led black-box checks for Anthropic-compatible endpoints"
+requires-python = ">=3.11"
+dependencies = ["httpx>=0.28,<1", "jsonschema>=4.23,<5", "PyYAML>=6,<7"]
+
+[project.scripts]
+anthropic-readiness = "anthropic_readiness.cli:main"
+
+[dependency-groups]
+dev = ["pytest>=8,<10", "pytest-cov>=6", "mypy>=1.15", "ruff>=0.11", "import-linter>=2", "types-PyYAML", "types-jsonschema", "hatchling==1.27.0"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/anthropic_readiness"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I", "UP", "B", "SIM", "C4", "RUF", "PT"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+files = ["src", "tests", "scripts"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = ["--strict-config", "--strict-markers", "--import-mode=importlib"]
+filterwarnings = ["error"]
+markers = ["integration: isolated synthetic HTTP integration", "live: explicit real endpoint tests"]
+
+[tool.importlinter]
+root_package = "anthropic_readiness"

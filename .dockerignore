@@ -1,0 +1,8 @@
+.git
+.venv
+.superpowers
+artifacts
+.env*
+target.local.*
+__pycache__
+dist
