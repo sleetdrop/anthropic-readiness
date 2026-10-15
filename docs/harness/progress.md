@@ -16,3 +16,5 @@ Task 1 verified: Dev Container pytest 4/4 passed; bootstrap fast graph passed lo
 Task 2 verified: eight domain/schema tests pass, including mixed-result round-trip and structurally valid inconsistent readiness rejection. Initial RED exposed absent modules; the first implementation also exposed and corrected aggregate precedence. Bootstrap graph remains green (12 total tests). Six packaged schemas and pure shared records are present; filesystem evidence checks remain Task 8.
 
 Task 3: strict config/contract tests 18/18 passed. Five official sources retrieved at 2026-10-15 15:58 UTC; normalized hashes recorded in the packaged manifest. Runtime resolution stays offline. API date 2023-06-01 with no beta is the sole supported contract. Fixture hashes cover legal and defective controls; detector coverage is implemented in Tasks 4–6.
+
+Task 4 verified: nine framing tests pass, including all byte split positions, one-byte delivery, 30 seeded multi-split plans, invalid UTF-8, EOF tails and event limits. Full bootstrap graph passed with 39 tests. Framing has no transport or Anthropic imports beyond domain records.
