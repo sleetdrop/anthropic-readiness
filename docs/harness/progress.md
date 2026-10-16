@@ -245,3 +245,14 @@ Task 1's final fast graph passed all seven gates; complete pytest passed 245 tes
 The official Node archive and immutable image digest are verified, with exact
 Python/npm tool versions locked. Browser preparation is separate and still in
 progress; no W1 browser/image acceptance is implied by these source checks.
+
+## W1 Task 2: recoverable operational records (2026-10-17)
+
+Implemented schema-checked ordered events, private replaceable execution snapshots,
+exclusive case checkpoints and pure observed-span reduction. Meaningful RED covered
+write failure, symlinks, interrupted logs and missing published checkpoints. Recovery
+retains committed prefixes and evidence; corrupt interior records fail explicitly.
+Durable events recover even when snapshot replacement fails. Final Linux Python 3.12
+fast graph passed seven gates and complete pytest passed 257 tests. Source contracts
+and frozen Stage A records remain unchanged. Browser preparation is still separate;
+no Web/image/remote/live acceptance is claimed. See the W1 ledger for design rulings.

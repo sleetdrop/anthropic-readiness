@@ -9,8 +9,8 @@
 - Implementation plan: [self-reviewed revision 1](../superpowers/plans/2026-10-16-local-web-console-implementation.md),
   14 sequential tasks; self-review completed and owner approval received on 2026-10-17.
 - Execution: current chat, sequentially; owner chose the current checkout/Dev Container.
-  W1 branch is `codex/local-web-console`, starting from `ad83593`. Task 1 is in progress;
-  tasks 2–14 and whole-W1 acceptance remain pending.
+  W1 branch is `codex/local-web-console`, starting from `ad83593`. Tasks 1–2 are complete;
+  tasks 3–14 and whole-W1 acceptance remain pending.
 
 ## Observed design checks
 
@@ -67,6 +67,9 @@ passed `UV_OFFLINE=1 uv run --frozen python scripts/check_docs.py`
 (`documentation_collaboration: passed`), and `git diff --check` passed. Only planning
 and handoff documentation changed; product suites and all W1 acceptance remain unrun.
 
+The owner subsequently approved execution; the observations below supersede that
+planning-only checkpoint.
+
 ## Task 1: operational contracts and development preparation
 
 In progress on `codex/local-web-console`, BASE `ad83593`. Existing full offline
@@ -88,3 +91,25 @@ recorded in `web-toolchain.json`. Chromium OS/font/binary preparation remains
 asynchronous; actual browser/new-image acceptance is not claimed. The combined
 draft schema/lifecycle test was split into explicit shape checks and 49 transition
 tests, preserving its intended coverage; actual names are reflected in the plan.
+
+Task 1 committed as `dceceb9`; its task-done rerun passed 70 tests.
+
+## Task 2: journal, checkpoints and observed spans
+
+RED recorded ten initial behavior failures and two focused storage-boundary
+failures. The first GREEN ran 15 targeted journal/span/evidence tests. A further
+fault test proved durable events survive snapshot-write failure. A missing published
+checkpoint initially escaped inventory verification; its failing test preceded
+the required-inventory fix. Failed attempts remain in the ignored plan workspace.
+
+Ruling: split operational storage and pure reduction into separate modules, adding
+the reducer to the enforced pure dependency contract. This keeps locks/filesystem
+work outside state reduction; if incorrect, additional modules could obscure the
+single-writer boundary. Add an optional explicit `evidence_root` to RunJournal so
+the future Web job layout and CLI sidecars share verification without guessing
+paths; if incorrect, a wrong root fails hash/reference checks instead of publishing
+a case. Snapshot replacement stays separate from exclusive source-evidence writes.
+
+Final Linux verification passed all seven fast gates and all 257 pytest tests.
+This establishes source/offline storage behavior; Web/browser/image acceptance
+and endpoint behavior remain outside these observations.

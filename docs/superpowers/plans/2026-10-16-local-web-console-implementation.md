@@ -160,22 +160,22 @@ modify `pyproject.toml`, `uv.lock`, `Dockerfile` dev target, `.devcontainer/devc
 - [x] **RED:** `test_operational_job_rejects_unsafe_fields` and `test_job_lifecycle_matches_the_declared_transition_table` assert extra `credential` fields, terminal-to-active transitions, negative sequence and unknown event kinds are rejected; every new resource is in the inventory. `test_web_extra_is_optional` asserts `import anthropic_readiness.cli` succeeds without Web packages. Named task files ran and observed behavior failures before implementation.
 - [x] **Implement:** Define records/ports and packaged schemas, add the optional `web` extra plus Web packages to the dev dependency group, prepare/pin the toolchain as above, and include Node/browser preparation only in dev stages. Extend schema/resource inventory without changing original rule/capture/result content.
 - [x] **GREEN:** Run `P tests/unit/test_operations.py tests/harness/test_web_toolchain.py`, resource validation and `F`; record exact resolved versions and any pending browser download honestly. The task-done rerun is recorded in the workspace ledger.
-- [ ] **Commit:** `feat: define operational contracts and optional web tooling`.
+- [x] **Commit:** `feat: define operational contracts and optional web tooling` (`dceceb9`).
 
 ### Task 2: Durable journal, checkpoints and execution spans
 
 **Files:** Create `operations/journal.py`, `operations/checkpoints.py`;
 test `tests/integration/test_run_journal.py`, `tests/unit/test_execution_spans.py`.
 
-**Interfaces:** `RunJournal(root: Path, run_id: str).append(event: WorkerEvent) -> ProgressEvent`,
+**Interfaces:** `RunJournal(root: Path, run_id: str, *, evidence_root: Path | None = None).append(event: WorkerEvent) -> ProgressEvent`,
 `.begin(context: JsonObject) -> None`, `.after(sequence: int) -> tuple[ProgressEvent, ...]`, `.snapshot() -> JsonObject`;
 `CheckpointStore(root: Path, run_id: str, *, evidence_root: Path).commit(case: JsonObject, refs: tuple[EvidenceRef, ...]) -> JsonObject`,
 `.load_verified() -> tuple[JsonObject, ...]`. Only the parent or standalone CLI owns a journal writer.
 
-- [ ] **RED:** `test_case_is_visible_only_after_evidence_and_checkpoint` asserts a failed checkpoint write leaves no case-completion event. `test_restart_retains_committed_prefix` simulates a torn last event and preserves valid prefix/checkpoints with an interruption warning, never erasing an attempt. `test_spans_preserve_real_gaps` asserts a deliberate gap is visible rather than reconstructed from duration sums. Run the two files.
-- [ ] **Implement:** Use exclusive safe paths/atomic file publication, run-scoped writer locking and schema-checked JSONL. Tolerate only an incomplete last event as uncommitted; corrupt interior records stop recovery and raise a diagnostic. Persist UTC plus monotonic elapsed spans; no raw text in payloads. Verify referenced hashes before checkpoint acceptance.
-- [ ] **GREEN:** Run `P tests/integration/test_run_journal.py tests/unit/test_execution_spans.py` and existing evidence integration tests. A storage failure cannot publish successful completion.
-- [ ] **Commit:** `feat: persist ordered execution events and verified checkpoints`.
+- [x] **RED:** `test_case_is_visible_only_after_evidence_and_checkpoint` asserts a failed checkpoint write leaves no case-completion event. `test_restart_retains_committed_prefix` simulates a torn last event and preserves valid prefix/checkpoints with an interruption warning, never erasing an attempt. `test_spans_preserve_real_gaps` asserts a deliberate gap is visible rather than reconstructed from duration sums. Run the two files.
+- [x] **Implement:** Use exclusive safe paths/atomic file publication, run-scoped writer locking and schema-checked JSONL. Tolerate only an incomplete last event as uncommitted; corrupt interior records stop recovery and raise a diagnostic. Persist UTC plus monotonic elapsed spans; no raw text in payloads. Verify referenced hashes before checkpoint acceptance.
+- [x] **GREEN:** Run `P tests/integration/test_run_journal.py tests/unit/test_execution_spans.py` and existing evidence integration tests. A storage failure cannot publish successful completion.
+- [x] **Commit:** `feat: persist ordered execution events and verified checkpoints`.
 
 ### Task 3: Shared application, observable runner and cancellation
 

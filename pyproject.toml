@@ -63,7 +63,7 @@ layers = [
 [[tool.importlinter.contracts]]
 name = "Operational values and ports stay independent of adapters"
 type = "forbidden"
-source_modules = ["anthropic_readiness.operations.models", "anthropic_readiness.operations.ports"]
+source_modules = ["anthropic_readiness.operations.models", "anthropic_readiness.operations.ports", "anthropic_readiness.operations.reduction"]
 forbidden_modules = ["anthropic_readiness.schema", "anthropic_readiness.config", "anthropic_readiness.operations.contracts", "anthropic_readiness.evidence", "pathlib", "importlib", "httpx", "fastapi", "sqlite3"]
 
 [[tool.importlinter.contracts]]
