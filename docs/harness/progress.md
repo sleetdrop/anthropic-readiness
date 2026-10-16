@@ -5,7 +5,7 @@ Plan: `docs/superpowers/plans/2026-10-15-stage-a-implementation.md`.
 Execution method: native, sequential, approved on 2026-10-15.
 Baseline: `676f105` on `feat/stage-a`; current project directory was explicitly selected for this new repository.
 
-Current milestone: Tasks 1–10 complete; Task 11 in progress. Expanded developer gates passed; two-architecture image/floor acceptance and independent Stage A review remain pending. Historical preparation notes below are dated observations, not unresolved current blockers.
+Current milestone: Tasks 1–11 complete; Task 12 in progress. Expanded full gates, Python floor and both architecture images passed locally; independent Stage A review and final fixed-commit handoff remain pending. Historical preparation notes below are dated observations, not unresolved current blockers.
 
 Ruling: use the dedicated new repository in place, on a feature branch — the approved plan selected this directory and no existing application checkout needs isolation.
 

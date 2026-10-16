@@ -11,16 +11,17 @@ plan is `docs/superpowers/plans/2026-10-15-stage-a-implementation.md`.
 
 ## Current implementation
 
-- Branch: `feat/stage-a`. Tasks 1–10 have scoped local commits. Task 11 is
-  completing the full gate graph, GitHub collaboration and two-architecture images.
+- Branch: `feat/stage-a`. Tasks 1–11 have scoped local commits. Task 12 is
+  performing whole-stage review and final fixed-content handoff verification.
 - The Linux Dev Container runs Python 3.12.15 and uv 0.13.1. Standard development,
   product checks and builds run inside Linux; a host stdlib script only orchestrates
   Docker acceptance. Do not replace product checks with host Python tests.
 - The expanded full graph passed 152 tests (106 unit/harness, 22 integration,
   23 acceptance, one installed-package test), strict types, architecture, schemas,
-  packaging and documentation. It is not yet final image/review acceptance.
-- Next: complete image/floor checks, commit Task 11, then Task 12 coverage,
-  independent whole-stage review, fixes and fixed-content handoff verification.
+  packaging and documentation. Both image architectures and the 3.11 floor also passed; final fixed-commit/review
+  acceptance remains pending.
+- Next: independent whole-stage review, evidence-backed fixes and final fixed-commit
+  full/floor/image revalidation. Preserve earlier failed attempts if any.
 - No real target, remote GitHub job or published image has been tested/released.
 
 ## Persistent boundaries
