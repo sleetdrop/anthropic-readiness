@@ -209,12 +209,14 @@ test `tests/integration/test_job_store.py`, `tests/unit/test_web_plans.py`.
 `get_job(run_id: str) -> JobRecord`, `transition(run_id: str, expected: JobState, next_state: JobState) -> JobRecord`,
 `history(filters: JsonObject, cursor: str | None, limit: int = 50) -> JsonObject`,
 `save_preset(preset_id: str | None, target: JsonObject) -> str`, `presets() -> tuple[JsonObject, ...]`.
+Internal `get_admitted_plan(run_id: str) -> FrozenPlan` verifies the retained plan
+after admission without reapplying preview expiry; preview HTTP routes never use it.
 `jobs.plans.resolve_messages_url(value: str, mode: Literal['base','messages']) -> str`.
 
-- [ ] **RED:** `test_duplicate_start_after_lost_reply_is_one_job` asserts identical admission returns the original job even if its preview subsequently expires; a reused key with different input rejects. `test_capacity_is_one_active_plus_eight_waiting` asserts ninth waiting job fails and queued plans survive preview expiry. `test_presets_cannot_change_old_plan` verifies old bytes/fingerprints. `test_expired_or_foreign_plan_is_rejected` covers 900-second TTL and session ownership. Run both files with a deterministic clock.
-- [ ] **Implement:** Use SQLite transactions/unique indexes for session+idempotency key and one admitted job per plan, schema-versioned migration under the ownership lock, immutable plan files and safe preset records. Page limits are 1–100, default 50, opaque cursors and bound SQL parameters. URL helper appends `/v1/messages` only to an origin or `/messages` to an explicit `/v1` base; other base paths require the full URL mode. Never substitute host aliases.
-- [ ] **GREEN:** Run the two files with concurrent admission and clock tests; local planning/URL handling causes zero upstream requests. Classify expired/mismatch/overflow with stable codes for Tasks 6–7.
-- [ ] **Commit:** `feat: persist frozen plans presets and bounded job admission`.
+- [x] **RED:** `test_duplicate_start_after_lost_reply_is_one_job` asserts identical admission returns the original job even if its preview subsequently expires; a reused key with different input rejects. `test_capacity_is_one_active_plus_eight_waiting` asserts ninth waiting job fails and queued plans survive preview expiry. `test_presets_cannot_change_old_plan` verifies old bytes/fingerprints. `test_expired_or_foreign_plan_is_rejected` covers 900-second TTL and session ownership. Run both files with a deterministic clock.
+- [x] **Implement:** Use SQLite transactions/unique indexes for session+idempotency key and one admitted job per plan, schema-versioned migration under the ownership lock, immutable plan files and safe preset records. Page limits are 1–100, default 50, opaque cursors and bound SQL parameters. URL helper appends `/v1/messages` only to an origin or `/messages` to an explicit `/v1` base; other base paths require the full URL mode. Never substitute host aliases.
+- [x] **GREEN:** Run the two files with concurrent admission and clock tests; local planning/URL handling causes zero upstream requests. Classify expired/mismatch/overflow with stable codes for Tasks 6–7.
+- [x] **Commit:** `feat: persist frozen plans presets and bounded job admission`.
 
 ### Task 5: One owned worker, safe IPC and restart reconciliation
 

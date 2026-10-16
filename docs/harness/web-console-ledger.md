@@ -9,8 +9,8 @@
 - Implementation plan: [self-reviewed revision 1](../superpowers/plans/2026-10-16-local-web-console-implementation.md),
   14 sequential tasks; self-review completed and owner approval received on 2026-10-17.
 - Execution: current chat, sequentially; owner chose the current checkout/Dev Container.
-  W1 branch is `codex/local-web-console`, starting from `ad83593`. Tasks 1–3 are complete;
-  tasks 4–14 and whole-W1 acceptance remain pending.
+  W1 branch is `codex/local-web-console`, starting from `ad83593`. Tasks 1–4 are complete;
+  tasks 5–14 and whole-W1 acceptance remain pending.
 
 ## Observed design checks
 
@@ -143,3 +143,25 @@ Final Linux verification: 17 task-specific tests, all seven fast gates, and all
 274 pytest tests passed. The existing CLI, replay, HTTP/deadline and golden protocol
 checks remain green. No W1 Web/browser/image, remote CI or real endpoint acceptance
 is implied. Browser download remains asynchronous and source separation is retained.
+
+## Task 4: frozen previews, presets and atomic admission
+
+Implemented versioned SQLite indexes and immutable hashed preview/job-plan files.
+Previews bind the hashed session owner and expire after 900 seconds. Transactions
+deduplicate session/operation keys and enforce one admitted job per plan, at most
+one active worker and eight waiting jobs. New keys for an already consumed plan
+return that job; a new test needs a fresh explicit preview. Presets retain validated
+non-secret targets without changing prior frozen plans. History has bound filters,
+bounded opaque pagination and safe identifiers. URL resolution accepts only an
+origin or explicit `/v1` base for automatic suffixes; no host alias substitution.
+
+RED: 22 behavior failures preceded implementation. GREEN: 22 targeted tests,
+all seven fast gates and all 296 pytest tests passed in Linux Python 3.12. Concurrent
+duplicate admission produces one creator; lost-response retries still return the
+same job after preview expiry. No upstream request is needed for these observations.
+
+Ruling: add internal `get_admitted_plan(run_id)` for integrity-checked access after
+queue admission, independent of preview expiry. If mistakenly used by a preview
+HTTP route, it could bypass expiry; that route must retain session-bound `get_plan`.
+Ruling: deduplicate across new keys for the same consumed plan as well; otherwise
+double execution could occur. Repeat testing requires a new preview, as specified.

@@ -270,3 +270,13 @@ accounting fixtures were replayed against the isolated prior implementation to
 establish actual RED evidence. Final checks passed 17 targeted tests, seven fast
 gates and all 274 pytest tests in Linux Python 3.12. No W1 live requests were made.
 See the W1 ledger for interface/cache rulings and remaining acceptance boundaries.
+
+## W1 Task 4: persistent previews and queue admission (2026-10-17)
+
+Twenty-two observed RED failures preceded the SQLite/frozen-plan implementation.
+Final targeted checks passed 22 tests, fast checks passed seven gates and complete
+pytest passed 296 tests. Verified owner binding/900-second expiry, immutable plan
+hashes, concurrent idempotency, one active/eight waiting capacity, preset isolation,
+history pagination and strict explicit URL resolution. Planning made zero upstream
+requests. The W1 ledger records admitted-plan access and consumed-plan deduplication
+rulings. Process supervision and all later Web/browser/image acceptance remain pending.
