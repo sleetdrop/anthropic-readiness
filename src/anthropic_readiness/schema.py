@@ -16,6 +16,7 @@ from anthropic_readiness.models import (
     readiness,
     strict_json,
 )
+from anthropic_readiness.requirements import CASE_IDS, PROFILE_CASES, SUPPORTED, assertion_plan
 
 
 def load_schema(name: str) -> JsonObject:
@@ -34,8 +35,55 @@ def _objects(value: JsonValue) -> list[JsonObject]:
     return [v for v in value if isinstance(v, dict)] if isinstance(value, list) else []
 
 
-def validate_result_semantics(value: JsonObject) -> list[str]:
+def _canonical_requirements(value: JsonObject) -> list[str]:
     errors: list[str] = []
+    plan = object_value(value.get("plan", {}))
+    profiles = _objects(plan.get("profiles", []))
+    if not any(p.get("id") in {*PROFILE_CASES, "capture-replay"} for p in profiles):
+        return errors
+    expected_ids: set[str] = set()
+    for profile in profiles:
+        identifier = str(profile.get("id"))
+        if identifier == "capture-replay":
+            members = profile.get("cases")
+            if (
+                value.get("mode") != "replay"
+                or not isinstance(members, list)
+                or len(members) != 1
+                or members[0] not in CASE_IDS
+            ):
+                errors.append("capture_replay_scope")
+                continue
+            expected_ids.add(str(members[0]))
+        elif identifier in PROFILE_CASES:
+            canonical_members = list(PROFILE_CASES[identifier])
+            if profile.get("cases") != canonical_members:
+                errors.append("profile_contract:" + identifier)
+            expected_ids.update(canonical_members)
+        else:
+            errors.append("unsupported_profile:" + identifier)
+        if profile.get("version") != 1:
+            errors.append("profile_version:" + identifier)
+    planned = _objects(plan.get("cases", []))
+    if {str(c.get("id")) for c in planned} != expected_ids:
+        errors.append("case_inventory_contract")
+    target = object_value(value.get("target", {}))
+    for case in planned:
+        identifier = str(case.get("id"))
+        if identifier not in CASE_IDS:
+            errors.append("unsupported_case:" + identifier)
+            continue
+        if case.get("version") != 1 or case.get("required") is not True:
+            errors.append("case_version_contract:" + identifier)
+        if case.get("assertions") != assertion_plan(
+            identifier, target.get("response_model_policy") != "structure_only"
+        ):
+            errors.append("assertion_inventory_contract:" + identifier)
+    return errors
+
+
+def validate_result_semantics(value: JsonObject) -> list[str]:
+    errors = _canonical_requirements(value)
     plan = object_value(value.get("plan", {}))
     cases = _objects(value.get("cases", []))
     by_id = {str(c.get("id")): c for c in cases}
@@ -113,7 +161,10 @@ def validate_result_semantics(value: JsonObject) -> list[str]:
         errors.append("profile_inventory")
     for profile in profile_records:
         expected_profile = planned_profiles.get(str(profile.get("id")))
-        if expected_profile is not None and expected_profile.get("cases") != profile.get("cases"):
+        if expected_profile is not None and (
+            expected_profile.get("cases") != profile.get("cases")
+            or expected_profile.get("version") != profile.get("version")
+        ):
             errors.append(f"profile_cases:{profile.get('id')}")
         required_ids = profile.get("cases", [])
         profile_statuses = (
@@ -133,6 +184,26 @@ def validate_result_semantics(value: JsonObject) -> list[str]:
 def result_from_document(document: JsonObject) -> RunResult:
     """Rehydrate only after structural and relational validation."""
     validate_document(document, load_schema("result"))
+    contract = object_value(document["contract"])
+    identity = (str(contract.get("id")), str(contract.get("revision")))
+    if identity not in SUPPORTED:
+        raise ValueError("unsupported_result_contract")
+    reference = object_value(
+        strict_json(
+            files("anthropic_readiness")
+            .joinpath(f"resources/contracts/{identity[0]}/{identity[1]}/manifest.json")
+            .read_text()
+        )
+    )
+    if any(contract.get(key) != val for key, val in reference.items()):
+        raise ValueError("result_contract_mismatch")
+    if not _objects(object_value(document["plan"]).get("profiles", [])):
+        raise ValueError("missing_result_profiles")
+    if any(
+        p.get("id") not in {*PROFILE_CASES, "capture-replay"}
+        for p in _objects(object_value(document["plan"]).get("profiles", []))
+    ):
+        raise ValueError("unsupported_result_profile")
     if errors := validate_result_semantics(document):
         raise ValueError("result_semantics:" + ";".join(errors))
 

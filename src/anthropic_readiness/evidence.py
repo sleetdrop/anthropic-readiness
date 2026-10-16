@@ -96,12 +96,38 @@ class SanitizedCapture:
     transformed: bool = False
     transforms: tuple[str, ...] = ()
     replay_rechunked: bool = False
+    structural_sha256: str | None = None
 
 
 @dataclass(frozen=True)
 class CaptureRefs:
     capture_path: str
     refs: tuple[EvidenceRef, ...]
+
+
+def _structure_digest(capture: Capture) -> str | None:
+    """Hash only decoded event identities and fields governing lifecycle transitions."""
+    if not capture.request.streaming:
+        return None
+    decoder = SSEDecoder(max(1, len(capture.body) + 1), max(1, len(capture.body) + 1))
+    frames = decoder.feed(capture.body, 0)
+    projection: list[JsonValue] = []
+    try:
+        for frame in frames:
+            data = object_value(strict_json(frame.data))
+            block = data.get("content_block")
+            projection.append(
+                {
+                    "event": frame.event,
+                    "type": data.get("type"),
+                    "index": data.get("index"),
+                    "block_type": block.get("type") if isinstance(block, dict) else None,
+                    "block_object": isinstance(block, dict),
+                }
+            )
+    except (ValueError, UnicodeError):
+        return None
+    return hashlib.sha256(json_bytes(projection)).hexdigest()
 
 
 def sanitize_capture(capture: Capture, secrets: Sequence[str]) -> SanitizedCapture:
@@ -135,12 +161,19 @@ def sanitize_capture(capture: Capture, secrets: Sequence[str]) -> SanitizedCaptu
         error=redactor.text(capture.error) if capture.error is not None else None,
     )
     changed = body != capture.body
+    original_structure = _structure_digest(capture) if changed else None
+    structural_sha256 = (
+        original_structure
+        if original_structure is not None and original_structure == _structure_digest(clean)
+        else None
+    )
     return SanitizedCapture(
         clean,
         hashlib.sha256(capture.body).hexdigest(),
         len(capture.body),
         changed,
         ("credential_redaction",) if changed else (),
+        structural_sha256=structural_sha256,
     )
 
 
@@ -222,7 +255,8 @@ def persist_capture(
         local_refs.append(EvidenceRef(name, digest))
         refs.append(EvidenceRef(f"{relative}/{name}", digest))
     metadata: JsonObject = {
-        "schema_version": "1.0",
+        "schema_version": "1.1",
+        "structural_sha256": capture.structural_sha256,
         "request": request,
         "status_code": value.status_code,
         "headers": dict(value.headers),
@@ -367,7 +401,7 @@ def load_capture(path: Path) -> SanitizedCapture:
         if streaming:
             frames.extend(decoder.feed(body[offset : offset + read.length], read.received_ms))
         offset += read.length
-    tail = decoder.finish() if streaming else DecodeTail()
+    tail = decoder.finish(complete=metadata["capture_end"] == "eof") if streaming else DecodeTail()
     raw_tail = object_value(metadata["tail"])
     pending = raw_tail.get("pending_data")
     if not isinstance(pending, bool):
@@ -375,7 +409,8 @@ def load_capture(path: Path) -> SanitizedCapture:
     tail = replace(
         tail,
         pending_data=pending,
-        encoding_errors=_integer(raw_tail["encoding_errors"]),
+        # Recompute UTF-8 proof from retained bytes, not an older finalizer verdict.
+        encoding_errors=tail.encoding_errors,
         limit_kind=string(raw_tail["limit_kind"])
         if raw_tail.get("limit_kind") is not None
         else None,
@@ -403,6 +438,11 @@ def load_capture(path: Path) -> SanitizedCapture:
     transforms = metadata["transforms"]
     if not isinstance(transforms, list):
         raise ValueError("invalid_capture_transforms")
+    structure = metadata.get("structural_sha256")
+    if structure is not None and (
+        not isinstance(structure, str) or _structure_digest(capture) != structure
+    ):
+        raise ValueError("capture_integrity:structural_proof")
     return SanitizedCapture(
         capture,
         original_hash,
@@ -410,4 +450,5 @@ def load_capture(path: Path) -> SanitizedCapture:
         transformed,
         tuple(string(v) for v in transforms),
         rechunked,
+        structure,
     )

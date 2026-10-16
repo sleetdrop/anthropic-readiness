@@ -9,9 +9,8 @@ from pathlib import PurePosixPath
 
 from anthropic_readiness.config import TargetConfig, fingerprint, string, strings
 from anthropic_readiness.models import ContractSpec, JsonObject, object_value, strict_json
+from anthropic_readiness.requirements import SUPPORTED as SUPPORTED
 from anthropic_readiness.schema import load_schema, validate_document
-
-SUPPORTED = (("anthropic-messages-2023-06-01-core", "1.0.0"),)
 
 
 @dataclass(frozen=True)

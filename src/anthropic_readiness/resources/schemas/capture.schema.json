@@ -2,7 +2,10 @@
   "type": "object",
   "properties": {
     "schema_version": {
-      "const": "1.0"
+      "enum": [
+        "1.0",
+        "1.1"
+      ]
     },
     "request": {
       "type": "object"
@@ -114,6 +117,13 @@
         ],
         "additionalProperties": false
       }
+    },
+    "structural_sha256": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[0-9a-f]{64}$"
     }
   },
   "required": [
@@ -136,5 +146,28 @@
     "files"
   ],
   "additionalProperties": false,
-  "$schema": "https://json-schema.org/draft/2020-12/schema"
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "schema_version": {
+            "const": "1.1"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "structural_sha256"
+        ]
+      },
+      "else": {
+        "not": {
+          "required": [
+            "structural_sha256"
+          ]
+        }
+      }
+    }
+  ]
 }

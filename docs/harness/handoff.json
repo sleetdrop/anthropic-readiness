@@ -1,0 +1,28 @@
+{
+  "schema_version": "1.0",
+  "stage": "A",
+  "stage_readiness": "incomplete",
+  "review_candidate_commit": "ad4e131",
+  "verification_commit": null,
+  "source_fingerprint": null,
+  "lock_sha256": null,
+  "contract": {
+    "id": "anthropic-messages-2023-06-01-core",
+    "revision": "1.0.0",
+    "api_version": "2023-06-01",
+    "beta_headers": [],
+    "version_semantics": "unverified"
+  },
+  "checks": {
+    "independent_review": "in_progress",
+    "final_fixed_commit_verification": "not_run",
+    "remote_ci": "not_run",
+    "real_endpoint": "not_run",
+    "registry_publication": "not_run"
+  },
+  "instructions": "docs/HANDOFF.md",
+  "limitations": [
+    "This interim manifest is not a completion claim or endpoint certificate.",
+    "Final fixed-commit verification follows independent review and any fixes."
+  ]
+}

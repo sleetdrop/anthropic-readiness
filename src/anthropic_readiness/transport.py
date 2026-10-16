@@ -151,7 +151,11 @@ class HttpTransport:
             capture_end, error = "read_error", str(exc)
         except (asyncio.CancelledError, KeyboardInterrupt):
             capture_end, error = "cancelled", "cancelled"
-        tail = decoder.finish() if request.streaming and code == 200 else DecodeTail()
+        tail = (
+            decoder.finish(complete=capture_end == "eof")
+            if request.streaming and code == 200
+            else DecodeTail()
+        )
         self._cancel = None
         return Capture(
             request,

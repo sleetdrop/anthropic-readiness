@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import codecs
+
 from anthropic_readiness.models import DecodeTail, SSEFrame
 
 
@@ -101,11 +103,20 @@ class SSEDecoder:
                 self._line.append(byte)
         return frames
 
-    def finish(self) -> DecodeTail:
+    def finish(self, *, complete: bool = True) -> DecodeTail:
         if self._tail is None:
             pending = bool(self._data)
             if self._line:
-                last = self._text(bytes(self._line))
+                if complete:
+                    last = self._text(bytes(self._line))
+                else:
+                    try:
+                        last = codecs.getincrementaldecoder("utf-8")().decode(
+                            bytes(self._line), final=False
+                        )
+                    except UnicodeDecodeError:
+                        self._encoding_errors += 1
+                        last = bytes(self._line).decode("utf-8", errors="replace")
                 pending = pending or last.partition(":")[0] == "data"
             self._tail = DecodeTail(pending, self._encoding_errors, self._limit)
             self._finished = True

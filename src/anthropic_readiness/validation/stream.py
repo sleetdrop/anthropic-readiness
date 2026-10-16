@@ -9,6 +9,7 @@ from anthropic_readiness.models import (
     CaptureEnd,
     CaseContract,
     DecodeTail,
+    JsonDepthError,
     JsonObject,
     ProtocolEnd,
     SSEFrame,
@@ -70,6 +71,9 @@ class StreamValidator:
         seq = frame.sequence
         try:
             data = object_value(strict_json(frame.data))
+        except JsonDepthError:
+            self._record("STR-JSON", "json_depth_limit", seq, Status.INDETERMINATE)
+            return
         except (ValueError, UnicodeError):
             self._record("STR-JSON", "invalid_event_json", seq)
             return
@@ -197,6 +201,10 @@ class StreamValidator:
                 else:
                     try:
                         block_state.value["input"] = strict_json("".join(block_state.fragments))
+                    except JsonDepthError:
+                        block_state.unknown = True
+                        self._unknown = True
+                        self._record("STR-TOOL-JSON", "json_depth_limit", seq, Status.INDETERMINATE)
                     except ValueError:
                         self._record("STR-TOOL-JSON", "invalid_tool_json", seq)
             return

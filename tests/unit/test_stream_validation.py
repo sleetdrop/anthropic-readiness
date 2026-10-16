@@ -292,3 +292,18 @@ def test_versioned_fixture_verdicts_are_split_invariant(name: str) -> None:
         assert [
             (a.id, a.status) for a in evaluate([], body=body, split=split).assertions
         ] == signature
+
+
+def test_tool_json_parser_limit_is_not_invalid_tool_input() -> None:
+    contract = CaseContract(
+        "tool-depth",
+        behavior="tool",
+        input_schema={"type": "object", "required": ["nested"]},
+        expected_input=None,
+    )
+    assert evaluate(tool_events('{"nested":[]}'), contract=contract).status == Status.PASS
+    fragment = '{"nested":' + "[" * 2000 + "0" + "]" * 2000 + "}"
+    result = evaluate(tool_events(fragment), contract=contract)
+    assert status(result, "STR-TOOL-JSON") == Status.INDETERMINATE
+    assert status(result, "MSG-TOOL-INPUT") == Status.INDETERMINATE
+    assert result.status == Status.INDETERMINATE

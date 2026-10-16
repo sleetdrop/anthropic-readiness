@@ -19,7 +19,7 @@ validation and rejects external references. No validation fetches a remote schem
 JSON Schema governs shape; relational validation governs required case/profile
 membership, assertion accounting and aggregates. Evidence hashes and relative
 pointers are verified independently. The five statuses preserve uncertainty:
-FAIL is an observed defect; INCONCLUSIVE, BLOCKED and NOT_RUN cannot prove support.
+FAIL is an observed defect; INDETERMINATE, BLOCKED and SKIP cannot prove support.
 
 ## Scope and provenance
 
@@ -33,3 +33,18 @@ The harness checks source, schemas, synthetic behavior, installed packaging and
 collaboration definitions. Image acceptance, visual review, independent review,
 remote CI and real endpoint outcomes are distinct evidence. See the
 [acceptance map](harness/acceptance.json) and [progress record](harness/progress.md).
+
+The pure `requirements` registry is shared by planning and result validation.
+Imported profile/case/assertion membership and versions cannot be reduced merely
+by editing both sides of a result. Public rehydration also compares the contract
+against the exact packaged manifest; arbitrary domain-only records are not public
+compatibility certificates.
+
+Capture schema 1.1 adds an optional-value lifecycle projection digest. Before
+redaction the writer compares event identities, type/index and block-creation
+fields with a freshly decoded sanitized body; only identical projections earn a
+proof. Replay verifies that digest and preserves only those lifecycle assertions.
+Other body semantics remain conservative. Schema 1.0 captures remain readable;
+transformed legacy captures have no such proof. This attests sanitizer-preserved
+structure, not origin authenticity or a signature. Never treat self-contained
+file hashes as independent proof of who produced a capture.

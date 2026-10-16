@@ -7,8 +7,9 @@ from dataclasses import dataclass, replace
 
 from anthropic_readiness.config import TargetConfig
 from anthropic_readiness.models import CaseContract, ContractSpec, JsonObject, RequestSpec
+from anthropic_readiness.requirements import PROFILE_CASES
 
-PROFILES = ("anthropic-basic", "anthropic-tools-smoke")
+PROFILES = tuple(PROFILE_CASES)
 
 
 @dataclass(frozen=True)

@@ -39,8 +39,8 @@ from anthropic_readiness.models import (
     AssertionResult,
     Capture,
     EvidenceRef,
+    JsonDepthError,
     JsonObject,
-    JsonValue,
     RunResult,
     Status,
     ValidationResult,
@@ -49,6 +49,7 @@ from anthropic_readiness.models import (
     readiness,
     strict_json,
 )
+from anthropic_readiness.requirements import assertion_plan
 from anthropic_readiness.schema import (
     load_schema,
     result_from_document,
@@ -57,42 +58,6 @@ from anthropic_readiness.schema import (
 )
 from anthropic_readiness.validation.messages import validate_message
 from anthropic_readiness.validation.stream import StreamValidator
-
-
-def _assertion_plan(case: CaseDefinition, target: TargetConfig) -> list[JsonValue]:
-    ids = [
-        "HTTP-STATUS",
-        "HTTP-CONTENT-TYPE",
-        "CAPTURE-COMPLETE",
-        "MSG-CORE",
-        "MSG-MODEL",
-        "MSG-STOP",
-        "MSG-STOP-SEQUENCE",
-        "TASK-COMPLETE",
-    ]
-    ids.extend(
-        [
-            "SSE-FRAMING",
-            "STR-JSON",
-            "STR-TYPE",
-            "STR-LIFECYCLE",
-            "STR-START",
-            "STR-DELTA",
-            "STR-STOP",
-        ]
-        if case.streaming
-        else ["MSG-JSON"]
-    )
-    if case.behavior == "tool":
-        ids.extend(["MSG-TOOL-CALLS", "MSG-TOOL-ID", "MSG-TOOL-NAME", "MSG-TOOL-INPUT"])
-    return [
-        {
-            "id": key,
-            "version": 1,
-            "required": key != "MSG-MODEL" or target.response_model_policy != "structure_only",
-        }
-        for key in ids
-    ]
 
 
 @dataclass(frozen=True)
@@ -110,7 +75,9 @@ class RunPlan:
                     "id": c.id,
                     "version": c.version,
                     "required": True,
-                    "assertions": _assertion_plan(c, self.target),
+                    "assertions": assertion_plan(
+                        c.id, self.target.response_model_policy != "structure_only"
+                    ),
                 }
                 for c in self.cases
             ],
@@ -153,7 +120,10 @@ def _tool_metadata() -> JsonObject:
     commit: str | None = None
     dirty: bool | None = None
     try:
-        root = Path(__file__).resolve().parents[2]
+        module = Path(__file__).resolve()
+        root = module.parents[2]
+        if module != root / "src/anthropic_readiness/runner.py" or not (root / ".git").exists():
+            raise OSError("unproven_source_checkout")
         revision = subprocess.run(
             ["git", "-C", str(root), "rev-parse", "HEAD"],
             capture_output=True,
@@ -255,6 +225,11 @@ def _validate(capture: Capture, case: CaseDefinition, plan: RunPlan) -> Validati
         )
         try:
             value = strict_json(capture.body.decode())
+        except JsonDepthError:
+            checks.append(
+                AssertionResult("MSG-JSON", "protocol", Status.INDETERMINATE, "json_depth_limit")
+            )
+            return ValidationResult(tuple(checks))
         except (ValueError, UnicodeError):
             checks.append(
                 AssertionResult(
@@ -397,6 +372,8 @@ def execute_run(
                     actual_requests = 1
                     capture = transport.send(request, plan.target.limits, deadline)
                     sanitized = sanitize_capture(capture, secrets)
+                persisted = persist_capture(output_dir, case.id, attempt_id, sanitized)
+                refs.extend(persisted.refs)
                 validated = _validate(capture, case, plan)
                 if replay is not None and replay.transformed:
                     validated = replace(
@@ -405,13 +382,25 @@ def execute_run(
                             replace(
                                 a, status=Status.INDETERMINATE, reason_code="transformed_capture"
                             )
-                            if a.id not in {"HTTP-STATUS", "CAPTURE-COMPLETE"}
+                            if a.id
+                            not in (
+                                {"HTTP-STATUS", "CAPTURE-COMPLETE"}
+                                | (
+                                    {
+                                        "STR-START",
+                                        "STR-DELTA",
+                                        "STR-STOP",
+                                        "STR-TYPE",
+                                        "STR-LIFECYCLE",
+                                    }
+                                    if replay.structural_sha256 is not None
+                                    else set()
+                                )
+                            )
                             else a
                             for a in validated.assertions
                         ),
                     )
-                persisted = persist_capture(output_dir, case.id, attempt_id, sanitized)
-                refs.extend(persisted.refs)
                 assertions = _bind(validated.assertions, persisted)
                 assertion_refs.extend(
                     ref for assertion in assertions for ref in assertion.evidence_refs

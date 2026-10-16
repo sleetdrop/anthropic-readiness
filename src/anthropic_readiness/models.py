@@ -60,6 +60,10 @@ def object_value(value: object) -> JsonObject:
     return parsed
 
 
+class JsonDepthError(ValueError):
+    """The parser cannot certify input at this nesting depth."""
+
+
 def strict_json(text: str) -> JsonValue:
     def reject_constant(value: str) -> None:
         raise ValueError(f"invalid_json_constant:{value}")
@@ -72,7 +76,10 @@ def strict_json(text: str) -> JsonValue:
             result[key] = as_json(value)
         return result
 
-    return as_json(json.loads(text, parse_constant=reject_constant, object_pairs_hook=pairs))
+    try:
+        return as_json(json.loads(text, parse_constant=reject_constant, object_pairs_hook=pairs))
+    except RecursionError as exc:
+        raise JsonDepthError("json_depth_limit") from exc
 
 
 @dataclass(frozen=True)

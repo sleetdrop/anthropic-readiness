@@ -19,7 +19,7 @@ Use the checked-in [Dev Container](.devcontainer/devcontainer.json), then:
 uv sync --locked
 UV_OFFLINE=1 uv run --frozen python scripts/check.py --suite fast
 uv run --frozen anthropic-readiness validate --target examples/target.yaml
-uv run --frozen anthropic-readiness run --target examples/target.yaml --dry-run
+uv run --frozen anthropic-readiness run --target examples/target.yaml --out artifacts/dry-plan --dry-run
 uv run --frozen anthropic-readiness replay --target examples/target.yaml \
   --capture tests/fixtures/captures/valid/evidence/ANT-TEXT-SSE-001/fixture-attempt/response.json \
   --case ANT-TEXT-SSE-001 --out artifacts/replay-example

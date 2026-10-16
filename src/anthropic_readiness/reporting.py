@@ -20,7 +20,14 @@ from anthropic_readiness.evidence import (
     safe_path,
     verify_evidence,
 )
-from anthropic_readiness.models import JsonObject, JsonValue, RunResult, object_value, strict_json
+from anthropic_readiness.models import (
+    EvidenceRef,
+    JsonObject,
+    JsonValue,
+    RunResult,
+    object_value,
+    strict_json,
+)
 from anthropic_readiness.schema import result_from_document
 
 EXPECTED = {
@@ -477,6 +484,27 @@ def render_html(result: RunResult) -> str:
 
 def write_reports(result: RunResult, output_dir: Path) -> None:
     issues = verify_evidence(output_dir, result.evidence)
+    inventory = {(ref.path, ref.sha256) for ref in result.evidence}
+    for case in result.cases:
+        assertions = list(_objects(case.get("preconditions", [])))
+        for attempt in _objects(case.get("attempts", [])):
+            assertions.extend(_objects(attempt.get("assertions", [])))
+        for assertion in assertions:
+            references = _objects(assertion.get("evidence_refs", []))
+            if assertion.get("status") == "FAIL" and not references:
+                issues.append("missing_assertion_evidence:" + str(assertion.get("id")))
+            for raw in references:
+                event = raw.get("event")
+                pointer = raw.get("pointer")
+                ref = EvidenceRef(
+                    str(raw["path"]),
+                    str(raw["sha256"]),
+                    event if type(event) is int else None,
+                    str(pointer) if pointer is not None else None,
+                )
+                if (ref.path, ref.sha256) not in inventory:
+                    issues.append("assertion_reference_not_in_inventory:" + ref.path)
+                issues.extend(verify_evidence(output_dir, [ref]))
     verification: JsonObject = {
         "status": "missing_or_invalid"
         if issues
