@@ -101,7 +101,10 @@ Primary references consulted on 2026-10-16:
 
 ## Evidence and limits
 
-The final offline report verified 799 file-hash references without errors. Machine
+The final offline report verified 799 file-hash references and 1036 report links
+without errors. The complete upstream observation window was 1073.07 seconds;
+final report timing includes the last two ID probes and an explicit Asia/Shanghai
+offset. Pre-finalization reader artifacts are archived privately. Machine
 results include original plans/captures/checks, a separate quality audit, request
 ledgers, per-request header combinations, tool histories, client outputs and
 independent generated-artifact checks. Report links and status counts are checked

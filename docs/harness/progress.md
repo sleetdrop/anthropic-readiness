@@ -155,3 +155,19 @@ Only handoff/validation documentation changes enter Git. Private scripts and act
 responses remain outside source and builds; Stage B/C remain unimplemented in the
 shipped CLI. No source/image/full-product/remote-CI acceptance is implied by this
 private run.
+
+## Private assessment finalization after owner resume (2026-10-16)
+
+Resumed from the explicit limit pause without new endpoint requests. Rechecked
+127 request records, all 90 API/seven client scenario accounting, 799 evidence
+hash references, 1036 report links and the official CLI checksum. Both recorded
+live containers exited successfully and have been removed; private preparation
+copies in the Dev Container were cleaned. Product source and lock remain unchanged.
+
+Final report timing now uses the full relay observation window including the last
+two ID probes, rather than the main run's earlier checkpoint, and displays the
+explicit Asia/Shanghai offset. The corrected window is 1073.07 seconds, within
+the 60-minute budget. Pre-finalization presentations and indexes remain archived
+privately; original assertions, captures and verdict files were not rewritten.
+Final provenance binds original plans, test/audit scripts, client checksums,
+container records, reader output and this documentation closure.

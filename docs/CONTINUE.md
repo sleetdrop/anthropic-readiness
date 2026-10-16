@@ -5,15 +5,15 @@ Read [HANDOFF.md](HANDOFF.md), [the evidence manifest](harness/handoff.json),
 [the progress record](harness/progress.md) and
 [the implementation ledger](harness/implementation-ledger.md) before further work.
 
-## Current pause
+## Private comprehensive assessment finalized
 
-The owner requested pausing for the account limit during finalization of the private
-comprehensive assessment. All 127 upstream requests are complete; no live run or
-download remains active. The private RESUME.md is beside the latest assessment,
-located through /private/tmp/anthropic-readiness-comprehensive-active-path.
-After the owner resumes, finish provenance/cleanup checks and deliver the existing
-report; do not repeat real calls, downloads or the completed Stage A review.
-See [the assessment method](reviews/2026-10-16-private-comprehensive-assessment.md).
+The owner resumed after the account-limit pause. All 127 upstream requests remain
+complete; finalization made no new model call. The existing report accounts for
+90 API scenarios and seven fixed SDK/Claude Code scenarios, with all seven client
+scenarios passing their observable conditions. Final evidence provenance and
+cleanup records are retained privately beside the assessment. No run/download is
+pending. See [the assessment method](reviews/2026-10-16-private-comprehensive-assessment.md).
+Do not repeat these calls or the completed Stage A review merely to resume.
 
 ## Report presentation follow-up
 
