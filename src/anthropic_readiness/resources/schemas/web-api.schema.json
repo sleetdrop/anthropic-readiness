@@ -3,6 +3,37 @@
     {
       "type": "object",
       "properties": {
+        "kind": {"const": "session_response"},
+        "data": {
+          "type": "object",
+          "properties": {
+            "csrf_token": {"type": "string", "pattern": "^[A-Za-z0-9_-]{43}$"},
+            "expires_in_s": {"type": "integer", "minimum": 1}
+          },
+          "required": ["csrf_token", "expires_in_s"],
+          "additionalProperties": false
+        }
+      },
+      "required": ["kind", "data"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "kind": {"const": "health_response"},
+        "data": {
+          "type": "object",
+          "properties": {"status": {"const": "ok"}},
+          "required": ["status"],
+          "additionalProperties": false
+        }
+      },
+      "required": ["kind", "data"],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
         "kind": {
           "const": "plan_request"
         },

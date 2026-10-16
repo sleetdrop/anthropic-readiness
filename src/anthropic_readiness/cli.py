@@ -43,8 +43,30 @@ def main(argv: Sequence[str] | None = None) -> int:
     report = commands.add_parser("report", help="Render an existing result offline")
     report.add_argument("--input", type=Path, required=True)
     report.add_argument("--out", type=Path, required=True)
+    serve_parser = commands.add_parser("serve", help="Run the optional local Web console")
+    serve_parser.add_argument("--data-dir", type=Path, required=True)
+    serve_parser.add_argument("--host", default="127.0.0.1")
+    serve_parser.add_argument("--port", type=int, default=8765)
+    serve_parser.add_argument("--credential-env", action="append", default=[])
     args = parser.parse_args(argv)
     try:
+        if args.command == "serve":
+            try:
+                from anthropic_readiness.web.serve import serve
+                from anthropic_readiness.web.settings import WebSettings
+            except ModuleNotFoundError:
+                print(
+                    'Web support requires: pip install "anthropic-readiness[web]"', file=sys.stderr
+                )
+                return 2
+            return serve(
+                args.data_dir,
+                WebSettings(
+                    host=args.host,
+                    port=args.port,
+                    credential_env_allowlist=tuple(dict.fromkeys(args.credential_env)),
+                ),
+            )
         if args.command == "report":
             render_from_file(args.input, args.out)
             return 0

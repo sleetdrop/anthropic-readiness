@@ -256,10 +256,10 @@ the internal Docker bind address never becomes an allowed browser origin.
 `serve(data_root: Path, settings: WebSettings) -> int`.
 CLI adds `serve --data-dir PATH [--host HOST] [--port PORT] [--credential-env NAME]` with lazy optional imports.
 
-- [ ] **RED:** `test_cross_origin_mutation_and_rebinding_host_rejected` checks Host, missing/wrong Origin, CSRF and cookies; `test_expired_session_can_bootstrap_without_restarting_job` pins recovery. `test_oversized_and_nested_body_rejected_before_dispatch` verifies 64 KiB bound and strict JSON depth. `test_missing_web_extra_returns_actionable_error` verifies CLI-only import/help and clear serve error. Run both files.
-- [ ] **Implement:** Create process-local random sessions/CSRF bootstrap, HttpOnly SameSite=Strict host-only cookies, no credential URL, no permissive CORS, `frame-ancestors 'none'`, `nosniff`, no-store for private pages/API. Use `strict_json` and operational schemas before dispatch. Return structured `{error: {code, message}}`; sanitize exceptions. Bind one Uvicorn worker; acquire/release manager under app lifespan. Resolve server secrets only through the explicit allowlist.
-- [ ] **GREEN:** Run HTTP security and serve/CLI acceptance with disposable data roots; no real endpoint or shared unauthenticated deployment is needed.
-- [ ] **Commit:** `feat: expose a protected local web service and serve command`.
+- [x] **RED:** `test_cross_origin_mutation_and_rebinding_host_rejected` checks Host, missing/wrong Origin, CSRF and cookies; `test_expired_session_can_bootstrap_without_restarting_job` pins recovery. `test_oversized_and_nested_body_rejected_before_dispatch` verifies 64 KiB bound and strict JSON depth. `test_missing_web_extra_returns_actionable_error` verifies CLI-only import/help and clear serve error. Run both files.
+- [x] **Implement:** Create process-local random sessions/CSRF bootstrap, HttpOnly SameSite=Strict host-only cookies, no credential URL, no permissive CORS, `frame-ancestors 'none'`, `nosniff`, no-store for private pages/API. Use `strict_json` and operational schemas before dispatch. Return structured `{error: {code, message}}`; sanitize exceptions. Bind one Uvicorn worker; acquire/release manager under app lifespan. Resolve server secrets only through the explicit allowlist.
+- [x] **GREEN:** Run HTTP security and serve/CLI acceptance with disposable data roots; no real endpoint or shared unauthenticated deployment is needed.
+- [x] **Commit:** `feat: expose a protected local web service and serve command`.
 
 ### Task 7: Run APIs, history and reconnectable SSE
 

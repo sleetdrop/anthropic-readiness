@@ -294,3 +294,15 @@ terminal races, storage/provider failure, IPC and secret-persistence boundaries.
 Pinned Chromium, dependencies and CJK fonts completed preparation with exit 0;
 actual browser, new image and HTTP acceptance remain pending. No real endpoint call,
 remote CI, publication or registry push was made.
+
+## W1 Task 6: local HTTP service (2026-10-17)
+
+Added optional lazy serve entry, exact local request protections, expiring sessions,
+bounded strict JSON and fixed safe errors, with one lifespan-owned manager.
+Retained warnings-as-errors by replacing a deprecated upstream test adapter with
+locked HTTPX ASGI transport. Meaningful RED preceded HTTP integration; extra RED
+covered non-ASCII CSRF and infinite numeric input. Fixture/source rulings and their
+costs are recorded in the W1 ledger. Final Linux Python 3.12 checks passed 15 targeted
+HTTP/serve tests, seven fast gates and all 329 pytest tests. Real socket startup and
+SIGTERM shutdown were observed on loopback. This is HTTP-boundary acceptance, not
+GUI/browser/runtime-image acceptance; no upstream model call occurred.

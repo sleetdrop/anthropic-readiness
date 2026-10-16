@@ -9,8 +9,8 @@
 - Implementation plan: [self-reviewed revision 1](../superpowers/plans/2026-10-16-local-web-console-implementation.md),
   14 sequential tasks; self-review completed and owner approval received on 2026-10-17.
 - Execution: current chat, sequentially; owner chose the current checkout/Dev Container.
-  W1 branch is `codex/local-web-console`, starting from `ad83593`. Tasks 1–5 are complete;
-  tasks 6–14 and whole-W1 acceptance remain pending.
+  W1 branch is `codex/local-web-console`, starting from `ad83593`. Tasks 1–6 are complete;
+  tasks 7–14 and whole-W1 acceptance remain pending.
 
 ## Observed design checks
 
@@ -206,3 +206,38 @@ Rulings and costs:
   before start. Consumers must handle this instead of inventing timing.
 - Internal `JobStore.observe` keeps sequences/result pointers monotonic without
   bypassing lifecycle CAS; nonblocking locks reject a second service owner.
+
+## Task 6: optional local HTTP boundary
+
+Added lazy `serve`, explicit local bind/port settings, process-local expiring
+sessions, host-only HttpOnly SameSite=Strict cookies, exact Origin/CSRF checks,
+bounded strict JSON input, safe errors and private response headers. The app
+lifespan owns exactly one manager and resolves only explicitly allowlisted server
+credential names. New session/health response variants are closed packaged Web
+contracts. Route exceptions are neither reflected nor traceback-logged; ordinary
+CLI use still imports no optional Web dependency.
+
+The initial test collection was blocked by Starlette's deprecated TestClient
+fallback under the existing warnings-as-errors gate. HTTPX ASGITransport with
+explicit lifespan/AnyIO asyncio fixtures preserves that gate without adding a
+network dependency. After restoring collection seams, RED observed four failures
+and nine missing-app setup errors. Later RED reproduced non-ASCII CSRF causing an
+internal error and overflowing JSON numbers reaching dispatch; both now reject
+safely. Test-only recursive-response inference and a draft exit-status assumption
+were corrected from installed primary-source evidence, without weakening original
+protocol goldens, schemas, warnings or timeouts.
+
+Final Linux verification: 15 HTTP/serve tests, seven fast gates and all 329 pytest
+tests passed. A real loopback server was started and signalled; no real model call
+was made. The home page remains a boundary-stage placeholder until Task 11; neither
+this result nor the prepared browser establishes GUI/image acceptance.
+
+Rulings and costs:
+
+- ASGITransport exercises the HTTP application without a socket; real serve,
+  browser and image checks remain separate required gates.
+- The locked Uvicorn source replays SIGTERM after lifespan shutdown. Serve
+  acceptance requires that signal status and rejects arbitrary/forced exits;
+  future dependency changes need review of this new command's contract.
+- Closed session/health response variants extend the unreleased Web API schema;
+  Task 7's generated OpenAPI comparison must check the same packaged shapes.
