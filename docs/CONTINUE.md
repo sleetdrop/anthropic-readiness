@@ -9,20 +9,38 @@ Read `AGENTS.md`, `docs/harness/progress.md` and the current task brief in
 `docs/superpowers/specs/2026-10-14-anthropic-readiness-design.md`; the approved
 plan is `docs/superpowers/plans/2026-10-15-stage-a-implementation.md`.
 
+## Resume state
+
+The user resumed on 2026-10-16 after the account limit reset. The pause is resolved.
+Continue the final image acceptance and handoff without redoing the independent review.
+
 ## Current implementation
 
-- Branch: `feat/stage-a`. Tasks 1–11 have scoped local commits. Task 12 is
-  performing whole-stage review and final fixed-content handoff verification.
-- The Linux Dev Container runs Python 3.12.15 and uv 0.13.1. Standard development,
-  product checks and builds run inside Linux; a host stdlib script only orchestrates
-  Docker acceptance. Do not replace product checks with host Python tests.
-- The expanded full graph passed 152 tests (106 unit/harness, 22 integration,
-  23 acceptance, one installed-package test), strict types, architecture, schemas,
-  packaging and documentation. Both image architectures and the 3.11 floor also passed; final fixed-commit/review
-  acceptance remains pending.
-- Next: independent whole-stage review, evidence-backed fixes and final fixed-commit
-  full/floor/image revalidation. Preserve earlier failed attempts if any.
-- No real target, remote GitHub job or published image has been tested/released.
+- Branch: `feat/stage-a`. Tasks 1–11 are complete. Task 12 is in final handoff.
+- One independent whole-stage review (gpt-6-astra/xhigh) is complete. Six Important
+  findings were reproduced and fixed in one author RED-to-GREEN pass, plus two
+  regraded documentation errors. Do not dispatch another reviewer.
+- Fix commit: `74e123d`. Final code/verification baseline:
+  `467227d20fb71c0141e154f0b4a3c098ddf3ce76`. Working tree was clean before these pause notes.
+- At that baseline, the full graph passed all 166 tests on Linux Python 3.12.15
+  and Python 3.11.17. The floor container was disconnected from external networks
+  before its final full run; network attachments were observed as {}.
+- Both architecture image jobs passed BEFORE the final review fixes. Final images
+  for baseline 467227d have NOT been rebuilt/verified. This remains required;
+  do not reuse earlier image results as current-code acceptance.
+- Next after explicit resume: run the two final full image jobs sequentially,
+  bind their source/lock/contract evidence with the final full/floor results,
+  produce fresh legal/invalid replay samples, finalize handoff/progress/ledger,
+  and make the scoped local delivery commit. No further feature work is planned.
+- `docs/harness/handoff.json` is intentionally an incomplete interim manifest.
+  Review summary is `docs/reviews/2026-10-16-stage-a-review.md`.
+- Capture writers now use schema 1.1 for verified lifecycle projection proof;
+  capture 1.0 remains readable. API bundle 1.0.0 and historical files are unchanged.
+- Existing Dev Container: 37e2df3d035dcea82e94d227f891b34b2f95e486d8336c785a3e29f85b61e139.
+  Floor container: readiness-stage-a-floor (Python 3.11.17, no network).
+  Use container Python for product checks. Host stdlib Python only orchestrates Docker.
+- No real target, remote CI or registry publication was run. Source/lock fingerprint
+  and precise final check paths are in the latest ignored artifacts/checks manifests.
 
 ## Persistent boundaries
 
@@ -38,7 +56,7 @@ and real endpoint execution need their specific authorization.
 
 The user permits discussing design with the referenced evaluation chat. Read
 that chat again before relying on any new conclusions. Its advice is not real
-endpoint evidence. One independent whole-stage reviewer remains required.
+endpoint evidence. The independent whole-stage review and its author fix pass are complete.
 
 ## Network waiting
 
