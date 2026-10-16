@@ -29,7 +29,11 @@ Claude Code workflows; D owns protocol-update Agent tooling and later maintenanc
 The sole API bundle is Messages 2023-06-01 core revision 1.0.0, with no betas.
 Capture writers use schema 1.1; readers retain conservative 1.0 support.
 
-No real endpoint, remote CI or registry publication was run. Remote repository
+The frozen offline handoff did not run a real endpoint. An owner-authorized private
+post-handoff assessment has since completed; see [the validation ledger](harness/validation-ledger.md).
+Its four behavior checks passed, but the selected protocol/identity contract failed;
+do not describe the target as fully compatible. Remote CI and registry publication
+remain unrun. Remote repository
 creation/push, registry publishing, account setup and real API execution require
 the owner's specific authorization. Keep private targets, credentials, original
 logs and the historical evaluation workspace outside source/build contexts.

@@ -5,7 +5,8 @@ Execution: approved sequential implementation in this chat; no implementer agent
 Baseline: `676f105`; delivery branch: `feat/stage-a`.
 
 Current milestone: all 12 tasks complete; local offline developer/container
-acceptance passed. Remote CI, actual endpoints and registry publication are unrun.
+acceptance passed. Remote CI and registry publication are unrun. The original
+handoff did not include real endpoints; a later private observation is recorded below.
 The machine-readable evidence is [handoff.json](handoff.json); this status does not
 certify a service. Local artifact paths refer to this checkout and are ignored by Git.
 
@@ -73,3 +74,21 @@ compatibility and published-image availability remain unobserved.
 
 Handoff-only follow-up commits affect excluded records and do not rebuild or
 relabel the verified images. The next stage requires separate owner scope.
+
+## Post-handoff private endpoint observation (2026-10-16)
+
+An owner-authorized private real endpoint assessment completed after the frozen
+Stage A offline handoff. Four planned/four actual requests, zero retries, 20.74 seconds,
+exit 1. All four returned HTTP 200 and complete captures; behavior passed for all
+four cases. Protocol failed under the selected fixed core/identity contract:
+MSG-CORE (missing stop metadata fields) and MSG-MODEL (unallowlisted response alias).
+The response alias must be confirmed by the operator before a separately configured
+assessment; no identity policy or original result was weakened to obtain PASS.
+The saved report was re-rendered with network=none: evidence status verified, no errors.
+Thinking, multi-turn tools, real clients and version-selection semantics remain untested.
+
+Private target configuration, model identifiers, response bytes and detailed reports
+remain outside Git and image build contexts. No additional API request or proxy/code
+change was made. The original handoff manifest retains its historical not_run
+endpoint status; this later observation does not rewrite that frozen acceptance.
+See [the validation ledger](validation-ledger.md) for the scoped observation.
