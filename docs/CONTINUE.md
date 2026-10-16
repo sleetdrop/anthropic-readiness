@@ -1,5 +1,13 @@
 # Stage A completed locally
 
+## Current design discussion: local Web console
+
+The owner requested a local Docker Web interface for configuration, live test
+progress and on-demand export, with independent CLI execution retained. Individual
+local deployment is confirmed. The [reference study and proposed direction](reviews/2026-10-16-web-console-reference-study.md)
+await owner design feedback; no Web implementation plan has been approved.
+Stage A completion and the private assessment below remain historical baselines.
+
 The approved 12-task Stage A plan is complete on branch `feat/stage-a`.
 Read [HANDOFF.md](HANDOFF.md), [the evidence manifest](harness/handoff.json),
 [the progress record](harness/progress.md) and

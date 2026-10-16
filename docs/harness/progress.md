@@ -171,3 +171,14 @@ the 60-minute budget. Pre-finalization presentations and indexes remain archived
 privately; original assertions, captures and verdict files were not rewritten.
 Final provenance binds original plans, test/audit scripts, client checksums,
 container records, reader output and this documentation closure.
+
+## Local Web console design research (2026-10-16)
+
+The owner requested a Docker-hosted GUI with target entry, live progress and optional
+report export, while retaining independent CLI execution and automatic reports.
+The owner selected individual local Docker deployment for the first version.
+Read the [reference study and proposed direction](../reviews/2026-10-16-web-console-reference-study.md).
+Official Promptfoo, Inspect, Postman, Locust, FastAPI and browser SSE documentation
+informed the proposal. This is awaiting owner design feedback, not an approved spec
+or implementation plan. No product code, dependency, frozen Stage A ledger or
+acceptance manifest changed; no model call or product check was run.
