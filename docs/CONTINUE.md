@@ -5,7 +5,16 @@ Read [HANDOFF.md](HANDOFF.md), [the evidence manifest](harness/handoff.json),
 [the progress record](harness/progress.md) and
 [the implementation ledger](harness/implementation-ledger.md) before further work.
 
-## Verified delivery
+## Report presentation follow-up
+
+The owner approved a bounded readability improvement after the first private
+assessment. The current renderer adds a plain Chinese overview, case table, grouped
+verified field/model explanations and technical appendix (presentation 1.1).
+See [the report ledger](harness/report-readability-ledger.md). The original assessment
+and frozen Stage A artifacts stay unchanged; prior image/visual acceptance is not
+new acceptance for this renderer. No new API request was made.
+
+## Verified Stage A delivery baseline
 
 - Verification commit: `be168d9962ff3dacd5e480818dd537d9f3438593`. Subsequent handoff-only
   commits update excluded records; source, lock, API bundle and image context stay identical.

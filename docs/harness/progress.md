@@ -92,3 +92,16 @@ remain outside Git and image build contexts. No additional API request or proxy/
 change was made. The original handoff manifest retains its historical not_run
 endpoint status; this later observation does not rewrite that frozen acceptance.
 See [the validation ledger](validation-ledger.md) for the scoped observation.
+
+## Report readability follow-up (2026-10-16)
+
+The owner approved a bounded presentation update after the private report was hard
+to interpret. The renderer now leads with Chinese task/protocol summaries and groups
+repeated findings; verified field/model excerpts explain the recorded failures.
+Original results, contracts and endpoint evidence are unchanged; no new API call.
+See [the report ledger](report-readability-ledger.md) for RED-to-GREEN evidence and
+the explicit static-render versus browser acceptance boundary. The frozen Stage A
+handoff/image manifests still describe their original baseline, not this new renderer.
+
+Final report follow-up verification: all 11 full gates passed, 171 tests, zero
+failures/errors/skips; source remained unchanged during the run. Check manifest: artifacts/checks/1792138109363923672/check-result.json.

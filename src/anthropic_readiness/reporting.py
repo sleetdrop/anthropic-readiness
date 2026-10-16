@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import html
 import re
+from collections.abc import Sequence
 from dataclasses import replace
 from datetime import datetime
 from importlib.resources import files
@@ -27,6 +28,13 @@ from anthropic_readiness.models import (
     RunResult,
     object_value,
     strict_json,
+)
+from anthropic_readiness.report_reading import (
+    case_name,
+    findings,
+    message_diagnostic,
+    overview,
+    state_name,
 )
 from anthropic_readiness.schema import result_from_document
 
@@ -51,52 +59,6 @@ EXPECTED = {
     "HTTP-STATUS": "收到成功 HTTP 状态。",
     "HTTP-CONTENT-TYPE": "响应类型与流式或非流式请求一致。",
 }
-
-READINESS = {
-    "passed": "本次已测必需项通过",
-    "not_ready": "本次发现必需项失败",
-    "incomplete": "本次评估不完整",
-}
-
-
-def _failures(result: RunResult) -> list[tuple[str, JsonObject]]:
-    return [
-        (str(case.get("id")), assertion)
-        for case in result.cases
-        for attempt in _objects(case.get("attempts"))
-        for assertion in _objects(attempt.get("assertions"))
-        if assertion.get("status") == "FAIL" and assertion.get("required") is True
-    ]
-
-
-def _summary_markdown(result: RunResult) -> list[str]:
-    lines = [""]
-    for profile in result.profiles:
-        state = str(profile.get("readiness"))
-        lines.append(
-            f"**{_md(profile.get('id'))} / {_md(profile.get('version'))}：{READINESS.get(state, state)}（{state}）。**"
-        )
-    for case_id, assertion in _failures(result)[:12]:
-        key = str(assertion.get("id"))
-        lines.append(
-            f"- 关键失败：{_md(case_id)} / {_md(key)}，{_md(assertion.get('reason_code'))}。[{_reference_id(key)}]"
-        )
-    return lines
-
-
-def _summary_html(result: RunResult) -> str:
-    parts: list[str] = []
-    for profile in result.profiles:
-        state = str(profile.get("readiness"))
-        parts.append(
-            f"<p><strong>{_h(profile.get('id'))} / {_h(profile.get('version'))}：{_h(READINESS.get(state, state))}（{_h(state)}）。</strong></p>"
-        )
-    for case_id, assertion in _failures(result)[:12]:
-        key = str(assertion.get("id"))
-        parts.append(
-            f'<p>关键失败：<code>{_h(case_id)} / {_h(key)}</code> · {_h(assertion.get("reason_code"))} <a href="#ref-{_reference_id(key)}">[{_reference_id(key)}]</a></p>'
-        )
-    return "".join(parts)
 
 
 def _objects(value: JsonValue) -> list[JsonObject]:
@@ -162,7 +124,7 @@ def _availability(result: RunResult) -> str:
     value = _context(result).get("evidence_verification")
     if isinstance(value, dict) and value.get("status") == "verified":
         return "随附文件的路径与哈希已核对；这不是独立的服务复测。仅凭报告摘要仍无法独立复核完整事件顺序。"
-    return "证据文件未附、未核验或不完整：无法独立复核。摘要仅供初步解读；复核需要 result.json 与完整证据文件。"
+    return "证据未完整核验，未提取字段级说明。证据文件未附、未核验或不完整：无法独立复核。摘要仅供初步解读；复核需要 result.json 与完整证据文件。"
 
 
 def _reference_id(assertion_id: str) -> str:
@@ -202,19 +164,158 @@ def _evidence_label(ref: JsonObject) -> str:
     )
 
 
-def render_markdown(result: RunResult) -> str:
+def _reader_markdown(result: RunResult, diagnostics: Sequence[JsonObject]) -> list[str]:
+    title, summary = overview(result)
+    lines = [
+        "",
+        "## 先看结论",
+        "",
+        "**" + title + "**",
+        "",
+        summary,
+        "",
+        "任务行为：有没有完成指定任务。协议格式：响应结构、流式顺序及模型身份是否符合所选契约。",
+        "",
+        "客户端工作流未测试；单次样本不能证明长期稳定或完整 API 兼容。",
+        "",
+        "## 用例结果",
+        "",
+        "| 测试任务 | 任务行为 | 协议格式 | 执行条件 |",
+        "| --- | --- | --- | --- |",
+    ]
+    for case in result.cases:
+        dimensions = object_value(case.get("dimensions", {}))
+        lines.append(
+            "| "
+            + " | ".join(
+                _md(v)
+                for v in (
+                    case_name(case.get("id")),
+                    state_name(dimensions.get("behavior")),
+                    state_name(dimensions.get("protocol")),
+                    state_name(dimensions.get("environment")),
+                )
+            )
+            + " |"
+        )
+    lines.extend(["", "## 需要处理的问题", ""])
+    grouped = findings(result, diagnostics)
+    if not grouped:
+        lines.append("所选必需检查未发现待处理项；结论仍限于本次已测范围。")
+    for group in grouped:
+        members = _values(group.get("cases"))
+        lines.extend(
+            [
+                "### " + _md(group.get("title")),
+                "",
+                "涉及：" + "、".join(_md(case_name(c)) for c in members) + "。",
+                "",
+                "影响：" + _md(group.get("impact")),
+                "",
+            ]
+        )
+        observations = _objects(group.get("observations"))
+        if observations:
+            lines.extend(["| 应满足 | 已校验证据中的实际情况 |", "| --- | --- |"])
+            seen: set[tuple[str, str]] = set()
+            for observation in observations:
+                pair = (_text(observation.get("expected")), _text(observation.get("actual")))
+                if pair not in seen:
+                    lines.append(f"| {_md(pair[0])} | {_md(_short(pair[1], 280))} |")
+                    seen.add(pair)
+        else:
+            lines.append("未附可核验的字段摘录；此处仅解释原始检查记录，不推测具体字段值。")
+        lines.extend(
+            [
+                "",
+                "建议：" + _md(group.get("action")),
+                "",
+                f"依据：{_md(group.get('id'))}；定位见技术附录。[{_reference_id(str(group.get('id')))}]",
+                "",
+            ]
+        )
+    lines.extend(["以上说明由原始判定与已校验证据生成，未重新判定、放宽条件或改写结果。", ""])
+    return lines
+
+
+def _reader_html(result: RunResult, diagnostics: Sequence[JsonObject]) -> str:
+    title, summary = overview(result)
+    parts = [
+        f'<section class="reading"><h2>先看结论</h2><p class="lead"><strong>{_h(title)}</strong></p><p>{_h(summary)}</p>',
+        "<p>任务行为：有没有完成指定任务。协议格式：响应结构、流式顺序及模型身份是否符合所选契约。</p>",
+        '<p class="muted">客户端工作流未测试；单次样本不能证明长期稳定或完整 API 兼容。</p>',
+        '<h2>用例结果</h2><div class="table-wrap"><table class="overview"><thead><tr><th>测试任务</th><th>任务行为</th><th>协议格式</th><th>执行条件</th></tr></thead><tbody>',
+    ]
+    for case in result.cases:
+        dimensions = object_value(case.get("dimensions", {}))
+        values = (
+            case_name(case.get("id")),
+            state_name(dimensions.get("behavior")),
+            state_name(dimensions.get("protocol")),
+            state_name(dimensions.get("environment")),
+        )
+        parts.append("<tr>" + "".join("<td>" + _h(v) + "</td>" for v in values) + "</tr>")
+    parts.append("</tbody></table></div><h2>需要处理的问题</h2>")
+    grouped = findings(result, diagnostics)
+    if not grouped:
+        parts.append("<p>所选必需检查未发现待处理项；结论仍限于本次已测范围。</p>")
+    for group in grouped:
+        parts.append(
+            '<article class="finding"><h3>'
+            + _h(group.get("title"))
+            + "</h3><p>涉及："
+            + "、".join(_h(case_name(c)) for c in _values(group.get("cases")))
+            + "。</p><p>影响："
+            + _h(group.get("impact"))
+            + "</p>"
+        )
+        observations = _objects(group.get("observations"))
+        if observations:
+            parts.append(
+                '<div class="table-wrap"><table><thead><tr><th>应满足</th><th>已校验证据中的实际情况</th></tr></thead><tbody>'
+            )
+            seen: set[tuple[str, str]] = set()
+            for observation in observations:
+                pair = (_text(observation.get("expected")), _text(observation.get("actual")))
+                if pair not in seen:
+                    parts.append(
+                        f"<tr><td>{_h(pair[0])}</td><td>{_h(_short(pair[1], 280))}</td></tr>"
+                    )
+                    seen.add(pair)
+            parts.append("</tbody></table></div>")
+        else:
+            parts.append(
+                '<p class="muted">未附可核验的字段摘录；此处仅解释原始检查记录，不推测具体字段值。</p>'
+            )
+        key = str(group.get("id"))
+        parts.append(
+            "<p><strong>建议：</strong>"
+            + _h(group.get("action"))
+            + f'</p><p class="muted">依据：<code>{_h(key)}</code>；'
+            + '<a href="#technical">定位见技术附录</a>。'
+            + f'<a href="#ref-{_reference_id(key)}">规范依据</a></p></article>'
+        )
+    parts.append(
+        '<p class="muted">以上说明由原始判定与已校验证据生成，未重新判定、放宽条件或改写结果。</p></section>'
+    )
+    return "".join(parts)
+
+
+def render_markdown(result: RunResult, diagnostics: Sequence[JsonObject] = ()) -> str:
     result_from_document(result.to_json())
     context = _context(result)
     attempts, assertions = _counts(result)
     lines = [
-        "# Anthropic Messages 协议检查记录",
+        "# Anthropic 接口兼容性报告",
         "",
         "**离线合成数据／捕获回放**" if _synthetic(result) else "**显式真实端点测试**",
+        "",
+        *_reader_markdown(result, diagnostics),
+        "## 技术附录",
         "",
         f"Run: {_md(result.run_id)}  ",
         f"Assessment: {_md(result.assessment_id)}  ",
         f"模式：{result.mode}；时间（UTC）：{_md(result.started_at)} → {_md(result.finished_at)}。",
-        *_summary_markdown(result),
         "",
         "## 阅读说明与方法",
         "",
@@ -330,7 +431,7 @@ def render_markdown(result: RunResult) -> str:
     return "\n".join(lines) + "\n"
 
 
-def render_html(result: RunResult) -> str:
+def render_html(result: RunResult, diagnostics: Sequence[JsonObject] = ()) -> str:
     result_from_document(result.to_json())
     context = _context(result)
     attempts, assertions = _counts(result)
@@ -338,8 +439,8 @@ def render_html(result: RunResult) -> str:
     parts = [
         '<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">',
         "<meta http-equiv=\"Content-Security-Policy\" content=\"default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'\">",
-        "<title>Anthropic Messages · 协议检查记录</title>",
-        f'<style>{css}</style></head><body><main><header><div class="eyebrow">Anthropic Readiness / Verification Record</div><h1>Messages 协议检查记录</h1>',
+        "<title>Anthropic 接口兼容性报告</title>",
+        f'<style>{css}</style></head><body><main><header><div class="eyebrow">Anthropic Readiness / Verification Record</div><h1>Anthropic 接口兼容性报告</h1>',
         '<p class="notice">'
         + (
             "离线合成数据／捕获回放 · 仅反映列出的样本与规则。"
@@ -347,9 +448,10 @@ def render_html(result: RunResult) -> str:
             else "显式真实端点测试 · 仅反映列出的样本与规则。"
         )
         + "</p>",
-        f'<p class="identity">Run {_h(result.run_id)}<br>Assessment {_h(result.assessment_id)}<br>{result.mode} · {_h(_display_time(result.started_at))} → {_h(_display_time(result.finished_at))}<br>Original UTC: {_h(result.started_at)} → {_h(result.finished_at)}</p>'
-        + _summary_html(result)
-        + "</header>",
+        f'<p class="identity">{_h(_display_time(result.started_at))} · 单轮固定契约检查</p></header>',
+        _reader_html(result, diagnostics),
+        '<details class="technical" id="technical"><summary>技术附录：运行信息、逐条断言与证据</summary>',
+        f'<p class="identity">Run {_h(result.run_id)}<br>Assessment {_h(result.assessment_id)}<br>{result.mode} · {_h(_display_time(result.started_at))} → {_h(_display_time(result.finished_at))}<br>Original UTC: {_h(result.started_at)} → {_h(result.finished_at)}</p>',
         "<h2>阅读说明与方法</h2><p>"
         + _h(context.get("methodology"))
         + '</p><p class="notice">'
@@ -454,7 +556,7 @@ def render_html(result: RunResult) -> str:
                 + "</div>"
             )
         parts.append("</section>")
-    parts.append("<h2>限制与未覆盖</h2><ul>")
+    parts.append("</details><h2>限制与未覆盖</h2><ul>")
     parts.extend("<li>" + _h(item) + "</li>" for item in result.limitations)
     parts.append(
         "<li>version_semantics=unverified；客户端维度未开展，不据此确认 Agent 工作流稳定。</li></ul><h2>术语</h2><dl>"
@@ -480,6 +582,56 @@ def render_html(result: RunResult) -> str:
         + "</footer></main></body></html>"
     )
     return "".join(parts)
+
+
+def _verified_diagnostics(result: RunResult, root: Path) -> list[JsonObject]:
+    diagnostics: list[JsonObject] = []
+    for case in result.cases:
+        for attempt in _objects(case.get("attempts")):
+            for assertion in _objects(attempt.get("assertions")):
+                if assertion.get("status") != "FAIL" or assertion.get("id") not in {
+                    "MSG-CORE",
+                    "MSG-MODEL",
+                }:
+                    continue
+                for reference in _objects(assertion.get("evidence_refs")):
+                    try:
+                        path = str(reference["path"])
+                        if not _safe_reference_path(path):
+                            continue
+                        data = safe_path(root, path).read_bytes()
+                        if (
+                            len(data) > 8 * 1024 * 1024
+                            or hashlib.sha256(data).hexdigest() != reference["sha256"]
+                        ):
+                            continue
+                        event = reference.get("event")
+                        start = False
+                        if type(event) is int and path.endswith("events.jsonl"):
+                            frame = object_value(strict_json(data.decode().splitlines()[event]))
+                            payload = object_value(strict_json(str(frame["data"])))
+                            if payload.get("type") != "message_start":
+                                continue
+                            message = object_value(payload["message"])
+                            start = True
+                        elif path.endswith("body.bin"):
+                            message = object_value(strict_json(data.decode()))
+                        else:
+                            continue
+                        observation = message_diagnostic(
+                            case.get("id"),
+                            assertion.get("id"),
+                            message,
+                            start,
+                            result.target,
+                            reference,
+                        )
+                        if observation is not None:
+                            diagnostics.append(observation)
+                    except (OSError, ValueError, KeyError, IndexError):
+                        # Unreadable evidence never becomes a specific diagnosis.
+                        continue
+    return diagnostics
 
 
 def write_reports(result: RunResult, output_dir: Path) -> None:
@@ -516,13 +668,17 @@ def write_reports(result: RunResult, output_dir: Path) -> None:
     rendered = replace(
         result, report_context={**result.report_context, "evidence_verification": verification}
     )
-    atomic_write(output_dir / "report.html", render_html(rendered).encode())
-    atomic_write(output_dir / "report.md", render_markdown(rendered).encode())
+    diagnostics = (
+        _verified_diagnostics(result, output_dir) if verification["status"] == "verified" else []
+    )
+    atomic_write(output_dir / "report.html", render_html(rendered, diagnostics).encode())
+    atomic_write(output_dir / "report.md", render_markdown(rendered, diagnostics).encode())
     atomic_write(
         output_dir / "report-manifest.json",
         json_bytes(
             {
                 "schema_version": "1.0",
+                "presentation_version": "1.1",
                 "run_id": result.run_id,
                 "assessment_id": result.assessment_id,
                 "evidence_verification": verification,
