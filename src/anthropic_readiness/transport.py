@@ -88,8 +88,12 @@ class HttpTransport:
         loop = asyncio.get_running_loop()
 
         def cancel_current() -> None:
-            if task is not None:
-                loop.call_soon_threadsafe(task.cancel)
+            if task is not None and not task.done() and not loop.is_closed():
+                try:
+                    loop.call_soon_threadsafe(task.cancel)
+                except RuntimeError:
+                    if not loop.is_closed():
+                        raise
 
         self._cancel = cancel_current
         unsubscribe = (

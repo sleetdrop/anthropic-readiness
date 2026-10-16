@@ -2,6 +2,7 @@
 
 import threading
 import time
+from collections.abc import Callable
 from pathlib import Path
 
 import httpx
@@ -48,6 +49,29 @@ def test_late_callback_registration_observes_cancellation_once() -> None:
     unsubscribe()
     assert callbacks == ["called"]
     assert token.reason_code == "first"
+
+
+def test_stale_cancellation_callback_after_transport_close_is_harmless() -> None:
+    class DelayedToken(CancelToken):
+        callback: Callable[[], None] | None = None
+
+        def register(self, callback: Callable[[], None]) -> Callable[[], None]:
+            self.callback = callback
+            return super().register(callback)
+
+    token = DelayedToken()
+    transport = HttpTransport(
+        control=token,
+        transport=httpx.MockTransport(
+            lambda request: httpx.Response(200, stream=httpx.ByteStream(b"synthetic"))
+        ),
+    )
+    capture = transport.send(
+        RequestSpec("http://synthetic.invalid", (), {}, False), Limits(), time.monotonic() + 2
+    )
+    assert capture.capture_end == "eof"
+    assert token.callback is not None
+    token.callback()
 
 
 def test_cancelled_run_checkpoints_all_required_cases_without_dispatch(tmp_path: Path) -> None:

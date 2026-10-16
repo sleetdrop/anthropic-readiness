@@ -9,8 +9,8 @@
 - Implementation plan: [self-reviewed revision 1](../superpowers/plans/2026-10-16-local-web-console-implementation.md),
   14 sequential tasks; self-review completed and owner approval received on 2026-10-17.
 - Execution: current chat, sequentially; owner chose the current checkout/Dev Container.
-  W1 branch is `codex/local-web-console`, starting from `ad83593`. Tasks 1–4 are complete;
-  tasks 5–14 and whole-W1 acceptance remain pending.
+  W1 branch is `codex/local-web-console`, starting from `ad83593`. Tasks 1–5 are complete;
+  tasks 6–14 and whole-W1 acceptance remain pending.
 
 ## Observed design checks
 
@@ -165,3 +165,44 @@ queue admission, independent of preview expiry. If mistakenly used by a preview
 HTTP route, it could bypass expiry; that route must retain session-bound `get_plan`.
 Ruling: deduplicate across new keys for the same consumed plan as well; otherwise
 double execution could occur. Repeat testing requires a new preview, as specified.
+
+## Task 5: one owned worker and crash recovery
+
+Implemented a nonblocking service ownership lock, one spawned worker and private
+bounded JSON control/observation pipes. Credentials travel only through private
+initialization; queued values stay in memory. The parent validates initial context,
+sequences events and acknowledges persistence before the worker continues. Worker
+checkpoints stay exclusive. Parent-control EOF stops subsequent dispatch and has
+a bounded self-shutdown fallback. Cancellation allows five seconds, then forced
+stop records interruption. Restart never resends; verified final artifacts can
+repair the index only when their complete frozen target/plan identity matches.
+Cancellation/completion terminal decisions serialize under the manager lock.
+
+Observed RED: eleven initial lifecycle failures; unbound jobs after arbitrary
+provider failure; continued admission after mandatory storage failure; stale
+cancellation delivery after loop closure; contradictory result target identity;
+and a private initial-context diagnostic entering persistence. These failures were
+fixed without changing protocol expectations. Two fixture corrections are recorded:
+worker discovery must use the owning process handle rather than another thread's
+`/proc` child list, and JSONL corruption fixtures must keep one record per line.
+The corrected target fixture reproduced the actual wrong-completion result.
+
+Final Linux checks passed seven fast gates and all 314 pytest tests. Acceptance
+uses disposable loopback peers, owned SIGTERM/forced-stop processes and pidfd-bound
+cleanup. Verified checkpoint survival after parent termination, zero subsequent
+requests, allowlisted credentials, safe IPC rejection, immutable terminal results
+and no leaked live owned child. No real model request or W1 runtime-image/browser
+acceptance occurred. Pinned browser/OS/font preparation has now exited successfully;
+this is preparation only.
+
+Rulings and costs:
+
+- Bounded JSON plus per-message acknowledgement preserves the publication barrier;
+  parent disk latency can increase execution time, while UI reading stays independent.
+- The parent commits the terminal decision after verified result publication and
+  before acknowledgement. Worker terminal transitions are validated advisory
+  duplicates; they cannot mutate a committed terminal state.
+- Queued snapshots have explicit null execution until begin, unless terminated
+  before start. Consumers must handle this instead of inventing timing.
+- Internal `JobStore.observe` keeps sequences/result pointers monotonic without
+  bypassing lifecycle CAS; nonblocking locks reject a second service owner.

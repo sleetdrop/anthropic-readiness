@@ -286,6 +286,32 @@ class JobStore:
                 raise ValueError("plan_integrity")
             return frozen
 
+    def observe(self, run_id: str, sequence: int, result_path: str | None = None) -> JobRecord:
+        identifier(run_id)
+        if (
+            type(sequence) is not int
+            or sequence < 0
+            or result_path not in {None, "assessment/result.json"}
+        ):
+            raise ValueError("invalid_job_observation")
+        with self._transaction() as connection:
+            row = connection.execute("SELECT * FROM jobs WHERE id=?", (run_id,)).fetchone()
+            if row is None:
+                raise ValueError("job_not_found")
+            if row["state"] in {"completed", "cancelled", "interrupted", "error"}:
+                if row["last_sequence"] == sequence and row["result_path"] == result_path:
+                    return job_record(row)
+                raise ValueError("terminal_job_immutable")
+            if sequence < row["last_sequence"]:
+                raise ValueError("job_sequence_backwards")
+            connection.execute(
+                "UPDATE jobs SET last_sequence=?, result_path=COALESCE(?, result_path) WHERE id=?",
+                (sequence, result_path, run_id),
+            )
+            return job_record(
+                connection.execute("SELECT * FROM jobs WHERE id=?", (run_id,)).fetchone()
+            )
+
     def transition(self, run_id: str, expected: JobState, next_state: JobState) -> JobRecord:
         identifier(run_id)
         if not transition_allowed(expected, next_state):

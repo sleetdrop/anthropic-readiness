@@ -22,7 +22,7 @@ MAX_JOURNAL_BYTES = 16 * 1024 * 1024
 
 
 @contextmanager
-def locked(root: Path, name: str = "writer.lock") -> Iterator[None]:
+def locked(root: Path, name: str = "writer.lock", *, blocking: bool = True) -> Iterator[None]:
     if root.is_symlink():
         raise ValueError("symlink_operations_root")
     root.mkdir(mode=0o700, parents=True, exist_ok=True)
@@ -34,9 +34,9 @@ def locked(root: Path, name: str = "writer.lock") -> Iterator[None]:
                 stream.write(b"\0")
                 stream.flush()
             stream.seek(0)
-            msvcrt.locking(fd, msvcrt.LK_LOCK, 1)
+            msvcrt.locking(fd, msvcrt.LK_LOCK if blocking else msvcrt.LK_NBLCK, 1)
         else:
-            fcntl.flock(fd, fcntl.LOCK_EX)
+            fcntl.flock(fd, fcntl.LOCK_EX | (0 if blocking else fcntl.LOCK_NB))
         try:
             yield
         finally:

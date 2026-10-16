@@ -280,3 +280,17 @@ hashes, concurrent idempotency, one active/eight waiting capacity, preset isolat
 history pagination and strict explicit URL resolution. Planning made zero upstream
 requests. The W1 ledger records admitted-plan access and consumed-plan deduplication
 rulings. Process supervision and all later Web/browser/image acceptance remain pending.
+
+## W1 Task 5: worker supervision and recovery (2026-10-17)
+
+Added owned spawn supervision, parent-acknowledged bounded JSON IPC, memory-only
+credential binding, five-second cancellation and parent-loss shutdown. Restart
+retains checkpoints and never redispatches. Final-result recovery requires verified
+evidence and the complete frozen target/plan identity. Actual RED failures and
+fixture corrections are retained in the task workspace and summarized in the W1
+ledger. Final Linux Python 3.12 verification passed seven fast gates and all 314
+pytest tests, including synthetic parent death, SIGTERM, unresponsive worker,
+terminal races, storage/provider failure, IPC and secret-persistence boundaries.
+Pinned Chromium, dependencies and CJK fonts completed preparation with exit 0;
+actual browser, new image and HTTP acceptance remain pending. No real endpoint call,
+remote CI, publication or registry push was made.
