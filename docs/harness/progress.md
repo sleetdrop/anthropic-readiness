@@ -123,3 +123,17 @@ disabled; actual browser interaction and responsive acceptance remain unrun.
 The private offline render preserved original result bytes and all 20 evidence files,
 with verified evidence/errors=[] and zero new API calls. No image rebuild, remote
 CI or publication was performed. Frozen Stage A records remain historical.
+
+## Second owner-authorized private model assessment (2026-10-16)
+
+The owner requested the same four-case live validation for another model on the
+local proxy. Offline validation/dry-run passed, then exactly four requests completed
+in 12.557 seconds with HTTP 200 and complete captures, zero retries. Task behavior
+passed in all four cases; the fixed protocol/identity contract failed in all four.
+Observed failures are missing stop fields and an unallowlisted response-name alias;
+no model routing cause is inferred. See [the validation ledger](validation-ledger.md).
+
+Presentation 1.2 was generated offline from the saved result, preserving its bytes
+and all 20 evidence files, with evidence verified/errors=[] and no extra API call.
+Private inputs and outputs remain outside the repository. This endpoint observation
+does not replace frozen Stage A acceptance or establish client workflow readiness.
