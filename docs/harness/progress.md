@@ -182,3 +182,13 @@ Official Promptfoo, Inspect, Postman, Locust, FastAPI and browser SSE documentat
 informed the proposal. This is awaiting owner design feedback, not an approved spec
 or implementation plan. No product code, dependency, frozen Stage A ledger or
 acceptance manifest changed; no model call or product check was run.
+
+## Visual report and console proposal (2026-10-16)
+
+The owner requested stronger charts, matrices and interaction while retaining a
+restrained professional style, and approved a browser visual companion. Read the
+[visual-expression proposal](../reviews/2026-10-16-visual-expression-design.md).
+The ignored synthetic mockup connects a running console, capability matrix,
+status distribution, timeline, finding impact and expected/actual drawers.
+Browser interaction observations are recorded in the proposal; no product-source,
+dependency, live-endpoint or frozen Stage A acceptance change is claimed.

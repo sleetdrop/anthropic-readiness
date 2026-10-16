@@ -64,6 +64,10 @@ browser tooling belong to a reviewed implementation plan.
 Use a restrained white engineering style, readable typography, tables, small status
 markers and progressive disclosure. Explain task behavior, strict protocol results
 and client workflow outcomes separately. No composite compatibility score.
+The owner subsequently requested stronger visual explanation and interaction.
+The [visual-expression proposal](2026-10-16-visual-expression-design.md) adds matrices,
+charts, linked detail views and equivalent offline/agent-readable representations.
+Restrained styling must not reduce reports to prose with navigation links.
 
 ## Proposed execution and data boundaries
 
