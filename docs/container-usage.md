@@ -49,3 +49,8 @@ Preparation can download pinned dependencies; verification inside the images is
 offline. Slow downloads use extended timeouts. GitHub runs the same script on
 native architecture runners. No registry login/push is configured. Docker Hub
 credentials and publishing can be configured with the owner in a later stage.
+
+The full image job prepares dev dependencies, disconnects that disposable dev
+container from its external network, verifies the empty network attachment list,
+and only then runs the offline full graph. Synthetic HTTP tests still use that
+container's loopback; the runtime peer uses a separate internal Docker network.

@@ -261,6 +261,13 @@ class Acceptance:
             ],
             timeout=7200,
         )
+        self.docker("dev-isolate", ["network", "disconnect", "bridge", name])
+        networks = self.docker(
+            "dev-network-inspect",
+            ["inspect", name, "--format", "{{json .NetworkSettings.Networks}}"],
+        )
+        if json.loads(networks):
+            raise RuntimeError("dev_network_not_isolated")
         self.docker(
             "dev-offline-full",
             [
