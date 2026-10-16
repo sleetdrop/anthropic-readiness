@@ -1,13 +1,16 @@
 # Stage A completed locally
 
-## Current milestone: W1 written design review
+## Current milestone: W1 planning paused by owner
 
 The owner requested a local Docker Web interface for configuration, live test
 progress and on-demand export, with independent CLI execution retained. Individual
 local deployment is confirmed. The owner approved the console/report visual
 direction. The [written W1 specification](superpowers/specs/2026-10-16-local-web-console-design.md)
-now awaits written-spec review; its implementation plan has not yet been written
-or approved. See the [W1 ledger](harness/web-console-ledger.md).
+was explicitly approved. Its [implementation plan draft](superpowers/plans/2026-10-16-local-web-console-implementation.md)
+has 14 sequential tasks but self-review is incomplete and plan approval is pending.
+The owner asked to pause before closing the laptop; wait for explicit resume.
+Continue with the self-review items in the [W1 ledger](harness/web-console-ledger.md),
+not implementation. No product dependency installation or live request was started.
 Stage A completion and the private assessment below remain historical baselines.
 
 The approved 12-task Stage A plan is complete on branch `feat/stage-a`.

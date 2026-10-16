@@ -206,3 +206,12 @@ product check, image acceptance, remote CI or live request is claimed.
 The existing Linux/Python 3.12 Dev Container passed the offline documentation/link
 and collaboration check; `git diff --check` also passed. These are documentation
 checks only, not W1 implementation acceptance.
+
+## W1 specification approved; planning paused by owner (2026-10-16)
+
+The owner explicitly approved written specification revision 1. A 14-task native
+sequential plan was drafted, but the owner paused before its self-review finished
+to close the laptop and travel home. The plan is explicitly DRAFT, with open review
+items and resume instructions in the W1 ledger. Do not begin implementation or ask
+for plan approval from this unfinished checkpoint. No new dependency installation,
+product process, model call or W1 acceptance was started during planning.
