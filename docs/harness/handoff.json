@@ -707,7 +707,56 @@
     },
     "remote_ci": "not_run",
     "real_endpoint": "not_run",
-    "registry_publication": "not_run"
+    "registry_publication": "not_run",
+    "final_handoff_full": {
+      "path": "artifacts/checks/1792134208189820297/check-result.json",
+      "sha256": "30e6d83b8813ed0f7136d285d81aa767fea498046660dac3bd3ca6d20dff5708",
+      "status": "passed",
+      "record_commit": "f9f5b99cc05e67df7aef67d36bbd12d7d291ef4f",
+      "source_fingerprint": "f7cdcacf4a7942b286f3c2c8f5e7ad14e9a3d3f7ce6bceb7ca59778d694daebd",
+      "lock_sha256": "8025bb668b4aa0aa8a8b949f71c166b895c973f74eb038570c13d655be98043d",
+      "source_unchanged": true,
+      "reported_git": {
+        "commit": null,
+        "dirty": null
+      },
+      "tool_versions": {
+        "python": "3.12.15",
+        "ruff": "0.17.0",
+        "mypy": "2.4.0",
+        "pytest": "9.1.1",
+        "import-linter": "2.15",
+        "jsonschema": "4.26.0",
+        "hatchling": "1.27.0",
+        "uv": "uv 0.13.1 (aarch64-unknown-linux-musl)"
+      },
+      "test_counts": {
+        "unit": {
+          "tests": 107,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "integration": {
+          "tests": 22,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "acceptance": {
+          "tests": 36,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "packaging": {
+          "tests": 1,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      }
+    }
   },
   "distribution": {
     "files": [
@@ -739,5 +788,19 @@
     "Tool loops/parallel live cases belong to B; real Claude Code workflows to C; protocol-update Agent command and publishing guidance to D.",
     "Remote repository setup, branch protection, Docker Hub publication, license selection and actual API runs require the owner to authorize/configure them separately."
   ],
-  "implementation_ledger": "docs/harness/implementation-ledger.md"
+  "implementation_ledger": "docs/harness/implementation-ledger.md",
+  "execution_history": {
+    "ledger": {
+      "path": "docs/harness/implementation-ledger.md",
+      "sha256": "686a350f344fad5866ee536c4a109682bed027d17ce31eb0707ead08a8bfb3ff"
+    },
+    "scratch_archive": {
+      "path": "artifacts/implementation-history/stage-a-execution.tar.gz",
+      "sha256": "b6322448aac86b92510277def6c379b0257d454d8def9cd101b966255566d626"
+    },
+    "initial_export_failure": {
+      "path": "artifacts/final-acceptance/export-first-attempt.txt",
+      "sha256": "fdb4e846b22c9745d0caa1cae617aeebcc6ef4ac23e0498af80fcadab320f0db"
+    }
+  }
 }
