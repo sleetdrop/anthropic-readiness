@@ -1,0 +1,30 @@
+# W1 Web console ledger
+
+## Design and authorization
+
+- 2026-10-16: owner chose individual local Docker deployment.
+- 2026-10-16: owner approved the interactive console/report visual direction.
+- Written specification: [local Web console](../superpowers/specs/2026-10-16-local-web-console-design.md),
+  revision 1; written-spec review is pending.
+- Implementation plan: not yet written or approved. No W1 product implementation
+  has started. Acceptance IDs W1-01 through W1-12 are all unrun.
+
+## Observed design checks
+
+- Prior ignored synthetic visual mockup: browser view switching, matrix/finding
+  navigation, failure filter and export-content preview were observed. This is
+  design material, not production browser or export acceptance.
+- Written spec self-review covers scope, lifecycle, source integrity, credential
+  handling, CLI independence and old-result compatibility. Documentation-only
+  checks are recorded separately from future product checks.
+- Linux/Python 3.12 Dev Container: `UV_OFFLINE=1 uv run --frozen python
+  scripts/check_docs.py` passed (`documentation_collaboration: passed`).
+- `git diff --check` passed. No product fast/full suite, browser acceptance,
+  image build or live endpoint check was run for these documentation-only changes.
+
+## Historical boundaries
+
+Frozen Stage A ledgers/manifests and private endpoint results remain historical.
+Do not repeat the completed Stage A independent review or prior live calls.
+W1 requires its own sequential plan, failing behavior tests, Linux verification,
+image/browser/export acceptance and one independent whole-milestone review.

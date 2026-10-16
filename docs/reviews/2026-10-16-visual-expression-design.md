@@ -1,6 +1,8 @@
 # Visual expression and interaction proposal
 
-Status: design discussion, not an approved product implementation specification.
+Status: visual direction approved by the owner on 2026-10-16. The
+[written W1 specification](../superpowers/specs/2026-10-16-local-web-console-design.md)
+awaits written-spec review before implementation planning.
 This extends the [local Web console proposal](2026-10-16-web-console-reference-study.md).
 The owner requires restrained, professional styling with substantially better
 visual explanation, rather than a predominantly textual report.

@@ -1,11 +1,13 @@
 # Stage A completed locally
 
-## Current design discussion: local Web console
+## Current milestone: W1 written design review
 
 The owner requested a local Docker Web interface for configuration, live test
 progress and on-demand export, with independent CLI execution retained. Individual
-local deployment is confirmed. The [reference study and proposed direction](reviews/2026-10-16-web-console-reference-study.md)
-await owner design feedback; no Web implementation plan has been approved.
+local deployment is confirmed. The owner approved the console/report visual
+direction. The [written W1 specification](superpowers/specs/2026-10-16-local-web-console-design.md)
+now awaits written-spec review; its implementation plan has not yet been written
+or approved. See the [W1 ledger](harness/web-console-ledger.md).
 Stage A completion and the private assessment below remain historical baselines.
 
 The approved 12-task Stage A plan is complete on branch `feat/stage-a`.
@@ -53,7 +55,8 @@ new acceptance for this renderer. No new API request was made.
 
 ## Next work requires its own scope
 
-Stop at A. B owns tool loops, parallel cases and version matrices; C owns real
+Stage A is complete. W1 is the separately scoped Web/report follow-up above.
+B owns tool loops, parallel cases and version matrices; C owns real
 Claude Code workflows; D owns protocol-update Agent tooling and later maintenance.
 The sole API bundle is Messages 2023-06-01 core revision 1.0.0, with no betas.
 Capture writers use schema 1.1; readers retain conservative 1.0 support.

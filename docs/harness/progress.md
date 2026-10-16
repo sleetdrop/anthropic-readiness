@@ -192,3 +192,17 @@ The ignored synthetic mockup connects a running console, capability matrix,
 status distribution, timeline, finding impact and expected/actual drawers.
 Browser interaction observations are recorded in the proposal; no product-source,
 dependency, live-endpoint or frozen Stage A acceptance change is claimed.
+
+## W1 visual direction approved and written specification (2026-10-16)
+
+The owner approved the browser console/report design and requested advancement.
+The [written W1 specification](../superpowers/specs/2026-10-16-local-web-console-design.md)
+formalizes local Docker use, shared CLI/Web services, durable job events, visual
+reports and offline exports. Self-review resolved lifecycle/result separation,
+restart/credential-loss behavior, source integrity and actual catalog scope.
+Written-spec review is pending; the [new W1 ledger](web-console-ledger.md) separates
+this milestone from frozen Stage A records. No implementation plan, new dependency,
+product check, image acceptance, remote CI or live request is claimed.
+The existing Linux/Python 3.12 Dev Container passed the offline documentation/link
+and collaboration check; `git diff --check` also passed. These are documentation
+checks only, not W1 implementation acceptance.
