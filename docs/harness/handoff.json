@@ -1,28 +1,743 @@
 {
   "schema_version": "1.0",
   "stage": "A",
-  "stage_readiness": "incomplete",
-  "review_candidate_commit": "ad4e131",
-  "verification_commit": null,
-  "source_fingerprint": null,
-  "lock_sha256": null,
+  "stage_readiness": "local_offline_developer_acceptance_passed",
+  "verified_at": "2026-10-16T07:02:19.974Z",
+  "verification_commit": "be168d9962ff3dacd5e480818dd537d9f3438593",
+  "source_fingerprint": "f7cdcacf4a7942b286f3c2c8f5e7ad14e9a3d3f7ce6bceb7ca59778d694daebd",
+  "lock_sha256": "8025bb668b4aa0aa8a8b949f71c166b895c973f74eb038570c13d655be98043d",
+  "source_unchanged": true,
+  "host_git_proof": {
+    "path": "artifacts/final-acceptance/host-and-checks.json",
+    "sha256": "93f1cd1ae62748a207c4c251cd738388d1396e3084532a24005fcb67c9979aeb",
+    "commit": "be168d9962ff3dacd5e480818dd537d9f3438593",
+    "dirty": false,
+    "method": "git rev-parse HEAD; git status --porcelain"
+  },
+  "provenance_note": "Container check Git fields may be null because source provenance was unavailable inside that environment. The separately observed clean host commit, identical source/lock fingerprints and exact runtime revision labels bind these local observations. Handoff-only follow-up commits change excluded records; they are not the image verification commit.",
+  "fingerprint_scope": {
+    "implementation": [
+      "src",
+      "tests",
+      "scripts",
+      "examples",
+      ".github",
+      ".devcontainer",
+      "pyproject.toml",
+      "uv.lock",
+      ".python-version",
+      "Dockerfile",
+      ".dockerignore",
+      ".gitignore",
+      ".pre-commit-config.yaml",
+      "AGENTS.md",
+      "README.md",
+      "CONTRIBUTING.md",
+      "docs/architecture.md",
+      "docs/development.md",
+      "docs/container-usage.md",
+      "docs/harness/acceptance.json"
+    ],
+    "excluded_records": [
+      "artifacts",
+      "docs/CONTINUE.md",
+      "docs/HANDOFF.md",
+      "docs/harness/progress.md",
+      "docs/harness/handoff.json",
+      "docs/harness/implementation-ledger.md",
+      "docs/reviews",
+      "docs/superpowers"
+    ]
+  },
   "contract": {
     "id": "anthropic-messages-2023-06-01-core",
     "revision": "1.0.0",
     "api_version": "2023-06-01",
     "beta_headers": [],
-    "version_semantics": "unverified"
+    "content_hash": "6552cdcbc2d0ce4f3a05c45f75a7edbca5e6b8e7e53b7075a2c9da6d511691a3",
+    "manifest": {
+      "path": "src/anthropic_readiness/resources/contracts/anthropic-messages-2023-06-01-core/1.0.0/manifest.json",
+      "sha256": "3e0b8884ab0f3ac1b843f5ae9dc8afd68e4633f2c23cb3db790f1fab386f3c26"
+    },
+    "version_semantics": "unverified",
+    "sources": [
+      {
+        "id": "versioning",
+        "url": "https://platform.claude.com/docs/en/api/versioning",
+        "retrieved_at": "2026-10-15T15:58:53.050670+00:00",
+        "normalized_sha256": "07fae2f05585aab87f2a9b2ae65c93d721ef323eac1510940070de3af30f1cd5",
+        "normalization": "html-visible-text-without-script-style-nav-footer+nfc+collapse-whitespace-v1",
+        "anchor": "version-history",
+        "characters": 2840,
+        "summary": "The API date selects an input/output compatibility contract; optional fields and new event variants may still be added."
+      },
+      {
+        "id": "messages",
+        "url": "https://platform.claude.com/docs/en/api/messages/create",
+        "retrieved_at": "2026-10-15T15:58:53.290208+00:00",
+        "normalized_sha256": "9d87e1b587c39f53da1b6012180cea3a59cba4895a731feda383582ae303766c",
+        "normalization": "html-visible-text-without-script-style-nav-footer+nfc+collapse-whitespace-v1",
+        "anchor": "response",
+        "characters": 29935,
+        "summary": "Messages return assistant content blocks, model identity, stop metadata and usage; tool inputs are JSON objects."
+      },
+      {
+        "id": "streaming",
+        "url": "https://platform.claude.com/docs/en/build-with-claude/streaming",
+        "retrieved_at": "2026-10-15T15:58:53.313357+00:00",
+        "normalized_sha256": "9619f452373a53466a5b878991f88443158d3c9f5a6b90b122dfd1b1e06403b9",
+        "normalization": "html-visible-text-without-script-style-nav-footer+nfc+collapse-whitespace-v1",
+        "anchor": "event-types",
+        "characters": 24574,
+        "summary": "Named JSON events describe message and indexed block lifecycles, cumulative usage and partial tool JSON."
+      },
+      {
+        "id": "sse",
+        "url": "https://html.spec.whatwg.org/multipage/server-sent-events.html",
+        "retrieved_at": "2026-10-15T15:58:53.706008+00:00",
+        "normalized_sha256": "3bd63281bc14e47ea618120849db81557fc2f30058c668b05d9b63209f144569",
+        "normalization": "html-visible-text-without-script-style-nav-footer+nfc+collapse-whitespace-v1",
+        "anchor": "parsing-an-event-stream",
+        "characters": 26337,
+        "summary": "UTF-8 lines dispatch an event at an empty line; incomplete data at EOF is not dispatched."
+      },
+      {
+        "id": "stop-reasons",
+        "url": "https://platform.claude.com/docs/en/build-with-claude/handling-stop-reasons",
+        "retrieved_at": "2026-10-15T15:58:53.245226+00:00",
+        "normalized_sha256": "008a86f0d5e9184fdd04fea0aa13c0d4505832bebf8db463f69d6abb1d32c8ff",
+        "normalization": "html-visible-text-without-script-style-nav-footer+nfc+collapse-whitespace-v1",
+        "anchor": "stop-reason-values",
+        "characters": 24327,
+        "summary": "A protocol-valid stop reason can still mean the controlled task did not complete."
+      }
+    ]
+  },
+  "capture_format": {
+    "writer": "1.1",
+    "readers": [
+      "1.0",
+      "1.1"
+    ],
+    "legacy_transformed_replay": "conservative; no lifecycle projection proof inferred"
   },
   "checks": {
-    "independent_review": "in_progress",
-    "final_fixed_commit_verification": "not_run",
+    "prepared_devcontainer_and_python_floor": [
+      {
+        "path": "artifacts/checks/1792129740476220923/check-result.json",
+        "sha256": "e9ef87d6c3976249526719b5f351ee4e0a6c0ec649e60571619a6cfe503536c0",
+        "scope": "full",
+        "python": "3.12.15",
+        "counts": {
+          "unit": {
+            "tests": 107,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          },
+          "integration": {
+            "tests": 22,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          },
+          "acceptance": {
+            "tests": 36,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          },
+          "packaging": {
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        "source_fingerprint": "f7cdcacf4a7942b286f3c2c8f5e7ad14e9a3d3f7ce6bceb7ca59778d694daebd",
+        "lock_sha256": "8025bb668b4aa0aa8a8b949f71c166b895c973f74eb038570c13d655be98043d",
+        "tool_versions": {
+          "python": "3.12.15",
+          "ruff": "0.17.0",
+          "mypy": "2.4.0",
+          "pytest": "9.1.1",
+          "import-linter": "2.15",
+          "jsonschema": "4.26.0",
+          "hatchling": "1.27.0",
+          "uv": "uv 0.13.1 (aarch64-unknown-linux-musl)"
+        },
+        "reported_git": {
+          "commit": null,
+          "dirty": null
+        }
+      },
+      {
+        "path": "artifacts/checks/1792129807345441635/check-result.json",
+        "sha256": "54b749878e802e28c337d1229f0e0ede1a76839fd3e5555a82ae3b5cee56b2b8",
+        "scope": "full",
+        "python": "3.11.17",
+        "counts": {
+          "unit": {
+            "tests": 107,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          },
+          "integration": {
+            "tests": 22,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          },
+          "acceptance": {
+            "tests": 36,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          },
+          "packaging": {
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        "source_fingerprint": "f7cdcacf4a7942b286f3c2c8f5e7ad14e9a3d3f7ce6bceb7ca59778d694daebd",
+        "lock_sha256": "8025bb668b4aa0aa8a8b949f71c166b895c973f74eb038570c13d655be98043d",
+        "tool_versions": {
+          "python": "3.11.17",
+          "ruff": "0.17.0",
+          "mypy": "2.4.0",
+          "pytest": "9.1.1",
+          "import-linter": "2.15",
+          "jsonschema": "4.26.0",
+          "hatchling": "1.27.0",
+          "uv": "uv 0.13.1 (aarch64-unknown-linux-musl)"
+        },
+        "reported_git": {
+          "commit": null,
+          "dirty": null
+        }
+      },
+      {
+        "path": "artifacts/checks/1792130127439201922/check-result.json",
+        "sha256": "3a724c3a2cd28cbf994e701cc00abce1513496c4c3c5f021e30d3bd9eba2619b",
+        "scope": "fast",
+        "python": "3.12.15",
+        "counts": {
+          "unit": {
+            "tests": 107,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        "source_fingerprint": "f7cdcacf4a7942b286f3c2c8f5e7ad14e9a3d3f7ce6bceb7ca59778d694daebd",
+        "lock_sha256": "8025bb668b4aa0aa8a8b949f71c166b895c973f74eb038570c13d655be98043d",
+        "tool_versions": {
+          "python": "3.12.15",
+          "ruff": "0.17.0",
+          "mypy": "2.4.0",
+          "pytest": "9.1.1",
+          "import-linter": "2.15",
+          "jsonschema": "4.26.0",
+          "hatchling": "1.27.0",
+          "uv": "uv 0.13.1 (aarch64-unknown-linux-musl)"
+        },
+        "reported_git": {
+          "commit": "be168d9962ff3dacd5e480818dd537d9f3438593",
+          "dirty": false
+        }
+      }
+    ],
+    "floor_network_proof": {
+      "path": "artifacts/final-acceptance/floor-network.json",
+      "sha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "images": [
+      {
+        "path": "artifacts/images/1792129994691446000-arm64/image-result.json",
+        "sha256": "d8b68fa486e2f10cefe72f2cf6e9a39ffaf59e988d42c0588a2b6ece32f58a87",
+        "platform": "linux/arm64",
+        "execution": "native",
+        "host_machine": "arm64",
+        "status": "passed",
+        "image_context_fingerprint": "e998daa89131d4d698d249b116912fe2ccf54ea9ec7fa2e499abf61247d4177d",
+        "runtime": {
+          "tag": "anthropic-readiness-runtime:arm64",
+          "id": "sha256:70de0d813e37b7ad0634939d8ea84518898d54fb9aa0563bde5f403fa81b6de7",
+          "revision": "be168d9962ff3dacd5e480818dd537d9f3438593",
+          "inspection": {
+            "path": "artifacts/images/1792129994691446000-arm64/04-image-inspect.log",
+            "sha256": "904bd3dc77e7417efd8efceaba80c30b811e5bb1d001aaec6e74a4b586ee16c7"
+          }
+        },
+        "development": {
+          "tag": "anthropic-readiness-dev:arm64",
+          "id": "sha256:12c44851da24dc3e802abf1b67d4e5c4c81cbe26e13f29f0cab6e88ec49115ad",
+          "inspection": {
+            "path": "artifacts/images/1792129994691446000-arm64/11-dev-image-inspect.log",
+            "sha256": "125c84421ed28be27b203d1033bb668575afb8eeddb604477109479b8e9c524e"
+          },
+          "network_attachments": {},
+          "network_proof": {
+            "path": "artifacts/images/1792129994691446000-arm64/16-dev-network-inspect.log",
+            "sha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+          },
+          "offline_full": {
+            "path": "artifacts/checks/1792131708894832418/check-result.json",
+            "sha256": "a0c5d8f90282d474f1bc8dcbf2e4f9c161f8b68d475778000c0639c662cd7c82",
+            "python": "3.12.15",
+            "reported_git": {
+              "commit": null,
+              "dirty": null
+            },
+            "tool_versions": {
+              "python": "3.12.15",
+              "ruff": "0.17.0",
+              "mypy": "2.4.0",
+              "pytest": "9.1.1",
+              "import-linter": "2.15",
+              "jsonschema": "4.26.0",
+              "hatchling": "1.27.0",
+              "uv": "uv 0.13.1 (aarch64-unknown-linux-musl)"
+            },
+            "test_counts": {
+              "unit": {
+                "tests": 107,
+                "failures": 0,
+                "errors": 0,
+                "skipped": 0
+              },
+              "integration": {
+                "tests": 22,
+                "failures": 0,
+                "errors": 0,
+                "skipped": 0
+              },
+              "acceptance": {
+                "tests": 36,
+                "failures": 0,
+                "errors": 0,
+                "skipped": 0
+              },
+              "packaging": {
+                "tests": 1,
+                "failures": 0,
+                "errors": 0,
+                "skipped": 0
+              }
+            }
+          }
+        },
+        "controls": {
+          "runtime_default_uid": 10001,
+          "read_only_root": true,
+          "tmpfs_limit": "64m",
+          "replay_network": "none",
+          "synthetic_peer_network": "internal",
+          "signals": {
+            "SIGINT": 130,
+            "SIGTERM": 143
+          },
+          "host_alias": "host.docker.internal; temporary generic loopback server; not a real target"
+        },
+        "samples": [
+          {
+            "name": "valid",
+            "files": [
+              {
+                "path": "artifacts/images/1792129994691446000-arm64/valid/result.json",
+                "sha256": "b87bf087464df56e45116be575bc205b7ff14640014b9d007828c90e1dba5a39"
+              },
+              {
+                "path": "artifacts/images/1792129994691446000-arm64/valid/report.html",
+                "sha256": "a396ad50189e2ce81ee79514e0489e11cd4b8211c345835fe7f04416701e63c8"
+              },
+              {
+                "path": "artifacts/images/1792129994691446000-arm64/valid/report.md",
+                "sha256": "66c48cd322926dafac281a21c7177c85e54276d303e410d3545fe3157fa11e24"
+              },
+              {
+                "path": "artifacts/images/1792129994691446000-arm64/valid/report-manifest.json",
+                "sha256": "94f70aae22ad13f9020b9e5d5fec818a0c9c7656094e619e833c3d4e10f8cb41"
+              }
+            ]
+          },
+          {
+            "name": "duplicate-start",
+            "files": [
+              {
+                "path": "artifacts/images/1792129994691446000-arm64/duplicate-start/result.json",
+                "sha256": "dfd08813662520253b7f9bcdfd5e36409148656e53ca9476f6a3de4f6248298f"
+              },
+              {
+                "path": "artifacts/images/1792129994691446000-arm64/duplicate-start/report.html",
+                "sha256": "821cf9d444afecfd667b470926ee7236b74b3f06a4a86357355aa6e30904f5f8"
+              },
+              {
+                "path": "artifacts/images/1792129994691446000-arm64/duplicate-start/report.md",
+                "sha256": "13fbad0403b0c30873fbbbd4cb6ec720572f4aaa4b058f352d56a16535475895"
+              },
+              {
+                "path": "artifacts/images/1792129994691446000-arm64/duplicate-start/report-manifest.json",
+                "sha256": "c3268c76de95ab1f56f7339c2855bb877bd52e3c11b3762461f1fb0b7c42a28a"
+              }
+            ]
+          },
+          {
+            "name": "isolated-peer",
+            "files": [
+              {
+                "path": "artifacts/images/1792129994691446000-arm64/isolated-peer/result.json",
+                "sha256": "e7accf770f94795d76a605616039040b11159d8ae4d59ae2f1d36a302d5fb965"
+              },
+              {
+                "path": "artifacts/images/1792129994691446000-arm64/isolated-peer/report.html",
+                "sha256": "63931bafcdecb7d360397ea7c7ebe5f0124dd4eeb8efb104c0eb7ed07c971c2d"
+              },
+              {
+                "path": "artifacts/images/1792129994691446000-arm64/isolated-peer/report.md",
+                "sha256": "02a2f86e48bfe41c822c3a617e2c6861afe3fbaec9e8ac63e709f31531e1e6b4"
+              },
+              {
+                "path": "artifacts/images/1792129994691446000-arm64/isolated-peer/report-manifest.json",
+                "sha256": "972137122a48c35ce75005bd6e25fb93c3a8c7f36be8bd1f52044428cbad3acb"
+              }
+            ]
+          },
+          {
+            "name": "signal-INT",
+            "files": [
+              {
+                "path": "artifacts/images/1792129994691446000-arm64/signal-INT/result.json",
+                "sha256": "988e3adafd7e77ad913f94b832010d68d955b69da248f8482832df9639020de1"
+              },
+              {
+                "path": "artifacts/images/1792129994691446000-arm64/signal-INT/report.html",
+                "sha256": "d29364244c8d4ce7acafd44d596e164f497263cc35265482c92e8ff5c588e443"
+              },
+              {
+                "path": "artifacts/images/1792129994691446000-arm64/signal-INT/report.md",
+                "sha256": "82f24301b59e58ce8ce36818d4482d34f2c079caf5bb82ba0a7bfd662951e876"
+              },
+              {
+                "path": "artifacts/images/1792129994691446000-arm64/signal-INT/report-manifest.json",
+                "sha256": "9fcb3647b089cc7f3064c0b92f2637e92b6e543559c268589e877bce02c348a1"
+              }
+            ]
+          },
+          {
+            "name": "signal-TERM",
+            "files": [
+              {
+                "path": "artifacts/images/1792129994691446000-arm64/signal-TERM/result.json",
+                "sha256": "2084bb544942bb17b4c5d95e9a0138391aa13f037b7b08423bcedb31cfd20e7b"
+              },
+              {
+                "path": "artifacts/images/1792129994691446000-arm64/signal-TERM/report.html",
+                "sha256": "ed3dc854189474a4ebc7613fb6b26c391b484ccff37801ed9a43ccbcaf606974"
+              },
+              {
+                "path": "artifacts/images/1792129994691446000-arm64/signal-TERM/report.md",
+                "sha256": "338aac100e717caca3652a9db08508036a8dd93fa0e3598e2dcbbcb22d54fbcb"
+              },
+              {
+                "path": "artifacts/images/1792129994691446000-arm64/signal-TERM/report-manifest.json",
+                "sha256": "7006456f3ce1a74bab4fe76f8a8ba60796563fd570cc787dc3a50f432f911e19"
+              }
+            ]
+          },
+          {
+            "name": "host-path",
+            "files": [
+              {
+                "path": "artifacts/images/1792129994691446000-arm64/host-path/result.json",
+                "sha256": "1e9a03a0f72270dd8d6223d39fa14d488708acd5e20285f8aebb4d9e35171677"
+              },
+              {
+                "path": "artifacts/images/1792129994691446000-arm64/host-path/report.html",
+                "sha256": "1ac55cb5ac9a234b29703e09f30af530498ba87780e553373a7e251a7189e989"
+              },
+              {
+                "path": "artifacts/images/1792129994691446000-arm64/host-path/report.md",
+                "sha256": "bf8c1d449ee8612d4f8778b5a7906ac177ba63f9469e5bead853ae5332d94389"
+              },
+              {
+                "path": "artifacts/images/1792129994691446000-arm64/host-path/report-manifest.json",
+                "sha256": "d78ee66565ddee788de23a2995e9be10a729a0da72164acdd244099efc65bb85"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "path": "artifacts/images/1792131819611604000-amd64/image-result.json",
+        "sha256": "6c61ddf402bd4a0b925e0308e376f3ad9f6d260b50747607d6471663c1cb2805",
+        "platform": "linux/amd64",
+        "execution": "emulated",
+        "host_machine": "arm64",
+        "status": "passed",
+        "image_context_fingerprint": "e998daa89131d4d698d249b116912fe2ccf54ea9ec7fa2e499abf61247d4177d",
+        "runtime": {
+          "tag": "anthropic-readiness-runtime:amd64",
+          "id": "sha256:3414c59a88956b16812a6a5d290a532f3db393cdb8711dfa263ce33396d400c1",
+          "revision": "be168d9962ff3dacd5e480818dd537d9f3438593",
+          "inspection": {
+            "path": "artifacts/images/1792131819611604000-amd64/04-image-inspect.log",
+            "sha256": "85f9f5112a4f1f86fa61f6d19b2789b8e1819ceb4cb534bcbe06420a5bb36f04"
+          }
+        },
+        "development": {
+          "tag": "anthropic-readiness-dev:amd64",
+          "id": "sha256:0aa587da1aa506db8cbd358a7433b63d118e54a2778d8e81359610bbb97ee155",
+          "inspection": {
+            "path": "artifacts/images/1792131819611604000-amd64/11-dev-image-inspect.log",
+            "sha256": "b11f9ca7f54faef3220830be68d675a71c4aac5944d8b3336d0454c5d418ce82"
+          },
+          "network_attachments": {},
+          "network_proof": {
+            "path": "artifacts/images/1792131819611604000-amd64/16-dev-network-inspect.log",
+            "sha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+          },
+          "offline_full": {
+            "path": "artifacts/checks/1792133513650696461/check-result.json",
+            "sha256": "0df416e16af14aa6cb7a7f53d99fc78c852bac9dd0d6f22ba20b3f5fe273b6c2",
+            "python": "3.12.15",
+            "reported_git": {
+              "commit": null,
+              "dirty": null
+            },
+            "tool_versions": {
+              "python": "3.12.15",
+              "ruff": "0.17.0",
+              "mypy": "2.4.0",
+              "pytest": "9.1.1",
+              "import-linter": "2.15",
+              "jsonschema": "4.26.0",
+              "hatchling": "1.27.0",
+              "uv": "uv 0.13.1 (x86_64-unknown-linux-musl)"
+            },
+            "test_counts": {
+              "unit": {
+                "tests": 107,
+                "failures": 0,
+                "errors": 0,
+                "skipped": 0
+              },
+              "integration": {
+                "tests": 22,
+                "failures": 0,
+                "errors": 0,
+                "skipped": 0
+              },
+              "acceptance": {
+                "tests": 36,
+                "failures": 0,
+                "errors": 0,
+                "skipped": 0
+              },
+              "packaging": {
+                "tests": 1,
+                "failures": 0,
+                "errors": 0,
+                "skipped": 0
+              }
+            }
+          }
+        },
+        "controls": {
+          "runtime_default_uid": 10001,
+          "read_only_root": true,
+          "tmpfs_limit": "64m",
+          "replay_network": "none",
+          "synthetic_peer_network": "internal",
+          "signals": {
+            "SIGINT": 130,
+            "SIGTERM": 143
+          },
+          "host_alias": "host.docker.internal; temporary generic loopback server; not a real target"
+        },
+        "samples": [
+          {
+            "name": "valid",
+            "files": [
+              {
+                "path": "artifacts/images/1792131819611604000-amd64/valid/result.json",
+                "sha256": "179646dfaf25ac106e87ed188171c7d1cf48bdfef4eb1a115e46de4d177ba66d"
+              },
+              {
+                "path": "artifacts/images/1792131819611604000-amd64/valid/report.html",
+                "sha256": "8a630f9011c124e0f86543c568c731bc8d8223c4411ebd67dc0c99c1f6141c71"
+              },
+              {
+                "path": "artifacts/images/1792131819611604000-amd64/valid/report.md",
+                "sha256": "aa7896d6f271fea44b31c7e3898ee74aa3d5ca838d9a48e8d8c404c6ac73ae87"
+              },
+              {
+                "path": "artifacts/images/1792131819611604000-amd64/valid/report-manifest.json",
+                "sha256": "231f756c11212b975a895031fde8b86cc5656533d94bd846d5eaf55f89de95cc"
+              }
+            ]
+          },
+          {
+            "name": "duplicate-start",
+            "files": [
+              {
+                "path": "artifacts/images/1792131819611604000-amd64/duplicate-start/result.json",
+                "sha256": "5c2722726ddaee445c8b55013ee0cf32b5251d02bd5c5e6a5fd07eea239214ac"
+              },
+              {
+                "path": "artifacts/images/1792131819611604000-amd64/duplicate-start/report.html",
+                "sha256": "c6c0d41b6152bb9ba84cc1d6737657b0ea4a97eb1559dc8e30f3872bc9eac447"
+              },
+              {
+                "path": "artifacts/images/1792131819611604000-amd64/duplicate-start/report.md",
+                "sha256": "b7b45db8e09f25184f136959dad9b3866e330bf6d9c617823783ac6d61de1668"
+              },
+              {
+                "path": "artifacts/images/1792131819611604000-amd64/duplicate-start/report-manifest.json",
+                "sha256": "a7e4e40a167192c005c2dc4bc55a7403499e2f9b1ef9083135b90298e7b73a2a"
+              }
+            ]
+          },
+          {
+            "name": "isolated-peer",
+            "files": [
+              {
+                "path": "artifacts/images/1792131819611604000-amd64/isolated-peer/result.json",
+                "sha256": "84f990ac3b7eb1a341f4e59285e0de5ef5eaf31105d43d36b1fcc9ab1b87df5d"
+              },
+              {
+                "path": "artifacts/images/1792131819611604000-amd64/isolated-peer/report.html",
+                "sha256": "b540800b456daf471772770c3b5d9bb80296c080b46f1cd1d77fbe793add7d57"
+              },
+              {
+                "path": "artifacts/images/1792131819611604000-amd64/isolated-peer/report.md",
+                "sha256": "b1caeb84b703a7d5d3de687473367897c0a0c5adad12e024ce7d1787c0dd6c41"
+              },
+              {
+                "path": "artifacts/images/1792131819611604000-amd64/isolated-peer/report-manifest.json",
+                "sha256": "b4097884777fa9823d6c1bf056388a95a003034c9256dc5698bcd8710da89b25"
+              }
+            ]
+          },
+          {
+            "name": "signal-INT",
+            "files": [
+              {
+                "path": "artifacts/images/1792131819611604000-amd64/signal-INT/result.json",
+                "sha256": "14c9b327067aebda637e273851cd5540b8d8a300ec943a53573c0b00444987e9"
+              },
+              {
+                "path": "artifacts/images/1792131819611604000-amd64/signal-INT/report.html",
+                "sha256": "eb405014ba9017a8bcb3b6c167cc0e50cd33985ae03b4e4c5793c3cd02e91c08"
+              },
+              {
+                "path": "artifacts/images/1792131819611604000-amd64/signal-INT/report.md",
+                "sha256": "8cda8e16a8390e2abf231e9352a423c9df1513351b13aedfa866d700aa04d12e"
+              },
+              {
+                "path": "artifacts/images/1792131819611604000-amd64/signal-INT/report-manifest.json",
+                "sha256": "137bb547799d4b06251d09973f0c7bd4b49d3a3b52ccd8da1f91fb0ff9b53dc8"
+              }
+            ]
+          },
+          {
+            "name": "signal-TERM",
+            "files": [
+              {
+                "path": "artifacts/images/1792131819611604000-amd64/signal-TERM/result.json",
+                "sha256": "d7a76a25a057e55a7e8818b17f411671fbf914d0ddd91f3b370d2c53a3e48f2b"
+              },
+              {
+                "path": "artifacts/images/1792131819611604000-amd64/signal-TERM/report.html",
+                "sha256": "101dfc43b58754d7ef810432a489b2a13c020f011c4d6090eebdb898a52b487f"
+              },
+              {
+                "path": "artifacts/images/1792131819611604000-amd64/signal-TERM/report.md",
+                "sha256": "0a285aefb3143c1b98442acfe81e9cd81a9374d16a025ffefe9590b266a1246e"
+              },
+              {
+                "path": "artifacts/images/1792131819611604000-amd64/signal-TERM/report-manifest.json",
+                "sha256": "9b7ccde9467b180c6a0df1b3ac90923367d809b5f5a606ca33102e0ed83fbdb9"
+              }
+            ]
+          },
+          {
+            "name": "host-path",
+            "files": [
+              {
+                "path": "artifacts/images/1792131819611604000-amd64/host-path/result.json",
+                "sha256": "82cde4a4b31335b67df701205586801805081bef222a3dbbf7a4430ccd609c6c"
+              },
+              {
+                "path": "artifacts/images/1792131819611604000-amd64/host-path/report.html",
+                "sha256": "deb3bc69fd56ecc4923395d9a6ca01917cb7d56d21855a43cd861dd9e5fc4fc4"
+              },
+              {
+                "path": "artifacts/images/1792131819611604000-amd64/host-path/report.md",
+                "sha256": "1c6e6189154de2ca6f347a3456930125ee0dbb12f73284deb20c8cba131fafa1"
+              },
+              {
+                "path": "artifacts/images/1792131819611604000-amd64/host-path/report-manifest.json",
+                "sha256": "a06dc3b98d3bd9355b467f11e93659c9f5e72d447def3e14e4f2d97753fe6989"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "independent_review": {
+      "status": "completed_with_findings",
+      "candidate": "ad4e131e6514438a00aca08c3f98a4a89ea16870",
+      "reviewer": "fresh-context gpt-6-astra/xhigh",
+      "important_findings": 6,
+      "documentation_findings_regraded_important": 2,
+      "author_fixes": "one RED-to-GREEN pass; 166 tests passed after fixes",
+      "fix_commit": "74e123d",
+      "deferred_minors": [],
+      "re_review": "not_requested",
+      "summary": "docs/reviews/2026-10-16-stage-a-review.md"
+    },
+    "visual_review": {
+      "status": "passed",
+      "record": "docs/reviews/2026-10-16-report-visual-review.md",
+      "scope": "1280x900 desktop; 390x844 narrow; all four A4 pages; synthetic mixed sample intentionally omits evidence; CSS unchanged after review fixes"
+    },
     "remote_ci": "not_run",
     "real_endpoint": "not_run",
     "registry_publication": "not_run"
   },
+  "distribution": {
+    "files": [
+      {
+        "path": "artifacts/distribution/be168d9/anthropic_readiness-0.1.0-py3-none-any.whl",
+        "sha256": "61304c4ecb8e03b16636b05056a27abc486cf42c33e79fc91bf4e3a1c91c980e"
+      },
+      {
+        "path": "artifacts/distribution/be168d9/anthropic_readiness-0.1.0.tar.gz",
+        "sha256": "7959ead7f67c3df7744c1c49fc58f2e54d4abdb10f423d32ed9c706b3bb0ca9a"
+      }
+    ],
+    "installed_export_verification": {
+      "path": "artifacts/distribution/be168d9/verification.json",
+      "sha256": "30c724512749d528b56babb76794a7770275371d6ad5913706519125aea578d2"
+    },
+    "installed_export_log": {
+      "path": "artifacts/distribution/be168d9/verification.log",
+      "sha256": "980b28a3df9a52f828676f9614dc0512e73911e178626ff2981c8a8544dab360"
+    },
+    "note": "Offline exported wheel installed in a clean Linux venv outside source; image-installed wheel independently exercised. Identical wheel byte hashes across builds are not claimed."
+  },
   "instructions": "docs/HANDOFF.md",
+  "local_artifact_policy": "Ignored artifacts are present in this checkout and are not published or committed. Archive them with this manifest when transferring an assessment; paths alone are not portable evidence.",
   "limitations": [
-    "This interim manifest is not a completion claim or endpoint certificate.",
-    "Final fixed-commit verification follows independent review and any fixes."
-  ]
+    "Local synthetic developer/container acceptance is not a real endpoint compatibility certificate.",
+    "amd64 was emulated on arm64; native remote amd64 CI remains unrun.",
+    "Single Messages 2023-06-01 core contract; no beta support or multi-version matrix claim.",
+    "Tool loops/parallel live cases belong to B; real Claude Code workflows to C; protocol-update Agent command and publishing guidance to D.",
+    "Remote repository setup, branch protection, Docker Hub publication, license selection and actual API runs require the owner to authorize/configure them separately."
+  ],
+  "implementation_ledger": "docs/harness/implementation-ledger.md"
 }

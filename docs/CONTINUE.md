@@ -1,66 +1,44 @@
-# Continue Stage A
+# Stage A completed locally
 
-The user approved the specification and the 12-task plan for sequential
-implementation in this chat. The earlier pause and planning approvals are
-resolved. Continue implementation without asking for another scope approval.
+The approved 12-task Stage A plan is complete on branch `feat/stage-a`.
+Read [HANDOFF.md](HANDOFF.md), [the evidence manifest](harness/handoff.json),
+[the progress record](harness/progress.md) and
+[the implementation ledger](harness/implementation-ledger.md) before further work.
 
-Read `AGENTS.md`, `docs/harness/progress.md` and the current task brief in
-`.superpowers/sdd/2026-10-15-stage-a-implementation/`. The specification is
-`docs/superpowers/specs/2026-10-14-anthropic-readiness-design.md`; the approved
-plan is `docs/superpowers/plans/2026-10-15-stage-a-implementation.md`.
+## Verified delivery
 
-## Resume state
+- Verification commit: `be168d9962ff3dacd5e480818dd537d9f3438593`. Subsequent handoff-only
+  commits update excluded records; source, lock, API bundle and image context stay identical.
+- Linux Python 3.12.15 Dev Container and supplemental Python 3.11.17 full graphs
+  each passed 166 tests with zero failures, errors or skips. The fast graph passed.
+- Final arm64 native and amd64 emulated image jobs passed builds, prepared/disconnected
+  dev full checks, nonroot read-only runtime replay, isolated synthetic peers, output
+  persistence, SIGINT/SIGTERM and a generic Docker Desktop host-alias path.
+- One independent whole-stage review is complete. Six Important findings and two
+  regraded documentation defects were fixed in one author RED-to-GREEN pass.
+  No re-review or deferred minor remains. Do not repeat this completed review.
+- Wheel and sdist are in ignored `artifacts/distribution/be168d9/`; the exported wheel
+  was installed and exercised offline in a fresh Linux environment outside source.
+- Reports and exact local artifact hashes are listed in the handoff manifest.
+  These observations are synthetic developer acceptance, not endpoint certification.
 
-The user resumed on 2026-10-16 after the account limit reset. The pause is resolved.
-Continue the final image acceptance and handoff without redoing the independent review.
+## Next work requires its own scope
 
-## Current implementation
+Stop at A. B owns tool loops, parallel cases and version matrices; C owns real
+Claude Code workflows; D owns protocol-update Agent tooling and later maintenance.
+The sole API bundle is Messages 2023-06-01 core revision 1.0.0, with no betas.
+Capture writers use schema 1.1; readers retain conservative 1.0 support.
 
-- Branch: `feat/stage-a`. Tasks 1–11 are complete. Task 12 is in final handoff.
-- One independent whole-stage review (gpt-6-astra/xhigh) is complete. Six Important
-  findings were reproduced and fixed in one author RED-to-GREEN pass, plus two
-  regraded documentation errors. Do not dispatch another reviewer.
-- Fix commit: `74e123d`. Final code/verification baseline:
-  `467227d20fb71c0141e154f0b4a3c098ddf3ce76`. Working tree was clean before these pause notes.
-- At that baseline, the full graph passed all 166 tests on Linux Python 3.12.15
-  and Python 3.11.17. The floor container was disconnected from external networks
-  before its final full run; network attachments were observed as {}.
-- Both architecture image jobs passed BEFORE the final review fixes. Final images
-  for baseline 467227d have NOT been rebuilt/verified. This remains required;
-  do not reuse earlier image results as current-code acceptance.
-- Next after explicit resume: run the two final full image jobs sequentially,
-  bind their source/lock/contract evidence with the final full/floor results,
-  produce fresh legal/invalid replay samples, finalize handoff/progress/ledger,
-  and make the scoped local delivery commit. No further feature work is planned.
-- `docs/harness/handoff.json` is intentionally an incomplete interim manifest.
-  Review summary is `docs/reviews/2026-10-16-stage-a-review.md`.
-- Capture writers now use schema 1.1 for verified lifecycle projection proof;
-  capture 1.0 remains readable. API bundle 1.0.0 and historical files are unchanged.
-- Existing Dev Container: 37e2df3d035dcea82e94d227f891b34b2f95e486d8336c785a3e29f85b61e139.
-  Floor container: readiness-stage-a-floor (Python 3.11.17, no network).
-  Use container Python for product checks. Host stdlib Python only orchestrates Docker.
-- No real target, remote CI or registry publication was run. Source/lock fingerprint
-  and precise final check paths are in the latest ignored artifacts/checks manifests.
+No real endpoint, remote CI or registry publication was run. Remote repository
+creation/push, registry publishing, account setup and real API execution require
+the owner's specific authorization. Keep private targets, credentials, original
+logs and the historical evaluation workspace outside source/build contexts.
+Local commits and synthetic checks remain authorized.
 
-## Persistent boundaries
+Use the checked-in Linux/Python 3.12 Dev Container for development. The existing
+prepared Dev Container is retained; its identifier is an ephemeral local detail.
+The completed plan's scratch workspace is archived locally and removed; its
+permanent ledger is tracked under docs/harness.
 
-Implement Stage A only. B owns tool loops and version matrices; C owns real
-Claude Code workflows; D owns periodic protocol-update tooling/Agent command,
-comparison and release guidance. The first protocol bundle supports only the
-Messages 2023-06-01 core subset with an empty beta set.
-
-Retain the read-only historical evaluation workspace. Keep private endpoints,
-models, logs and credentials outside source/build contexts. Local commits and
-synthetic testing are authorized; remote creation/push, Docker Hub publishing
-and real endpoint execution need their specific authorization.
-
-The user permits discussing design with the referenced evaluation chat. Read
-that chat again before relying on any new conclusions. Its advice is not real
-endpoint evidence. The independent whole-stage review and its author fix pass are complete.
-
-## Network waiting
-
-The user explicitly reports a slow network and asks for patient waits with
-roughly ten-minute progress polling. Extend download timeouts and retain the
-original source; do not repeatedly probe or change download routes. Ordinary
-local checks do not need that delay.
+For future network preparation, retain the original source and wait patiently.
+The user requested roughly ten-minute download-progress polling.

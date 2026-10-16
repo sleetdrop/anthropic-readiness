@@ -1,46 +1,75 @@
 # Stage A execution progress
 
 Plan: `docs/superpowers/plans/2026-10-15-stage-a-implementation.md`.
+Execution: approved sequential implementation in this chat; no implementer agents.
+Baseline: `676f105`; delivery branch: `feat/stage-a`.
 
-Execution method: native, sequential, approved on 2026-10-15.
-Baseline: `676f105` on `feat/stage-a`; current project directory was explicitly selected for this new repository.
+Current milestone: all 12 tasks complete; local offline developer/container
+acceptance passed. Remote CI, actual endpoints and registry publication are unrun.
+The machine-readable evidence is [handoff.json](handoff.json); this status does not
+certify a service. Local artifact paths refer to this checkout and are ignored by Git.
 
-Current milestone: Tasks 1–11 complete; Task 12 in progress. Expanded full gates, Python floor and both architecture images passed locally; independent Stage A review and final fixed-commit handoff remain pending. Historical preparation notes below are dated observations, not unresolved current blockers.
+## Completed implementation
 
-Ruling: use the dedicated new repository in place, on a feature branch — the approved plan selected this directory and no existing application checkout needs isolation.
+Tasks 1–3 established the Dev Container, locked modern Python package, strict
+domain/config/result contracts, packaged schemas and immutable official-source
+API bundle. Tasks 4–6 added incremental SSE framing, lifecycle/message validation
+and the four fixed cases. Tasks 7–9 added bounded transport, redaction/evidence,
+required-case accounting, offline replay and explicit live opt-in. Task 10 added
+restrained Chinese HTML/Markdown reports, reader guidance, sources and installed
+wheel acceptance. Task 11 added quality gates, negative gate controls, pinned
+GitHub workflows, contribution templates and two-architecture image validation.
+Task 12 mapped coverage, arranged the independent review, fixed its findings,
+revalidated final sources and assembled the handoff.
 
-Environment preparation: dev image and actual Dev Container built/started successfully (arm64). Python 3.12.15, uv 0.13.1, Dev Container CLI 0.89.0. Dependency lock resolved 39 packages. Initial four check-runner behavior tests observed RED then GREEN inside Linux; formal pytest and strict checks await environment sync.
+Meaningful counterexamples were observed RED before behavior was implemented;
+legal controls/goldens were retained. The permanent
+[implementation ledger](implementation-ledger.md) records task ranges, commands,
+review fixes and all scope rulings. Historical intermediate status snapshots are
+retained in Git and ignored artifacts/implementation-history; their former pending
+wording is not the current milestone.
 
-Task 1 verified: Dev Container pytest 4/4 passed; bootstrap fast graph passed lock, format, lint, strict types and tests. Installed CLI help ran from `/tmp`. This verifies the development foundation only. Source/validator/runtime acceptance remains incomplete.
+## Final observations
 
-Task 2 verified: eight domain/schema tests pass, including mixed-result round-trip and structurally valid inconsistent readiness rejection. Initial RED exposed absent modules; the first implementation also exposed and corrected aggregate precedence. Bootstrap graph remains green (12 total tests). Six packaged schemas and pure shared records are present; filesystem evidence checks remain Task 8.
+Verification commit: `be168d9962ff3dacd5e480818dd537d9f3438593`, observed clean on the host.
+Source fingerprint: `f7cdcacf4a7942b286f3c2c8f5e7ad14e9a3d3f7ce6bceb7ca59778d694daebd`.
+Lock SHA-256: `8025bb668b4aa0aa8a8b949f71c166b895c973f74eb038570c13d655be98043d`.
+Container Git metadata was unavailable/null where recorded; host proof, source/lock
+fingerprints and runtime revision labels are bound separately without inventing fields.
 
-Task 3: strict config/contract tests 18/18 passed. Five official sources retrieved at 2026-10-15 15:58 UTC; normalized hashes recorded in the packaged manifest. Runtime resolution stays offline. API date 2023-06-01 with no beta is the sole supported contract. Fixture hashes cover legal and defective controls; detector coverage is implemented in Tasks 4–6.
+- Python 3.12.15 Dev Container: all 11 full gates passed; 166 tests.
+- Python 3.11.17 compatibility floor: all 11 gates passed; 166 tests; network disconnected.
+- Fast graph: all seven gates and 107 unit/harness tests passed.
+- Full count per graph: 107 unit/harness, 22 integration, 36 acceptance, one installed-package;
+  zero failures, errors or skips. Image-prepared dev full graphs independently passed.
+- linux/arm64: native; artifacts/images/1792129994691446000-arm64/image-result.json; runtime sha256:70de0d813e37b7ad0634939d8ea84518898d54fb9aa0563bde5f403fa81b6de7.
+- linux/amd64: emulated; artifacts/images/1792131819611604000-amd64/image-result.json; runtime sha256:3414c59a88956b16812a6a5d290a532f3db393cdb8711dfa263ce33396d400c1.
+- Image controls include UID 10001 by default, read-only root, bounded tmpfs, no-network
+  replay, retained output, internal synthetic peer, SIGINT 130/SIGTERM 143, package/OS
+  inventories and host.docker.internal against a temporary generic loopback server.
+- Exported wheel/sdist built offline; wheel resources matched source and the exported
+  wheel installed/executed in a clean Linux venv outside source. The initial standalone
+  export command did not select the prepared project environment and lacked its
+  backend on the subprocess path; invoking it through uv run corrected the command.
+  No dependency declaration was changed and the failed attempt is retained.
+- Desktop, narrow and four-page print visual checks passed. Layout CSS was unchanged
+  by final review fixes. The mixed synthetic layout sample intentionally lacks evidence.
 
-Task 4 verified: nine framing tests pass, including all byte split positions, one-byte delivery, 30 seeded multi-split plans, invalid UTF-8, EOF tails and event limits. Full bootstrap graph passed with 39 tests. Framing has no transport or Anthropic imports beyond domain records.
+## Independent review closure and boundaries
 
-Task 5 verified: 30 streaming tests and the 69-test bootstrap suite pass. Versioned legal/defect fixtures retain verdicts at every split position. Regression tests preserve initial-field defects, duplicate-stop failures and known bad tool input alongside unknown extensions; complete message stops remain proven when capture times out. Shared message checks were introduced here to avoid two different reconstruction/nonstream verdict engines; Task 6 adds direct acceptance coverage.
+The fresh-context gpt-6-astra/xhigh review found six Important defects and independently
+passed the earlier 152-test candidate. The author reproduced and fixed required
+membership, transformed replay, deep JSON/capture persistence, assertion evidence
+verification, interrupted UTF-8 and installed provenance in one RED-to-GREEN pass.
+Two onboarding/domain documentation errors were regraded Important and fixed in
+the same pass. Final full suites passed 166 tests. No second review or deferred
+minor remains. See [review closure](../reviews/2026-10-16-stage-a-review.md).
 
-Task 6 verified: direct message/case tests 24/24 pass. Unknown stop reasons remain indeterminate, non-object tool input fails protocol structure, and max_tokens preserves protocol validity but fails short-task completion. Exactly four case/version definitions retain 3/4 request selection and explicit capability exclusions. The complete bootstrap suite passed (93 tests), including strict types and lint.
+Capture writer 1.1 versions the lifecycle projection proof; 1.0 reads remain
+conservative. API bundle 1.0.0, prompts and historical results are unchanged.
+Tool loops/matrices, real Claude Code, protocol-update Agent command and remote
+release/account operations remain outside A. Native amd64 remote CI, real service
+compatibility and published-image availability remain unobserved.
 
-Task 7 verified: 17 transport/deadline tests pass against loopback synthetic HTTP and injected transport seams. No retries/redirect following; exact headers and no-auth verified. Absolute deadlines stop active ping streams and preserve message_stop before timeout/reset. Incremental gzip decoding is bounded; observed read sizes remain distinct from retained bytes. Test socket guards reject external connections. Public transport stays synchronous; one internal async request enforces portable absolute cancellation without concurrent cases.
-
-Task 8 verified: nine redaction/evidence tests pass, strict types/lint/format and the bootstrap graph pass (119 tests). Versioned synthetic captures are stored for legal and duplicate-start replay. Files are exclusive, private and hashed; bad paths/hashes/event pointers are rejected. Transformed or partial captures are re-chunked on load. Updated continuation/spec/plan status text to remove obsolete approval-pending/no-code statements.
-
-Task 9 verified: 17 CLI/runner/replay acceptance tests pass; full bootstrap checks pass with 136 tests. Real loopback requests match the count, SIGINT/SIGTERM preserve partial captures and return 130/143, known failures survive earlier successes, and internal errors override ordinary evaluation exits. Missing assertions/profile cases and invalid event references block misleading final results. Offline capture contract/request mismatches are rejected before output; replay cannot fall through to live transport. Returned and saved results are both sanitized. Synthetic captures now include the complete fixed request context. A mixed synthetic result fixture explicitly omits evidence and labels synthetic transport calls.
-
-Task 10: HTML/Markdown and fresh non-editable wheel checks passed. The wheel and sdist build offline with locked build requirements; runtime dependencies are prepared from uv.lock in a new environment, then the wheel is installed without source injection and checked for dependency consistency. Help/contracts/validate/replay/report all run outside the repository. Final visual review covers desktop, narrow screen and all four A4 print pages; see docs/reviews/2026-10-16-report-visual-review.md. Synthetic data, missing evidence and unexecuted case counts remain explicit. PASS IDs are compact; every non-PASS assertion retains detailed references.
-
-Task 11 interim: designated negative gate controls observed RED, then all 13 harness tests pass after implementation. Expanded full graph at artifacts/checks/1792111012405437381 passed all 11 checks and 152 tests (106 unit/harness, 22 integration, 23 acceptance, one installed-package). Pure JSON validation was separated from packaged resource loading so both architecture contracts pass. Workflow definitions use exact verified action SHAs, read-only permissions and no secrets/publishing. Remote CI remains not_run. Image acceptance is running; do not infer its result from this graph. Python 3.11.17 floor preparation is separate from standard Python 3.12.15 development.
-
-Container interim: arm64 native full acceptance at artifacts/images/1792110918344857000-arm64 passed build/dev offline graph, ordinary UID 10001 runtime, read-only/network-none legal and defective replay, retained outputs, private internal synthetic peer and SIGINT/SIGTERM (130/143). Its optional host path was not_run, not inferred. A later run will add OS/package inventories and the separately prepared host-path observation before final handoff. amd64 emulated acceptance is in progress.
-
-Container interim: amd64 full acceptance at artifacts/images/1792111556181703000-amd64 passed, explicitly emulated on this arm64 host. It additionally recorded runtime/dev image inspection, actual Debian package inventories, Python/runtime package versions, bounded tmpfs and the Docker Desktop host.docker.internal route to a disposable loopback synthetic peer. Both signals, isolated peer and network-none replay passed. Python 3.11.17 full graph passed all 152 tests separately; remote CI/real endpoints remain not_run.
-
-Task 11 verified: updated arm64 native full acceptance at artifacts/images/1792111710031649000-arm64 passed the same inventory/bounded-tmpfs/host-path controls as amd64. Both architecture jobs are independently passed, with synthetic-only evidence and retained logs. The actual Dev Container and separate 3.11.17 floor graph passed; latest source full graph passed all 152 tests. These are local developer/container observations, not remote CI or endpoint results. Final fixed-commit revalidation and independent review belong to Task 12.
-
-Task 12 fix pass: all six independently reproduced Important defects corrected. New tests observed RED then GREEN; profile version/empty-scope, tool JSON parser limits and legacy partial captures add legal/negative controls. Full graph passed 166 tests (107 unit/harness, 22 integration, 36 acceptance, one packaging test). README dry-run now executes successfully with --out, plans three requests and makes none. Capture schema 1.1 adds a verified lifecycle projection; schema 1.0 reads remain supported, with UTF-8 proof recomputed from retained bytes. Original API bundle and historical results are unchanged. Final clean-commit/floor/images verification remains pending.
-
-User-requested pause on 2026-10-16: final source baseline 467227d20fb71c0141e154f0b4a3c098ddf3ce76 has passing full graphs on Python 3.12.15 and 3.11.17 (166 tests each). Final dual-architecture images, fresh sample outputs and handoff manifest closure are still pending. Earlier candidate image PASS is not final-code acceptance. Resume only when explicitly requested. Final observed graph manifests: [{"path":"artifacts/checks/1792114118626572180","status":"passed","python":"3.12.15","source":"f7cdcacf4a7942b286f3c2c8f5e7ad14e9a3d3f7ce6bceb7ca59778d694daebd"},{"path":"artifacts/checks/1792114175865605637","status":"passed","python":"3.11.17","source":"f7cdcacf4a7942b286f3c2c8f5e7ad14e9a3d3f7ce6bceb7ca59778d694daebd"}].
-
-Resumed on the user request after the limit reset. The previous pause-note commit was not executed because automatic approval review hit its usage limit; the saved notes remained in the working tree. No safety rejection or source change occurred. Resume final clean-commit verification and handoff only.
+Handoff-only follow-up commits affect excluded records and do not rebuild or
+relabel the verified images. The next stage requires separate owner scope.
