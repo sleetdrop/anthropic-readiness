@@ -1,5 +1,6 @@
 """Pure reader-facing explanations; recorded verdicts remain authoritative."""
 
+import json
 from collections.abc import Sequence
 
 from anthropic_readiness.models import JsonObject, JsonValue, RunResult
@@ -45,6 +46,14 @@ def overview(result: RunResult) -> tuple[str, str]:
     dimensions = [c.get("dimensions") for c in result.cases]
     behavior = sum(isinstance(d, dict) and d.get("behavior") == "PASS" for d in dimensions)
     protocol = sum(isinstance(d, dict) and d.get("protocol") == "PASS" for d in dimensions)
+    if (
+        executed == len(result.cases)
+        and executed > 0
+        and behavior == executed
+        and protocol < executed
+        and "not_ready" in states
+    ):
+        title = "任务已完成，兼容检查未通过"
     return title, (
         f"已执行 {executed}/{len(result.cases)} 个用例；"
         f"任务行为通过 {behavior} 个，协议格式通过 {protocol} 个。"
@@ -71,6 +80,7 @@ def findings(result: RunResult, diagnostics: Sequence[JsonObject]) -> list[JsonO
                 groups[identity] = {
                     "id": key,
                     "status": assertion.get("status"),
+                    "category": assertion.get("category"),
                     "title": title,
                     "impact": impact,
                     "action": action,
@@ -90,12 +100,34 @@ def findings(result: RunResult, diagnostics: Sequence[JsonObject]) -> list[JsonO
                     and diagnostic.get("assertion_id") == key
                 ):
                     observations.append(diagnostic)
-    for group in groups.values():
+    for index, group in enumerate(groups.values(), 1):
+        group["number"] = f"F{index:02}"
+        group["anchor"] = f"finding-{index}"
+        group["kind"] = (
+            "身份配置待确认"
+            if group["id"] == "MSG-MODEL"
+            else "执行条件"
+            if group["category"] == "environment"
+            else "任务行为"
+            if group["category"] == "behavior"
+            else "客户端约束"
+            if group["category"] == "client"
+            else "格式差异"
+        )
         if group["id"] == "MSG-CORE" and objects(group.get("observations")):
             group["title"] = "停止字段不完整"
         if group["status"] != "FAIL":
             group["impact"] = "本项记录为" + state_name(group["status"]) + "，不能当作已完整通过。"
     return list(groups.values())
+
+
+def finding_count(groups: Sequence[JsonObject]) -> str:
+    affected: set[str] = set()
+    for group in groups:
+        members = group.get("cases")
+        if isinstance(members, list):
+            affected.update(str(case) for case in members)
+    return f"{len(groups)} 类问题，涉及 {len(affected)} 个用例"
 
 
 def _explanation(key: str, reason: str) -> tuple[str, str, str]:
@@ -146,6 +178,17 @@ def message_diagnostic(
             else "最终消息：stop_reason 为停止原因；stop_sequence 存在，无匹配序列时为 null"
         )
         actual = "字段缺失：" + "、".join(missing)
+        expected_fields: JsonObject = (
+            {"stop_reason": None, "stop_sequence": None}
+            if streaming_start
+            else {"stop_sequence": None}
+            if "stop_sequence" in missing
+            else {}
+        )
+        actual_fields: JsonObject = {
+            key: message[key] for key in ("stop_reason", "stop_sequence") if key in message
+        }
+        expected_label = "应有字段（局部示意）"
     elif assertion_id == "MSG-MODEL":
         aliases = target.get("response_model_aliases")
         allowed = (
@@ -155,6 +198,9 @@ def message_diagnostic(
         )
         expected = f"请求模型：{target.get('model')}；允许别名：{allowed}"
         actual = f"响应模型：{message.get('model')}"
+        expected_fields = {"requested_model": target.get("model"), "allowed_aliases": aliases}
+        actual_fields = {"model": message.get("model")}
+        expected_label = "本次身份配置（非请求正文）"
     else:
         return None
     return {
@@ -163,4 +209,10 @@ def message_diagnostic(
         "expected": expected,
         "actual": actual,
         "reference": reference,
+        "source_label": "message_start.message" if streaming_start else "JSON 响应根对象",
+        "expected_label": expected_label,
+        "expected_excerpt": json.dumps(expected_fields, ensure_ascii=False, indent=2)
+        if expected_fields
+        else "",
+        "actual_excerpt": json.dumps(actual_fields, ensure_ascii=False, indent=2),
     }

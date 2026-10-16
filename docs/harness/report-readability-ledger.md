@@ -52,3 +52,48 @@ integration, 41 acceptance, one installed-package), zero failures/errors/skips.
 Check manifest: artifacts/checks/1792138109363923672/check-result.json. Source fingerprint: 8093e7e9d327a7364c5677d7b74803a5480a17a885cd661cb49013e1d73a2f2f.
 The source remained unchanged during verification; the lock file remains unchanged.
 An ignored machine index is saved at artifacts/report-readability/verification.json.
+
+## Reference-informed refinement (presentation 1.2)
+
+The owner requested comparison with reports from similar tools. See the
+[reference study](../reviews/2026-10-16-report-reference-study.md) for primary
+examples, observations and adaptations. The approved reading flow remains the same.
+
+- Added a compact run masthead, contextual verdict, distinct finding/affected-case
+  counts, visible evidence quality, report-local finding IDs and case/finding links.
+- Partial expected/actual JSON excerpts link to retained responses or SSE events.
+  Identity configuration is labeled separately from protocol format; original FAIL
+  states remain visible. Different observed field values retain distinct excerpts.
+- HTML uses restrained typography, semantic navigation, comparison columns and
+  narrow-layout stacking. Markdown includes the same facts and evidence locations.
+  No external asset, script or service is required.
+- The presentation contract advances from 1.1 to 1.2; the manifest regression was
+  intentionally updated for this version change. Result schema, API bundle, golden
+  verdicts and original result bytes are unchanged.
+- Initial summary/evidence tests observed two failures and one passing negative
+  control before implementation (artifacts/report-research/red.log). Existing markup
+  injection coverage caught a Markdown snippet regression; string brackets are now
+  represented with JSON unicode escapes, retaining their decoded values.
+- Content review identified different final stop values being combined under the
+  same missing-field description. A new test failed before the grouping key included
+  the actual/expected excerpts (distinct-values-red.log). Focused reports then passed
+  15 tests (green-final.log); no assertion or recorded verdict was weakened.
+
+Final Linux/Python 3.12 graph: all 11 gates passed, 175 tests (107 unit/harness,
+22 integration, 45 acceptance, one installed-package), zero failures/errors/skips.
+Check manifest: artifacts/checks/1792140545162506299/check-result.json.
+Source fingerprint: 2dea2be76048d18ddd832edca142d46290af90a0de0b7c4b5384d50df130959b.
+Source remained unchanged during verification; the lock hash remains unchanged.
+The ignored index artifacts/report-research/verification.json records the checks.
+
+Static document QA inspected desktop/narrow layouts, the narrow stacked comparisons
+and all eight A4 pages. URL fetching was disabled. The local-field values and source
+links were also inspected in the rendered output. Browser interaction/responsive
+acceptance remains unrun; the public example tab timed out, and the previously
+blocked local file was not accessed through another browser surface.
+
+The private re-render preserved result.json and all 20 evidence files byte for byte;
+the generated evidence status is verified with no errors.
+The existing capture is re-rendered offline to a new private output directory; no
+new endpoint request is made. Frozen Stage A and presentation 1.1 observations above
+remain historical, rather than acceptance for this renderer.

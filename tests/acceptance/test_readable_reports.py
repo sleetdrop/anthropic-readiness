@@ -107,7 +107,7 @@ def test_grouped_findings_explain_missing_fields_and_alias_without_rescoring(
         assert "未重新判定" in text
     manifest = json.loads((destination / "report-manifest.json").read_text())
     assert manifest["evidence_verification"]["status"] == "verified"
-    assert manifest["presentation_version"] == "1.1"
+    assert manifest["presentation_version"] == "1.2"
 
 
 def test_invalid_evidence_never_becomes_a_field_diagnosis(tmp_path: Path) -> None:
@@ -155,3 +155,83 @@ def test_verified_diagnostic_strings_cannot_inject_report_markup(tmp_path: Path)
     assert "&lt;script&gt;" in html + md
     assert 'href="javascript:' not in html
     assert "|[link](javascript:run)" not in md
+
+
+def test_reference_informed_report_connects_summary_findings_and_source(tmp_path: Path) -> None:
+    source = assessment(tmp_path / "source")
+    out = tmp_path / "report"
+    render_from_file(source, out)
+    html = (out / "report.html").read_text()
+    markdown = (out / "report.md").read_text()
+    for text in (html, markdown):
+        front = text.split("技术附录", 1)[0]
+        assert "运行摘要" in front
+        assert "2 类问题，涉及 4 个用例" in front
+        assert "F01" in front
+        assert "F02" in front
+        assert "格式差异" in front
+        assert "身份配置待确认" in front
+        assert "example-model" in front
+        assert "API 2023-06-01" in front
+        assert "原断言：FAIL" in text
+        assert "实际字段摘录" in text
+        assert "局部字段" in text
+    assert 'id="finding-1"' in html
+    assert 'href="#finding-1"' in html
+    assert 'class="comparison"' in html
+    assert "&quot;stop_sequence&quot;: null" in html
+    assert "SSE 事件" in html
+    front_md = markdown.split("## 技术附录", 1)[0]
+    assert "evidence/" in front_md
+    assert "body.bin" in front_md
+    assert "events.jsonl" in front_md
+
+
+def test_grouped_excerpts_retain_distinct_observed_stop_values(tmp_path: Path) -> None:
+    source = assessment(tmp_path / "source")
+    out = tmp_path / "report"
+    render_from_file(source, out)
+    html = (out / "report.html").read_text()
+    markdown = (out / "report.md").read_text().split("## 技术附录", 1)[0]
+    assert "&quot;stop_reason&quot;: &quot;tool_use&quot;" in html
+    assert '"stop_reason": "tool_use"' in markdown
+    assert '"stop_reason": "end_turn"' in markdown
+
+
+def test_evidence_warning_precedes_case_results(tmp_path: Path) -> None:
+    source = ROOT / "tests/fixtures/results/mixed.json"
+    out = tmp_path / "report"
+    render_from_file(source, out)
+    for name in ("report.html", "report.md"):
+        text = (out / name).read_text()
+        assert text.index("证据未完整核验") < text.index("用例结果")
+    assert 'class="comparison"' not in (out / "report.html").read_text()
+
+
+def test_other_core_failure_is_not_presented_as_missing_stop_fields(tmp_path: Path) -> None:
+    target = load_target(ROOT / "examples/target.yaml")
+
+    class UsageDefectTransport(FixtureTransport):
+        def send(self, request: RequestSpec, limits: Limits, deadline: float) -> Capture:
+            result = super().send(request, limits, deadline)
+            if request.streaming:
+                return result
+            message = json.loads(result.body)
+            message["usage"]["output_tokens"] = "invalid-synthetic-number"
+            return replace(capture(json.dumps(message).encode()), request=request)
+
+    out = tmp_path / "source"
+    result = execute_run(
+        plan_run(
+            target,
+            resolve_contract(target.contract_id, target.contract_revision),
+            ["anthropic-basic"],
+        ),
+        UsageDefectTransport(),
+        out,
+    )
+    write_reports(result, out)
+    text = (out / "report.html").read_text()
+    assert "消息结构不符合要求" in text
+    assert "停止字段不完整" not in text
+    assert 'class="comparison"' not in text

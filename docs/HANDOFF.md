@@ -39,8 +39,10 @@ not prove the full live profile. To share with an Agent, include report.md for a
 initial reading; include result.json and the referenced evidence for independent
 verification. The reader guide, glossary and source references are embedded.
 
-Report presentation 1.1 starts with a Chinese conclusion, task/protocol case table
-and grouped findings. Expected/observed stop fields and model names are supplemented
+Report presentation 1.2 includes a compact run summary, Chinese conclusion,
+task/protocol case table and linked grouped findings. Partial expected/observed
+field comparisons distinguish format differences from identity configuration; stop
+fields and model names are supplemented
 only from verified evidence. Technical IDs, full assertions and provenance remain
 in the appendix. Re-rendering keeps the original result.json bytes and verdicts;
 it does not rescore or make new API calls. See the

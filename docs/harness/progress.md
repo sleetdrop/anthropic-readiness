@@ -105,3 +105,21 @@ handoff/image manifests still describe their original baseline, not this new ren
 
 Final report follow-up verification: all 11 full gates passed, 171 tests, zero
 failures/errors/skips; source remained unchanged during the run. Check manifest: artifacts/checks/1792138109363923672/check-result.json.
+
+## Reference-informed report refinement (2026-10-16)
+
+At the owner's request, inspected actual AI Ping HTML examples and primary
+Schemathesis, Allure and Inspect documentation. Presentation 1.2 adds a compact run
+summary, contextual conclusion, numbered/linked findings, partial JSON comparisons
+and per-case source links. Format differences and identity configuration have
+separate treatment labels while original assertion statuses remain intact.
+See [the reference study](../reviews/2026-10-16-report-reference-study.md) and
+[reader ledger](report-readability-ledger.md) for rationale and RED-to-GREEN evidence.
+
+All 11 full Linux/Python 3.12 gates passed; 175 tests, zero failures/errors/skips.
+Check manifest: artifacts/checks/1792140545162506299/check-result.json. Source unchanged during verification.
+Static desktop/narrow layouts and eight A4 pages were inspected with URL fetching
+disabled; actual browser interaction and responsive acceptance remain unrun.
+The private offline render preserved original result bytes and all 20 evidence files,
+with verified evidence/errors=[] and zero new API calls. No image rebuild, remote
+CI or publication was performed. Frozen Stage A records remain historical.

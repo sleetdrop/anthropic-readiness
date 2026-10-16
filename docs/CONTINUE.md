@@ -9,7 +9,9 @@ Read [HANDOFF.md](HANDOFF.md), [the evidence manifest](harness/handoff.json),
 
 The owner approved a bounded readability improvement after the first private
 assessment. The current renderer adds a plain Chinese overview, case table, grouped
-verified field/model explanations and technical appendix (presentation 1.1).
+verified field/model explanations and technical appendix. Presentation 1.2 adds a
+compact run summary, linked findings/evidence and local-field comparisons informed
+by [public report examples](reviews/2026-10-16-report-reference-study.md).
 See [the report ledger](harness/report-readability-ledger.md). The original assessment
 and frozen Stage A artifacts stay unchanged; prior image/visual acceptance is not
 new acceptance for this renderer. No new API request was made.
