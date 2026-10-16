@@ -11,17 +11,17 @@ plan is `docs/superpowers/plans/2026-10-15-stage-a-implementation.md`.
 
 ## Current implementation
 
-- Branch: `feat/stage-a`. Tasks 1–7 have scoped local commits and passing
-  verification; Task 8 implements sanitized evidence and replayable captures.
-- The Linux Dev Container runs Python 3.12.15 and uv 0.13.1. Its container ID and
-  actual test commands are in the task ledger. Use the container-owned virtual
-  environment; do not substitute host Python for container acceptance.
-- Current checks cover strict config/results/contracts, SSE framing, message and
-  streaming validators, four case definitions and synthetic HTTP deadlines.
-  Bootstrap check success is not complete Stage A acceptance.
-- Next: finish Task 8, then runner/CLI (9), reports/package acceptance (10),
-  complete gates/runtime/CI/contribution files (11), and independent review (12).
-- Real targets have not been tested. No GitHub repository or image was published.
+- Branch: `feat/stage-a`. Tasks 1–10 have scoped local commits. Task 11 is
+  completing the full gate graph, GitHub collaboration and two-architecture images.
+- The Linux Dev Container runs Python 3.12.15 and uv 0.13.1. Standard development,
+  product checks and builds run inside Linux; a host stdlib script only orchestrates
+  Docker acceptance. Do not replace product checks with host Python tests.
+- The expanded full graph passed 152 tests (106 unit/harness, 22 integration,
+  23 acceptance, one installed-package test), strict types, architecture, schemas,
+  packaging and documentation. It is not yet final image/review acceptance.
+- Next: complete image/floor checks, commit Task 11, then Task 12 coverage,
+  independent whole-stage review, fixes and fixed-content handoff verification.
+- No real target, remote GitHub job or published image has been tested/released.
 
 ## Persistent boundaries
 

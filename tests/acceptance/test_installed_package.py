@@ -3,9 +3,10 @@
 import json
 import os
 import subprocess
-import zipfile
+import sys
 from pathlib import Path
 
+from scripts.check_package import verify_wheel_resources
 from tests.acceptance.test_cli import ROOT
 
 
@@ -27,16 +28,9 @@ def test_installed_wheel_outside_repository(tmp_path: Path) -> None:
     run(["uv", "build", "--offline", "--no-build-isolation", "--out-dir", str(dist)], ROOT)
     wheel = next(dist.glob("*.whl"))
     assert list(dist.glob("*.tar.gz"))
-    with zipfile.ZipFile(wheel) as archive:
-        names = set(archive.namelist())
-        resources = ROOT / "src/anthropic_readiness/resources"
-        for resource in resources.rglob("*"):
-            if resource.is_file():
-                assert (
-                    "anthropic_readiness/resources/" + str(resource.relative_to(resources)) in names
-                )
+    assert verify_wheel_resources(wheel, ROOT) == []
     environment = tmp_path / "venv"
-    run(["uv", "venv", str(environment), "--python", "/usr/local/bin/python3"], tmp_path)
+    run(["uv", "venv", str(environment), "--python", sys.executable], tmp_path)
     run(
         ["uv", "sync", "--locked", "--no-dev", "--no-install-project", "--project", str(ROOT)],
         tmp_path,

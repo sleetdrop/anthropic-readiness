@@ -1,0 +1,9 @@
+repos:
+  - repo: local
+    hooks:
+      - id: readiness-fast
+        name: Locked readiness quality gates (inside Dev Container)
+        entry: uv run --frozen python scripts/check.py --suite fast
+        language: system
+        pass_filenames: false
+        always_run: true

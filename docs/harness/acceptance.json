@@ -2,14 +2,82 @@
   "schema_version": "1.0",
   "stage": "A",
   "requirements": [
-    {"id": "A-HARNESS", "checks": ["check-runner", "format", "lint", "type", "architecture"]},
-    {"id": "A-CONTRACT", "checks": ["config", "contracts", "schemas"]},
-    {"id": "A-SSE", "checks": ["sse", "stream-validation"]},
-    {"id": "A-CASES", "checks": ["messages", "cases", "transport"]},
-    {"id": "A-EVIDENCE", "checks": ["redaction", "evidence", "replay"]},
-    {"id": "A-REPORTS", "checks": ["reports", "visual-review"]},
-    {"id": "A-PACKAGING", "checks": ["installed-package", "python-3.11", "python-3.12"]},
-    {"id": "A-CONTAINERS", "checks": ["devcontainer", "runtime-amd64", "runtime-arm64"]},
-    {"id": "A-COLLABORATION", "checks": ["documentation", "ci-definitions", "contribution-templates"]}
+    {
+      "id": "A-HARNESS",
+      "checks": [
+        "lock",
+        "format",
+        "lint",
+        "type",
+        "architecture",
+        "unit"
+      ]
+    },
+    {
+      "id": "A-CONTRACT",
+      "checks": [
+        "schemas",
+        "unit"
+      ]
+    },
+    {
+      "id": "A-SSE",
+      "checks": [
+        "unit",
+        "integration"
+      ]
+    },
+    {
+      "id": "A-CASES",
+      "checks": [
+        "unit",
+        "integration",
+        "acceptance"
+      ]
+    },
+    {
+      "id": "A-EVIDENCE",
+      "checks": [
+        "unit",
+        "integration",
+        "acceptance"
+      ]
+    },
+    {
+      "id": "A-REPORTS",
+      "checks": [
+        "acceptance",
+        "visual-review"
+      ]
+    },
+    {
+      "id": "A-PACKAGING",
+      "checks": [
+        "packaging",
+        "python-3.11",
+        "python-3.12"
+      ]
+    },
+    {
+      "id": "A-CONTAINERS",
+      "checks": [
+        "devcontainer",
+        "runtime-amd64",
+        "runtime-arm64"
+      ]
+    },
+    {
+      "id": "A-COLLABORATION",
+      "checks": [
+        "documentation",
+        "unit"
+      ]
+    },
+    {
+      "id": "A-REVIEW",
+      "checks": [
+        "independent-review"
+      ]
+    }
   ]
 }

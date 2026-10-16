@@ -13,6 +13,7 @@ dependencies = ["httpx>=0.28,<1", "jsonschema>=4.23,<5", "PyYAML>=6,<7"]
 anthropic-readiness = "anthropic_readiness.cli:main"
 
 [dependency-groups]
+build = ["hatchling==1.27.0"]
 dev = ["pytest>=8,<10", "pytest-cov>=6", "mypy>=1.15", "ruff>=0.11", "import-linter>=2", "types-PyYAML", "types-jsonschema", "hatchling==1.27.0"]
 
 [tool.hatch.build.targets.wheel]
@@ -40,3 +41,24 @@ markers = ["integration: isolated synthetic HTTP integration", "live: explicit r
 
 [tool.importlinter]
 root_package = "anthropic_readiness"
+include_external_packages = true
+
+[[tool.importlinter.contracts]]
+name = "Application dependency direction"
+type = "layers"
+layers = [
+  "anthropic_readiness.cli",
+  "anthropic_readiness.runner | anthropic_readiness.reporting",
+  "anthropic_readiness.evidence | anthropic_readiness.transport | anthropic_readiness.cases | anthropic_readiness.contracts | anthropic_readiness.context",
+  "anthropic_readiness.config",
+  "anthropic_readiness.schema | anthropic_readiness.validation.stream",
+  "anthropic_readiness.validation.messages",
+  "anthropic_readiness.json_validation | anthropic_readiness.sse",
+  "anthropic_readiness.models",
+]
+
+[[tool.importlinter.contracts]]
+name = "Pure domain, framing and validation"
+type = "forbidden"
+source_modules = ["anthropic_readiness.models", "anthropic_readiness.sse", "anthropic_readiness.validation", "anthropic_readiness.json_validation"]
+forbidden_modules = ["anthropic_readiness.schema", "anthropic_readiness.config", "anthropic_readiness.contracts", "anthropic_readiness.transport", "anthropic_readiness.evidence", "anthropic_readiness.runner", "anthropic_readiness.reporting", "anthropic_readiness.context", "anthropic_readiness.cli", "httpx", "yaml", "pathlib", "importlib"]

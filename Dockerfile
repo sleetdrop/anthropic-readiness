@@ -12,3 +12,26 @@ ENV UV_PROJECT_ENVIRONMENT=/home/developer/.venv
 USER developer
 WORKDIR /workspaces/anthropic-readiness
 CMD ["sleep", "infinity"]
+
+FROM base AS build
+ENV UV_PROJECT_ENVIRONMENT=/opt/build-venv UV_HTTP_TIMEOUT=600 UV_HTTP_RETRIES=5
+WORKDIR /build
+COPY pyproject.toml uv.lock .python-version ./
+RUN uv sync --locked --no-dev --group build --no-install-project
+COPY src ./src
+RUN UV_OFFLINE=1 /opt/build-venv/bin/python -m hatchling build -t wheel \
+    && UV_OFFLINE=1 UV_PROJECT_ENVIRONMENT=/opt/runtime-venv uv sync --locked --no-dev --no-install-project \
+    && uv pip install --offline --no-deps --python /opt/runtime-venv/bin/python dist/*.whl \
+    && uv pip check --python /opt/runtime-venv/bin/python
+
+FROM python:3.12-slim-bookworm@sha256:34386ef0cb081344d7ec1c103ba398e6e9f64e9ab3a1509accc92a4e24a07258 AS runtime
+ARG VCS_REF=unknown
+LABEL org.opencontainers.image.title="Anthropic Readiness" \
+      org.opencontainers.image.revision=$VCS_REF
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PATH=/opt/runtime-venv/bin:$PATH
+COPY --from=build /opt/runtime-venv /opt/runtime-venv
+RUN useradd --no-create-home --uid 10001 app && mkdir /work && chown app /work
+USER app
+WORKDIR /work
+ENTRYPOINT ["anthropic-readiness"]
+CMD ["--help"]

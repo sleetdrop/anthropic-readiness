@@ -17,6 +17,9 @@ dependencies = [
 ]
 
 [package.dev-dependencies]
+build = [
+    { name = "hatchling" },
+]
 dev = [
     { name = "hatchling" },
     { name = "import-linter" },
@@ -36,6 +39,7 @@ requires-dist = [
 ]
 
 [package.metadata.requires-dev]
+build = [{ name = "hatchling", specifier = "==1.27.0" }]
 dev = [
     { name = "hatchling", specifier = "==1.27.0" },
     { name = "import-linter", specifier = ">=2" },

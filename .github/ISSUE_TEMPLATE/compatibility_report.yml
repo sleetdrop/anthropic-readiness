@@ -1,0 +1,20 @@
+name: Compatibility report
+description: Share a scoped endpoint observation
+body:
+  - type: markdown
+    attributes:
+      value: "Use public IDs and synthetic data. Never attach credentials, private endpoints, original logs or private chats. unknown/not_run are valid."
+  - type: textarea
+    id: context
+    attributes:
+      label: Context and outcome
+      description: "Public case/assertion IDs, model alias, API/beta/bundle version and observation date; private addresses must be omitted"
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Validation evidence
+      description: "Checks run, versions, sanitized reproduction and remaining unknown or not_run checks. See CONTRIBUTING.md."
+    validations:
+      required: true

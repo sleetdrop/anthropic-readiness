@@ -62,6 +62,12 @@
           },
           "log": {
             "type": "string"
+          },
+          "started_at": {
+            "type": "string"
+          },
+          "finished_at": {
+            "type": "string"
           }
         },
         "required": [
@@ -72,9 +78,65 @@
           "reason",
           "returncode",
           "duration_s",
-          "log"
+          "log",
+          "started_at",
+          "finished_at"
         ],
         "additionalProperties": false
+      }
+    },
+    "finished_at": {
+      "type": "string"
+    },
+    "source_unchanged": {
+      "type": "boolean"
+    },
+    "lock_sha256": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "tool_versions": {
+      "type": "object",
+      "additionalProperties": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "git": {
+      "type": "object",
+      "properties": {
+        "commit": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "dirty": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "commit",
+        "dirty"
+      ],
+      "additionalProperties": false
+    },
+    "external_checks": {
+      "type": "object",
+      "additionalProperties": {
+        "enum": [
+          "not_run",
+          "passed",
+          "failed",
+          "blocked"
+        ]
       }
     }
   },
@@ -85,7 +147,13 @@
     "started_at",
     "source_fingerprint",
     "status",
-    "checks"
+    "checks",
+    "finished_at",
+    "source_unchanged",
+    "lock_sha256",
+    "tool_versions",
+    "git",
+    "external_checks"
   ],
   "additionalProperties": false,
   "$schema": "https://json-schema.org/draft/2020-12/schema"

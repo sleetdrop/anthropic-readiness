@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import re
 
+from anthropic_readiness.json_validation import validate_document
 from anthropic_readiness.models import (
     AssertionResult,
     CaseContract,
@@ -13,7 +14,6 @@ from anthropic_readiness.models import (
     ValidationResult,
     object_value,
 )
-from anthropic_readiness.schema import validate_document
 
 
 def validate_message(value: object, contract: CaseContract) -> ValidationResult:

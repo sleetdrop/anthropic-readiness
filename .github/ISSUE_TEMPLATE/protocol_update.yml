@@ -1,0 +1,20 @@
+name: Protocol update
+description: Propose a reviewed protocol bundle update
+body:
+  - type: markdown
+    attributes:
+      value: "Use public IDs and synthetic data. Never attach credentials, private endpoints, original logs or private chats. unknown/not_run are valid."
+  - type: textarea
+    id: context
+    attributes:
+      label: Context and outcome
+      description: "Official source links, retrieval date, old/new API and beta dimensions, rule differences and positive/negative fixtures"
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Validation evidence
+      description: "Checks run, versions, sanitized reproduction and remaining unknown or not_run checks. See CONTRIBUTING.md."
+    validations:
+      required: true
