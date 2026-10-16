@@ -53,3 +53,25 @@ completed and immutable Stage A implementation ledger/evidence index.
 - Limits: basic single-turn cases only; no thinking, tool-result round trip, beta,
   client workflow or version-selector proof. No proxy/configuration modification,
   allowlist relaxation, image rebuild, remote CI or publication occurred.
+
+## 2026-10-16: owner-authorized comprehensive private assessment
+
+The owner requested broad testing of the latest private model with no API cost
+constraint. A disposable private suite accounted for 90 API scenarios plus four
+Python SDK 1.15.0 cases and three Claude Code 2.1.292 Linux arm64 workflows. Exactly
+127 upstream calls were observed, within the aggregate 200-request/60-minute cap.
+All seven client scenarios passed; API outcomes after the explicit applicability
+audit were 61 PASS, 18 FAIL, eight INDETERMINATE, one optional request rejected,
+and two BLOCKED prerequisites. These are heterogeneous conditions, not a score.
+
+Missing stop metadata, a declared-name mismatch, JSON fences, stop-sequence metadata,
+request/error validation and a mismatched tool-result ID were observed. One complex
+nonstream input failure was followed by three passing confirmation samples.
+Thinking-channel and cache-hit semantics remained unverified. Captures, private
+scripts, fixed plans, raw/derived verdicts and client artifacts remain private.
+The report verified 799 hash references without errors.
+
+See [the method and rulings](../reviews/2026-10-16-private-comprehensive-assessment.md)
+for the relay-timeout boundary, corrected zero-token oracle, blocked-predecessor
+accounting and exact client evidence. No old failure was erased or rescored in
+place. No shipped Stage B/C implementation or new stage acceptance is claimed.

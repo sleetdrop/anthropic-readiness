@@ -137,3 +137,21 @@ Presentation 1.2 was generated offline from the saved result, preserving its byt
 and all 20 evidence files, with evidence verified/errors=[] and no extra API call.
 Private inputs and outputs remain outside the repository. This endpoint observation
 does not replace frozen Stage A acceptance or establish client workflow readiness.
+
+## Comprehensive private API and client validation (2026-10-16)
+
+At the owner's explicit request, completed a private disposable black-box assessment:
+90 API scenarios, four official SDK cases, three fixed Claude Code workflows and
+127 actual upstream requests within a 200-request/60-minute envelope. All seven
+client scenarios passed independent observable conditions. The API reader audit
+reports 61 PASS, 18 FAIL, eight INDETERMINATE, one optional rejection and two blocked
+prerequisites; no unified compatibility percentage is inferred.
+
+Six harness controls and seven audit controls passed offline; original failed
+attempts and pre-audit interpretations are retained. The final report verified
+799 evidence hash references without errors. See [validation ledger](validation-ledger.md)
+and [assessment method](../reviews/2026-10-16-private-comprehensive-assessment.md).
+Only handoff/validation documentation changes enter Git. Private scripts and actual
+responses remain outside source and builds; Stage B/C remain unimplemented in the
+shipped CLI. No source/image/full-product/remote-CI acceptance is implied by this
+private run.

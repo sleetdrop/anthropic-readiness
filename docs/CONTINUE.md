@@ -5,6 +5,16 @@ Read [HANDOFF.md](HANDOFF.md), [the evidence manifest](harness/handoff.json),
 [the progress record](harness/progress.md) and
 [the implementation ledger](harness/implementation-ledger.md) before further work.
 
+## Current pause
+
+The owner requested pausing for the account limit during finalization of the private
+comprehensive assessment. All 127 upstream requests are complete; no live run or
+download remains active. The private RESUME.md is beside the latest assessment,
+located through /private/tmp/anthropic-readiness-comprehensive-active-path.
+After the owner resumes, finish provenance/cleanup checks and deliver the existing
+report; do not repeat real calls, downloads or the completed Stage A review.
+See [the assessment method](reviews/2026-10-16-private-comprehensive-assessment.md).
+
 ## Report presentation follow-up
 
 The owner approved a bounded readability improvement after the first private
@@ -40,9 +50,12 @@ Claude Code workflows; D owns protocol-update Agent tooling and later maintenanc
 The sole API bundle is Messages 2023-06-01 core revision 1.0.0, with no betas.
 Capture writers use schema 1.1; readers retain conservative 1.0 support.
 
-The frozen offline handoff did not run a real endpoint. An owner-authorized private
-post-handoff assessment has since completed; see [the validation ledger](harness/validation-ledger.md).
-Its four behavior checks passed, but the selected protocol/identity contract failed;
+The frozen offline handoff did not run a real endpoint. Owner-authorized private
+post-handoff assessments have since completed; see [the validation ledger](harness/validation-ledger.md).
+A later disposable comprehensive suite also exercised 90 API scenarios and seven
+fixed SDK/Claude Code client scenarios; all seven client scenarios passed, with
+API differences and limits recorded separately. This did not implement Stage B/C.
+The original four behavior checks passed, but the selected protocol/identity contract failed;
 do not describe the target as fully compatible. Remote CI and registry publication
 remain unrun. Remote repository
 creation/push, registry publishing, account setup and real API execution require

@@ -77,8 +77,9 @@ operator grants live authorization, use both `anthropic-basic` and
 configuration, original service logs or credentials into this repository.
 
 Only the observed model, contract, transport path and selected cases are covered.
-Version header acceptance does not prove version-selection semantics. No result
-here establishes tool loops, thinking/parallel behavior, beta support or Claude Code
-readiness. B adds tool loops/matrices, C real fixed-client workflows, and D the
+Version header acceptance does not prove version-selection semantics. The frozen Stage A delivery does not establish tool loops, thinking/parallel
+behavior, beta support or Claude Code readiness. Later owner-authorized private
+API/client observations are recorded separately in the validation ledger; they do
+not implement or certify the Stage B/C product. B adds tool loops/matrices, C real fixed-client workflows, and D the
 protocol-update Agent command and reviewed maintenance/publishing path. Stop at A
 unless the owner authorizes the next stage.
