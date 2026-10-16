@@ -256,3 +256,17 @@ Durable events recover even when snapshot replacement fails. Final Linux Python 
 fast graph passed seven gates and complete pytest passed 257 tests. Source contracts
 and frozen Stage A records remain unchanged. Browser preparation is still separate;
 no Web/image/remote/live acceptance is claimed. See the W1 ledger for design rulings.
+
+## W1 Task 3: shared observable execution (2026-10-17)
+
+Added the shared application/credential boundary, early shared run identity, lazy
+CLI sidecars, durable case publication, observed/coalesced transport phases and
+sticky cancellation. Existing assertion semantics, stdout and exit behavior are
+preserved. RED covered adapter behavior, cancellation, failed mandatory writes,
+unexecuted/incomplete checkpoint certification and premature completion timestamps.
+The unchanged CLI timeout exposed repeated schema compilation; a retained profile
+guided compilation caching without bypassing document validation. Corrected
+accounting fixtures were replayed against the isolated prior implementation to
+establish actual RED evidence. Final checks passed 17 targeted tests, seven fast
+gates and all 274 pytest tests in Linux Python 3.12. No W1 live requests were made.
+See the W1 ledger for interface/cache rulings and remaining acceptance boundaries.

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-import os
+import hashlib
 import platform
 import signal
 import subprocess
@@ -23,6 +23,7 @@ from anthropic_readiness.cases import CaseDefinition, build_request, list_cases,
 from anthropic_readiness.config import TargetConfig, fingerprint
 from anthropic_readiness.context import build_report_context
 from anthropic_readiness.contracts import ContractBundle, validate_target_contract
+from anthropic_readiness.credentials import EnvironmentCredentials
 from anthropic_readiness.evidence import (
     CaptureRefs,
     SanitizedCapture,
@@ -48,6 +49,14 @@ from anthropic_readiness.models import (
     object_value,
     readiness,
     strict_json,
+)
+from anthropic_readiness.operations.models import EventKind, WorkerEvent
+from anthropic_readiness.operations.ports import (
+    CancelToken,
+    CredentialProvider,
+    ExecutionObserver,
+    ObservationError,
+    emit_observation,
 )
 from anthropic_readiness.requirements import assertion_plan
 from anthropic_readiness.schema import (
@@ -270,7 +279,7 @@ class _Interruption:
 
 
 @contextmanager
-def _signals(transport: object, state: _Interruption) -> Iterator[None]:
+def _signals(transport: object, state: _Interruption, control: CancelToken) -> Iterator[None]:
     if threading.current_thread() is not threading.main_thread():
         yield
         return
@@ -278,6 +287,7 @@ def _signals(transport: object, state: _Interruption) -> Iterator[None]:
 
     def handler(signum: int, frame: FrameType | None) -> None:
         state.signum = signum
+        control.cancel("signal_cancelled")
         cancel = getattr(transport, "cancel", None)
         if callable(cancel):
             cancel()
@@ -312,6 +322,10 @@ def execute_run(
     environment: Mapping[str, str] | None = None,
     clock: Callable[[], float] = time.monotonic,
     replay: SanitizedCapture | None = None,
+    observer: ExecutionObserver | None = None,
+    control: CancelToken | None = None,
+    credentials: CredentialProvider | None = None,
+    run_id: str | None = None,
 ) -> RunResult:
     from anthropic_readiness.transport import HttpTransport
 
@@ -319,26 +333,96 @@ def execute_run(
         raise TypeError("invalid_transport")
     if (plan.mode == "replay") != (replay is not None):
         raise ValueError("run_mode_capture_mismatch")
+    run_id = str(uuid.uuid4()) if run_id is None else str(uuid.UUID(run_id))
     create_run_directory(output_dir)
     started = _utc()
-    deadline = clock() + plan.target.limits.run_timeout_s
+    started_clock = clock()
+    deadline = started_clock + plan.target.limits.run_timeout_s
+    control = control if control is not None else CancelToken()
     state = _Interruption()
     secret: str | None = None
     credential_error: str | None = None
-    if plan.mode == "live":
+    if plan.mode == "live" and plan.target.auth_mode != "none":
         try:
-            secret = plan.target.credential(os.environ if environment is None else environment)
+            secret = (
+                credentials
+                if credentials is not None
+                else EnvironmentCredentials(plan.target, environment)
+            ).resolve()
+            if plan.target.auth_mode == "api_key" and not secret:
+                raise ValueError("missing_credential")
+            if secret is not None and (not secret.strip() or "\r" in secret or "\n" in secret):
+                raise ValueError("invalid_credential")
         except ValueError as exc:
-            credential_error = str(exc)
+            credential_error = (
+                "invalid_credential" if str(exc) != "missing_credential" else "missing_credential"
+            )
     secrets = [secret] if secret else []
     cases: list[JsonObject] = []
     refs: list[EvidenceRef] = []
     assertion_refs: list[EvidenceRef] = []
     requests = 0
     internal_error: str | None = None
-    with _signals(transport, state):
+    cancelling = False
+
+    def elapsed_ms() -> float:
+        return max(0.0, (clock() - started_clock) * 1000)
+
+    def emit(kind: EventKind, payload: JsonObject) -> None:
+        emit_observation(observer, WorkerEvent(kind, _utc(), elapsed_ms(), payload))
+
+    def commit_case(record: JsonObject, evidence: tuple[EvidenceRef, ...] = ()) -> None:
+        if observer is not None:
+            receipt = observer.commit_case(object_value(sanitize_json(record, secrets)), evidence)
+            emit(
+                "case_committed", {key: value for key, value in receipt.items() if key != "run_id"}
+            )
+
+    if observer is not None:
+        observer.begin(
+            {
+                "schema_version": "1.0",
+                "run_id": run_id,
+                "config_sha256": plan.to_json()["config_fingerprint"],
+                "target": object_value(sanitize_json(plan.target.to_json(), secrets)),
+                "contract": {**plan.bundle.manifest, "version_semantics": "unverified"},
+                "plan": plan.to_json(),
+                "state": "running",
+                "sequence": 0,
+                "case_states": [
+                    {
+                        "case_id": case.id,
+                        "state": "pending",
+                        "checkpoint_path": None,
+                        "checkpoint_sha256": None,
+                    }
+                    for case in plan.cases
+                ],
+                "actual_requests": 0,
+                "started_at": started,
+                "updated_at": started,
+                "finished_at": None,
+                "elapsed_ms": 0,
+                "spans": [],
+                "warnings": [],
+                "result_sha256": None,
+                "terminal_reason": None,
+            }
+        )
+        emit("job_transition", {"from": None, "to": "running"})
+
+    with _signals(transport, state, control):
         for case in plan.cases:
-            if state.signum is not None or internal_error is not None:
+            if control.requested and state.signum is None:
+                state.signum = signal.SIGINT
+            if control.requested and not cancelling:
+                emit(
+                    "job_transition",
+                    {"from": "running", "to": "cancelling", "reason_code": "cancel_requested"},
+                )
+                cancelling = True
+            emit("case_started", {"case_id": case.id, "case_version": case.version})
+            if control.requested or internal_error is not None:
                 cases.append(
                     _precondition(
                         case,
@@ -346,18 +430,30 @@ def execute_run(
                         "cancelled" if state.signum else "internal_error",
                     )
                 )
+                commit_case(cases[-1])
                 continue
             if clock() >= deadline:
                 cases.append(_precondition(case, Status.INDETERMINATE, "run_deadline_exceeded"))
+                commit_case(cases[-1])
                 continue
             if not case.available(plan.target):
                 cases.append(_precondition(case, Status.SKIP, "capability_not_declared"))
+                commit_case(cases[-1])
                 continue
             if credential_error:
                 cases.append(_precondition(case, Status.BLOCKED, credential_error))
+                commit_case(cases[-1])
                 continue
             attempt_id = str(uuid.uuid4())
             actual_requests = 0
+            case_refs: tuple[EvidenceRef, ...] = ()
+            transport.bind_execution(
+                case.id, attempt_id, observer=observer, control=control, elapsed_ms=elapsed_ms
+            )
+
+            def phase(name: str, case_id: str = case.id, attempt: str = attempt_id) -> None:
+                emit("transport_phase", {"case_id": case_id, "attempt_id": attempt, "phase": name})
+
             try:
                 if replay is not None:
                     capture = replay.capture
@@ -370,10 +466,17 @@ def execute_run(
                         )
                     requests += 1
                     actual_requests = 1
+                    emit(
+                        "request_started",
+                        {"case_id": case.id, "attempt_id": attempt_id, "request_index": requests},
+                    )
                     capture = transport.send(request, plan.target.limits, deadline)
                     sanitized = sanitize_capture(capture, secrets)
+                phase("saving")
                 persisted = persist_capture(output_dir, case.id, attempt_id, sanitized)
+                case_refs = persisted.refs
                 refs.extend(persisted.refs)
+                phase("validating")
                 validated = _validate(capture, case, plan)
                 if replay is not None and replay.transformed:
                     validated = replace(
@@ -434,11 +537,13 @@ def execute_run(
                 )
                 if capture.capture_end == "cancelled" and state.signum is None:
                     state.signum = signal.SIGINT
+                    control.cancel("transport_cancelled")
             except (KeyboardInterrupt, Exception) as exc:
-                if isinstance(exc, OSError):
+                if isinstance(exc, (OSError, ObservationError)):
                     raise
                 if isinstance(exc, KeyboardInterrupt):
                     state.signum = signal.SIGINT
+                    control.cancel("keyboard_cancelled")
                 else:
                     internal_error = str(sanitize_json(f"{type(exc).__name__}:{exc}", secrets))
                 assertion = AssertionResult(
@@ -470,6 +575,8 @@ def execute_run(
                         "dimensions": _dimensions([assertion]),
                     }
                 )
+            phase("saving")
+            commit_case(cases[-1], case_refs)
     profiles: list[JsonObject] = []
     for profile in plan.profiles:
         members = [
@@ -487,7 +594,7 @@ def execute_run(
             }
         )
     result = RunResult(
-        str(uuid.uuid4()),
+        run_id,
         str(uuid.uuid4()),
         plan.mode,
         started,
@@ -538,12 +645,42 @@ def execute_run(
                                 raise RuntimeError("failure_without_evidence")
     if errors := verify_evidence(output_dir, all_refs):
         raise RuntimeError("evidence_integrity:" + ";".join(errors))
-    atomic_write(output_dir / "result.json", json_bytes(document))
+    data = json_bytes(document)
+    atomic_write(output_dir / "result.json", data)
+    emit(
+        "result_committed",
+        {"result_path": "result.json", "sha256": hashlib.sha256(data).hexdigest()},
+    )
+    if control.requested and not cancelling:
+        emit(
+            "job_transition",
+            {"from": "running", "to": "cancelling", "reason_code": "cancel_requested"},
+        )
+        cancelling = True
+    terminal = "cancelled" if cancelling else "error" if internal_error is not None else "completed"
+    emit(
+        "job_transition",
+        {
+            "from": "cancelling" if cancelling else "running",
+            "to": terminal,
+            **(
+                {"reason_code": "cancelled" if cancelling else "internal_error"}
+                if cancelling or internal_error is not None
+                else {}
+            ),
+        },
+    )
     return result_from_document(document)
 
 
 def replay_run(
-    target: TargetConfig, bundle: ContractBundle, case_id: str, source: Path, output_dir: Path
+    target: TargetConfig,
+    bundle: ContractBundle,
+    case_id: str,
+    source: Path,
+    output_dir: Path,
+    *,
+    observer: ExecutionObserver | None = None,
 ) -> RunResult:
     from anthropic_readiness.transport import HttpTransport
 
@@ -569,6 +706,7 @@ def replay_run(
         HttpTransport(),
         output_dir,
         replay=captured,
+        observer=observer,
     )
 
 

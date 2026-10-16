@@ -150,12 +150,7 @@ class TargetConfig:
         return fingerprint(value)
 
 
-def load_target(path: Path) -> TargetConfig:
-    try:
-        raw: object = yaml.load(path.read_text(), Loader=UniqueLoader)
-        value = object_value(raw)
-    except (yaml.YAMLError, RecursionError) as exc:
-        raise ValueError("invalid_yaml") from exc
+def target_from_document(value: JsonObject) -> TargetConfig:
     validate_document(value, load_schema("target"))
     url = string(value["messages_url"])
     try:
@@ -206,3 +201,12 @@ def load_target(path: Path) -> TargetConfig:
         tuple(sorted(set(strings(value["response_model_aliases"])))),
         limits,
     )
+
+
+def load_target(path: Path) -> TargetConfig:
+    try:
+        raw: object = yaml.load(path.read_text(), Loader=UniqueLoader)
+        value = object_value(raw)
+    except (yaml.YAMLError, RecursionError) as exc:
+        raise ValueError("invalid_yaml") from exc
+    return target_from_document(value)

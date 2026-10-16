@@ -7,7 +7,7 @@ from jsonschema import Draft202012Validator
 from anthropic_readiness.models import JsonValue
 
 
-def validate_document(value: object, schema: JsonValue) -> None:
+def checked_validator(schema: JsonValue) -> Draft202012Validator:
     def check_refs(node: JsonValue) -> None:
         if isinstance(node, dict):
             for key, child in node.items():
@@ -26,6 +26,10 @@ def validate_document(value: object, schema: JsonValue) -> None:
     if not isinstance(schema, (dict, bool)):
         raise ValueError("invalid_schema")
     Draft202012Validator.check_schema(schema)
-    errors = sorted(Draft202012Validator(schema).iter_errors(value), key=lambda e: str(e.path))
+    return Draft202012Validator(schema)
+
+
+def validate_document(value: object, schema: JsonValue) -> None:
+    errors = sorted(checked_validator(schema).iter_errors(value), key=lambda e: str(e.path))
     if errors:
         raise ValueError("schema:" + "; ".join(f"{list(e.path)}:{e.message}" for e in errors))

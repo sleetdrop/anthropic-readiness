@@ -6,6 +6,7 @@ import asyncio
 import time
 import zlib
 from collections.abc import Callable
+from datetime import UTC, datetime
 
 import httpx
 
@@ -14,11 +15,14 @@ from anthropic_readiness.models import (
     Capture,
     CaptureEnd,
     DecodeTail,
+    JsonObject,
     ProtocolEnd,
     ReadRecord,
     RequestSpec,
     SSEFrame,
 )
+from anthropic_readiness.operations.models import WorkerEvent
+from anthropic_readiness.operations.ports import CancelToken, ExecutionObserver, emit_observation
 from anthropic_readiness.sse import SSEDecoder
 
 
@@ -27,12 +31,52 @@ class HttpTransport:
         self,
         clock: Callable[[], float] = time.monotonic,
         transport: httpx.AsyncBaseTransport | None = None,
+        *,
+        observer: ExecutionObserver | None = None,
+        control: CancelToken | None = None,
     ):
         self.clock = clock
         self.transport = transport
         self._cancel: Callable[[], None] | None = None
+        self._cancel_requested = False
+        self.observer = observer
+        self.control = control
+        self._case_id: str | None = None
+        self._attempt_id: str | None = None
+        self._elapsed: Callable[[], float] = lambda: 0.0
+
+    def bind_execution(
+        self,
+        case_id: str,
+        attempt_id: str,
+        *,
+        observer: ExecutionObserver | None,
+        control: CancelToken,
+        elapsed_ms: Callable[[], float],
+    ) -> None:
+        self._case_id = case_id
+        self._attempt_id = attempt_id
+        self.observer = observer
+        self.control = control
+        self._elapsed = elapsed_ms
+
+    def _phase(self, phase: str, received_bytes: int | None = None) -> None:
+        if self._case_id is None or self._attempt_id is None:
+            return
+        payload: JsonObject = {
+            "case_id": self._case_id,
+            "attempt_id": self._attempt_id,
+            "phase": phase,
+        }
+        if received_bytes is not None:
+            payload["received_bytes"] = received_bytes
+        emit_observation(
+            self.observer,
+            WorkerEvent("transport_phase", datetime.now(UTC).isoformat(), self._elapsed(), payload),
+        )
 
     def cancel(self) -> None:
+        self._cancel_requested = True
         if self._cancel is not None:
             self._cancel()
 
@@ -48,6 +92,9 @@ class HttpTransport:
                 loop.call_soon_threadsafe(task.cancel)
 
         self._cancel = cancel_current
+        unsubscribe = (
+            self.control.register(cancel_current) if self.control is not None else lambda: None
+        )
         started = self.clock()
         expires = min(deadline, started + limits.attempt_timeout_s)
         body = bytearray()
@@ -60,10 +107,11 @@ class HttpTransport:
         headers: tuple[tuple[str, str], ...] = ()
         headers_ms: float | None = None
         observed = 0
+        last_activity = float("-inf")
         decoder = SSEDecoder(limits.max_event_bytes, limits.max_events)
 
         def accept(data: bytes) -> bool:
-            nonlocal observed, protocol_end, capture_end, error
+            nonlocal observed, protocol_end, capture_end, error, last_activity
             observed += len(data)
             remaining = limits.max_response_bytes - len(body)
             kept = data[:remaining]
@@ -71,6 +119,9 @@ class HttpTransport:
             received_ms = (self.clock() - started) * 1000
             if data:
                 reads.append(ReadRecord(len(data), received_ms))
+                if self.clock() - last_activity >= 1:
+                    self._phase("receiving", observed)
+                    last_activity = self.clock()
             if request.streaming and code == 200:
                 dispatched = decoder.feed(kept, received_ms)
                 frames.extend(dispatched)
@@ -88,8 +139,13 @@ class HttpTransport:
             return True
 
         try:
+            if self._cancel_requested or (self.control is not None and self.control.requested):
+                raise asyncio.CancelledError
             if expires <= started:
                 raise TimeoutError
+            self._phase("awaiting_headers")
+            if self._cancel_requested or (self.control is not None and self.control.requested):
+                raise asyncio.CancelledError
             async with asyncio.timeout(expires - started):
                 timeout = httpx.Timeout(
                     connect=limits.connect_timeout_s,
@@ -112,6 +168,7 @@ class HttpTransport:
                         code = response.status_code
                         headers = tuple(response.headers.multi_items())
                         headers_ms = (self.clock() - started) * 1000
+                        self._phase("headers_received")
                         encoding = (
                             response.headers.get("content-encoding", "identity").lower().strip()
                         )
@@ -151,12 +208,14 @@ class HttpTransport:
             capture_end, error = "read_error", str(exc)
         except (asyncio.CancelledError, KeyboardInterrupt):
             capture_end, error = "cancelled", "cancelled"
+        finally:
+            unsubscribe()
+            self._cancel = None
         tail = (
             decoder.finish(complete=capture_end == "eof")
             if request.streaming and code == 200
             else DecodeTail()
         )
-        self._cancel = None
         return Capture(
             request,
             code,

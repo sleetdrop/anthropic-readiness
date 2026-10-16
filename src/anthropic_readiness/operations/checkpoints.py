@@ -54,15 +54,35 @@ def validate_checkpoint(document: JsonObject, context: JsonObject, evidence_root
         raise ValueError("checkpoint_evidence_invalid")
     inventory = {(ref.path, ref.sha256) for ref in refs}
     assertions = objects(case["preconditions"])
-    for attempt in objects(case["attempts"]):
+    attempts = objects(case["attempts"])
+    if not attempts and case["status"] == "PASS":
+        raise ValueError("checkpoint_unexecuted_case_pass")
+    attempt_statuses: list[Status] = []
+    for attempt in attempts:
         items = objects(attempt["assertions"])
+        by_id = {str(item["id"]): item for item in items}
+        if len(by_id) != len(items):
+            raise ValueError("checkpoint_duplicate_assertion")
+        for expected in objects(definition["assertions"]):
+            actual = by_id.get(str(expected["id"]))
+            if actual is None:
+                if expected["required"] and attempt["status"] == "PASS":
+                    raise ValueError("checkpoint_missing_assertion")
+            elif (
+                actual["version"] != expected["version"]
+                or actual["required"] != expected["required"]
+            ):
+                raise ValueError("checkpoint_assertion_contract")
         status = aggregate_required(
             [Status(str(item["status"])) for item in items if item["required"]]
         )
         if attempt["status"] != status.value:
             raise ValueError("checkpoint_attempt_status")
+        attempt_statuses.append(status)
         assertions.extend(items)
-    required = [Status(str(item["status"])) for item in assertions if item["required"]]
+    required = attempt_statuses or [
+        Status(str(item["status"])) for item in objects(case["preconditions"]) if item["required"]
+    ]
     if case["status"] != aggregate_required(required).value:
         raise ValueError("checkpoint_case_status")
     for assertion in assertions:

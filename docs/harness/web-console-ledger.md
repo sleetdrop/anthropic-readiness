@@ -9,8 +9,8 @@
 - Implementation plan: [self-reviewed revision 1](../superpowers/plans/2026-10-16-local-web-console-implementation.md),
   14 sequential tasks; self-review completed and owner approval received on 2026-10-17.
 - Execution: current chat, sequentially; owner chose the current checkout/Dev Container.
-  W1 branch is `codex/local-web-console`, starting from `ad83593`. Tasks 1–2 are complete;
-  tasks 3–14 and whole-W1 acceptance remain pending.
+  W1 branch is `codex/local-web-console`, starting from `ad83593`. Tasks 1–3 are complete;
+  tasks 4–14 and whole-W1 acceptance remain pending.
 
 ## Observed design checks
 
@@ -113,3 +113,33 @@ a case. Snapshot replacement stays separate from exclusive source-evidence write
 Final Linux verification passed all seven fast gates and all 257 pytest tests.
 This establishes source/offline storage behavior; Web/browser/image acceptance
 and endpoint behavior remain outside these observations.
+
+## Task 3: shared application and observable bounded execution
+
+CLI and application adapters now share document planning, explicit credential
+providers and runner execution. Live CLI/replay write operational sidecars without
+requiring Web packages. Run identity is allocated before observations, output
+creation stays exclusive, and required cases receive verified checkpoints.
+Cancellation is sticky across callback registration and interrupts active transport;
+mandatory observation failures stop subsequent dispatch. Content activity is
+coalesced and observations contain safe phase metadata rather than model text.
+
+Observed RED: twelve initial behavior failures, no-auth credential resolution,
+premature completion timestamps and checkpoint-accounting regressions. An
+accounting fixture initially changed detached copies; corrected fixtures reproduced
+two real failures against the isolated Task 2 implementation before current GREEN.
+The original CLI timeout also caught a performance regression. Profiling attributed
+12.735 of 14.414 seconds to repeated schema compilation; the unchanged timeout then
+passed after caching compilation while retaining complete per-record validation.
+
+Ruling: cache compiled immutable packaged operational schemas within each process.
+If resources were replaced in a running installation, restart is needed to load
+them; no document result is cached or validation weakened. Ruling: `commit_case`
+returns its verified receipt, letting the runner timestamp completion after durable
+publication. The synthetic delay test proves the ordering. Future adapters must
+implement this refined source interface; persisted contracts do not change.
+
+Final Linux verification: 17 task-specific tests, all seven fast gates, and all
+274 pytest tests passed. The existing CLI, replay, HTTP/deadline and golden protocol
+checks remain green. No W1 Web/browser/image, remote CI or real endpoint acceptance
+is implied. Browser download remains asynchronous and source separation is retained.

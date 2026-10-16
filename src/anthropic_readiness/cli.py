@@ -8,11 +8,13 @@ import sys
 from collections.abc import Sequence
 from pathlib import Path
 
+from anthropic_readiness.application import build_plan, run_assessment
 from anthropic_readiness.config import load_target
 from anthropic_readiness.contracts import SUPPORTED, resolve_contract, validate_target_contract
+from anthropic_readiness.credentials import EnvironmentCredentials
+from anthropic_readiness.operations.observer import DiskExecutionObserver
 from anthropic_readiness.reporting import render_from_file, write_reports
-from anthropic_readiness.runner import execute_run, plan_run, replay_run, result_exit_code
-from anthropic_readiness.transport import HttpTransport
+from anthropic_readiness.runner import replay_run, result_exit_code
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -76,14 +78,21 @@ def main(argv: Sequence[str] | None = None) -> int:
             )
             return 0
         if args.command == "run":
-            plan = plan_run(target, bundle, args.profile or ["anthropic-basic"])
+            plan = build_plan(target.to_json(), args.profile or ["anthropic-basic"])
             if args.dry_run:
                 print(json.dumps(plan.to_json(), ensure_ascii=False, indent=2))
                 return 0
             print(f"Planned requests: {len(plan.cases)}; no retries.", file=sys.stderr)
-            result = execute_run(plan, HttpTransport(), args.out)
+            result = run_assessment(plan, args.out, credentials=EnvironmentCredentials(target))
         else:
-            result = replay_run(target, bundle, args.case, args.capture, args.out)
+            result = replay_run(
+                target,
+                bundle,
+                args.case,
+                args.capture,
+                args.out,
+                observer=DiskExecutionObserver(args.out / "operations", args.out),
+            )
         write_reports(result, args.out)
         print(
             json.dumps(
