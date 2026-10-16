@@ -6,8 +6,8 @@
 - 2026-10-16: owner approved the interactive console/report visual direction.
 - Written specification: [local Web console](../superpowers/specs/2026-10-16-local-web-console-design.md),
   revision 1; explicitly approved by the owner on 2026-10-16.
-- Implementation plan: [draft checkpoint](../superpowers/plans/2026-10-16-local-web-console-implementation.md),
-  14 sequential tasks; self-review is incomplete and plan approval is pending. No W1 product implementation
+- Implementation plan: [self-reviewed revision 1](../superpowers/plans/2026-10-16-local-web-console-implementation.md),
+  14 sequential tasks; self-review completed on 2026-10-17 and owner plan review is pending. No W1 product implementation
   has started. Acceptance IDs W1-01 through W1-12 are all unrun.
 
 ## Observed design checks
@@ -30,14 +30,15 @@ Do not repeat the completed Stage A independent review or prior live calls.
 W1 requires its own sequential plan, failing behavior tests, Linux verification,
 image/browser/export acceptance and one independent whole-milestone review.
 
-## Owner-requested pause and resume point
+## Historical owner-requested pause (2026-10-16)
 
-The owner paused work to close the laptop and leave work. Stop planning/implementation
-until the owner resumes. No dependency installation, product worker or model request
-was started in this planning turn. The local visual companion is being stopped;
+The owner paused work to close the laptop and leave work; the owner explicitly
+resumed on 2026-10-17. No dependency installation, product worker or model request
+was started in the paused planning turn. The local visual companion was stopped;
 its ignored HTML/screenshots remain available and it can restart at the same project.
 
-Resume with plan self-review, not implementation. Known open items:
+The pause checkpoint recorded these five self-review items, all resolved in plan
+revision 1 on resume:
 
 1. Put operational schema-loading validation in an adapter such as
    `operations/contracts.py`, keeping operational value records independent of I/O.
@@ -49,3 +50,17 @@ Resume with plan self-review, not implementation. Known open items:
    execution argument; currently the runner allocates its result ID at finalization.
 5. Add concrete assertion snippets to task test steps, check cross-task signatures,
    and verify documentation links. No W1 execution acceptance has been run.
+
+## Resume and plan self-review (2026-10-17)
+
+Completed the five recorded items without implementing product behavior. Also
+specified parent-only event sequencing, hashed session owner bindings, explicit
+local defaults, admission-created flags, source/operational snapshot ownership,
+and real-browser versus pure-state test responsibilities. The plan maps all
+W1-01 through W1-12 requirements to its 14 tasks. Existing specification approval
+and current-chat sequential execution remain in force; await owner plan review.
+
+Observed planning checks on 2026-10-17: the existing Linux/Python 3.12 Dev Container
+passed `UV_OFFLINE=1 uv run --frozen python scripts/check_docs.py`
+(`documentation_collaboration: passed`), and `git diff --check` passed. Only planning
+and handoff documentation changed; product suites and all W1 acceptance remain unrun.

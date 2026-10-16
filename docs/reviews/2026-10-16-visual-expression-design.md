@@ -2,7 +2,7 @@
 
 Status: visual direction approved by the owner on 2026-10-16. The
 [written W1 specification](../superpowers/specs/2026-10-16-local-web-console-design.md)
-awaits written-spec review before implementation planning.
+was approved; the implementation plan is self-reviewed and awaits owner review.
 This extends the [local Web console proposal](2026-10-16-web-console-reference-study.md).
 The owner requires restrained, professional styling with substantially better
 visual explanation, rather than a predominantly textual report.

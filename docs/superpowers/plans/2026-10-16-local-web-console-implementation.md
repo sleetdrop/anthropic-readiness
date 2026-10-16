@@ -1,9 +1,7 @@
 # Local Web Console and Visual Reports Implementation Plan
 
-Status: DRAFT checkpoint at the owner's explicit pause. Tasks are not started.
-The self-review below is incomplete; do not treat its closing handoff paragraph
-as completed review. Resume with the open items in the W1 ledger before asking
-the owner to approve this plan.
+Revision: 1. Status: self-reviewed on 2026-10-17; awaiting owner plan review.
+The owner resumed after the explicit pause. Tasks are not started.
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking. Repository instructions require sequential native execution, not per-task implementer agents; arrange one independent whole-W1 review at the end.
 
@@ -44,11 +42,16 @@ the owner to approve this plan.
 
 ## File and interface map
 
-Paths below are relative to the repository. Do not split the existing validator modules.
+Paths below are relative to the repository. Python application/module paths in
+the table and task file lists are beneath `src/anthropic_readiness/`; paths beginning
+with `tests/`, `scripts/`, `docs/`, `.github/` or `.devcontainer/` are repository-relative.
+Root tooling files and `Dockerfile` are also repository-relative. Do not split the
+existing validator modules.
 
 | Unit | Files and responsibility |
 | --- | --- |
 | Operational values/ports | `operations/models.py`, `operations/ports.py`: immutable records, lifecycle and observer/control interfaces; no Web/SQLite imports. |
+| Operational schema adapter | `operations/contracts.py`: packaged schema loading and validation, outside pure operational value modules. |
 | Shared application | `application.py`, `credentials.py`: build plans from canonical documents and bind ephemeral credentials; no framework types. |
 | Durable observations | `operations/journal.py`, `operations/checkpoints.py`: atomic immutable records, ordered events and verified recovery. |
 | Engine integration | existing `runner.py`, `transport.py`, `config.py`: observer hooks, cancellation and document loading without changing judgments. |
@@ -57,7 +60,7 @@ Paths below are relative to the repository. Do not split the existing validator 
 | Report projection | `report_models.py`, `report_sources.py`, `report_view.py`: verified I/O loading followed by pure visual projection. |
 | Rendering/export | `report_rendering.py`, `exports.py`, existing `reporting.py`: shared progressive HTML/Markdown, byte-preserving packaging and compatible public wrappers. |
 | Browser resources | `resources/web/{base,configure,run,history}.html`, `resources/web/{app,forms,progress,report}.js`, `resources/web/app.css`, `resources/report-v2.html`, `resources/report-v2.js`, `resources/report-v2.css`. |
-| Contracts | `resources/schemas/{job,execution,checkpoint,progress-event,report-view,export-manifest,web-api}.schema.json`: packaged operational/API schemas; original result/capture schemas remain unchanged. |
+| Contracts | `resources/schemas/{plan,job,execution,checkpoint,progress-event,report-view,export-manifest,web-api}.schema.json`: packaged operational/API schemas; original result/capture schemas remain unchanged. |
 | Harness | root npm/TypeScript/ESLint/Prettier/Playwright configs, `tests/browser`, `scripts/browser_fixture.py`, `scripts/check_frontend.py`; extend existing check/package/image/CI scripts. |
 
 Shared types established in Task 1:
@@ -66,11 +69,52 @@ Shared types established in Task 1:
 - `EventKind = Literal['job_transition','case_started','request_started','transport_phase','case_committed','result_committed']`.
 - `FrozenPlan(id: str, session_id: str, created_at: str, expires_at: str, config_sha256: str, target: JsonObject, profiles: tuple[str, ...], plan: JsonObject)`.
 - `JobRecord(id: str, plan_id: str, state: JobState, created_at: str, updated_at: str, last_sequence: int, result_path: str | None)`.
+- `Admission(job: JobRecord, created: bool)` identifies whether the transaction created the job; never infer this from its queued state.
 - `WorkerEvent(kind: EventKind, occurred_at: str, elapsed_ms: float, payload: JsonObject)`; no sequence until the parent accepts it.
 - `ProgressEvent(schema_version: str, run_id: str, sequence: int, event: WorkerEvent)` with `to_json() -> JsonObject` on each persisted record.
-- `ExecutionObserver.emit(event: WorkerEvent) -> None` and `ExecutionObserver.commit_case(case: JsonObject, refs: tuple[EvidenceRef, ...]) -> None` are protocols. Case commit must finish before its completion becomes visible.
+- `ProgressEvent.to_json()` flattens its event into `schema_version`, `run_id`, `sequence`, `occurred_at`, `elapsed_ms`, `kind`, `payload`; IPC events have no sequence and cannot forge one.
+- `ExecutionObserver.begin(context: JsonObject) -> None`, `.emit(event: WorkerEvent) -> None` and `.commit_case(case: JsonObject, refs: tuple[EvidenceRef, ...]) -> None` are protocol methods. Begin receives the schema-checked non-secret execution context after output creation, before requests; case commit finishes before completion becomes visible.
 - `CancelToken.cancel(reason_code: str) -> None`, `.requested: bool`, `.reason_code: str | None`, with thread-safe reads/writes.
 - `CredentialProvider.resolve() -> str | None`; a provider is already bound to its target/allowed reference. No raw secret in a value record.
+- `operations.models.transition_allowed(before: JobState, after: JobState) -> bool` is pure and follows the specification's lifecycle table; terminal-to-active transitions are rejected.
+
+Persisted `session_id` is an owner-binding hash, never a cookie value or CSRF token.
+Raw session credentials remain in the HTTP boundary. New operational schemas are
+closed to undeclared fields, with internal `$defs` rather than remote schema references.
+
+## Storage and ownership contract
+
+```text
+Web data root/
+  jobs.sqlite3
+  plans/<plan-id>.json
+  runs/<run-id>/
+    plan.json                   # immutable FrozenPlan copy
+    operations/                # parent journal/context/spans; worker checkpoints
+    assessment/                # runner creates this exclusively
+      result.json
+      evidence/
+    exports/<export-id>/
+
+Standalone CLI --out/
+  result.json
+  evidence/
+  operations/                  # CLI observer writes after runner creates --out
+```
+
+All evidence refs are relative to the assessment root, never the operations directory.
+Web admission may create the job root/operations directory but must not precreate
+`assessment/`. CLI observer construction performs no filesystem writes: `begin`
+initializes sidecars only after `execute_run` exclusively creates its output root.
+Web passes the existing job ID as the result run ID; CLI allocates its ID once,
+before the first observation. All contexts/checkpoints/events/final results bind
+that ID and the canonical plan fingerprint. Assessment UUID remains separately allocated.
+
+The Web parent is the sole event/context/snapshot writer; the worker alone publishes
+case checkpoints and source result/evidence. The CLI observer owns both responsibilities
+in one process. Operational snapshots may be atomically replaced until terminal;
+source results, evidence and checkpoints retain exclusive publication. Never weaken
+the existing `evidence.atomic_write` contract to enable snapshot replacement.
 
 ## Commands and preparation policy
 
@@ -81,8 +125,8 @@ All selected tests must execute, with zero failures/errors/unexpected skips.
 
 Task 1 resolves compatible stable releases once: Web ranges
 `fastapi>=0.115,<1`, `uvicorn>=0.34,<1`, `jinja2>=3.1,<4`; dev packages TypeScript,
-ESLint, typescript-eslint, Prettier, `@playwright/test`, `@types/node` and an
-accessibility checker for browser tests. Save exact npm direct versions and all
+ESLint, typescript-eslint, Prettier, `@playwright/test`, `@types/node` and
+`@axe-core/playwright` for accessibility checks. Save exact npm direct versions and all
 transitives in `package-lock.json`, Python resolutions in `uv.lock`. Choose the
 newest published stable Node 24 patch from the official release index at preparation
 time, record its version, per-architecture SHA-256 and matching official image digest
@@ -103,15 +147,17 @@ Primary compatibility references checked during planning:
 ### Task 1: Operational contracts and optional Web tooling
 
 **Files:** Create `operations/__init__.py`, `operations/models.py`, `operations/ports.py`,
-the seven schema files above, `package.json`, `package-lock.json`, `tsconfig.json`,
+`operations/contracts.py`, the eight operational/API schema files above plus
+`resources/schemas/web-console-acceptance.schema.json` and `web-console-handoff.schema.json`,
+`package.json`, `package-lock.json`, `tsconfig.json`,
 `eslint.config.js`, `.prettierignore`, `.prettierrc.json`, `docs/harness/web-toolchain.json`;
 modify `pyproject.toml`, `uv.lock`, `Dockerfile` dev target, `.devcontainer/devcontainer.json`,
 `scripts/validate_resources.py`, `scripts/check_package.py`; test `tests/unit/test_operations.py`,
 `tests/harness/test_web_toolchain.py`.
 
-**Interfaces:** Produces the shared types above and `validate_operational(document: JsonObject, schema_name: str) -> None` in `operations/models.py`, delegating schema I/O through a boundary in `schema.py`; keep immutable value construction independent of resource loading. Runtime CLI never imports FastAPI while discovering commands.
+**Interfaces:** Produces the shared types above and `operations.contracts.validate_operational(document: JsonObject, schema_name: str) -> None`, using the existing packaged loader in `schema.py`. Pure records/ports never import this adapter or resource loaders. Runtime CLI never imports FastAPI while discovering commands.
 
-- [ ] **RED:** `test_operational_contracts_reject_secret_and_illegal_state` asserts extra `credential` fields, nonterminal-to-terminal violations, negative sequence and unknown event kinds are rejected; every new resource is in an installed-wheel inventory. `test_web_extra_is_optional` asserts `import anthropic_readiness.cli` succeeds without Web packages. Run the two named test files and observe assertion failures.
+- [ ] **RED:** `test_operational_contracts_reject_secret_and_illegal_state` asserts extra `credential` fields, terminal-to-active transitions, negative sequence and unknown event kinds are rejected; every new resource is in an installed-wheel inventory. `test_web_extra_is_optional` asserts `import anthropic_readiness.cli` succeeds without Web packages. Run the two named test files and observe assertion failures.
 - [ ] **Implement:** Define records/ports and packaged schemas, add the optional `web` extra plus Web packages to the dev dependency group, prepare/pin the toolchain as above, and include Node/browser preparation only in dev stages. Extend schema/resource inventory without changing original rule/capture/result content.
 - [ ] **GREEN:** Run `P tests/unit/test_operations.py tests/harness/test_web_toolchain.py`, resource validation and `F`; record exact resolved versions and any pending browser download honestly.
 - [ ] **Commit:** `feat: define operational contracts and optional web tooling`.
@@ -122,8 +168,8 @@ modify `pyproject.toml`, `uv.lock`, `Dockerfile` dev target, `.devcontainer/devc
 test `tests/integration/test_run_journal.py`, `tests/unit/test_execution_spans.py`.
 
 **Interfaces:** `RunJournal(root: Path, run_id: str).append(event: WorkerEvent) -> ProgressEvent`,
-`.after(sequence: int) -> tuple[ProgressEvent, ...]`, `.snapshot() -> JsonObject`;
-`CheckpointStore(root: Path, run_id: str).commit(case: JsonObject, refs: tuple[EvidenceRef, ...]) -> JsonObject`,
+`.begin(context: JsonObject) -> None`, `.after(sequence: int) -> tuple[ProgressEvent, ...]`, `.snapshot() -> JsonObject`;
+`CheckpointStore(root: Path, run_id: str, *, evidence_root: Path).commit(case: JsonObject, refs: tuple[EvidenceRef, ...]) -> JsonObject`,
 `.load_verified() -> tuple[JsonObject, ...]`. Only the parent or standalone CLI owns a journal writer.
 
 - [ ] **RED:** `test_case_is_visible_only_after_evidence_and_checkpoint` asserts a failed checkpoint write leaves no case-completion event. `test_restart_retains_committed_prefix` simulates a torn last event and preserves valid prefix/checkpoints with an interruption warning, never erasing an attempt. `test_spans_preserve_real_gaps` asserts a deliberate gap is visible rather than reconstructed from duration sums. Run the two files.
@@ -133,18 +179,21 @@ test `tests/integration/test_run_journal.py`, `tests/unit/test_execution_spans.p
 
 ### Task 3: Shared application, observable runner and cancellation
 
-**Files:** Create `application.py`, `credentials.py`; modify `config.py`, `runner.py`,
+**Files:** Create `application.py`, `credentials.py`, `operations/observer.py`; modify `config.py`, `runner.py`,
 `transport.py`, `cli.py`; test `tests/unit/test_application.py`, `tests/integration/test_execution_observer.py`,
 `tests/integration/test_execution_cancel.py`; reuse existing runner/transport/CLI tests.
 
 **Interfaces:** `config.target_from_document(value: JsonObject) -> TargetConfig` is the existing loader validation extracted from file I/O; `load_target` still rejects duplicate YAML keys.
 `application.build_plan(target: JsonObject, profiles: Sequence[str]) -> RunPlan`;
-`application.run_assessment(plan: RunPlan, output: Path, *, credentials: CredentialProvider, observer: ExecutionObserver | None = None, control: CancelToken | None = None) -> RunResult`.
-Extend `execute_run` with optional observer/control/provider keyword arguments, preserving old callers/environment behavior.
+`application.run_assessment(plan: RunPlan, output: Path, *, credentials: CredentialProvider, observer: ExecutionObserver | None = None, control: CancelToken | None = None, run_id: str | None = None) -> RunResult`.
+Extend `execute_run` with optional observer/control/provider/run_id keyword arguments, preserving old callers/environment behavior; allocate a missing run ID before `begin`, not during final result assembly.
 `HttpTransport(..., observer: ExecutionObserver | None = None, control: CancelToken | None = None)` emits only observed safe phase events.
 Provide bound `EnvironmentCredentials` and `MemoryCredentials` implementations in `credentials.py`.
+`operations.observer.DiskExecutionObserver(operations_root: Path, evidence_root: Path)`
+constructs lazily and implements the protocol using Task 2 stores. Web's pipe
+observer performs `begin` via a parent acknowledgement before any model request.
 
-- [ ] **RED:** `test_cli_and_observed_run_keep_identical_assertion_semantics` compares assertion IDs/versions/required/status/reasons, plan fingerprints and response-body hashes for the same synthetic target; exclude only UUIDs, timestamp/duration/environment fields and timing-bearing evidence metadata. `test_cancel_before_transport_callback_registration` proves no dispatch through the cancellation race. `test_observer_failure_stops_next_request` asserts no later request after a mandatory write failure. Run the three new files.
+- [ ] **RED:** `test_cli_and_observed_run_keep_identical_assertion_semantics` compares assertion IDs/versions/required/status/reasons, plan fingerprints and response-body hashes for the same synthetic target; exclude only UUIDs, timestamp/duration/environment fields and timing-bearing evidence metadata. `test_run_id_and_output_ownership_are_consistent` asserts supplied run ID on every record and preserves exclusive CLI/assessment root creation. `test_cancel_before_transport_callback_registration` proves no dispatch through the cancellation race. `test_observer_failure_stops_next_request` asserts no later request after a mandatory write failure. Run the three new files.
 - [ ] **Implement:** Emit case/request/observed headers/content/validation/commit phases, coalesce content activity to one event/second, and checkpoint all completed or precondition cases. Do not label “connecting” as established TCP or a first event as first output token. Honor token before dispatch and during transport; unify signal cancellation with the token and preserve existing CLI exits. Standalone CLI gets a local journal/checkpoint observer, keeping machine stdout stable and reports automatic.
 - [ ] **GREEN:** Run new tests plus `tests/acceptance/test_cli.py`, `test_runner.py`, `test_replay.py`, existing transport/deadline tests, then `F`. Source result/capture schemas and golden protocol expectations remain unchanged.
 - [ ] **Commit:** `feat: share observable bounded execution across adapters`.
@@ -156,7 +205,7 @@ test `tests/integration/test_job_store.py`, `tests/unit/test_web_plans.py`.
 
 **Interfaces:** `JobStore(root: Path)` provides `create_plan(target: JsonObject, profiles: tuple[str, ...], session_id: str, *, now: datetime) -> FrozenPlan`,
 `get_plan(plan_id: str, session_id: str, *, now: datetime) -> FrozenPlan`,
-`admit(plan_id: str, session_id: str, idempotency_key: str, *, now: datetime) -> JobRecord`,
+`admit(plan_id: str, session_id: str, idempotency_key: str, *, now: datetime) -> Admission`,
 `get_job(run_id: str) -> JobRecord`, `transition(run_id: str, expected: JobState, next_state: JobState) -> JobRecord`,
 `history(filters: JsonObject, cursor: str | None, limit: int = 50) -> JsonObject`,
 `save_preset(preset_id: str | None, target: JsonObject) -> str`, `presets() -> tuple[JsonObject, ...]`.
@@ -174,9 +223,15 @@ test `tests/integration/test_job_manager.py`, `tests/integration/test_worker_lif
 `tests/fixtures/http/slow_peer.py`.
 
 **Interfaces:** `JobManager(store: JobStore, *, credential_allowlist: Mapping[str, str])` exposes
-`start() -> None`, `submit(plan: FrozenPlan, idempotency_key: str, credentials: CredentialProvider) -> JobRecord`,
+`start() -> None`, `submit(plan_id: str, session_id: str, idempotency_key: str, credentials: CredentialProvider) -> JobRecord`,
 `cancel(run_id: str) -> JobRecord`, `snapshot(run_id: str) -> JsonObject`, `close() -> None`.
 `jobs.worker.worker_main(plan: JsonObject, root: Path, control: Connection, observations: Connection) -> None` uses spawn, not a shell. Handshake/secret/control messages are private; only validated `WorkerEvent` messages may enter persistence.
+`submit` calls `JobStore.admit` before checking an old preview's expiry again. An
+existing idempotent admission (`created=False`) returns its job without resolving credentials,
+creating a worker or replacing its secret. A new admission validates expiry/owner
+transactionally. If credential binding fails after admission, record terminal
+`error` with a safe code and zero dispatched requests; the old plan stays consumed.
+Never leave an admitted job queued without a credential provider.
 
 - [ ] **RED:** `test_parent_loss_after_checkpoint_never_sends_next_request` checks synthetic peer call count and retained checkpoint after terminating the parent. `test_force_stop_after_five_seconds_is_interrupted` uses an unresponsive disposable worker. `test_cancel_completion_race_has_one_terminal_state` and `test_restart_never_redispatches` pin finalization and restart behavior. `test_secret_never_enters_persisted_worker_messages` scans synthetic artifacts. Run both lifecycle files.
 - [ ] **Implement:** Own one process handle and a filesystem service lock; keep eight queued secrets in memory only, release per-run secrets at termination, validate IPC shape/size and transport them over private pipes, never argv/environment. Parent assigns event sequences after checking referenced commits; worker never concurrently writes the parent's journal. A parent-channel watchdog sets cancellation on EOF, with bounded self-shutdown if necessary. Restart reconciles valid final artifacts or records interruption, with no resend. Storage failure stops scheduling/worker requests.
@@ -190,8 +245,11 @@ test `tests/integration/test_job_manager.py`, `tests/integration/test_worker_lif
 `tests/acceptance/test_serve_command.py`.
 
 **Interfaces:** `WebSettings` is a frozen dataclass with `host: str = '127.0.0.1'`,
-`port: int = 8765`, `allowed_hosts: tuple[str, ...]`, `allowed_origins: tuple[str, ...]`,
-`credential_env_allowlist: tuple[str, ...]`, `max_body_bytes: int = 65536` (remaining fields have explicit safe defaults).
+`port: int = 8765`, `allowed_hosts: tuple[str, ...] = ('localhost', '127.0.0.1', '[::1]')`,
+`allowed_origins: tuple[str, ...] = ('http://localhost:8765', 'http://127.0.0.1:8765', 'http://[::1]:8765')`,
+`credential_env_allowlist: tuple[str, ...] = ()`, `max_body_bytes: int = 65536`.
+For another configured port, derive these exact loopback origins with that port;
+the internal Docker bind address never becomes an allowed browser origin.
 `create_app(*, data_root: Path, settings: WebSettings) -> FastAPI`;
 `serve(data_root: Path, settings: WebSettings) -> int`.
 CLI adds `serve --data-dir PATH [--host HOST] [--port PORT] [--credential-env NAME]` with lazy optional imports.
@@ -225,8 +283,11 @@ modify `report_reading.py` only to share existing pure explanations; test
 `case_records: tuple[JsonObject, ...]`, `execution: JsonObject | None`,
 `evidence_verification: JsonObject`, `diagnostics: tuple[JsonObject, ...]`, `plan: JsonObject`.
 `ReportView(document: JsonObject)` validates against report-view 1.0.
-`report_sources.load_report_source(root: Path) -> ReportSource` performs all I/O;
+`report_sources.load_report_source(root: Path, *, operations_root: Path | None = None) -> ReportSource` performs all I/O;
 `report_view.build_report_view(source: ReportSource) -> ReportView` is pure.
+`root` is always the assessment/evidence root. Operations default to `root/operations`
+for CLI; Web supplies its sibling `operations/` explicitly. A legacy result with no
+sidecars remains readable. Partial context comes from the verified execution snapshot.
 
 - [ ] **RED:** `test_matrix_counts_all_original_states_without_rescoring` asserts mixed status cells and distinct affected-case counts. `test_old_result_has_no_fabricated_timeline` requires duration-only/unavailable instead. `test_partial_checkpoint_is_not_final_result` keeps pending scope explicit. `test_missing_evidence_removes_snippets_and_warns` pins damaged-capture behavior. Run both files, including current core fixtures.
 - [ ] **Implement:** Reuse original grouped explanations and verified diagnostics; add stable figure IDs, exact counting units/denominators, sources and independently versioned projection metadata. Use actual catalog metadata: W1 groups message, streaming and forced tool selection; never call the last one a complete tool loop. Bind execution sidecar run ID, source result hash and planned membership before drawing spans. Keep source result bytes unchanged.
@@ -258,7 +319,10 @@ with JSDoc types derived from report-view; DOM bootstrap is separate from pure h
 **Interfaces:** `ExportPolicy(formats: tuple[Literal['html','markdown','json','zip'], ...], include_evidence: bool)`;
 `ExportService(data_root: Path).preview(run_id: str, policy: ExportPolicy) -> JsonObject`,
 `.create(run_id: str, policy: ExportPolicy) -> JsonObject`, `.resolve(run_id: str, export_id: str) -> Path`.
-Export records/manifests are schema-checked and opaque. Task 7 adds the approved POST/download routes through this service.
+Export records/manifests are schema-checked and opaque. This task extends Task 7's
+router with the approved POST/download routes; it does not require exports to exist
+earlier. `manifest.files` is an array of `{path, sha256, bytes}` records relative to
+the export root, excludes the manifest's own self-hash, and declares omitted evidence.
 
 - [ ] **RED:** `test_export_preserves_sources_and_manifest_hashes` verifies every archive entry and local link; `test_report_only_and_partial_exports_disclose_omissions` checks proper schema/labels and no clean certificate. `test_export_rejects_changed_source_between_verification_and_copy` replaces a source during copying and requires rejection or explicitly diagnostic output. `test_export_ignores_unrelated_files_and_secret_values` checks allowlisted contents and zero upstream calls. Run both files.
 - [ ] **Implement:** Freeze policy/source identity under a new export ID, use only whitelisted verified files, reject symlink/traversal/unsafe names, rehash the bytes actually copied and publish only after manifest validation. Preserve original result/evidence bytes. Include Chinese README, agent interpretation, versions, limitations, references and SHA-256 manifest; self-hash is a provenance inventory, not a source signature. Never overwrite prior exports or raw captures; damaged sources get a diagnostic-only path.
@@ -273,12 +337,14 @@ test `tests/frontend/forms.test.js`, `tests/frontend/progress.test.js`,
 `tests/integration/test_web_pages.py`.
 
 **Interfaces:** `pages.router` provides `/`, `/new`, `/runs/{id}` and `/history`.
-Browser `forms.js` exports `resolvePreviewState(current, edited)`, `progress.js`
-exports `reduceSnapshot(snapshot, event)`; both have strict JSDoc input/output
+Browser `forms.js` exports `resolvePreviewState(current, edited)`; its state has
+`target` and nullable `previewId`, invalidated by any canonical target change.
+`progress.js` exports `reduceSnapshot(snapshot, event)` preserving committed `sequence`
+and `case_states`; both have strict JSDoc input/output
 contracts matching web-api/progress-event schemas. No browser module starts a test
 on import, reconnect, view change or preset editing.
 
-- [ ] **RED:** `test_edit_invalidates_preview_and_clears_submitted_secret` checks explicit start only; `test_reducer_deduplicates_and_recovers_ahead_cursor` preserves last committed sequence and pending counts. `test_page_renders_only_installed_capabilities` requires exactly the chosen Stage A catalog and correct partial labels. Run frontend Node tests and the page integration file.
+- [ ] **RED:** `test_edit_invalidates_preview` checks the pure form-state transition; `test_reducer_deduplicates_and_recovers_ahead_cursor` preserves last committed sequence and pending counts. `test_page_renders_only_installed_capabilities` requires exactly the chosen Stage A catalog and correct partial labels. Actual input clearing/explicit start behavior belongs to Task 12's browser tests. Run frontend Node tests and the page integration file.
 - [ ] **Implement:** Follow the approved visual hierarchy: compact conclusion, matrix, state distribution, issue impact, real timeline and contextual drawer. Add plan preview/effective URL, finite budgets, generic Docker hint, safe authentication input, persistent run navigation, history filters/preset editing and export preview. Reauthenticate local session on expiry without resubmitting a run; reconnect with snapshot cursor. Restore focus/filter context, expose table data and all five result states. Do not ship the prototype's fake names/counts/events or simulation timers.
 - [ ] **GREEN:** Run named tests plus static frontend checks and Web integration. Inspect the actual four-case layout rather than filling empty space with fictional capabilities.
 - [ ] **Commit:** `feat: add local configuration live assessment and history interfaces`.
@@ -292,8 +358,8 @@ modify `scripts/check.py`, `.github/workflows/ci.yml`, `scripts/check_docs.py` o
 **Interfaces:** `check_frontend.py --suite static|browser --out PATH` writes a schema-validated check record plus JUnit/browser artifacts; reports BLOCKED for missing tools and FAIL for zero executed cases.
 `browser_fixture.py --port PORT --root PATH` starts the local app and a synthetic delayed endpoint, writes disposable control records, and shuts down owned children. Browser tests use no real target or credentials.
 
-- [ ] **RED:** `test_frontend_gate_cannot_pass_with_missing_browser_or_zero_cases` pins truthful aggregation. Browser tests require: preview zero calls; duplicate start one run; close/reopen observation; cancellation; expired-session recovery; exact matrix/detail/figure data; hostile fields inert; keyboard focus restoration; 390px and 1280px layouts; print styles; script-disabled essentials; direct `file://` report with all network requests blocked. Run the new gate test and selected browser specs and observe behavior failures.
-- [ ] **Implement:** Wire static checks into fast and browser checks into full, with browser JUnit attached to required accounting. Lock Chromium through the npm Playwright version; CI prepares deps/browser then runs offline. Add/check any new CI child in `ci-required` with pinned action SHAs, read-only permissions and no publishing. Preserve Python 3.11/3.12 matrix; browser acceptance runs in Linux/Python 3.12 with Node 24. Add synthetic fixture process cleanup and request-count assertions.
+- [ ] **RED:** `test_frontend_gate_cannot_pass_with_missing_browser_or_zero_cases` pins truthful aggregation. Browser tests require: preview zero calls; duplicate start one run; `test_start_clears_submitted_secret`; close/reopen observation; cancellation; expired-session recovery; exact matrix/detail/figure data; hostile fields inert; keyboard focus restoration; 390px and 1280px layouts; print styles; script-disabled essentials; direct `file://` report with all network requests blocked. Run the new gate test and selected browser specs and observe behavior failures.
+- [ ] **Implement:** Wire static checks into fast and browser checks into full, with browser JUnit attached to required accounting. Lock Chromium through the npm Playwright version; CI prepares deps/browser then runs offline. Add/check any new CI child in `ci-required` with pinned action SHAs, read-only permissions and no publishing. Preserve Python 3.11/3.12 matrix; every job executing full prepares locked Node 24 and Chromium. Linux/Python 3.12 is the required browser baseline, with 3.11 supplemental when it runs full; do not silently omit browser checks from a full graph. Add synthetic fixture process cleanup and request-count assertions.
 - [ ] **GREEN:** Run `A`, inspect browser screenshots for summary/matrix/timeline/detail/configuration/print/narrow views, and record actual observations. Automated screenshots do not replace checking their contents. No whole-stage acceptance until image/package/review tasks finish.
 - [ ] **Commit:** `test: gate web and offline report behavior in the unified harness`.
 
@@ -348,11 +414,141 @@ Do not repoint the frozen Stage A manifest to new source artifacts.
 | W1-11 wheels/images | 1, 6, 12–13 |
 | W1-12 gates/review/handoff | 12–14 |
 
+## Concrete regression assertion cores
+
+These belong to the named RED tests in their owning tasks. Test setup constructs
+valid schema-complete records/disposable peers before the demonstrated mutation;
+do not let a missing field or import accidentally satisfy a negative test. They are
+assertion cores rather than production algorithms or substitutes for the other
+explicitly listed cases.
+
+**Task 1 — `test_operational_contracts_reject_secret_and_illegal_state`:**
+
+```python
+with pytest.raises(ValueError):
+    validate_operational({**valid_job, "credential": "synthetic-secret"}, "job")
+assert not transition_allowed("completed", "running")
+```
+
+**Task 2 — `test_case_is_visible_only_after_evidence_and_checkpoint`:** after
+injecting failure in the checkpoint write, preserve any preceding start event.
+
+```python
+assert "case_committed" not in {entry.event.kind for entry in journal.after(0)}
+assert original_evidence_bytes == evidence_path.read_bytes()
+```
+
+**Task 3 — `test_run_id_and_output_ownership_are_consistent`:** use a caller-chosen
+UUID, separate precreated Web job root and initially absent assessment child.
+
+```python
+assert result.run_id == requested_id
+assert {event.run_id for event in journal.after(0)} == {requested_id}
+assert checkpoint["run_id"] == requested_id
+```
+
+**Task 4 — `test_duplicate_start_after_lost_reply_is_one_job`:** admit once,
+advance the deterministic clock past 900 seconds, then repeat the same start key.
+Here `first` and `duplicate` are the returned `Admission.job` values.
+
+```python
+assert first.id == duplicate.id
+assert admitted_run_count == 1
+assert queued_overflow_error == "queue_full"
+```
+
+**Task 5 — `test_parent_loss_after_checkpoint_never_sends_next_request`:** kill
+the disposable parent after an acknowledged first checkpoint and wait for owned
+worker shutdown/reconciliation, rather than merely checking that a signal was sent.
+
+```python
+assert upstream_requests_after_shutdown == upstream_requests_at_parent_exit
+assert recovered.state == "interrupted"
+assert committed_checkpoint_bytes == recovered_checkpoint_bytes
+```
+
+**Task 6 — `test_cross_origin_mutation_and_rebinding_host_rejected`:** start from
+a valid session/CSRF token, send a mutation with a foreign Origin, then check:
+
+```python
+assert response.status_code == 403
+assert upstream_requests == 0
+assert session_cookie_value not in persisted_artifact_text
+```
+
+**Task 7 — `test_snapshot_cursor_gap_and_ahead_reset`:** with writes committed
+between snapshot and subscription, assert replay contains exactly the later prefix.
+
+```python
+assert replayed_sequences == list(range(snapshot_sequence + 1, last_sequence + 1))
+assert upstream_requests_after_reconnect == upstream_requests_before_reconnect
+```
+
+**Task 8 — `test_matrix_counts_all_original_states_without_rescoring`:** build a
+valid four-case source with two PASS, one FAIL and one INDETERMINATE case. Extract
+the status-distribution figure's case counts, not the sum of all matrix dimensions.
+
+```python
+assert case_counts == {"PASS": 2, "FAIL": 1, "INDETERMINATE": 1, "BLOCKED": 0, "SKIP": 0}
+assert original_result_bytes == result_path.read_bytes()
+```
+
+**Task 9 — `test_embedded_hostile_text_is_not_executable`:** preserve malicious
+source text as escaped readable content without producing an active markup boundary.
+
+```python
+assert "</script><img" not in html
+assert source_result_hash_before == source_result_hash_after
+```
+
+**Task 10 — `test_export_preserves_sources_and_manifest_hashes`:** parse the
+manifest from the committed archive and hash the bytes actually read from it.
+
+```python
+for entry in manifest["files"]:
+    assert hashlib.sha256(archive.read(entry["path"])).hexdigest() == entry["sha256"]
+assert archive.read("result.json") == original_result_bytes
+```
+
+**Task 11 — `test_edit_invalidates_preview`:** construct a valid preview and edit
+its model. Separately feed an already consumed event to the pure progress reducer.
+
+```javascript
+assert.equal(edited.previewId, null);
+assert.equal(replayed.sequence, original.sequence);
+```
+
+**Task 12 — offline browser report test:** navigate to the exported `file://`
+artifact with HTTP(S) blocked, then operate the matrix using its accessible control.
+
+```javascript
+await expect(page.getByRole("heading", {name: "能力矩阵", exact: true})).toBeVisible();
+expect(httpRequestCount).toBe(0);
+expect(upstreamCountAfter).toBe(upstreamCountBefore);
+```
+
+The separate `test_start_clears_submitted_secret` uses the real browser input after
+a successful start: `await expect(page.getByLabel("API Key")).toHaveValue("")`.
+
+**Task 13 — installed package and image acceptance:** independently install the
+minimal package and Web extra outside source; collect image observations separately.
+
+```python
+assert installed_cli.returncode == 0
+assert missing_web_resources == []
+assert observed_runtime_uid != 0
+assert published_host_address == "127.0.0.1"
+```
+
 ## Plan self-review and execution handoff
 
-Reviewed each specification section against the traceability table. Checked common
+Self-review completed on 2026-10-17. Reviewed each specification section against the traceability table. Checked common
 type/function names across tasks, parent-only event sequencing, credential IPC,
 API/body/session boundaries, old-report fallbacks, immutable export inputs and
-all five Review Focus scenarios. Tool preparation is a prerequisite with pinned
+all five Review Focus scenarios. Resolved the pause ledger's five open items:
+schema-adapter purity, idempotency before preview expiry, exclusive output layout,
+early shared run ID and concrete regression assertions. Added owner-binding hashes,
+explicit local defaults and separate harness schemas without changing product scope.
+Tool preparation is a prerequisite with pinned
 outputs, not an unrun check labeled passed. Implementation remains sequential in
 this chat; the written plan awaits owner review before Task 1 starts.

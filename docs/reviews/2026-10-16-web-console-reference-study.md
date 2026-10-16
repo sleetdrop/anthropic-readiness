@@ -2,7 +2,8 @@
 
 Status: research proposal; its visual/local direction was approved by the owner.
 The [written W1 specification](../superpowers/specs/2026-10-16-local-web-console-design.md)
-now governs the proposed implementation scope and awaits written-spec review.
+was approved by the owner and governs implementation scope; the implementation
+plan is self-reviewed and awaits owner review.
 Research date: 2026-10-16. The owner confirmed that each user will run Docker on
 their own computer. Product code, dependencies and live endpoint results are unchanged.
 

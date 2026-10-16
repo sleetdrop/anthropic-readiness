@@ -215,3 +215,16 @@ to close the laptop and travel home. The plan is explicitly DRAFT, with open rev
 items and resume instructions in the W1 ledger. Do not begin implementation or ask
 for plan approval from this unfinished checkpoint. No new dependency installation,
 product process, model call or W1 acceptance was started during planning.
+
+## W1 planning resumed and self-reviewed (2026-10-17)
+
+The owner explicitly resumed from home after reconnecting the network. Completed
+the plan's five recorded self-review items and mapped all twelve W1 acceptance
+requirements to fourteen sequential tasks. Clarified exclusive assessment output
+versus job directories, shared early run identity, idempotent admission before
+preview expiry, schema adapter purity and concrete regression assertions. The
+approved spec's scope is unchanged. The plan now awaits owner review; no product
+implementation, dependency preparation, browser acceptance or live call was started.
+The existing Linux/Python 3.12 Dev Container passed the offline documentation/link
+and collaboration check on the resumed plan; whitespace validation also passed.
+These observations do not establish any W1 product acceptance.

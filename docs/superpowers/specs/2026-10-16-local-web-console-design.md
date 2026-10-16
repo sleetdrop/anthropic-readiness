@@ -3,7 +3,7 @@
 Revision: 1. Status: explicitly approved by the owner on 2026-10-16.
 The owner approved the local deployment direction and interactive visual design
 on 2026-10-16. This document formalizes that direction; its implementation plan
-is a draft checkpoint; self-review and owner plan approval remain pending.
+was self-reviewed on 2026-10-17 and awaits owner plan approval.
 
 ## 1. Outcome and scope
 
