@@ -1,0 +1,45 @@
+{
+  "node_version": "24.22.0",
+  "npm_version": "11.19.1",
+  "archives": {
+    "arm64": {
+      "url": "https://nodejs.org/dist/v24.22.0/node-v24.22.0-linux-arm64.tar.xz",
+      "sha256": "fef00bb4d36e1c50104a9775a10359beee98f162b4104dd12472c75065c6a143"
+    },
+    "x64": {
+      "url": "https://nodejs.org/dist/v24.22.0/node-v24.22.0-linux-x64.tar.xz",
+      "sha256": "cc2f601cee82d9a5a233302fe307abc600727035fd7d2c3a3571755989e95008"
+    }
+  },
+  "schema_version": "1.0",
+  "node_image": "docker.io/library/node:24.22.0-bookworm-slim@sha256:a5f4366e834695d5f363b920c104953a535d3a9864d1bdf74566a0ebe01daee5",
+  "development_packages": {
+    "@axe-core/playwright": "4.14.0",
+    "@eslint/js": "10.0.1",
+    "@playwright/test": "1.64.1",
+    "@types/node": "24.19.2",
+    "eslint": "10.13.0",
+    "globals": "17.13.0",
+    "prettier": "3.9.10",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.71.2"
+  },
+  "web_packages": {
+    "fastapi": "0.143.3",
+    "uvicorn": "0.54.0",
+    "jinja2": "3.1.6"
+  },
+  "selected_browsers": [
+    {
+      "name": "chromium",
+      "revision": "1248",
+      "browser_version": "156.0.8078.4"
+    },
+    {
+      "name": "chromium-headless-shell",
+      "revision": "1248",
+      "browser_version": "156.0.8078.4"
+    }
+  ],
+  "browser_preparation_command": "npx --no-install playwright install chromium"
+}

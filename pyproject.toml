@@ -9,12 +9,15 @@ description = "Evidence-led black-box checks for Anthropic-compatible endpoints"
 requires-python = ">=3.11"
 dependencies = ["httpx>=0.28,<1", "jsonschema>=4.23,<5", "PyYAML>=6,<7"]
 
+[project.optional-dependencies]
+web = ["fastapi>=0.115,<1", "uvicorn>=0.34,<1", "jinja2>=3.1,<4"]
+
 [project.scripts]
 anthropic-readiness = "anthropic_readiness.cli:main"
 
 [dependency-groups]
 build = ["hatchling==1.27.0"]
-dev = ["pytest>=8,<10", "pytest-cov>=6", "mypy>=1.15", "ruff>=0.11", "import-linter>=2", "types-PyYAML", "types-jsonschema", "hatchling==1.27.0"]
+dev = ["pytest>=8,<10", "pytest-cov>=6", "mypy>=1.15", "ruff>=0.11", "import-linter>=2", "types-PyYAML", "types-jsonschema", "hatchling==1.27.0", "fastapi>=0.115,<1", "uvicorn>=0.34,<1", "jinja2>=3.1,<4"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/anthropic_readiness"]
@@ -56,6 +59,12 @@ layers = [
   "anthropic_readiness.json_validation | anthropic_readiness.sse | anthropic_readiness.requirements | anthropic_readiness.report_reading",
   "anthropic_readiness.models",
 ]
+
+[[tool.importlinter.contracts]]
+name = "Operational values and ports stay independent of adapters"
+type = "forbidden"
+source_modules = ["anthropic_readiness.operations.models", "anthropic_readiness.operations.ports"]
+forbidden_modules = ["anthropic_readiness.schema", "anthropic_readiness.config", "anthropic_readiness.operations.contracts", "anthropic_readiness.evidence", "pathlib", "importlib", "httpx", "fastapi", "sqlite3"]
 
 [[tool.importlinter.contracts]]
 name = "Pure domain, framing and validation"

@@ -1,0 +1,183 @@
+{
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "stage": {
+      "const": "W1"
+    },
+    "requirements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "enum": [
+              "W1-01",
+              "W1-02",
+              "W1-03",
+              "W1-04",
+              "W1-05",
+              "W1-06",
+              "W1-07",
+              "W1-08",
+              "W1-09",
+              "W1-10",
+              "W1-11",
+              "W1-12"
+            ]
+          },
+          "checks": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1
+          }
+        },
+        "required": [
+          "id",
+          "checks"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 12,
+      "maxItems": 12
+    }
+  },
+  "required": [
+    "schema_version",
+    "stage",
+    "requirements"
+  ],
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$defs": {
+    "assertion": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "category": {
+          "enum": [
+            "protocol",
+            "behavior",
+            "client",
+            "environment"
+          ]
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "status": {
+          "enum": [
+            "PASS",
+            "FAIL",
+            "SKIP",
+            "BLOCKED",
+            "INDETERMINATE"
+          ]
+        },
+        "reason_code": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expected": {
+          "type": "string"
+        },
+        "actual": {
+          "type": "string"
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "event": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "minimum": 0
+              },
+              "pointer": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "path",
+              "sha256",
+              "event",
+              "pointer"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "id",
+        "version",
+        "category",
+        "required",
+        "status",
+        "reason_code",
+        "expected",
+        "actual",
+        "evidence_refs"
+      ],
+      "additionalProperties": false
+    },
+    "evidence": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "event": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "pointer": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "path",
+        "sha256",
+        "event",
+        "pointer"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,13 +1,23 @@
 # syntax=docker/dockerfile:1@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e
 FROM ghcr.io/astral-sh/uv@sha256:4a1f3666816dafadd20ceb71eac9a7d56d7ef30279f7d64048519ab901ada336 AS uv
+FROM node:24.22.0-bookworm-slim@sha256:a5f4366e834695d5f363b920c104953a535d3a9864d1bdf74566a0ebe01daee5 AS node_toolchain
 FROM python:3.12-slim-bookworm@sha256:34386ef0cb081344d7ec1c103ba398e6e9f64e9ab3a1509accc92a4e24a07258 AS base
 COPY --from=uv /uv /uvx /usr/local/bin/
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 UV_LINK_MODE=copy
 
 FROM base AS dev
-RUN apt-get update && apt-get install -y --no-install-recommends git ca-certificates \
+COPY --from=node_toolchain /usr/local/bin/node /usr/local/bin/node
+COPY --from=node_toolchain /usr/local/lib/node_modules/ /usr/local/lib/node_modules/
+RUN apt-get update && apt-get install -y --no-install-recommends git ca-certificates fonts-noto-cjk \
     && rm -rf /var/lib/apt/lists/* \
-    && useradd --create-home --uid 1000 developer
+    && useradd --create-home --uid 1000 developer \
+    && ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm \
+    && ln -s /usr/local/lib/node_modules/npm/bin/npx-cli.js /usr/local/bin/npx
+WORKDIR /opt/frontend-preparation
+COPY package.json package-lock.json ./
+RUN npm ci --ignore-scripts \
+    && npx --no-install playwright install-deps chromium \
+    && rm -rf /opt/frontend-preparation
 ENV UV_PROJECT_ENVIRONMENT=/home/developer/.venv
 USER developer
 WORKDIR /workspaces/anthropic-readiness

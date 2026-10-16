@@ -1,0 +1,443 @@
+{
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "run_id": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "config_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "case_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "case_record": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "status": {
+          "enum": [
+            "PASS",
+            "FAIL",
+            "SKIP",
+            "BLOCKED",
+            "INDETERMINATE"
+          ]
+        },
+        "preconditions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "version": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "category": {
+                "enum": [
+                  "protocol",
+                  "behavior",
+                  "client",
+                  "environment"
+                ]
+              },
+              "required": {
+                "type": "boolean"
+              },
+              "status": {
+                "enum": [
+                  "PASS",
+                  "FAIL",
+                  "SKIP",
+                  "BLOCKED",
+                  "INDETERMINATE"
+                ]
+              },
+              "reason_code": {
+                "type": "string",
+                "minLength": 1
+              },
+              "expected": {
+                "type": "string"
+              },
+              "actual": {
+                "type": "string"
+              },
+              "evidence_refs": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "path": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "sha256": {
+                      "type": "string",
+                      "pattern": "^[0-9a-f]{64}$"
+                    },
+                    "event": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "minimum": 0
+                    },
+                    "pointer": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "path",
+                    "sha256",
+                    "event",
+                    "pointer"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "id",
+              "version",
+              "category",
+              "required",
+              "status",
+              "reason_code",
+              "expected",
+              "actual",
+              "evidence_refs"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "attempts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "index": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "status": {
+                "enum": [
+                  "PASS",
+                  "FAIL",
+                  "SKIP",
+                  "BLOCKED",
+                  "INDETERMINATE"
+                ]
+              },
+              "actual_requests": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "termination": {
+                "type": "object"
+              },
+              "duration_ms": {
+                "type": "number",
+                "minimum": 0
+              },
+              "observations": {
+                "type": "object"
+              },
+              "assertions": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "version": {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "category": {
+                      "enum": [
+                        "protocol",
+                        "behavior",
+                        "client",
+                        "environment"
+                      ]
+                    },
+                    "required": {
+                      "type": "boolean"
+                    },
+                    "status": {
+                      "enum": [
+                        "PASS",
+                        "FAIL",
+                        "SKIP",
+                        "BLOCKED",
+                        "INDETERMINATE"
+                      ]
+                    },
+                    "reason_code": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "expected": {
+                      "type": "string"
+                    },
+                    "actual": {
+                      "type": "string"
+                    },
+                    "evidence_refs": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "path": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "sha256": {
+                            "type": "string",
+                            "pattern": "^[0-9a-f]{64}$"
+                          },
+                          "event": {
+                            "type": [
+                              "integer",
+                              "null"
+                            ],
+                            "minimum": 0
+                          },
+                          "pointer": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "path",
+                          "sha256",
+                          "event",
+                          "pointer"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "version",
+                    "category",
+                    "required",
+                    "status",
+                    "reason_code",
+                    "expected",
+                    "actual",
+                    "evidence_refs"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "id",
+              "index",
+              "status",
+              "actual_requests",
+              "termination",
+              "duration_ms",
+              "observations",
+              "assertions"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "dimensions": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "id",
+        "version",
+        "required",
+        "status",
+        "preconditions",
+        "attempts",
+        "dimensions"
+      ],
+      "additionalProperties": false
+    },
+    "evidence_refs": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/evidence"
+      }
+    },
+    "committed_at": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d\\d-\\d\\dT\\d\\d:\\d\\d:\\d\\d(?:\\.\\d+)?(?:Z|[+-]\\d\\d:\\d\\d)$"
+    }
+  },
+  "required": [
+    "schema_version",
+    "run_id",
+    "config_sha256",
+    "case_id",
+    "case_record",
+    "evidence_refs",
+    "committed_at"
+  ],
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$defs": {
+    "assertion": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "category": {
+          "enum": [
+            "protocol",
+            "behavior",
+            "client",
+            "environment"
+          ]
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "status": {
+          "enum": [
+            "PASS",
+            "FAIL",
+            "SKIP",
+            "BLOCKED",
+            "INDETERMINATE"
+          ]
+        },
+        "reason_code": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expected": {
+          "type": "string"
+        },
+        "actual": {
+          "type": "string"
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "event": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "minimum": 0
+              },
+              "pointer": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "path",
+              "sha256",
+              "event",
+              "pointer"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "id",
+        "version",
+        "category",
+        "required",
+        "status",
+        "reason_code",
+        "expected",
+        "actual",
+        "evidence_refs"
+      ],
+      "additionalProperties": false
+    },
+    "evidence": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "event": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "pointer": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "path",
+        "sha256",
+        "event",
+        "pointer"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

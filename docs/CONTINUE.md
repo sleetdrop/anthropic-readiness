@@ -1,17 +1,18 @@
 # Stage A completed locally
 
-## Current milestone: W1 implementation-plan review
+## Current milestone: W1 sequential implementation
 
 The owner requested a local Docker Web interface for configuration, live test
 progress and on-demand export, with independent CLI execution retained. Individual
 local deployment is confirmed. The owner approved the console/report visual
 direction. The [written W1 specification](superpowers/specs/2026-10-16-local-web-console-design.md)
 was explicitly approved. Its [implementation plan](superpowers/plans/2026-10-16-local-web-console-implementation.md)
-has 14 sequential tasks; self-review completed on 2026-10-17 and owner plan review
-is pending. The owner explicitly resumed after the laptop/network pause. Preserve
-current-chat sequential execution and one independent whole-W1 review; do not start
-Task 1 before plan approval. See the [W1 ledger](harness/web-console-ledger.md).
-No W1 product dependency installation or live request was started.
+has 14 sequential tasks; self-review and owner approval completed on 2026-10-17.
+The owner chose the current checkout and prepared Dev Container. Work is on branch
+`codex/local-web-console`; Task 1 is in progress. Preserve current-chat sequential
+execution and one independent whole-W1 review. See the [W1 ledger](harness/web-console-ledger.md)
+and this plan's ignored `.superpowers/sdd/` workspace for exact task/RED/GREEN state.
+No W1 real endpoint call is authorized by plan approval.
 Stage A completion and the private assessment below remain historical baselines.
 
 The approved 12-task Stage A plan is complete on branch `feat/stage-a`.

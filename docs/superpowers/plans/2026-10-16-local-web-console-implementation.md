@@ -1,7 +1,7 @@
 # Local Web Console and Visual Reports Implementation Plan
 
-Revision: 1. Status: self-reviewed on 2026-10-17; awaiting owner plan review.
-The owner resumed after the explicit pause. Tasks are not started.
+Revision: 1. Status: self-reviewed and owner-approved on 2026-10-17.
+Execution is sequential in the current chat; the W1 ledger records task state.
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking. Repository instructions require sequential native execution, not per-task implementer agents; arrange one independent whole-W1 review at the end.
 
@@ -157,9 +157,9 @@ modify `pyproject.toml`, `uv.lock`, `Dockerfile` dev target, `.devcontainer/devc
 
 **Interfaces:** Produces the shared types above and `operations.contracts.validate_operational(document: JsonObject, schema_name: str) -> None`, using the existing packaged loader in `schema.py`. Pure records/ports never import this adapter or resource loaders. Runtime CLI never imports FastAPI while discovering commands.
 
-- [ ] **RED:** `test_operational_contracts_reject_secret_and_illegal_state` asserts extra `credential` fields, terminal-to-active transitions, negative sequence and unknown event kinds are rejected; every new resource is in an installed-wheel inventory. `test_web_extra_is_optional` asserts `import anthropic_readiness.cli` succeeds without Web packages. Run the two named test files and observe assertion failures.
-- [ ] **Implement:** Define records/ports and packaged schemas, add the optional `web` extra plus Web packages to the dev dependency group, prepare/pin the toolchain as above, and include Node/browser preparation only in dev stages. Extend schema/resource inventory without changing original rule/capture/result content.
-- [ ] **GREEN:** Run `P tests/unit/test_operations.py tests/harness/test_web_toolchain.py`, resource validation and `F`; record exact resolved versions and any pending browser download honestly.
+- [x] **RED:** `test_operational_job_rejects_unsafe_fields` and `test_job_lifecycle_matches_the_declared_transition_table` assert extra `credential` fields, terminal-to-active transitions, negative sequence and unknown event kinds are rejected; every new resource is in the inventory. `test_web_extra_is_optional` asserts `import anthropic_readiness.cli` succeeds without Web packages. Named task files ran and observed behavior failures before implementation.
+- [x] **Implement:** Define records/ports and packaged schemas, add the optional `web` extra plus Web packages to the dev dependency group, prepare/pin the toolchain as above, and include Node/browser preparation only in dev stages. Extend schema/resource inventory without changing original rule/capture/result content.
+- [x] **GREEN:** Run `P tests/unit/test_operations.py tests/harness/test_web_toolchain.py`, resource validation and `F`; record exact resolved versions and any pending browser download honestly. The task-done rerun is recorded in the workspace ledger.
 - [ ] **Commit:** `feat: define operational contracts and optional web tooling`.
 
 ### Task 2: Durable journal, checkpoints and execution spans
@@ -422,7 +422,7 @@ do not let a missing field or import accidentally satisfy a negative test. They 
 assertion cores rather than production algorithms or substitutes for the other
 explicitly listed cases.
 
-**Task 1 — `test_operational_contracts_reject_secret_and_illegal_state`:**
+**Task 1 — contract-shape and lifecycle tests (split from the combined draft test):**
 
 ```python
 with pytest.raises(ValueError):
@@ -551,4 +551,4 @@ early shared run ID and concrete regression assertions. Added owner-binding hash
 explicit local defaults and separate harness schemas without changing product scope.
 Tool preparation is a prerequisite with pinned
 outputs, not an unrun check labeled passed. Implementation remains sequential in
-this chat; the written plan awaits owner review before Task 1 starts.
+this chat; owner plan approval was received before Task 1 started.

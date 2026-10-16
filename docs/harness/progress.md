@@ -228,3 +228,20 @@ implementation, dependency preparation, browser acceptance or live call was star
 The existing Linux/Python 3.12 Dev Container passed the offline documentation/link
 and collaboration check on the resumed plan; whitespace validation also passed.
 These observations do not establish any W1 product acceptance.
+
+## W1 execution approved; Task 1 in progress (2026-10-17)
+
+The owner approved the 14-task plan and chose the existing checkout/Dev Container.
+Created local branch `codex/local-web-console` from `ad83593`; the original full
+11-gate offline baseline passed before implementation. Task 1 added pure operational
+records/ports, packaged operational schemas and optional Web dependencies. Observed
+RED failures preceded implementation; 69 targeted checks now pass while the Node
+check awaits official preparation. The first fast run failed test-style lint and
+the missing toolchain marker; these are retained instead of whole-task PASS.
+Toolchain preparation remains in progress. No W1 live endpoint call, runtime image
+acceptance or remote CI has run.
+
+Task 1's final fast graph passed all seven gates; complete pytest passed 245 tests.
+The official Node archive and immutable image digest are verified, with exact
+Python/npm tool versions locked. Browser preparation is separate and still in
+progress; no W1 browser/image acceptance is implied by these source checks.

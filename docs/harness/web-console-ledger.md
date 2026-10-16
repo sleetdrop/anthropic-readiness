@@ -7,8 +7,10 @@
 - Written specification: [local Web console](../superpowers/specs/2026-10-16-local-web-console-design.md),
   revision 1; explicitly approved by the owner on 2026-10-16.
 - Implementation plan: [self-reviewed revision 1](../superpowers/plans/2026-10-16-local-web-console-implementation.md),
-  14 sequential tasks; self-review completed on 2026-10-17 and owner plan review is pending. No W1 product implementation
-  has started. Acceptance IDs W1-01 through W1-12 are all unrun.
+  14 sequential tasks; self-review completed and owner approval received on 2026-10-17.
+- Execution: current chat, sequentially; owner chose the current checkout/Dev Container.
+  W1 branch is `codex/local-web-console`, starting from `ad83593`. Task 1 is in progress;
+  tasks 2–14 and whole-W1 acceptance remain pending.
 
 ## Observed design checks
 
@@ -64,3 +66,25 @@ Observed planning checks on 2026-10-17: the existing Linux/Python 3.12 Dev Conta
 passed `UV_OFFLINE=1 uv run --frozen python scripts/check_docs.py`
 (`documentation_collaboration: passed`), and `git diff --check` passed. Only planning
 and handoff documentation changed; product suites and all W1 acceptance remain unrun.
+
+## Task 1: operational contracts and development preparation
+
+In progress on `codex/local-web-console`, BASE `ad83593`. Existing full offline
+baseline passed all eleven gates. RED log in the plan workspace recorded 55
+behavior failures, followed by 69 passing core checks with the pending Node check
+deselected. This does not complete the task. Python Web extra/dev packages are
+locked and prepared; official Node 24.22.0 archive and npm/browser preparation remain
+separate. No image, browser or real-endpoint outcome is implied.
+
+Ruling: retain the recursive wheel resource checker because the new controlled
+missing-schema inventory test already exercises it. If incorrect, an omitted
+resource could remain undetected until Task 13's required installed-wheel acceptance.
+Frozen Stage A records remain unchanged.
+
+Task 1 verification: final fast graph passed all seven gates; the complete bare
+pytest suite passed 245 tests. Official Node 24.22.0 archive checksum was verified,
+Node/npm installed only inside the Dev Container, and exact npm versions/lock were
+recorded in `web-toolchain.json`. Chromium OS/font/binary preparation remains
+asynchronous; actual browser/new-image acceptance is not claimed. The combined
+draft schema/lifecycle test was split into explicit shape checks and 49 transition
+tests, preserving its intended coverage; actual names are reflected in the plan.

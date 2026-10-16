@@ -73,7 +73,24 @@ def validate_resources(root: Path) -> list[str]:
             schemas[path.name.removesuffix(".schema.json")] = schema
         except (ValueError, SchemaError) as exc:
             errors.append(f"schema_invalid:{path.name}:{type(exc).__name__}")
-    expected = {"result", "target", "capture", "contract", "check-result", "acceptance"}
+    expected = {
+        "result",
+        "target",
+        "capture",
+        "contract",
+        "check-result",
+        "acceptance",
+        "plan",
+        "job",
+        "execution",
+        "checkpoint",
+        "progress-event",
+        "report-view",
+        "export-manifest",
+        "web-api",
+        "web-console-acceptance",
+        "web-console-handoff",
+    }
     if set(schemas) != expected:
         errors.append("schema_inventory")
     for path in (resources / "contracts").glob("*/*/manifest.json"):

@@ -20,7 +20,24 @@ from anthropic_readiness.requirements import CASE_IDS, PROFILE_CASES, SUPPORTED,
 
 
 def load_schema(name: str) -> JsonObject:
-    if name not in {"result", "capture", "target", "contract", "check-result", "acceptance"}:
+    if name not in {
+        "result",
+        "capture",
+        "target",
+        "contract",
+        "check-result",
+        "acceptance",
+        "plan",
+        "job",
+        "execution",
+        "checkpoint",
+        "progress-event",
+        "report-view",
+        "export-manifest",
+        "web-api",
+        "web-console-acceptance",
+        "web-console-handoff",
+    }:
         raise ValueError("unknown_schema")
     return object_value(
         strict_json(
