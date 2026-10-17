@@ -276,3 +276,46 @@ Rulings and costs:
 - Ambiguous credential sources are rejected; opaque evidence IDs and fixed safe
   attachments avoid client-controlled paths or active upstream content. Clients
   must explicitly choose a credential source and use the returned inventory.
+
+## Task 8: verified shared report projection
+
+Added an I/O-only source loader and deterministic report projection. Final results
+retain their original cases/assertions and source-byte hash. Partial runs expose
+only advertised, hash-verified checkpoints with explicit pending scope and no
+fabricated final RunResult. Evidence inventory and assertion references are checked
+before local field diagnostics; damaged evidence retains original verdicts but has
+no snippets. Operational timing requires matching run, frozen target/contract/plan,
+source hash, case membership and valid span coordinates. Unsafe/mismatched sidecars
+become visible diagnostics beside a valid original result. Partial target bindings
+also recompute the frozen configuration fingerprint.
+
+Four stable figures describe exact capability counts, status distribution, distinct
+finding impact and observed spans (or labeled duration-only comparison for legacy
+sources). Current groups match all four real catalog IDs: messages, streaming and
+forced tool selection, explicitly excluding a full tool loop. All original states,
+counting units, denominators and untested client/version semantics remain explicit.
+The projection retains full source provenance and original assertion/reason indexes
+for later agent interpretation without changing result/capture contracts.
+
+Observed RED: 18 initial behavior assertions; additional provenance omission,
+first-call schema I/O, an unsafe sidecar hiding a valid result and an unbound partial
+target. All received fixes with regression tests. The earlier 362-test
+pass preceded the final two sidecar fixes. Final verification passed all seven fast
+gates and all 364 pytest tests in 74.07s.
+Report/source and unchanged report acceptance currently pass 39 tests. No browser,
+new renderer/runtime-image or real endpoint acceptance is implied.
+
+Rulings and costs:
+
+- Add closed provenance plus assertion/reason indexes to the unreleased report-view
+  1.0 contract and its Web API embedding. The initial draft omitted facts needed by
+  unchanged CLI details. Consumers of that unshipped draft would need to update.
+- Precompile the immutable projection schema at model initialization; every build
+  still validates, with no resource I/O during projection. Schema replacement needs
+  a process restart.
+- Partial views use advertised verified checkpoints only; unavailable records stay
+  unassessed pending with diagnostics. Consumers must inspect partial scope and
+  limitations rather than interpreting a status color alone.
+- Exact known catalog IDs define the three truthful groups, with a coverage gate;
+  unknown historical IDs have an explicit other group. Catalog changes must update
+  this presentation mapping before that gate passes.

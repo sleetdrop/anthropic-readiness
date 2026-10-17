@@ -4488,6 +4488,14 @@
               "affected_cases": {
                 "type": "integer",
                 "minimum": 0
+              },
+              "assertion_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "reason_code": {
+                "type": "string",
+                "minLength": 1
               }
             },
             "required": [
@@ -4502,7 +4510,9 @@
               "number",
               "anchor",
               "kind",
-              "affected_cases"
+              "affected_cases",
+              "assertion_id",
+              "reason_code"
             ],
             "additionalProperties": false
           }
@@ -5199,6 +5209,91 @@
               "type": "null"
             }
           ]
+        },
+        "provenance": {
+          "type": "object",
+          "properties": {
+            "assessment_id": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source_run_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "tool": {
+              "type": "object"
+            },
+            "execution_environment": {
+              "type": "object"
+            },
+            "contract": {
+              "type": "object"
+            },
+            "target": {
+              "type": "object"
+            },
+            "profiles": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "version": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "cases": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "readiness": {
+                    "enum": [
+                      "passed",
+                      "not_ready",
+                      "incomplete"
+                    ]
+                  }
+                },
+                "required": [
+                  "id",
+                  "version",
+                  "cases",
+                  "readiness"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "report_context": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "assessment_id",
+            "source_run_id",
+            "tool",
+            "execution_environment",
+            "contract",
+            "target",
+            "profiles",
+            "report_context"
+          ],
+          "additionalProperties": false
         }
       },
       "required": [
@@ -5217,7 +5312,8 @@
         "evidence_verification",
         "limitations",
         "references",
-        "execution"
+        "execution",
+        "provenance"
       ],
       "additionalProperties": false
     }

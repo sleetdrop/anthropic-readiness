@@ -62,8 +62,14 @@ def overview(result: RunResult) -> tuple[str, str]:
 
 
 def findings(result: RunResult, diagnostics: Sequence[JsonObject]) -> list[JsonObject]:
+    return case_findings(result.cases, diagnostics)
+
+
+def case_findings(
+    cases: Sequence[JsonObject], diagnostics: Sequence[JsonObject]
+) -> list[JsonObject]:
     groups: dict[tuple[str, str, str], JsonObject] = {}
-    for case in result.cases:
+    for case in cases:
         assertions = objects(case.get("preconditions")) + [
             a
             for attempt in objects(case.get("attempts"))
@@ -79,6 +85,8 @@ def findings(result: RunResult, diagnostics: Sequence[JsonObject]) -> list[JsonO
                 title, impact, action = _explanation(key, reason)
                 groups[identity] = {
                     "id": key,
+                    "assertion_id": key,
+                    "reason_code": reason,
                     "status": assertion.get("status"),
                     "category": assertion.get("category"),
                     "title": title,

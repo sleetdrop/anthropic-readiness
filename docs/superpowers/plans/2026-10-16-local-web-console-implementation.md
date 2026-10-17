@@ -291,10 +291,10 @@ modify `report_reading.py` only to share existing pure explanations; test
 for CLI; Web supplies its sibling `operations/` explicitly. A legacy result with no
 sidecars remains readable. Partial context comes from the verified execution snapshot.
 
-- [ ] **RED:** `test_matrix_counts_all_original_states_without_rescoring` asserts mixed status cells and distinct affected-case counts. `test_old_result_has_no_fabricated_timeline` requires duration-only/unavailable instead. `test_partial_checkpoint_is_not_final_result` keeps pending scope explicit. `test_missing_evidence_removes_snippets_and_warns` pins damaged-capture behavior. Run both files, including current core fixtures.
-- [ ] **Implement:** Reuse original grouped explanations and verified diagnostics; add stable figure IDs, exact counting units/denominators, sources and independently versioned projection metadata. Use actual catalog metadata: W1 groups message, streaming and forced tool selection; never call the last one a complete tool loop. Bind execution sidecar run ID, source result hash and planned membership before drawing spans. Keep source result bytes unchanged.
-- [ ] **GREEN:** Run report-view/source and all existing report acceptance tests relevant to verdict/evidence preservation. New presentation expectations are intentional 2.0 changes, not silent edits of protocol goldens.
-- [ ] **Commit:** `feat: derive truthful visual reports from verified assessment sources`.
+- [x] **RED:** `test_matrix_counts_all_original_states_without_rescoring` asserts mixed status cells and distinct affected-case counts. `test_old_result_has_no_fabricated_timeline` requires duration-only/unavailable instead. `test_partial_checkpoint_is_not_final_result` keeps pending scope explicit. `test_missing_evidence_removes_snippets_and_warns` pins damaged-capture behavior. Run both files, including current core fixtures.
+- [x] **Implement:** Reuse original grouped explanations and verified diagnostics; add stable figure IDs, exact counting units/denominators, sources and independently versioned projection metadata. Use actual catalog metadata: W1 groups message, streaming and forced tool selection; never call the last one a complete tool loop. Bind execution sidecar run ID, source result hash and planned membership before drawing spans. Keep source result bytes unchanged.
+- [x] **GREEN:** Run report-view/source and all existing report acceptance tests relevant to verdict/evidence preservation. New presentation expectations are intentional 2.0 changes, not silent edits of protocol goldens.
+- [x] **Commit:** `feat: derive truthful visual reports from verified assessment sources`.
 
 ### Task 9: Progressive visual reports and CLI report compatibility
 

@@ -317,3 +317,16 @@ Final Linux Python 3.12 checks passed seven fast gates, 40 targeted tests and al
 synthetic requests; observer disconnect did not cancel the active worker. The W1
 ledger records snapshot/replay, lazy credentials and typed OpenAPI rulings. GUI,
 browser and runtime-image acceptance remain pending. No real model call was made.
+
+## W1 Task 8: shared verified visual projection (2026-10-17)
+
+Added verified source loading and schema-validated report-view 1.0/presentation 2.0
+projection. Matrix/status/impact counts preserve original case and assertion facts;
+observed spans retain coordinates, while legacy results get labeled duration-only
+comparison. Partial checkpoints remain distinct from final results. Evidence damage
+removes field excerpts; unsafe/mismatched sidecars leave an explicit diagnostic
+beside a readable valid result. Provenance and original assertion indexes remain
+available for agents. Initial 18 RED assertions and additional targeted REDs are
+recorded in the W1 ledger. Final Linux Python 3.12 verification passed seven fast
+gates and all 364 pytest tests (74.07s), including 24 new projection/source checks.
+No new renderer, GUI/browser, runtime-image or real endpoint acceptance is claimed.
