@@ -1,0 +1,106 @@
+{
+  "schema_version": "1.0",
+  "stage": "W1",
+  "requirements": [
+    {
+      "id": "W1-01",
+      "checks": [
+        "integration",
+        "installed-packages",
+        "arm64-images",
+        "amd64-images"
+      ]
+    },
+    {
+      "id": "W1-02",
+      "checks": [
+        "unit",
+        "integration",
+        "browser"
+      ]
+    },
+    {
+      "id": "W1-03",
+      "checks": [
+        "integration",
+        "browser"
+      ]
+    },
+    {
+      "id": "W1-04",
+      "checks": [
+        "integration",
+        "browser",
+        "arm64-images",
+        "amd64-images"
+      ]
+    },
+    {
+      "id": "W1-05",
+      "checks": [
+        "integration",
+        "acceptance"
+      ]
+    },
+    {
+      "id": "W1-06",
+      "checks": [
+        "integration",
+        "acceptance",
+        "browser"
+      ]
+    },
+    {
+      "id": "W1-07",
+      "checks": [
+        "unit",
+        "acceptance",
+        "frontend-static",
+        "browser"
+      ]
+    },
+    {
+      "id": "W1-08",
+      "checks": [
+        "acceptance",
+        "frontend-static",
+        "browser"
+      ]
+    },
+    {
+      "id": "W1-09",
+      "checks": [
+        "integration",
+        "acceptance",
+        "browser",
+        "compose-demo"
+      ]
+    },
+    {
+      "id": "W1-10",
+      "checks": [
+        "integration",
+        "browser",
+        "arm64-images",
+        "amd64-images",
+        "compose-demo"
+      ]
+    },
+    {
+      "id": "W1-11",
+      "checks": [
+        "installed-packages",
+        "arm64-images",
+        "amd64-images"
+      ]
+    },
+    {
+      "id": "W1-12",
+      "checks": [
+        "full-source",
+        "stage-a-preservation",
+        "independent-review"
+      ]
+    }
+  ]
+}

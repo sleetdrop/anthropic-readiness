@@ -1,0 +1,159 @@
+{
+  "schema_version": "1.0",
+  "stage": "W1",
+  "source_commit": "7739ec18d8be914ec7f311311fcfabc9cc003830",
+  "source_fingerprint": "f53d36ecb0f50f5126d502e66ddc7bd332c96e1926a194afd30c5dd950dd0f94",
+  "lock_sha256": "4ca7b27fc7e151188e574625fd6d9b1ef8334fa865ee9266344bed7a3987f735",
+  "toolchain_sha256": "b2a1352868acbc2cf72db7393b10624778b9c8d1aac0e7a3fde3659d85274ebf",
+  "checks": [
+    {
+      "id": "full-source",
+      "status": "passed",
+      "artifact": "artifacts/checks/1792246817058713338/check-result.json",
+      "sha256": "ba180c481e75e87ad34d4cbcbe0c50b6039dc541c2e6b4c41825183c0d370ec6",
+      "reason": "Native Linux arm64 Python 3.12.15; all 13 gates; clean verification commit; no skips."
+    },
+    {
+      "id": "unit",
+      "status": "passed",
+      "artifact": "artifacts/checks/1792246817058713338/unit.xml",
+      "sha256": "db800562195d4f285a8ab292ac4c5c3a43a4251ff5c6bc8ce4ad523148bc803a",
+      "reason": "251 unit and harness cases."
+    },
+    {
+      "id": "integration",
+      "status": "passed",
+      "artifact": "artifacts/checks/1792246817058713338/integration.xml",
+      "sha256": "7254a0511fab0fb431e09ff8cb70e54dbeea01279dc4ea3db049fdbfb401e7b4",
+      "reason": "127 integration cases."
+    },
+    {
+      "id": "acceptance",
+      "status": "passed",
+      "artifact": "artifacts/checks/1792246817058713338/acceptance.xml",
+      "sha256": "12f86db614d6f2d7f364dae2790adf7a19761894c367c27e61f203a7314a9299",
+      "reason": "54 acceptance cases."
+    },
+    {
+      "id": "installed-packages",
+      "status": "passed",
+      "artifact": "artifacts/checks/1792246817058713338/packaging.xml",
+      "sha256": "8ef28ce82e742606d7c6b8c259de6daa36973ddbceff225e4be7a1aafd8b9cd4",
+      "reason": "Four outside-source CLI-only/Web wheel checks."
+    },
+    {
+      "id": "frontend-static",
+      "status": "passed",
+      "artifact": "artifacts/checks/1792246817058713338/frontend-static/check-result.json",
+      "sha256": "91ae2688aaa49753f5fc32cd3425f1b27fd9ae53944583f9b9d3b2796ecde5f8",
+      "reason": "Pinned Node, strict JSDoc types, lint/format, Jinja compilation/render and 10 Node cases."
+    },
+    {
+      "id": "browser",
+      "status": "passed",
+      "artifact": "artifacts/checks/1792246817058713338/frontend-browser/check-result.json",
+      "sha256": "958c62b87ed7bcfc6d77b8f1f05aab7f1de7fd2d9c5090ee728dc1511afb593e",
+      "reason": "15 actual locked Chromium cases with numeric calibration, Axe, keyboard, print/narrow and disconnected standalone export; verified fixture cleanup."
+    },
+    {
+      "id": "arm64-images",
+      "status": "passed",
+      "artifact": "artifacts/w1/task13-arm64-full-sixth/image-result.json",
+      "sha256": "811589ca5b9da6a036bce48124273908d66f450acc70abdf452e91b46d7e90ec",
+      "reason": "Actual native CLI/Web runtime images; native arm64 development baseline."
+    },
+    {
+      "id": "amd64-images",
+      "status": "passed",
+      "artifact": "artifacts/w1/task13-amd64-full-third/image-result.json",
+      "sha256": "f12f562172f308e36edd32f6743d687c3395a79f6c8d4d57006aa7d267769826",
+      "reason": "Actual emulated amd64 CLI/Web runtime images; separate native arm64 development baseline."
+    },
+    {
+      "id": "stage-a-preservation",
+      "status": "passed",
+      "artifact": "artifacts/w1/frozen-stage-a-proof-7739ec1.json",
+      "sha256": "0da44a002e75388029aa90a65022a87567ef03bfd6ed0607b7c689760b11b1c6",
+      "reason": "29 protected contract/schema/fixture/handoff files byte-identical to W1 branch base."
+    },
+    {
+      "id": "compose-demo",
+      "status": "passed",
+      "artifact": "artifacts/w1/demo-observation-7739ec1.json",
+      "sha256": "154dcfcf61159d09d42c51445783378ef34035a90bb218987518d0b332f71761",
+      "reason": "Exact verified ARM Web image upgraded with retained synthetic volume; actual GUI export; 25 file hashes and original result bytes verified."
+    },
+    {
+      "id": "independent-review",
+      "status": "not_run",
+      "artifact": null,
+      "sha256": null,
+      "reason": "Fresh whole-W1 review not yet dispatched."
+    },
+    {
+      "id": "remote-ci",
+      "status": "not_run",
+      "artifact": null,
+      "sha256": null,
+      "reason": "Workflows are implemented; no remote GitHub run was authorized or observed."
+    },
+    {
+      "id": "native-amd64-ci",
+      "status": "not_run",
+      "artifact": null,
+      "sha256": null,
+      "reason": "Local amd64 runtime execution is emulated; native amd64 runner remains unobserved."
+    },
+    {
+      "id": "live-endpoint",
+      "status": "not_run",
+      "artifact": null,
+      "sha256": null,
+      "reason": "No W1 real endpoint opt-in or request/time budget was granted."
+    },
+    {
+      "id": "registry-publication",
+      "status": "not_run",
+      "artifact": null,
+      "sha256": null,
+      "reason": "No remote registry push or account configuration was authorized."
+    }
+  ],
+  "images": [
+    {
+      "target": "runtime",
+      "platform": "linux/arm64",
+      "digest": "sha256:33ab42fe169b8be74c23b5ab777d27dc3bd42e415b6fc1af8f794bb4ed12e550",
+      "execution": "native"
+    },
+    {
+      "target": "web",
+      "platform": "linux/arm64",
+      "digest": "sha256:27d24eb0116903aba5a67ea03781de256d36d2e092ec540e458289fa573cfda2",
+      "execution": "native"
+    },
+    {
+      "target": "runtime",
+      "platform": "linux/amd64",
+      "digest": "sha256:aa4fff5ab297fb5d7d966d58ab5b25a282d9a93078ac79ced283d5da3f38544e",
+      "execution": "emulated"
+    },
+    {
+      "target": "web",
+      "platform": "linux/amd64",
+      "digest": "sha256:95132a19039360a05c634f49829476c339b1c37b4e26232cdedc1a2e755f0892",
+      "execution": "emulated"
+    }
+  ],
+  "limitations": [
+    "Candidate handoff: independent whole-W1 review is pending; W1-12 is not yet satisfied.",
+    "Only four formal Stage A API cases, API 2023-06-01 core revision 1.0.0, no betas; no tool loops, version matrix or Claude Code workflow claim.",
+    "All W1 execution evidence is synthetic. Historical private endpoint assessments are separate and unchanged.",
+    "Full developer/browser gates use native Linux arm64 Python 3.12.15. Translated x64 developer/browser execution failed pidfd/numeric prerequisites and is not accepted; assertions were not weakened.",
+    "AMD64 CLI/Web runtime images were actually exercised under emulation; native AMD64 CI and real Linux-host routing remain unobserved.",
+    "Images identify local Docker image IDs, not pushed registry manifest digests. Remote GitHub CI and registry publication are not run.",
+    "The exact GUI export ZIP bytes were verified. Manual IAB navigation to its host file URL was policy-denied; no bypass was attempted. Approved synthetic Playwright file-based offline QA passed separately.",
+    "Image jobs and source graph bind the clean verification commit. Later handoff-only changes are excluded from source/image fingerprints; they are not new image verification commits.",
+    "Failed attempts and large evidence remain in ignored local artifacts and are not bundled in public runtime images."
+  ]
+}

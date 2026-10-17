@@ -434,3 +434,32 @@ retry-exhaustion edge in the actual installed Web image. Its response/trace rema
 retained, including the missing normal manifest. Three RED regressions now cover
 that edge and failed controller/cleanup publication; 39 focused checks and strict
 validation passed. New full image observations are required for these source bytes.
+
+## W1 Task 13 completed; Task 14 candidate acceptance (2026-10-18)
+
+Clean verification source `7739ec18d8be914ec7f311311fcfabc9cc003830` passed
+all 13 offline gates with 436 Python tests (251 unit/harness, 127 integration,
+54 acceptance and four installed-package cases), ten Node cases and 15 actual
+Chromium cases. No test was skipped. Task 13's completion rerun in the prepared
+Linux development container also passed the full graph.
+
+The latest native ARM64 and emulated AMD64 CLI/Web image jobs both passed full
+acceptance against that same unchanged source and image-context fingerprint.
+Both used a separately identified native Linux ARM64 development/browser baseline.
+Image-result 2.1 records passed their packaged schema. Actual requested-architecture
+runtime, nonroot/read-only isolation, shutdown, volume replacement, cancellation,
+export and generic host routing passed. Owned temporary containers were absent
+after cleanup. Native AMD64 CI, real Linux-host execution and remote CI remain unrun.
+
+The retained Compose demonstration was upgraded to the exact verified ARM Web
+image. Its earlier synthetic volume and results remained readable. Actual visible
+GUI preview/export produced a new bundle: all 25 manifest files matched copied
+and ZIP bytes, and original result bytes remained identical. A narrow-view matrix
+wrapping concern and actual screenshots are explicitly included in final review
+materials. This demonstration is synthetic, not a real endpoint observation.
+
+Candidate W1 acceptance/handoff records map all twelve requirements to retained
+checks. The independent review is still not_run, so W1-12 and whole-W1 completion
+remain pending. The frozen Stage A handoff and 29 protected files are unchanged.
+All earlier failures remain retained; no normal manifest was fabricated for the
+failed controller attempt that did not produce one.
