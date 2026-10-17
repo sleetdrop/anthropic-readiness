@@ -8,6 +8,7 @@ import json
 import os
 import platform
 import subprocess
+import sys
 import time
 import uuid
 from datetime import UTC, datetime
@@ -16,9 +17,67 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 
 
+class EnvironmentUnavailable(RuntimeError):
+    """A required tool/platform could not execute; this is not an assertion PASS."""
+
+
+def assess_image_checks(
+    records: list[dict[str, object]], targets: tuple[str, ...], scope: str
+) -> tuple[str, list[str]]:
+    """Require each selected image's own observations rather than CLI-only success."""
+    required: set[str] = set()
+    if "runtime" in targets:
+        required.update(
+            {
+                "image-inspect",
+                "default-nonroot",
+                "runtime-help",
+                "replay-valid",
+                "replay-duplicate-start",
+            }
+        )
+        if scope == "full":
+            required.update({"isolated-peer", "host-path", "signal-wait-INT", "signal-wait-TERM"})
+    if "web" in targets:
+        required.update(
+            {
+                "web-image-inspect",
+                "web-default-nonroot",
+                "web-pages",
+                "web-assessment",
+                "web-exports",
+            }
+        )
+        if scope == "full":
+            required.update({"web-volume-restart", "web-cancellation", "web-host-path"})
+    if scope == "full":
+        required.add("dev-offline-full")
+    observed = {str(record["id"]) for record in records if record["status"] == "passed"}
+    missing = sorted(required - observed)
+    if any(record["status"] == "failed" for record in records):
+        return "failed", missing
+    if missing or not required or any(record["status"] == "blocked" for record in records):
+        return "blocked", missing
+    return "passed", []
+
+
 def context_hash(root: Path) -> str:
     digest = hashlib.sha256()
-    paths = [root / name for name in ("Dockerfile", "pyproject.toml", "uv.lock", ".dockerignore")]
+    paths = [
+        root / name
+        for name in (
+            "Dockerfile",
+            "pyproject.toml",
+            "uv.lock",
+            ".dockerignore",
+            ".python-version",
+            "package.json",
+            "package-lock.json",
+            "compose.yaml",
+            ".devcontainer/devcontainer.json",
+        )
+        if (root / name).is_file()
+    ]
     paths.extend(
         p for p in (root / "src").rglob("*") if p.is_file() and "__pycache__" not in p.parts
     )
@@ -38,15 +97,27 @@ def wait_file(path: Path, timeout: float = 30) -> None:
 
 
 class Acceptance:
-    def __init__(self, output: Path, target_platform: str, scope: str) -> None:
+    def __init__(
+        self,
+        output: Path,
+        target_platform: str,
+        scope: str,
+        targets: tuple[str, ...] = ("runtime", "web"),
+    ) -> None:
         self.output = output
         self.platform = target_platform
         self.scope = scope
+        self.image_context = context_hash(ROOT)
         self.records: list[dict[str, object]] = []
         self.runtime = "anthropic-readiness-runtime:" + target_platform.split("/")[1]
         self.dev = "anthropic-readiness-dev:" + target_platform.split("/")[1]
+        self.web = "anthropic-readiness-web:" + target_platform.split("/")[1]
+        self.targets = targets
         self.token = "readiness-" + uuid.uuid4().hex[:12]
         self.containers: list[str] = []
+        self.volumes: list[str] = []
+        self.peer_state = output / "peer"
+        self.peer_host_url = ""
         self.network_created = False
         self.sequence = 0
 
@@ -66,10 +137,18 @@ class Acceptance:
                     timeout=timeout,
                 )
             passed = result.returncode == expected
+            unavailable = not passed and any(
+                text in log.read_text().lower()
+                for text in (
+                    "exec format error",
+                    "no matching manifest for",
+                    "cannot connect to the docker daemon",
+                )
+            )
             self.records.append(
                 {
                     "id": label,
-                    "status": "passed" if passed else "failed",
+                    "status": "passed" if passed else "blocked" if unavailable else "failed",
                     "expected_exit": expected,
                     "actual_exit": result.returncode,
                     "started_at": started,
@@ -79,6 +158,8 @@ class Acceptance:
             )
             print(label + (": passed" if passed else ": failed"), flush=True)
             if not passed:
+                if unavailable:
+                    raise EnvironmentUnavailable(label + ": see " + str(log))
                 raise RuntimeError(label + ": see " + str(log))
         except (OSError, subprocess.TimeoutExpired) as exc:
             self.records.append(
@@ -114,7 +195,7 @@ class Acceptance:
     def run(self, skip_build: bool, host_url: str | None) -> None:
         commit = self.command("git-commit", ["git", "rev-parse", "HEAD"]).strip()
         if not skip_build:
-            targets = [("runtime", self.runtime)]
+            targets = [(target, getattr(self, target)) for target in self.targets]
             if self.scope == "full":
                 targets.append(("dev", self.dev))
             for target, tag in targets:
@@ -130,13 +211,38 @@ class Acceptance:
                         "--load",
                         "--build-arg",
                         "VCS_REF=" + commit,
+                        "--build-arg",
+                        "IMAGE_CONTEXT_SHA=" + context_hash(ROOT),
                         "-t",
                         tag,
                         ".",
                     ],
                     timeout=7200,
                 )
-        self.docker("image-inspect", ["image", "inspect", self.runtime, "--format", "{{json .}}"])
+        if "runtime" in self.targets:
+            self.run_runtime()
+        if self.scope == "full":
+            self.run_development()
+        if "web" in self.targets or self.scope == "full":
+            self.start_peer()
+        if "runtime" in self.targets and self.scope == "full":
+            self.run_cli_live(host_url or self.peer_host_url + "/cases")
+        if "web" in self.targets:
+            from scripts.web_image_checks import run_web_checks
+
+            run_web_checks(self, host_url or self.peer_host_url + "/cases")
+
+    def run_runtime(self) -> None:
+        image = json.loads(
+            self.docker(
+                "image-inspect", ["image", "inspect", self.runtime, "--format", "{{json .}} "]
+            )
+        )
+        if (
+            image["Config"]["Labels"].get("io.anthropic-readiness.image-context")
+            != self.image_context
+        ):
+            raise RuntimeError("runtime_image_context_mismatch")
         self.docker(
             "default-nonroot",
             [
@@ -151,7 +257,7 @@ class Acceptance:
                 "python",
                 self.runtime,
                 "-c",
-                'import os,shutil,importlib.util; assert os.getuid()==10001; assert not any(shutil.which(x) for x in ("uv","git","pytest")); assert importlib.util.find_spec("pytest") is None; assert not os.path.exists("/build"); print(os.getuid())',
+                'import os,shutil,importlib.util; assert os.getuid()==10001; assert not any(shutil.which(x) for x in ("uv","git","node","npm","chromium","pytest")); assert all(importlib.util.find_spec(x) is None for x in ("pytest","fastapi","uvicorn")); assert not os.path.exists("/build"); print(os.getuid())',
             ],
         )
         self.docker(
@@ -212,8 +318,8 @@ class Acceptance:
                 expected,
             )
             self.verify_output(name)
-        if self.scope != "full":
-            return
+
+    def run_development(self) -> None:
         # The disposable dev environment is retained for the offline verification.
         name = self.token + "-dev"
         self.containers.append(name)
@@ -261,6 +367,17 @@ class Acceptance:
             ],
             timeout=7200,
         )
+        self.docker(
+            "dev-frontend-prepare",
+            [
+                "exec",
+                name,
+                "sh",
+                "-c",
+                "npm ci --ignore-scripts && npx --no-install playwright install chromium",
+            ],
+            timeout=7200,
+        )
         self.docker("dev-isolate", ["network", "disconnect", "bridge", name])
         networks = self.docker(
             "dev-network-inspect",
@@ -285,6 +402,8 @@ class Acceptance:
             ],
             timeout=1800,
         )
+
+    def start_peer(self) -> None:
         self.docker("network-create", ["network", "create", "--internal", self.token])
         self.network_created = True
         state = self.output / "peer"
@@ -302,6 +421,8 @@ class Acceptance:
                 self.token,
                 "--network-alias",
                 "synthetic-peer",
+                "-p",
+                "127.0.0.1::8080",
                 "--platform",
                 self.platform,
                 "--read-only",
@@ -315,7 +436,7 @@ class Acceptance:
                 f"{state}:/state",
                 "--entrypoint",
                 "python",
-                self.runtime,
+                self.runtime if "runtime" in self.targets else self.web,
                 "/fixtures/http/server.py",
                 "--fixtures",
                 "/fixtures",
@@ -324,6 +445,13 @@ class Acceptance:
             ],
         )
         wait_file(state / "ready")
+        host_port = (
+            self.docker("peer-published-port", ["port", peer, "8080/tcp"]).strip().split(":")[-1]
+        )
+        self.peer_host_url = "http://host.docker.internal:" + host_port
+
+    def run_cli_live(self, host_url: str) -> None:
+        state = self.peer_state
         self.synthetic_run("isolated-peer", "http://synthetic-peer:8080/cases", self.token)
         for sig, expected in [("INT", 130), ("TERM", 143)]:
             (state / "request").unlink(missing_ok=True)
@@ -363,12 +491,7 @@ class Acceptance:
             document = json.loads((self.output / ("signal-" + sig) / "result.json").read_text())
             if document["execution_environment"]["interruption"] != expected - 128:
                 raise RuntimeError("signal_partial_record")
-        if host_url:
-            self.synthetic_run("host-path", host_url, "bridge")
-        else:
-            self.records.append(
-                {"id": "host-path", "status": "not_run", "reason": "no_explicit_host_url"}
-            )
+        self.synthetic_run("host-path", host_url, "bridge")
 
     def synthetic_run(self, name: str, url: str, network: str) -> None:
         path = self.output / (name + ".yaml")
@@ -381,6 +504,11 @@ class Acceptance:
             name,
             [
                 *self.runtime_args(network),
+                *(
+                    ["--add-host", "host.docker.internal:host-gateway"]
+                    if network == "bridge" and platform.system() == "Linux"
+                    else []
+                ),
                 self.runtime,
                 "run",
                 "--target",
@@ -413,12 +541,19 @@ class Acceptance:
                 check=False,
                 timeout=30,
             )
+        for name in reversed(self.volumes):
+            subprocess.run(
+                ["docker", "volume", "rm", name], capture_output=True, check=False, timeout=30
+            )
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--platform", choices=["linux/amd64", "linux/arm64"], required=True)
     parser.add_argument("--scope", choices=["smoke", "full"], default="full")
+    parser.add_argument(
+        "--targets", default="runtime,web", help="Comma-separated runtime,web image targets"
+    )
     parser.add_argument(
         "--skip-build", action="store_true", help="Debug only; uses existing local image tags"
     )
@@ -427,26 +562,40 @@ def main() -> int:
     )
     parser.add_argument("--out", type=Path)
     args = parser.parse_args()
+    targets = tuple(args.targets.split(","))
+    if not targets or len(set(targets)) != len(targets) or set(targets) - {"runtime", "web"}:
+        parser.error("--targets requires unique runtime,web names")
     output = (
         args.out
         or ROOT / "artifacts/images" / (str(time.time_ns()) + "-" + args.platform.split("/")[1])
     ).resolve()
     output.mkdir(parents=True, exist_ok=False)
-    acceptance = Acceptance(output, args.platform, args.scope)
+    acceptance = Acceptance(output, args.platform, args.scope, targets)
     started = datetime.now(UTC).isoformat()
     before = context_hash(ROOT)
     error: str | None = None
+    unavailable = False
     try:
         acceptance.run(args.skip_build, args.host_url)
     except (OSError, RuntimeError, subprocess.TimeoutExpired, ValueError, KeyError) as exc:
         error = str(exc)
+        unavailable = isinstance(exc, (OSError, subprocess.TimeoutExpired, EnvironmentUnavailable))
         print(error)
     finally:
         acceptance.cleanup()
     unchanged = before == context_hash(ROOT)
-    passed = error is None and unchanged
+    status, missing = assess_image_checks(acceptance.records, targets, args.scope)
+    if error is not None:
+        status = "blocked" if unavailable else "failed"
+    if not unchanged:
+        status = "failed"
+    if args.skip_build and status == "passed":
+        status = "blocked"
+        missing.append("build_not_observed_debug_only")
     payload = {
-        "schema_version": "1.0",
+        "schema_version": "2.0",
+        "targets": list(targets),
+        "missing_checks": missing,
         "scope": args.scope,
         "platform": args.platform,
         "host_machine": platform.machine(),
@@ -458,14 +607,16 @@ def main() -> int:
         "image_context_fingerprint": before,
         "source_unchanged": unchanged,
         "skip_build": args.skip_build,
-        "status": "passed" if passed else "failed",
+        "status": status,
         "error": error,
         "checks": acceptance.records,
     }
     (output / "image-result.json").write_text(json.dumps(payload, indent=2) + "\n")
     print(str(output / "image-result.json"))
-    return 0 if passed else 1
+    return {"passed": 0, "failed": 1, "blocked": 2}[status]
 
 
 if __name__ == "__main__":
+    # Preserve the documented direct-script entry while sharing stdlib-only modules.
+    sys.path.insert(0, str(ROOT))
     raise SystemExit(main())

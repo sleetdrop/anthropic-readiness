@@ -1,0 +1,20 @@
+services:
+  readiness:
+    build:
+      context: .
+      target: web
+    image: anthropic-readiness-web:local
+    ports:
+      - "127.0.0.1:8765:8765"
+    user: "10001:10001"
+    init: true
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    tmpfs:
+      - /tmp:rw,nosuid,noexec,size=64m
+    volumes:
+      - readiness-data:/data
+    stop_grace_period: 15s
+volumes:
+  readiness-data: {}

@@ -527,3 +527,34 @@ Rulings and costs:
 
 New runtime/Web image acceptance and independent whole-W1 review remain Tasks 13–14.
 No W1 real endpoint call, remote CI run, registry publication or account setup occurred.
+
+## Task 13 — container delivery in progress (2026-10-17)
+
+Source now defines independent CLI/Web dependency environments and Docker targets,
+a loopback-only nonroot/read-only Compose workspace, and selected-target image
+acceptance. CLI-only and Web wheel installs run outside source; the latter starts
+the installed server and reads packaged templates/assets. Web image observations
+have their own required page/run/export/cancel/volume/host-route checks; CLI-only
+success cannot satisfy them. The host-side stdlib controller imports no product
+package. Product compilation/tests still run inside Linux containers.
+
+Initial 11 image/Compose/preparation RED assertions failed while three already
+implemented package behaviors passed. Four isolated installed checks, 14 focused
+package/image gates, strict typing/lint, docs and all eight fast gates passed.
+A full source graph passed 419 Python tests, nine Node cases, 13 Chromium cases
+and fixture cleanup. A subsequent Git-provenance regression reproduced dubious
+ownership on container mounts; a scoped command trust plus disabled fsmonitor now
+records the declared source commit without changing user Git config or executing
+repository monitor hooks. Its 22 focused harness checks and all eight fast gates
+passed; earlier unavailable metadata is retained unchanged.
+
+Image-result is intentionally versioned to 2.0, with a packaged schema, selected
+targets and explicit missing checks. Debug skip-build cannot pass acceptance;
+unavailable tools/platforms remain BLOCKED. The complete image jobs now prepare
+npm/Chromium before disconnecting development networking. Public guides cover
+GUI/CLI, ports, credentials, persistence, exports and human/Agent contribution.
+Native development image network preparation is separate from acceptance.
+
+CLI/Web image acceptance on arm64/amd64, any remaining full verification, independent
+whole-W1 review and final handoff are pending. No real endpoint, publishing, registry
+login or remote CI execution is included in this source milestone.

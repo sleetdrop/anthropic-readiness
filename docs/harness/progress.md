@@ -393,3 +393,17 @@ network-blocked file HTML and script-disabled essentials all passed. Details and
 rulings are in the W1 ledger; failed attempts remain ignored artifacts.
 Task 13 owns new CLI/Web image acceptance and delivery docs. Whole-W1 review and
 handoff, remote CI and any real endpoint verification remain separate.
+
+## W1 Task 13: delivery source ready, image acceptance pending (2026-10-17)
+
+Implemented separate CLI/Web Docker dependency targets, local nonroot/read-only
+Compose, installed Web resource checks and independent Web image observations.
+The selected image contract is now packaged image-result 2.0; archived Stage A
+1.0 records remain unchanged. Updated Web/CLI/contributor/container guidance.
+
+Observed source verification passed 419 Python tests, Node 9 and Chromium 13.
+After reproducing container Git ownership refusal, 22 focused provenance/harness
+checks and all eight fast gates passed with scoped read-only Git trust and fsmonitor
+disabled. New image source is ready for local baseline commit; native/emulated image
+acceptance and Task 14 whole-W1 review/handoff are still pending. Network preparation
+uses original locked sources and is not counted as image acceptance.

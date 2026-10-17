@@ -64,8 +64,8 @@ jobs:
         with:
           persist-credentials: false
       - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
-      - name: Runtime smoke (full matrix is separate)
-        run: python3 scripts/check_images.py --platform linux/amd64 --scope smoke
+      - name: CLI and Web image smoke (full matrix is separate)
+        run: python3 scripts/check_images.py --platform linux/amd64 --scope smoke --targets runtime,web
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:

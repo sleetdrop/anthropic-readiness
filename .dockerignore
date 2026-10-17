@@ -6,6 +6,15 @@ node_modules
 playwright-report
 test-results
 .env*
+.aws
+.ssh
+.codex
+.agents
+.coverage
+.mypy_cache
+.pytest_cache
+.ruff_cache
+readiness-data
 target.local.*
 __pycache__
 dist

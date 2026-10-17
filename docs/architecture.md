@@ -48,3 +48,42 @@ Other body semantics remain conservative. Schema 1.0 captures remain readable;
 transformed legacy captures have no such proof. This attests sanitizer-preserved
 structure, not origin authenticity or a signature. Never treat self-contained
 file hashes as independent proof of who produced a capture.
+
+## Local console and shared engine
+
+W1 adds a local optional Web adapter over the same application/runner used by CLI.
+`application` builds canonical plans and binds ephemeral credentials. Pure operational
+values/ports and reduction code do not import Web/SQLite/filesystem adapters.
+The parent-side job service owns SQLite admission, immutable plan identity and the
+sole ordered progress journal; one spawned worker owns model I/O, source evidence,
+exclusive checkpoints and the final result. Bounded private JSON pipes carry keys
+and events. Parent acknowledgment follows durable validation before the worker can
+continue. Keys do not enter argv, persistent plans/presets or reports.
+
+Queue capacity, preview expiry and idempotency are operational contracts, separate
+from the five compatibility verdicts. Parent loss, worker failure, cancellation and
+service replacement preserve committed evidence and never automatically resume a
+model request. Parent-only snapshots and advertised checkpoint receipts define the
+readable prefix; unrelated worker files cannot become published evidence.
+
+The HTTP boundary enforces exact local Host/Origin, memory sessions, CSRF, bounded
+strict JSON and safe exception responses. SSE carries observations, snapshots and
+recoverable cursors, not execution commands. Closing a browser or reconnecting cannot
+start/cancel a job. API/page reads and exports all use the verified source loader.
+
+`report_sources` performs bounded path/hash/schema/identity verification; pure
+`report_view` projects immutable facts into cases, findings and four stable figures.
+Shared packaged HTML/CSS/plain JS renders server pages and standalone exports with
+native SVG, equal data tables, keyboard navigation and print essentials. Report
+projection/presentation versions do not change original result/capture judgments.
+ZIP publication copies and hashes the actual selected bytes, then exclusively
+publishes a sealed record last. Unpublished/changed files cannot become a clean
+export. An exported hash inventory proves bytes, not independent authenticity.
+
+The `web` dependency extra and Docker target are independent from minimal CLI
+installation and `runtime`. Node/Chromium belong only to development/CI. A personal
+Compose deployment binds the host port to loopback and stores data in one owned
+nonroot volume with a read-only root filesystem. This is not a shared-host service.
+See the [W1 specification](superpowers/specs/2026-10-16-local-web-console-design.md)
+and [W1 ledger](harness/web-console-ledger.md); they do not expand the four-case
+protocol scope into tool loops, API version matrices or client certification.

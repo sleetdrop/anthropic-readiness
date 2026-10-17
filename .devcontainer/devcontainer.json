@@ -5,6 +5,8 @@
   "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/anthropic-readiness,type=bind",
   "remoteUser": "developer",
   "updateRemoteUserUID": true,
+  "forwardPorts": [8765],
+  "portsAttributes": {"8765": {"label": "Anthropic Readiness local console", "onAutoForward": "notify"}},
   "postCreateCommand": "uv sync --locked && npm ci --ignore-scripts && npx --no-install playwright install chromium",
   "customizations": {
     "vscode": {"extensions": ["ms-python.python", "charliermarsh.ruff"]}

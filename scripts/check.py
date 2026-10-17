@@ -83,6 +83,7 @@ def source_fingerprint(root: Path) -> str:
             "docs/harness/web-toolchain.json",
             ".python-version",
             "Dockerfile",
+            "compose.yaml",
             ".dockerignore",
             ".gitignore",
             ".pre-commit-config.yaml",
@@ -219,9 +220,12 @@ def junit_result(path: Path | None) -> tuple[str, str]:
 
 
 def _git_state(root: Path) -> dict[str, str | bool | None]:
+    # The caller explicitly selected this source root. Trust only that root for
+    # these read commands; disable its executable filesystem-monitor hook.
+    command = ["git", "-c", "safe.directory=" + str(root.resolve()), "-c", "core.fsmonitor=false"]
     try:
         commit = subprocess.run(
-            ["git", "rev-parse", "HEAD"],
+            [*command, "rev-parse", "HEAD"],
             cwd=root,
             capture_output=True,
             text=True,
@@ -229,7 +233,7 @@ def _git_state(root: Path) -> dict[str, str | bool | None]:
             check=False,
         )
         dirty = subprocess.run(
-            ["git", "status", "--porcelain"],
+            [*command, "status", "--porcelain"],
             cwd=root,
             capture_output=True,
             text=True,
@@ -374,9 +378,19 @@ def build_checks(root: Path, output: Path, suite: str) -> list[CheckSpec]:
                 pytest_check("integration", ["tests/integration"]),
                 pytest_check(
                     "acceptance",
-                    ["tests/acceptance", "--ignore=tests/acceptance/test_installed_package.py"],
+                    [
+                        "tests/acceptance",
+                        "--ignore=tests/acceptance/test_installed_package.py",
+                        "--ignore=tests/acceptance/test_web_package.py",
+                    ],
                 ),
-                pytest_check("packaging", ["tests/acceptance/test_installed_package.py"]),
+                pytest_check(
+                    "packaging",
+                    [
+                        "tests/acceptance/test_installed_package.py",
+                        "tests/acceptance/test_web_package.py",
+                    ],
+                ),
                 command(
                     "documentation",
                     [sys.executable, str(ROOT / "scripts/check_docs.py"), "--root", str(root)],

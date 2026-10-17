@@ -1,17 +1,55 @@
 # Anthropic Readiness
 
-An evidence-led, black-box CLI for a scoped subset of Anthropic Messages.
-It records observed behavior, required-case coverage and uncertainty. It cannot
-infer an endpoint's internals or certify an untested client workflow.
+A local Web console and independent CLI for black-box checks of a scoped subset
+of Anthropic Messages. Preview a fixed plan, explicitly start it, observe real
+progress, and inspect or export the evidence-led report. Execution completion and
+protocol compatibility are separate outcomes; untested capabilities stay untested.
 
-Stage A contains four versioned cases: non-stream text, a streamed greeting,
-a streamed count from 1 to 5, and a forced non-stream tool call with schema
-validation. The `anthropic-basic` profile runs three cases;
-`anthropic-tools-smoke` runs one. The bundled contract is Messages `2023-06-01`, revision
-`1.0.0`, with no beta headers. Tool loops, version matrices, Claude Code client
-tests and protocol-maintenance commands belong to later stages.
+The installed scope is four versioned cases: non-stream text, a streamed greeting,
+a streamed count from 1 to 5, and a forced non-stream tool call. `anthropic-basic`
+runs three cases; `anthropic-tools-smoke` runs one. The sole bundled contract is
+Messages `2023-06-01`, revision `1.0.0`, without betas. Tool loops, version matrices,
+Claude Code workflows and protocol-update Agent commands belong to later stages.
+The API date alone does not prove client pinning semantics or workflow stability.
 
-## Start without a real endpoint
+## Local Web console
+
+From this checkout with Docker Compose:
+
+```sh
+docker compose up --build -d
+```
+
+Open [http://localhost:8765](http://localhost:8765). The published port binds only
+to this computer. Enter the endpoint and exact model, review the installed cases
+and request/time limits, then choose **Preview** and **Start**. Configuration and
+preview send no model request. Start is the explicit live opt-in.
+
+A base URL helper accepts an origin or `/v1`; a complete Messages URL is also
+supported. Container `127.0.0.1` means the container itself. Docker Desktop users
+can explicitly choose `host.docker.internal` for a host proxy; Linux host routing
+is described in [container usage](docs/container-usage.md). Addresses are never
+silently substituted.
+
+Closing or refreshing the page only ends observation. Use **Cancel** to stop a
+job, and reopen it from history to read saved progress. The service executes one
+job at a time with eight waiting slots. Presets omit secrets; browser credentials
+are submitted only at start and held in task memory. Restarted services retain
+records but never resume or automatically resend an interrupted assessment.
+
+Web reports are generated on demand. Export selected HTML, Markdown or JSON, or a
+ZIP with a file/hash manifest and optional sanitized evidence. Standalone HTML
+contains its own styles, figures and data tables and works offline; it does not
+embed capture files. Report-only and partial exports explain their limitations.
+Check business content before sharing captures. Hashes establish byte integrity,
+not provider authenticity or independent certification.
+
+```sh
+docker compose stop              # preserve history and the named data volume
+docker compose up -d             # reopen the same local workspace
+```
+
+## CLI without a real endpoint
 
 Use the checked-in [Dev Container](.devcontainer/devcontainer.json), then:
 
@@ -25,20 +63,28 @@ uv run --frozen anthropic-readiness replay --target examples/target.yaml \
   --case ANT-TEXT-SSE-001 --out artifacts/replay-example
 ```
 
-Replay is synthetic evidence, not an endpoint result. Each run writes structured
-`result.json`, a restrained Chinese `report.html`, `report.md` and an evidence
-manifest. Reports include assertion versions, scope, references and an offline
-reader guide for humans and Agents. [Architecture](docs/architecture.md) explains
-the trust boundaries.
+Replay uses synthetic captures and makes no endpoint request. CLI execution retains
+automatic `result.json`, `report.html`, `report.md`, visual `report-view.json` and
+report/evidence manifests. The Chinese report includes scope, a capability matrix,
+status/impact charts, recorded timing when available, assertions and citations for
+human and Agent interpretation. No score or invented token/latency metric is used.
 
-For a real target, copy the example outside the repository, supply its named
-credential environment variable and explicitly select `--allow-live`. Review the
-dry-run's selected cases and finite request/time budget first. Never commit
-private configuration or original service logs. Exit codes: 0 pass, 1 observed
-failure, 2 invalid input, 3 incomplete/blocked, 4 internal error, 130/143 signal.
+Minimal Python installation needs only the core dependencies; install the optional
+`anthropic-readiness[web]` extra to use `serve`. The Docker `runtime` target retains
+the CLI, and the separate `web` target provides the local console. Neither ships
+Node, Chromium, development tools or a source checkout.
 
-See [container usage](docs/container-usage.md), [development](docs/development.md)
-and [contribution guide](CONTRIBUTING.md). The source is intended for a personal
-GitHub repository; remote CI and registry publishing are not performed by local
-checks. Choose an appropriate license before public distribution; no license has
-been selected on the owner's behalf.
+For an explicitly authorized real target, put configuration outside the build
+context, prepare the named credential variable, inspect `--dry-run`, and select
+`--allow-live` with finite request/time budgets. Never commit private configuration
+or original service logs. Exit codes: 0 pass, 1 observed failure, 2 invalid input,
+3 incomplete/blocked, 4 internal error, 130/143 signal.
+
+See [container usage](docs/container-usage.md), [development](docs/development.md),
+[architecture](docs/architecture.md), [contribution guide](CONTRIBUTING.md) and
+[current milestone/evidence](docs/CONTINUE.md). Local checks, installed packages,
+images, independent review, remote CI and real endpoints are distinct evidence.
+GitHub CI and container builds do not publish images. Docker Hub account setup and
+push credentials can be configured with the owner when publishing is authorized.
+Choose an appropriate license before public distribution; none has been selected
+on the owner's behalf.

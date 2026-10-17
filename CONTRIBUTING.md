@@ -34,3 +34,34 @@ honest handoff. Do not report tools or tests as passing unless they actually ran
 Remote publication, credentials and account setup require owner authorization.
 Protocol updates currently use the issue form and reviewed immutable bundles;
 the runnable maintenance command is deferred to Stage D.
+
+## Local console and reports
+
+For the W1 workstream, read [CONTINUE](docs/CONTINUE.md), its approved specification/
+plan and [W1 ledger](docs/harness/web-console-ledger.md) before changing behavior.
+Human and Agent contributions use the same development container, source contracts
+and gates. Do not create one implementer Agent per plan task; the approved milestone
+is sequential with one independent whole-stage review. Record meaningful decisions,
+failed attempts and missing acceptance honestly for the next person or Agent.
+
+Prepare Python/npm/Chromium through the Dev Container. Fast now requires frontend
+static checks; full also requires actual browser cases and isolated CLI/Web installs.
+Use the [documented commands](docs/development.md), save large evidence under ignored
+`artifacts/`, and inspect rendered screenshots when UI/report output changes. Keep
+human-facing UI/report text in Simplified Chinese and code/machine contracts in
+English. New figures need units, captions and equivalent data; unknown timing or
+client support must remain unknown. Test hostile text and offline/script-disabled
+reading as well as the ordinary success path.
+
+Use the existing bug/compatibility/protocol-update issue forms and pull-request
+template to state exact scope, reproducible synthetic input, expected/observed
+behavior, contract/tool identities and executed checks. Include sanitized minimal
+captures only when safe to share; never upload real keys, private endpoint settings
+or original service logs. An Agent handoff should distinguish source completion,
+offline/full checks, installed packages, native/emulated images, independent review,
+remote CI and any separately authorized real endpoint outcome.
+
+CI builds CLI/Web images without publishing. Registry/account changes and remote
+writes require explicit owner authorization. Protocol-update automation remains a
+later milestone; a contribution proposing it must retain versioned snapshots and
+reviewed changes rather than silently replacing existing judgments.

@@ -2,6 +2,7 @@
 
 import argparse
 import json
+import threading
 import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -15,6 +16,8 @@ def main() -> None:
     args = parser.parse_args()
     body = (args.fixtures / "contracts/core-1.0.0/stream-valid.sse").read_bytes()
     message = (args.fixtures / "contracts/core-1.0.0/message-valid.json").read_bytes()
+    tool = (args.fixtures / "contracts/core-1.0.0/message-valid-tool.json").read_bytes()
+    record_lock = threading.Lock()
 
     class Handler(BaseHTTPRequestHandler):
         protocol_version = "HTTP/1.1"
@@ -25,6 +28,17 @@ def main() -> None:
         def do_POST(self) -> None:
             payload = json.loads(self.rfile.read(int(self.headers.get("Content-Length", "0"))))
             (args.state / "request").write_text(self.path)
+            with record_lock, (args.state / "requests.jsonl").open("a") as record:
+                record.write(
+                    json.dumps(
+                        {
+                            "path": self.path,
+                            "model": payload.get("model"),
+                            "stream": bool(payload.get("stream")),
+                        }
+                    )
+                    + "\n"
+                )
             self.send_response(200)
             streaming = bool(payload.get("stream")) or self.path == "/pings"
             self.send_header(
@@ -42,7 +56,7 @@ def main() -> None:
                 except OSError:
                     pass
                 return
-            data = body if streaming else message
+            data = body if streaming else tool if "tools" in payload else message
             if streaming and "Count" in payload["messages"][0]["content"]:
                 data = body.replace(b"Hello.", b"1 2 3 4 5")
             self.send_header("Content-Length", str(len(data)))

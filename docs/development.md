@@ -1,57 +1,82 @@
 # Development
 
-The supported development environment is the checked-in Linux Dev Container.
-Its image and Python toolchain are pinned; host Python is not required.
-
-Preparation may download locked dependencies. Verification must use already
-prepared dependencies with `UV_OFFLINE=1`. Run tests with
-`uv run --frozen python -m pytest`; run the project gates through
-`uv run --frozen python scripts/check.py --suite fast` or `--suite full`.
-
-See [the approved plan](superpowers/plans/2026-10-15-stage-a-implementation.md)
-for the current stage. Bootstrap acceptance is narrower than Stage A.
-Neither implies that a real endpoint has passed any test.
-
-## Stable gates
-
-Fast: `lock`, `format`, `lint`, `type`, `architecture`, `schemas`, `unit`.
-Full adds `integration`, `acceptance`, `packaging`, `documentation`. Each command
-has a timeout and a retained log; pytest gates require nonzero executed tests
-and a clean JUnit report. Deliberately broken disposable projects verify lint,
-typing, architecture, schema, missing executable and missing wheel resources.
-Missing/skipped/cancelled required CI jobs fail `ci-required`.
-
-Check manifests record UTC times, Git commit/dirty state, lock hash, tools and a
-source fingerprint. The fingerprint covers source/tests/scripts/examples,
-workflows, Dev Container files, project configuration, root guides, architecture,
-development/container docs and the acceptance map. It excludes generated evidence,
-progress/review notes and caches so checks can record their own results without
-changing the tested source. A change during a run fails that run. This fingerprint
-is not a signature or a claim that all Git content was checked.
-
-CI runs the full graph on Linux/Python 3.11 and 3.12, the actual Dev Container and
-an amd64 runtime smoke. Weekly/manual matrix jobs build dev/runtime on both
-architectures. Fork PRs need no secrets, model calls, privileged source workflow
-or registry access. Nothing publishes images. The stable required branch check is
-`ci-required`; select it in repository settings after remote CI first succeeds.
-
-Actions are pinned to verified commit SHAs (checkout v7.0.1, setup-python v7.0.0,
-upload-artifact v7.0.2, setup-buildx-action v4.4.1). The matrix uses GitHub's
-[documented native runners](https://docs.github.com/en/actions/reference/runners/github-hosted-runners).
-Updating pins is a reviewed maintenance change. Caches are deliberately omitted
-initially to keep preparation and fork trust behavior simple; uv's local cache
-supports subsequent offline verification. Remote outcomes remain `not_run` until
-the owner connects and runs the workflows.
-
-The editor entry point is “Reopen in Container”. Without an editor, use a pinned
-Dev Container CLI on the host:
+Use the checked-in Linux/Python 3.12 Dev Container. It contains pinned uv and Node
+24, browser system libraries and CJK fonts. Reopening the container prepares
+`uv sync --locked`, `npm ci --ignore-scripts` and the npm-locked Playwright Chromium.
+Preparation may use the network; verification uses already prepared dependencies
+with `UV_OFFLINE=1`. Host-specific Python is not the development environment.
 
 ```sh
-npm exec --yes --package @devcontainers/cli@0.89.0 -- devcontainer build --workspace-folder .
+UV_OFFLINE=1 uv run --frozen python scripts/check.py --suite fast
+UV_OFFLINE=1 uv run --frozen python scripts/check.py --suite full
+uv run --frozen anthropic-readiness serve --data-dir artifacts/local-web --port 8765
+```
+
+The port is forwarded by the Dev Container. The console starts no model request by
+itself. Test code uses synthetic fixtures and disposable local services. For direct
+pytest work use `uv run --frozen python -m pytest`; the module form keeps repository
+harness imports available. See [CONTINUE](CONTINUE.md) for the active W1 plan and
+[the ledger](harness/web-console-ledger.md) for observed RED/GREEN evidence and rulings.
+Stage A artifacts remain a frozen historical baseline, not W1 acceptance.
+
+## Required graph
+
+Fast includes `lock`, `format`, `lint`, `type` (mypy strict), `architecture`, `schemas`,
+`unit` and `frontend-static`. Frontend static includes strict TypeScript checking of
+plain JS/JSDoc, ESLint, Prettier, Jinja compilation/asset inventory and Node JUnit.
+Plain HTML Prettier is excluded only for Jinja templates because it corrupts control
+syntax; compiler, page and browser checks remain required for those files.
+
+Full additionally executes actual Chromium, Python integration/acceptance, isolated
+CLI-only/Web wheel installs and documentation/CI validation. Every full environment
+must prepare the locked Node/browser first, including supplemental Python 3.11 CI.
+Missing tools are BLOCKED; empty, claimed-only or all-skipped JUnit cannot pass.
+Gates keep bounded logs, schema-validated frontend records, traces/screenshots and
+actual testcase counts. Owned fixture/listener cleanup and timeout process-group
+termination are checked. Bootstrap, fast and smoke are not whole-stage acceptance.
+
+```sh
+UV_OFFLINE=1 uv run --frozen python -m scripts.check_frontend --suite static --out artifacts/frontend-static-new
+UV_OFFLINE=1 uv run --frozen python -m scripts.check_frontend --suite browser --out artifacts/browser-new
+```
+
+Choose new output paths each time. The browser fixture owns only disposable local
+synthetic services and controls; it never uses real provider credentials. Tests
+exercise explicit start/idempotency, durable progress, cancellation/reconnection,
+secret clearing, hostile fields, exact figure data, focus/accessibility, narrow
+layouts, print and direct file HTML with scripts/network disabled. Inspect actual
+screenshots; merely generating them is not visual review.
+
+Source fingerprints include Python/frontend code, tests, scripts, workflow/container
+configuration, lock/toolchain files and public development guides. Schema/engine
+contracts, source evidence and report projections have separate identities. Verify
+source bytes before rendering; do not infer support from UI state or task completion.
+
+## CI and contribution workflow
+
+Pull requests/default-branch pushes run Python 3.11/3.12 full jobs, the actual Dev
+Container full graph, and CLI/Web amd64 image smoke. Every child is required by the
+stable `ci-required` aggregator; missing/skipped/cancelled children cannot pass.
+Node archives and image/tool versions are frozen in the toolchain record; actions
+remain pinned SHAs with read-only permissions. Weekly/manual native amd64/arm64 jobs
+run the full CLI/Web image matrix. No secrets, real model calls or publishing are
+required for fork PRs. Remote outcomes remain unrun until those workflows execute.
+
+Keep `uv.lock`, `package-lock.json`, Docker pins and
+[harness/web-toolchain.json](harness/web-toolchain.json) synchronized when intentionally
+updating tooling. Review primary upstream sources; record versions and hashes, then
+prepare and verify the updated environments. Do not regenerate protocol assertions
+or golden expectations merely to obtain a green result.
+
+The editor entry point is Reopen in Container. A pinned Dev Container CLI can also
+run on the host:
+
+```sh
 npm exec --yes --package @devcontainers/cli@0.89.0 -- devcontainer up --workspace-folder .
 npm exec --yes --package @devcontainers/cli@0.89.0 -- devcontainer exec --workspace-folder . env UV_OFFLINE=1 uv run --frozen python scripts/check.py --suite full
 ```
 
-The Docker socket is not mounted into the default container. Image orchestration
-runs on the host or independent CI runner; its stdlib Python does not import the
-product. Product builds and tests still execute in Linux containers.
+Image orchestration runs on the Docker host or independent runner using stdlib
+Python; product builds/tests stay in Linux containers. The default development and
+runtime configurations mount no Docker socket. See [container usage](container-usage.md)
+and [CONTRIBUTING](../CONTRIBUTING.md) for delivery checks and Agent handoff.

@@ -79,6 +79,7 @@ def validate_resources(root: Path) -> list[str]:
         "capture",
         "contract",
         "check-result",
+        "image-result",
         "acceptance",
         "plan",
         "job",

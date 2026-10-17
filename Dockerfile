@@ -34,14 +34,31 @@ RUN UV_OFFLINE=1 /opt/build-venv/bin/python -m hatchling build -t wheel \
     && uv pip install --offline --no-deps --python /opt/runtime-venv/bin/python dist/*.whl \
     && uv pip check --python /opt/runtime-venv/bin/python
 
-FROM python:3.12-slim-bookworm@sha256:34386ef0cb081344d7ec1c103ba398e6e9f64e9ab3a1509accc92a4e24a07258 AS runtime
+FROM build AS web_build
+RUN UV_PROJECT_ENVIRONMENT=/opt/web-venv uv sync --locked --no-dev --extra web --no-install-project \
+    && uv pip install --offline --no-deps --python /opt/web-venv/bin/python dist/*.whl \
+    && uv pip check --python /opt/web-venv/bin/python
+
+FROM python:3.12-slim-bookworm@sha256:34386ef0cb081344d7ec1c103ba398e6e9f64e9ab3a1509accc92a4e24a07258 AS runtime_base
 ARG VCS_REF=unknown
+ARG IMAGE_CONTEXT_SHA=unknown
 LABEL org.opencontainers.image.title="Anthropic Readiness" \
-      org.opencontainers.image.revision=$VCS_REF
-ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PATH=/opt/runtime-venv/bin:$PATH
-COPY --from=build /opt/runtime-venv /opt/runtime-venv
-RUN useradd --no-create-home --uid 10001 app && mkdir /work && chown app /work
+      org.opencontainers.image.revision=$VCS_REF \
+      io.anthropic-readiness.image-context=$IMAGE_CONTEXT_SHA
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
+RUN useradd --no-create-home --uid 10001 app && mkdir /work /data && chown app /work /data
 USER app
 WORKDIR /work
+
+FROM runtime_base AS runtime
+ENV PATH=/opt/runtime-venv/bin:$PATH
+COPY --from=build /opt/runtime-venv /opt/runtime-venv
 ENTRYPOINT ["anthropic-readiness"]
 CMD ["--help"]
+
+FROM runtime_base AS web
+ENV PATH=/opt/web-venv/bin:$PATH
+COPY --from=web_build /opt/web-venv /opt/web-venv
+EXPOSE 8765
+ENTRYPOINT ["anthropic-readiness"]
+CMD ["serve", "--host", "0.0.0.0", "--port", "8765", "--data-dir", "/data"]
