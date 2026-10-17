@@ -18,7 +18,7 @@ from threading import Condition, Thread
 from typing import cast
 
 from anthropic_readiness.application import build_plan
-from anthropic_readiness.credentials import MemoryCredentials
+from anthropic_readiness.credentials import AllowlistedCredentials, MemoryCredentials
 from anthropic_readiness.evidence import safe_path, verify_evidence
 from anthropic_readiness.jobs.store import JobStore
 from anthropic_readiness.jobs.worker import (
@@ -31,7 +31,13 @@ from anthropic_readiness.models import JsonObject, RunResult, object_value
 from anthropic_readiness.operations.checkpoints import checkpoint_refs
 from anthropic_readiness.operations.contracts import validate_operational
 from anthropic_readiness.operations.journal import RunJournal
-from anthropic_readiness.operations.models import EventKind, JobRecord, JobState, WorkerEvent
+from anthropic_readiness.operations.models import (
+    EventKind,
+    JobRecord,
+    JobState,
+    ProgressEvent,
+    WorkerEvent,
+)
 from anthropic_readiness.operations.ports import CredentialProvider
 from anthropic_readiness.operations.reduction import TERMINAL, objects
 from anthropic_readiness.operations.storage import locked, read_document
@@ -62,6 +68,13 @@ class JobManager:
         self._queue: deque[str] = deque()
         self._credentials: dict[str, str | None] = {}
         self._active: OwnedWorker | None = None
+
+    @property
+    def credential_references(self) -> tuple[str, ...]:
+        return tuple(sorted(self._allowlist))
+
+    def credentials_for_reference(self, name: str) -> CredentialProvider:
+        return AllowlistedCredentials(name, self._allowlist)
 
     def _root(self, run_id: str) -> Path:
         return safe_path(self.store.root, "runs/" + run_id)
@@ -551,6 +564,23 @@ class JobManager:
             if safe_path(journal.root, "execution.json").exists():
                 execution = journal.snapshot()
             return {"job": job.to_json(), "execution": execution}
+
+    def read_events(
+        self, run_id: str, after: int
+    ) -> tuple[JsonObject, tuple[ProgressEvent, ...], bool]:
+        if type(after) is not int or after < 0:
+            raise ValueError("invalid_event_cursor")
+        with self._condition:
+            snapshot = self.snapshot(run_id)
+            execution = snapshot["execution"]
+            sequence = int(str(execution["sequence"])) if isinstance(execution, dict) else 0
+            reset = after > sequence
+            events = (
+                self._journal(run_id).after(sequence if reset else after)
+                if execution is not None
+                else ()
+            )
+            return snapshot, events, reset
 
     def close(self) -> None:
         with self._condition:

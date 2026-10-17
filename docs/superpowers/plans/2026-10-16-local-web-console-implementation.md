@@ -270,10 +270,10 @@ test `tests/integration/test_web_api.py`, `tests/integration/test_web_events.py`
 `events.event_stream(run_id: str, after: int, manager: JobManager) -> AsyncIterator[str]`;
 SSE endpoint reads `Last-Event-ID`, sessions and safe cursors. Bind the Task 4/5 store/manager during app lifespan, no independent scheduler per route.
 
-- [ ] **RED:** `test_preview_and_duplicate_start_request_counts` checks zero calls for catalog/preview and exactly the planned count despite duplicate POSTs. `test_snapshot_cursor_gap_and_ahead_reset` verifies committed snapshot+events, repeated cursor and ahead reset; `test_sse_heartbeat_never_dispatches` asserts a 15-second heartbeat through injected clock. `test_history_and_evidence_are_scoped_and_safe` covers 422/409/410/429 semantics, traversal/symlinks and fixed safe download content types. Run both files.
-- [ ] **Implement:** Map schema-validated payloads to shared services; credentials are a separate start-only field/reference, never returned. Query parameter `after` supports first connection from a saved snapshot; subsequent reconnect uses event IDs. Serialize snapshot plus later events atomically under journal read coordination. Handle a terminal job without endless polling; disconnect SSE without cancelling the worker. Evidence is plain escaped display or attachment, never active upstream HTML.
-- [ ] **GREEN:** Run Web API/events/security/job lifecycle tests. Capture peer call counts before/after repeated reconnect and confirm equality.
-- [ ] **Commit:** `feat: add planned execution history evidence and resumable progress APIs`.
+- [x] **RED:** `test_preview_and_duplicate_start_request_counts` checks zero calls for catalog/preview and exactly the planned count despite duplicate POSTs. `test_snapshot_cursor_gap_and_ahead_reset` verifies committed snapshot+events, repeated cursor and ahead reset; `test_sse_heartbeat_never_dispatches` asserts a 15-second heartbeat through injected clock. `test_history_and_evidence_are_scoped_and_safe` covers 422/409/410/429 semantics, traversal/symlinks and fixed safe download content types. Run both files.
+- [x] **Implement:** Map schema-validated payloads to shared services; credentials are a separate start-only field/reference, never returned. Query parameter `after` supports first connection from a saved snapshot; subsequent reconnect uses event IDs. Serialize snapshot plus later events atomically under journal read coordination. Handle a terminal job without endless polling; disconnect SSE without cancelling the worker. Evidence is plain escaped display or attachment, never active upstream HTML.
+- [x] **GREEN:** Run Web API/events/security/job lifecycle tests. Capture peer call counts before/after repeated reconnect and confirm equality.
+- [x] **Commit:** `feat: add planned execution history evidence and resumable progress APIs`.
 
 ### Task 8: Verified shared report projection
 

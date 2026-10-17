@@ -27,3 +27,14 @@ class MemoryCredentials:
         ):
             raise ValueError("invalid_credential")
         return self._value
+
+
+class AllowlistedCredentials:
+    def __init__(self, name: str, allowed: Mapping[str, str]) -> None:
+        self._name = name
+        self._allowed = allowed
+
+    def resolve(self) -> str | None:
+        if self._name not in self._allowed:
+            raise ValueError("unknown_credential_reference")
+        return MemoryCredentials(self._allowed[self._name]).resolve()

@@ -12,6 +12,8 @@ from starlette.responses import HTMLResponse, JSONResponse
 
 from anthropic_readiness.jobs.manager import JobManager
 from anthropic_readiness.jobs.store import JobStore
+from anthropic_readiness.web.api import router
+from anthropic_readiness.web.contracts import ContractApplication
 from anthropic_readiness.web.security import (
     COOKIE_NAME,
     SESSION_TTL_S,
@@ -43,7 +45,7 @@ def create_app(*, data_root: Path, settings: WebSettings) -> FastAPI:
         finally:
             manager.close()
 
-    app = FastAPI(
+    app = ContractApplication(
         title="Anthropic Readiness",
         version="1.0",
         lifespan=lifespan,
@@ -86,4 +88,5 @@ def create_app(*, data_root: Path, settings: WebSettings) -> FastAPI:
             '<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>Anthropic Readiness</title><body><main><h1>Anthropic Readiness</h1><p>本机兼容性测试控制台</p></main></body></html>'
         )
 
+    app.include_router(router)
     return app

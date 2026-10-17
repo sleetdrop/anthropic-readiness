@@ -241,3 +241,38 @@ Rulings and costs:
   future dependency changes need review of this new command's contract.
 - Closed session/health response variants extend the unreleased Web API schema;
   Task 7's generated OpenAPI comparison must check the same packaged shapes.
+
+## Task 7: versioned operations API and resumable progress
+
+Added catalog/preview/start/history/cancel/preset/evidence routes, closed packaged
+wire contracts and OpenAPI derived from exactly those shapes. Preview makes no
+upstream request. Duplicate start returns the same admitted job before resolving
+credentials. Raw credentials remain start-only, and a raw value plus a server
+reference is rejected. Evidence uses opaque inventory IDs and verified bytes with
+a fixed attachment content type. Traversal, symlink and changed evidence are rejected.
+SSE is an observer: snapshot/replay/reset, 15-second heartbeat, terminal closure and
+disconnect do not start or cancel assessments. Parent-coordinated journal reads
+preserve sequence consistency independently of browser backpressure.
+
+RED: eight initial behavior failures. Initial GREEN passed eight tests, then three
+additional tests covered private credentials/lazy duplicate binding, idempotent
+queued/active cancellation and disconnect of an actual active worker. Strict typing
+caught framework-hook assignment and asynchronous return annotations. A typed
+FastAPI subclass supplies the OpenAPI extension point; no type gate was suppressed.
+After the owner resumed from the account-limit pause, seven fast gates and 40
+API/events/security/worker lifecycle tests passed in Linux Python 3.12. Duplicate
+starts and repeated cursor reads retained exactly three synthetic requests. Full
+pytest passed all 340 tests in 69.58s; this does not establish GUI/browser/image or real endpoint acceptance.
+
+Rulings and costs:
+
+- Initial and ahead cursors receive a current snapshot; valid saved cursors replay
+  only later entries under the parent manager lock. This avoids stale events over
+  a newer snapshot. Consumers must retain their saved snapshot or request `after=0`.
+- Credential references resolve only after idempotent admission. A new invalid
+  reference consumes a terminal error job; another attempt needs a fresh preview.
+- New closed response variants and a shared contract-derived OpenAPI extend the
+  unreleased Web API only. Framework extension changes need explicit review.
+- Ambiguous credential sources are rejected; opaque evidence IDs and fixed safe
+  attachments avoid client-controlled paths or active upstream content. Clients
+  must explicitly choose a credential source and use the returned inventory.

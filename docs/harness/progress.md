@@ -306,3 +306,14 @@ costs are recorded in the W1 ledger. Final Linux Python 3.12 checks passed 15 ta
 HTTP/serve tests, seven fast gates and all 329 pytest tests. Real socket startup and
 SIGTERM shutdown were observed on loopback. This is HTTP-boundary acceptance, not
 GUI/browser/runtime-image acceptance; no upstream model call occurred.
+
+## W1 Task 7: operations API and resumable SSE (2026-10-17)
+
+Implemented schema-validated preview/start/history/cancel/preset/evidence routes
+and read-only reconnectable SSE. Eight observed initial RED failures preceded
+behavior; extra regressions cover credentials, duplicate binding and cancellation.
+Final Linux Python 3.12 checks passed seven fast gates, 40 targeted tests and all
+340 pytest tests. Repeated starts/cursor reads retained exactly three planned
+synthetic requests; observer disconnect did not cancel the active worker. The W1
+ledger records snapshot/replay, lazy credentials and typed OpenAPI rulings. GUI,
+browser and runtime-image acceptance remain pending. No real model call was made.
