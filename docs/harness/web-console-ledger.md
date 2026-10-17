@@ -558,3 +558,13 @@ Native development image network preparation is separate from acceptance.
 CLI/Web image acceptance on arm64/amd64, any remaining full verification, independent
 whole-W1 review and final handoff are pending. No real endpoint, publishing, registry
 login or remote CI execution is included in this source milestone.
+
+Task 13 image attempts: native arm64 CLI/Web builds and CLI runtime/replay checks
+passed, but the first smoke failed before Web cases because Docker suppressed host
+publication on an internal-only network. A new adapter regression reproduced it;
+12 image harness checks and all eight fast gates passed after retaining the CLI
+internal route and adding a normal bridge for the owned peer/Web host listeners.
+The failed result remains retained and does not count as Web acceptance. Initial
+dev preparation also failed at the original Debian CJK font download; dev-only APT
+retry/timeout settings now allow bounded longer waits without changing source or
+font versions. Preparation retries and image acceptance remain pending.

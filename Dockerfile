@@ -6,6 +6,7 @@ COPY --from=uv /uv /uvx /usr/local/bin/
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 UV_LINK_MODE=copy
 
 FROM base AS dev
+RUN printf 'Acquire::Retries "8";\nAcquire::http::Timeout "600";\nAcquire::https::Timeout "600";\n' > /etc/apt/apt.conf.d/80-readiness-network
 COPY --from=node_toolchain /usr/local/bin/node /usr/local/bin/node
 COPY --from=node_toolchain /usr/local/lib/node_modules/ /usr/local/lib/node_modules/
 RUN apt-get update && apt-get install -y --no-install-recommends git ca-certificates fonts-noto-cjk \

@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 import yaml
 
-from scripts.check_images import assess_image_checks
+from scripts.check_images import Acceptance, assess_image_checks
 
 ROOT = Path(__file__).resolve().parents[2]
 WEB_CHECKS = (
@@ -61,3 +61,30 @@ def test_image_full_prepares_browser_before_disconnect() -> None:
     assert source.index('"dev-frontend-prepare"') < source.index('"dev-isolate"')
     workflow = (ROOT / ".github/workflows/container-matrix.yml").read_text()
     assert "--targets runtime,web" in workflow
+
+
+def test_peer_publishing_uses_normal_bridge_while_cli_peer_route_stays_internal(
+    tmp_path: Path,
+) -> None:
+    commands: dict[str, list[str]] = {}
+
+    class Recorded(Acceptance):
+        def docker(
+            self, label: str, args: list[str], expected: int = 0, timeout: float = 120
+        ) -> str:
+            commands[label] = args
+            if label == "peer-start":
+                (self.peer_state / "ready").write_text("8080")
+            return "127.0.0.1:34567" if label == "peer-published-port" else "synthetic"
+
+    fixture = Recorded(tmp_path, "linux/arm64", "smoke")
+    fixture.start_peer()
+    args = commands["peer-start"]
+    published_network = args[args.index("--network") + 1]
+    creation = next(
+        value
+        for value in commands.values()
+        if value[:2] == ["network", "create"] and value[-1] == published_network
+    )
+    assert "--internal" not in creation, "Docker cannot publish a host UI from an isolated network"
+    assert "--internal" in commands["network-create"]

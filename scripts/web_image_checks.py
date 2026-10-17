@@ -175,7 +175,7 @@ def run_web_checks(a: Acceptance, host_url: str) -> None:
             "--security-opt",
             "no-new-privileges",
             "--network",
-            a.token,
+            a.web_network,
             "-p",
             "127.0.0.1::8765",
             "-v",

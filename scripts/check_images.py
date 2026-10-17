@@ -114,8 +114,10 @@ class Acceptance:
         self.web = "anthropic-readiness-web:" + target_platform.split("/")[1]
         self.targets = targets
         self.token = "readiness-" + uuid.uuid4().hex[:12]
+        self.web_network = self.token + "-web"
         self.containers: list[str] = []
         self.volumes: list[str] = []
+        self.extra_networks: list[str] = []
         self.peer_state = output / "peer"
         self.peer_host_url = ""
         self.network_created = False
@@ -406,6 +408,8 @@ class Acceptance:
     def start_peer(self) -> None:
         self.docker("network-create", ["network", "create", "--internal", self.token])
         self.network_created = True
+        self.extra_networks.append(self.web_network)
+        self.docker("web-network-create", ["network", "create", self.web_network])
         state = self.output / "peer"
         state.mkdir()
         peer = self.token + "-peer"
@@ -418,7 +422,7 @@ class Acceptance:
                 "--name",
                 peer,
                 "--network",
-                self.token,
+                self.web_network,
                 "--network-alias",
                 "synthetic-peer",
                 "-p",
@@ -445,6 +449,10 @@ class Acceptance:
             ],
         )
         wait_file(state / "ready")
+        self.docker(
+            "peer-internal-connect",
+            ["network", "connect", "--alias", "synthetic-peer", self.token, peer],
+        )
         host_port = (
             self.docker("peer-published-port", ["port", peer, "8080/tcp"]).strip().split(":")[-1]
         )
@@ -533,6 +541,10 @@ class Acceptance:
         for name in reversed(self.containers):
             subprocess.run(
                 ["docker", "rm", "-f", name], capture_output=True, check=False, timeout=30
+            )
+        for name in reversed(self.extra_networks):
+            subprocess.run(
+                ["docker", "network", "rm", name], capture_output=True, check=False, timeout=30
             )
         if self.network_created:
             subprocess.run(
