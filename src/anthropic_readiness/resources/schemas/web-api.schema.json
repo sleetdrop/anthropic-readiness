@@ -1814,13 +1814,35 @@
                     "items": {
                       "type": "string"
                     }
+                  },
+                  "contract_id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "contract_revision": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "api_version": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "beta_headers": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
                   }
                 },
                 "required": [
                   "job",
                   "target_name",
                   "model",
-                  "profiles"
+                  "profiles",
+                  "contract_id",
+                  "contract_revision",
+                  "api_version",
+                  "beta_headers"
                 ],
                 "additionalProperties": false
               }

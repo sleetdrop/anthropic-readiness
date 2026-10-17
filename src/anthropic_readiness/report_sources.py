@@ -246,4 +246,5 @@ def load_report_source(root: Path, *, operations_root: Path | None = None) -> Re
         else object_value(execution["plan"])
         if execution is not None
         else {},
+        refs,
     )

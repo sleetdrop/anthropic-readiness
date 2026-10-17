@@ -18,7 +18,7 @@ from tests.acceptance.test_readable_reports import MissingFieldsTransport
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def prepared_run(root: Path, *, partial: bool = False) -> str:
+def prepared_run(root: Path, *, partial: bool = False, keep_unpublished: bool = False) -> str:
     store = JobStore(root)
     plan = store.create_plan(
         load_target(ROOT / "examples/target.yaml").to_json(),
@@ -40,9 +40,12 @@ def prepared_run(root: Path, *, partial: bool = False) -> str:
     if partial:
         context = object_value(json.loads((operations / "execution.json").read_text()))
         states = objects(context["case_states"])
-        for state in states[1:]:
-            (operations / str(state["checkpoint_path"])).unlink()
+        for index, state in enumerate(states[1:], 1):
+            if not keep_unpublished or index != 1:
+                (operations / str(state["checkpoint_path"])).unlink()
             state.update({"state": "pending", "checkpoint_path": None, "checkpoint_sha256": None})
+            if keep_unpublished and index == 1:
+                state["state"] = "running"
         context.update(
             {
                 "case_states": list(states),
@@ -51,11 +54,12 @@ def prepared_run(root: Path, *, partial: bool = False) -> str:
                 "terminal_reason": None,
                 "sequence": 0,
                 "result_sha256": None,
-                "actual_requests": 1,
+                "actual_requests": 2 if keep_unpublished else 1,
                 "spans": [
                     span
                     for span in objects(context["spans"])
                     if span["case_id"] == states[0]["case_id"]
+                    or (keep_unpublished and span["case_id"] == states[1]["case_id"])
                 ],
             }
         )

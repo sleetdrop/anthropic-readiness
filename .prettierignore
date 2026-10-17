@@ -5,3 +5,5 @@ uv.lock
 package-lock.json
 playwright-report/
 test-results/
+# Plain HTML parsing corrupts Jinja control syntax; compile/render gates cover templates.
+src/anthropic_readiness/resources/web/*.html

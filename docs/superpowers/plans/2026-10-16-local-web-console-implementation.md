@@ -346,10 +346,10 @@ and `case_states`; both have strict JSDoc input/output
 contracts matching web-api/progress-event schemas. No browser module starts a test
 on import, reconnect, view change or preset editing.
 
-- [ ] **RED:** `test_edit_invalidates_preview` checks the pure form-state transition; `test_reducer_deduplicates_and_recovers_ahead_cursor` preserves last committed sequence and pending counts. `test_page_renders_only_installed_capabilities` requires exactly the chosen Stage A catalog and correct partial labels. Actual input clearing/explicit start behavior belongs to Task 12's browser tests. Run frontend Node tests and the page integration file.
-- [ ] **Implement:** Follow the approved visual hierarchy: compact conclusion, matrix, state distribution, issue impact, real timeline and contextual drawer. Add plan preview/effective URL, finite budgets, generic Docker hint, safe authentication input, persistent run navigation, history filters/preset editing and export preview. Reauthenticate local session on expiry without resubmitting a run; reconnect with snapshot cursor. Restore focus/filter context, expose table data and all five result states. Do not ship the prototype's fake names/counts/events or simulation timers.
-- [ ] **GREEN:** Run named tests plus static frontend checks and Web integration. Inspect the actual four-case layout rather than filling empty space with fictional capabilities.
-- [ ] **Commit:** `feat: add local configuration live assessment and history interfaces`.
+- [x] **RED:** `test_edit_invalidates_preview` checks the pure form-state transition; `test_reducer_deduplicates_and_recovers_ahead_cursor` preserves last committed sequence and pending counts. `test_page_renders_only_installed_capabilities` requires exactly the chosen Stage A catalog and correct partial labels. Actual input clearing/explicit start behavior belongs to Task 12's browser tests. Run frontend Node tests and the page integration file.
+- [x] **Implement:** Follow the approved visual hierarchy: compact conclusion, matrix, state distribution, issue impact, real timeline and contextual drawer. Add plan preview/effective URL, finite budgets, generic Docker hint, safe authentication input, persistent run navigation, history filters/preset editing and export preview. Reauthenticate local session on expiry without resubmitting a run; reconnect with snapshot cursor. Restore focus/filter context, expose table data and all five result states. Do not ship the prototype's fake names/counts/events or simulation timers.
+- [x] **GREEN:** Run named tests plus static frontend checks and Web integration. Inspect the actual four-case layout rather than filling empty space with fictional capabilities.
+- [x] **Commit:** `feat: add local configuration live assessment and history interfaces`.
 
 ### Task 12: Browser acceptance and unified frontend/CI gates
 

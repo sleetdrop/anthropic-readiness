@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{ title }} · Anthropic Readiness</title>
+    <link rel="stylesheet" href="/assets/report-v2.css" />
+    <link rel="stylesheet" href="/assets/web/app.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">跳到主要内容</a>
+    <header class="masthead">
+      <a class="brand" href="/">Anthropic Readiness <span> / 本机兼容性控制台</span></a
+      ><span class="local-badge">LOCAL WORKSPACE</span>
+    </header>
+    <div class="workspace">
+      <nav class="side-nav" aria-label="主导航">
+        <span class="eyebrow">工作台</span
+        ><a href="/new" {% if active == 'new' %}aria-current="page" {% endif %}>新建评估</a
+        ><a href="/history" {% if active == 'history' %}aria-current="page" {% endif %}
+          >评估历史</a
+        >
+        <div class="nav-note">固定规则 · 可复核证据<br />显式开始才发送模型请求</div>
+      </nav>
+      <main id="main" tabindex="-1">
+        <div id="app-message" role="status" aria-live="polite" hidden></div>
+        {% block content %}{% endblock %}
+      </main>
+    </div>
+    <footer>个人本机工作区 · 数据留在本机持久卷 · 未测能力不代表支持</footer>
+    <script id="bootstrap" type="application/json">
+      {{ bootstrap | tojson }}
+    </script>
+    <script type="module" src="/assets/web/app.js"></script>
+  </body>
+</html>

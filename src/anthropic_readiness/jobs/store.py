@@ -74,7 +74,7 @@ class JobStore:
                 atomic_write(self.path, b"")
             with self._connection() as connection:
                 version = connection.execute("PRAGMA user_version").fetchone()[0]
-                if version not in {0, 1}:
+                if version not in {0, 1, 2}:
                     raise ValueError("unsupported_job_store_version")
                 if version == 0:
                     connection.executescript("""
@@ -104,6 +104,38 @@ class JobStore:
                         PRAGMA user_version=1;
                         COMMIT;
                     """)
+                    version = 1
+                if version == 1:
+                    connection.execute("BEGIN IMMEDIATE")
+                    try:
+                        for column in (
+                            "contract_id",
+                            "contract_revision",
+                            "api_version",
+                            "beta_headers",
+                        ):
+                            connection.execute("ALTER TABLE plans ADD COLUMN " + column + " TEXT")
+                        for row in connection.execute("SELECT id FROM plans").fetchall():
+                            frozen = self._plan(connection, str(row["id"]))
+                            contract = object_value(frozen.target["protocol_contract"])
+                            connection.execute(
+                                "UPDATE plans SET contract_id=?, contract_revision=?, api_version=?, beta_headers=? WHERE id=?",
+                                (
+                                    contract["id"],
+                                    contract["revision"],
+                                    frozen.target["api_version"],
+                                    json.dumps(frozen.target["beta_headers"]),
+                                    frozen.id,
+                                ),
+                            )
+                        connection.execute(
+                            "CREATE INDEX plans_contract ON plans(contract_id, contract_revision, api_version)"
+                        )
+                        connection.execute("PRAGMA user_version=2")
+                        connection.commit()
+                    except BaseException:
+                        connection.rollback()
+                        raise
 
     @contextmanager
     def _connection(self) -> Iterator[sqlite3.Connection]:
@@ -150,7 +182,7 @@ class JobStore:
         atomic_write(safe_path(self.root, "plans/" + frozen.id + ".json"), data)
         with self._transaction() as connection:
             connection.execute(
-                "INSERT INTO plans VALUES (?, ?, ?, ?, ?, ?, ?)",
+                "INSERT INTO plans (id, session_id, sha256, expires_at, target_name, model, profiles, contract_id, contract_revision, api_version, beta_headers) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 (
                     frozen.id,
                     session_id,
@@ -159,6 +191,10 @@ class JobStore:
                     plan.target.name,
                     plan.target.model,
                     json.dumps(plan.profiles),
+                    plan.target.contract_id,
+                    plan.target.contract_revision,
+                    plan.target.api_version,
+                    json.dumps(plan.target.beta_headers),
                 ),
             )
         return frozen
@@ -335,7 +371,14 @@ class JobStore:
     def history(self, filters: JsonObject, cursor: str | None, limit: int = 50) -> JsonObject:
         if type(limit) is not int or not 1 <= limit <= 100:
             raise ValueError("invalid_history_limit")
-        columns = {"state": "j.state", "target_name": "p.target_name", "model": "p.model"}
+        columns = {
+            "state": "j.state",
+            "target_name": "p.target_name",
+            "model": "p.model",
+            "contract_id": "p.contract_id",
+            "contract_revision": "p.contract_revision",
+            "api_version": "p.api_version",
+        }
         if set(filters) - {*columns, "profile", "created_after", "created_before"}:
             raise ValueError("invalid_history_filter")
         clauses: list[str] = []
@@ -373,7 +416,7 @@ class JobStore:
                 raise ValueError("invalid_history_cursor") from exc
             clauses.append("(j.created_at < ? OR (j.created_at = ? AND j.id < ?))")
             values.extend((stamp, stamp, last_id))
-        query = "SELECT j.*, p.target_name, p.model, p.profiles FROM jobs j JOIN plans p ON j.plan_id=p.id"
+        query = "SELECT j.*, p.target_name, p.model, p.profiles, p.contract_id, p.contract_revision, p.api_version, p.beta_headers FROM jobs j JOIN plans p ON j.plan_id=p.id"
         if clauses:
             query += " WHERE " + " AND ".join(clauses)
         query += " ORDER BY j.created_at DESC, j.id DESC LIMIT ?"
@@ -386,6 +429,10 @@ class JobStore:
                 "target_name": str(row["target_name"]),
                 "model": str(row["model"]),
                 "profiles": strict_json(str(row["profiles"])),
+                "contract_id": str(row["contract_id"]),
+                "contract_revision": str(row["contract_revision"]),
+                "api_version": str(row["api_version"]),
+                "beta_headers": strict_json(str(row["beta_headers"])),
             }
             for row in rows[:limit]
         ]

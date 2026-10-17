@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="page-title">
+  <span class="eyebrow">ASSESSMENT / 评估记录</span>
+  <div class="section-header">
+    <h1>{{ target.name }}</h1>
+    <div class="form-actions">
+      <a class="button secondary" href="/new?copy={{ job.id }}">复制配置重新测试</a>
+      <a class="button secondary" href="#export-panel">导出报告</a>
+      <button id="cancel-run" type="button" {% if job.state in ['completed','cancelled','interrupted','error'] %}disabled{% endif %}>取消任务</button>
+    </div>
+  </div>
+  <p class="lead">{{ target.model }} · API {{ target.api_version }} · 规则 {{ target.protocol_contract.revision }} · <span id="job-state">{{ state_names[job.state] }}</span></p>
+  <p class="field-note">关闭或刷新页面不会停止任务；重新连接只读取已保存进度。</p>
+</div>
+<details id="execution-panel" class="panel live-console" {% if job.state not in ['completed','cancelled','interrupted','error'] %}open{% endif %}>
+  <summary>执行进度与记录 <span id="connection-state" role="status">正在连接本机记录</span></summary>
+  <div class="live-metrics">
+    <div><span>已完成评估 / 计划</span><strong id="case-progress">— / {{ cases | length }}</strong></div>
+    <div><span>实际请求 / 配置上限</span><strong id="request-progress">{{ execution.actual_requests if execution else 0 }} / {{ plan.limits.max_requests }}</strong></div>
+    <div><span>已记录耗时 / 时间上限</span><strong id="elapsed-progress">{{ '%.1f' | format(execution.elapsed_ms / 1000) if execution else '0.0' }} / {{ plan.limits.run_timeout_s }} s</strong></div>
+  </div>
+  <div class="phase-strip"><span id="active-phase">{% if execution and execution.spans %}已保存的阶段与间隔见报告时间线{% else %}等待任务开始{% endif %}</span><time id="last-activity">{{ execution.updated_at if execution else job.created_at }}</time></div>
+  <ol id="case-list" class="execution-cases">
+    {% for case in cases %}
+    <li data-progress-case="{{ case.id }}"><span>{{ case.name }}</span><span class="status {{ case.state }}" data-case-state>{{ state_names[case.state] }} · {{ case.state }}</span></li>
+    {% endfor %}
+  </ol>
+  <details><summary>冻结计划与端点</summary><p class="source-ref">{{ target.messages_url }}</p><p class="field-note">Run {{ job.id }} · 不重试 · 预览之后的预设修改不会影响此任务。</p></details>
+</details>
+<section id="report-panel" aria-label="兼容性报告">
+  {% if report_html %}
+  {{ report_html }}
+  {% else %}
+  <div class="panel"><h2>兼容性报告</h2><p>尚无可展示的已核验用例记录。执行完成不等于协议检查通过；报告来源不可用时，不能据此判定兼容性。</p></div>
+  {% endif %}
+</section>
+<section id="export-panel" class="panel export-panel" aria-labelledby="export-title">
+  <div class="section-header"><h2 id="export-title">按需导出</h2><span class="field-note">读取与导出均不发送模型请求</span></div>
+  <form id="export-form">
+    <div class="check-row"><label><input type="checkbox" name="format" value="html" checked>HTML</label><label><input type="checkbox" name="format" value="markdown" checked>Markdown</label><label><input type="checkbox" name="format" value="json" checked>JSON</label><label><input id="include-evidence" type="checkbox">附带已脱敏证据</label></div>
+    <div class="form-actions"><button id="preview-export" type="button" {% if job.state not in ['completed','cancelled','interrupted','error'] %}disabled{% endif %}>预览导出内容</button><button id="create-export" type="button" disabled>生成导出</button></div>
+    <div id="export-preview" aria-live="polite"><p class="field-note">任务结束后可冻结导出；生成前会列出文件与省略项。单独 HTML 不内嵌捕获文件。</p></div>
+    <div id="export-downloads"></div>
+  </form>
+</section>
+<dialog id="finding-drawer" aria-labelledby="drawer-title">
+  <div class="drawer-header"><h2 id="drawer-title">问题与证据</h2><button id="close-drawer" type="button">关闭详情</button></div>
+  <div id="drawer-content"></div>
+</dialog>
+{% endblock %}

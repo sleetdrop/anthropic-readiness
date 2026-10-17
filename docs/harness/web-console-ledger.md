@@ -411,3 +411,57 @@ Rulings and costs:
 - Bound selected payloads/artifacts at 256 MiB with an actionable error. Larger
   captures need smaller selections or a future streaming path; sources and failed
   attempts are never erased or truncated.
+
+## Task 11: local configuration, live console and history
+
+Added packaged server-rendered configuration/run/history pages and strictly checked
+plain JavaScript modules. Configuration accepts full/base URL input with explicit
+resolution, installed rule/profile choices, finite budgets, model identity/aliases,
+local presets and start-only credentials. Preview freezes exact scope; canonical
+edits invalidate it and start remains an explicit live opt-in. Credential input is
+cleared after admission and never enters presets or browser persistence. Run pages
+show recorded progress, separate pending/running and original verdicts, reconnect
+without dispatch, support cancellation, contextual finding drawers and on-demand
+export previews/downloads. Completed views lead with the conclusion; execution
+details collapse and exports follow the report. Cached-page restoration refreshes
+read-only state. History exposes frozen rule/API/beta identities and bound filters.
+
+SQLite index v2 backfills only from integrity-checked immutable v1 plans, with a
+transactional rollback on corrupt legacy sources. Original frozen plan/result bytes
+and admission semantics remain unchanged. Web reports use the same verified source
+and report projection as CLI/exports. A new unpublished-checkpoint regression found
+and fixed early evidence inventory exposure; only parent-advertised verified refs
+are exposed, shared through the optional immutable ReportSource inventory.
+
+Observed RED includes page/preview/reducer failures, migration/rollback, real
+request_index drift, unbounded read-session retries, report-refresh focus loss,
+completed-page hierarchy and cached-page resume. Fixture correction moved seeding
+before the app's exclusive manager owner. Plain HTML Prettier damaged inline Jinja
+controls; restored them and retained compiler/render gates instead. Final Linux
+checks passed seven fast gates, nine Node tests, strict frontend type/lint/format,
+37 Web/store regressions and all 388 pytest tests (88.10s). Targeted Chromium smoke
+loaded actual four-case synthetic configuration/report/history/drawer views with
+zero browser errors; hierarchy/focus/cache-resume probes passed. This is visual smoke,
+not the full Task 12 browser/offline/print/accessibility acceptance.
+
+Rulings and costs:
+
+- Add atomic index v2 for required frozen-rule filtering, with verified backfill.
+  Older binaries reject v2 rather than silently dropping metadata; rollback must use
+  an appropriate older data snapshot, while original source files remain intact.
+- Exclude Jinja templates only from incompatible plain HTML Prettier; compiler/render
+  and upcoming browser gates remain mandatory. Manual template formatting needs review.
+- Share the loader's advertised evidence inventory through an optional tuple on
+  ReportSource. Partial sources must use the verifier; final in-memory sources still
+  retain their original result refs.
+- Track preview child PID/start ticks inside the container. Stopping only the host
+  docker-exec session left a child/port behind; cleanup checks exact identity and pidfd,
+  never signals a process selected merely by name/port. The retained failed smoke
+  chain never ran its subsequent full pytest command; final corrected checks did.
+- Use a declaration-only recursive JSON type module with JSDoc runtime JS; TypeScript
+  rejected the inline recursive JSDoc alias. No TypeScript runtime or build service
+  enters the product; declarations remain checked by tsc and formatting gates.
+
+Task 12 should explicitly exercise terminal partial labels and print-essential
+content as well as the required complete browser matrix. Current targeted smoke
+screenshots/data are ignored synthetic artifacts; no real model request occurred.

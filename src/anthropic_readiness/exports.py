@@ -14,7 +14,6 @@ from anthropic_readiness.config import target_from_document
 from anthropic_readiness.evidence import atomic_write, json_bytes, safe_path
 from anthropic_readiness.jobs.store import JobStore
 from anthropic_readiness.models import EvidenceRef, JsonObject, JsonValue, object_value, strict_json
-from anthropic_readiness.operations.checkpoints import checkpoint_refs
 from anthropic_readiness.operations.contracts import validate_operational
 from anthropic_readiness.operations.reduction import TERMINAL, objects
 from anthropic_readiness.operations.storage import read_document
@@ -152,25 +151,9 @@ class ExportService:
             if state["case_id"] in retained
         )
 
-    def _refs(self, source: ReportSource, run_id: str) -> tuple[EvidenceRef, ...]:
-        if source.result:
-            refs = source.result.evidence
-        else:
-            refs = tuple(
-                ref
-                for state in self._checkpoints(source)
-                for ref in checkpoint_refs(
-                    object_value(
-                        strict_json(
-                            copied_bytes(
-                                self._job_root(run_id) / "operations",
-                                str(state["checkpoint_path"]),
-                                str(state["checkpoint_sha256"]),
-                            ).decode()
-                        )
-                    )
-                )
-            )
+    @staticmethod
+    def _refs(source: ReportSource) -> tuple[EvidenceRef, ...]:
+        refs = source.result.evidence if source.result else source.evidence_refs
         unique = {(ref.path, ref.sha256): EvidenceRef(ref.path, ref.sha256) for ref in refs}
         return tuple(unique.values())
 
@@ -193,7 +176,7 @@ class ExportService:
 
     def preview(self, run_id: str, policy: ExportPolicy) -> JsonObject:
         source = self._source(run_id)
-        refs = self._refs(source, run_id)
+        refs = self._refs(source)
         selected_names: list[JsonValue] = list(self._names(source, policy, refs))
         excluded: list[JsonValue] = list(omissions(policy))
         result: JsonObject = {
@@ -211,7 +194,7 @@ class ExportService:
     def _files(
         self, run_id: str, policy: ExportPolicy, source: ReportSource
     ) -> tuple[dict[str, bytes], ReportSource]:
-        refs = self._refs(source, run_id)
+        refs = self._refs(source)
         if policy.include_evidence and (
             source.evidence_verification["status"] == "missing_or_invalid"
             or any(item.get("kind") == "source_warning" for item in source.diagnostics)

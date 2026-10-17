@@ -360,3 +360,17 @@ preceded fixes. Final Linux Python 3.12 verification passed seven fast gates,
 39 export/source/evidence/API regressions and all 382 pytest tests (83.94s). Export
 preview/create/repeated ZIP and standalone downloads added zero requests beyond the
 three synthetic model calls. No GUI/browser/new image/live endpoint acceptance yet.
+
+## W1 Task 11: configuration/live/history interface (2026-10-17)
+
+Added actual four-case local Web pages, strict plain JS preview/progress modules,
+recorded lifecycle display, cancellation, presets, contextual evidence drawers and
+on-demand exports. History now filters frozen rule/API metadata through transactional
+SQLite index v2; corrupt v1 plans abort migration without partial schema changes.
+Actual RED regressions and fixture/formatter/process rulings are retained in the W1
+ledger. Parent-unpublished evidence no longer leaks into the browsable inventory.
+Final Linux Python 3.12 verification passed seven fast gates, nine Node tests,
+frontend type/lint/format, 37 Web/store regressions and all 388 pytest tests (88.10s).
+Targeted Chromium visual smoke/probes passed against four-case synthetic data with
+zero browser errors; full Task 12 browser/offline/print/accessibility gates, new
+runtime images, remote CI and real endpoint checks remain distinct and pending.

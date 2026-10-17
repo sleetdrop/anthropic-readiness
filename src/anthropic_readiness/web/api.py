@@ -21,10 +21,11 @@ from anthropic_readiness.evidence import safe_path, verify_evidence
 from anthropic_readiness.exports import ExportFormat, ExportPolicy, ExportService
 from anthropic_readiness.jobs.manager import JobManager
 from anthropic_readiness.models import EvidenceRef, JsonObject, object_value
-from anthropic_readiness.operations.checkpoints import CheckpointStore, checkpoint_refs
 from anthropic_readiness.operations.contracts import validate_operational
 from anthropic_readiness.operations.models import JobState
 from anthropic_readiness.operations.storage import MAX_DOCUMENT_BYTES, read_document
+from anthropic_readiness.report_sources import load_report_source
+from anthropic_readiness.report_view import build_report_view
 from anthropic_readiness.schema import result_from_document
 from anthropic_readiness.web.contracts import request_contract, response_contract
 from anthropic_readiness.web.events import event_stream
@@ -130,10 +131,16 @@ def evidence_refs(manager: JobManager, run_id: str) -> tuple[Path, tuple[Evidenc
                 raise ValueError("result_hash_mismatch")
             refs = result.evidence
         elif safe_path(root, "operations/execution.json").exists():
-            checkpoints = CheckpointStore(
-                root / "operations", run_id, evidence_root=evidence_root
-            ).load_verified()
-            refs = tuple(ref for checkpoint in checkpoints for ref in checkpoint_refs(checkpoint))
+            source = load_report_source(evidence_root, operations_root=root / "operations")
+            frozen = manager.store.get_admitted_plan(run_id)
+            if (
+                source.execution is None
+                or source.execution["run_id"] != run_id
+                or source.execution["target"] != frozen.target
+                or source.plan != frozen.plan
+            ):
+                raise ValueError("partial_identity")
+            refs = source.evidence_refs
         else:
             refs = ()
         unique = {(ref.path, ref.sha256): EvidenceRef(ref.path, ref.sha256) for ref in refs}
@@ -143,6 +150,41 @@ def evidence_refs(manager: JobManager, run_id: str) -> tuple[Path, tuple[Evidenc
 
 
 def run_document(manager: JobManager, run_id: str) -> JsonObject:
+    frozen = manager.store.get_admitted_plan(run_id)
+    report: JsonObject | None = None
+    try:
+        job_root = safe_path(manager.store.root, "runs/" + run_id)
+        source = load_report_source(
+            job_root / "assessment", operations_root=job_root / "operations"
+        )
+        target = (
+            source.result.target
+            if source.result
+            else object_value(source.execution["target"])
+            if source.execution
+            else {}
+        )
+        source_id = (
+            source.result.run_id
+            if source.result
+            else source.execution["run_id"]
+            if source.execution
+            else None
+        )
+        actual = (
+            source.result.plan["actual_requests"]
+            if source.result
+            else source.plan["actual_requests"]
+        )
+        if (
+            source_id != run_id
+            or target != frozen.target
+            or source.plan != {**frozen.plan, "actual_requests": actual}
+        ):
+            raise ValueError("report_source_identity")
+        report = build_report_view(source).document
+    except (ValueError, OSError):
+        pass
     snapshot = manager.snapshot(run_id)
     inventory: list[JsonObject] = []
     try:
@@ -160,14 +202,13 @@ def run_document(manager: JobManager, run_id: str) -> JsonObject:
         pass
     return {
         **snapshot,
-        "plan": manager.store.get_admitted_plan(run_id).to_json(),
-        "report": None,
+        "plan": frozen.to_json(),
+        "report": report,
         "evidence": list(inventory),
     }
 
 
-@router.get("/catalog", responses=response_contract("catalog_response"))
-def catalog(request: Request) -> JSONResponse:
+def catalog_document(manager: JobManager) -> JsonObject:
     titles = {
         "ANT-MESSAGE-001": "基础消息",
         "ANT-TEXT-SSE-001": "流式消息",
@@ -179,37 +220,39 @@ def catalog(request: Request) -> JSONResponse:
         "anthropic-tools-smoke": "强制工具调用",
     }
     cases = list_cases()
-    return api_response(
-        "catalog_response",
-        {
-            "contracts": [
-                {**resolve_contract(name, revision).manifest, "version_semantics": "unverified"}
-                for name, revision in SUPPORTED
-            ],
-            "profiles": [
-                {
-                    "id": profile,
-                    "version": 1,
-                    "title": profile_titles[profile],
-                    "cases": [case.id for case in cases if profile in case.profiles],
-                }
-                for profile in PROFILES
-            ],
-            "cases": [
-                {
-                    "id": case.id,
-                    "version": case.version,
-                    "title": titles[case.id],
-                    "streaming": case.streaming,
-                    "behavior": case.behavior,
-                    "profiles": list(case.profiles),
-                    "capabilities": list(case.capabilities),
-                }
-                for case in cases
-            ],
-            "credential_refs": list(manager_for(request).credential_references),
-        },
-    )
+    return {
+        "contracts": [
+            {**resolve_contract(name, revision).manifest, "version_semantics": "unverified"}
+            for name, revision in SUPPORTED
+        ],
+        "profiles": [
+            {
+                "id": profile,
+                "version": 1,
+                "title": profile_titles[profile],
+                "cases": [case.id for case in cases if profile in case.profiles],
+            }
+            for profile in PROFILES
+        ],
+        "cases": [
+            {
+                "id": case.id,
+                "version": case.version,
+                "title": titles[case.id],
+                "streaming": case.streaming,
+                "behavior": case.behavior,
+                "profiles": list(case.profiles),
+                "capabilities": list(case.capabilities),
+            }
+            for case in cases
+        ],
+        "credential_refs": list(manager.credential_references),
+    }
+
+
+@router.get("/catalog", responses=response_contract("catalog_response"))
+def catalog(request: Request) -> JSONResponse:
+    return api_response("catalog_response", catalog_document(manager_for(request)))
 
 
 @router.post(
@@ -268,6 +311,9 @@ def history(
     profile: str | None = None,
     created_after: str | None = None,
     created_before: str | None = None,
+    contract_id: str | None = None,
+    contract_revision: str | None = None,
+    api_version: str | None = None,
 ) -> JSONResponse:
     if set(request.query_params) - {
         "cursor",
@@ -278,6 +324,9 @@ def history(
         "profile",
         "created_after",
         "created_before",
+        "contract_id",
+        "contract_revision",
+        "api_version",
     }:
         raise ValueError("invalid_history_filter")
     filters: JsonObject = {
@@ -289,6 +338,9 @@ def history(
             "profile": profile,
             "created_after": created_after,
             "created_before": created_before,
+            "contract_id": contract_id,
+            "contract_revision": contract_revision,
+            "api_version": api_version,
         }.items()
         if value is not None
     }

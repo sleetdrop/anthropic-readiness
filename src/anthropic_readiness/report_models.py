@@ -4,7 +4,7 @@ import json
 from dataclasses import dataclass
 
 from anthropic_readiness.json_validation import checked_validator
-from anthropic_readiness.models import JsonObject, RunResult
+from anthropic_readiness.models import EvidenceRef, JsonObject, RunResult
 from anthropic_readiness.schema import load_schema
 
 # Resolve the immutable packaged boundary once, before any pure projection runs.
@@ -20,6 +20,7 @@ class ReportSource:
     evidence_verification: JsonObject
     diagnostics: tuple[JsonObject, ...]
     plan: JsonObject
+    evidence_refs: tuple[EvidenceRef, ...] = ()
 
 
 @dataclass(frozen=True)
