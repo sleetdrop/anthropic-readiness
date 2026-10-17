@@ -14,6 +14,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends git ca-certific
     && useradd --create-home --uid 1000 developer \
     && ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm \
     && ln -s /usr/local/lib/node_modules/npm/bin/npx-cli.js /usr/local/bin/npx
+RUN install -d -o developer -g developer /home/developer/.cache
 WORKDIR /opt/frontend-preparation
 COPY package.json package-lock.json ./
 RUN npm ci --ignore-scripts \
