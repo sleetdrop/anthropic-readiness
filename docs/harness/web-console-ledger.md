@@ -629,3 +629,51 @@ Rulings and costs:
   holding the scheduler lock. A worker can finalize while report I/O runs. If work
   changes throughout those reads, temporarily omit the projection and retain accurate
   progress rather than combine different generations; a subsequent read can recover.
+
+The first amd64 full attempt failed during the locked browser install with an
+unreproduced directory-lock mtime error. Cache-only preparation with native Node
+and the shipped explicit x64 platform selector fetched the identical official
+archives; their ELF identities, actual x64 installer and actual x64 browser launch
+were verified separately. No dependency/lock/criterion was patched. Preparation
+alone was never counted as acceptance.
+
+The second attempt reached real checks: that historical run executed 245
+unit/harness cases, 125/126 integration cases, 54 acceptance and four installed
+cases; 12/14 browser cases passed. Its parent-loss fixture encountered unsupported
+pidfd_open, and its translated browser failed both contrast checks. Independent
+black/white calibration measured 21 natively and null under translated x64; even
+String(4.5) became 4, including with interpretation-only diagnostics. The screenshot
+itself retained the intended colors. This is an invalid measurement environment;
+its failed records remain unaccepted.
+
+The controller now observes the Docker engine's architecture and uses its native
+Linux developer baseline independently of requested runtime targets. All Python,
+Axe, lifecycle and browser assertions remain required and unchanged; a new numeric
+prerequisite rejects invalid browser arithmetic as BLOCKED, and a permanent
+black/white calibration adds one full browser case. Engine/runtime/development
+identities are explicit in image-result 2.1; strict 2.0 reading remains supported.
+Native GitHub matrix runners naturally select their matching developer architecture.
+The target CLI/Web images still require their own actual requested-architecture
+runtime, HTTP, cancellation, restart, evidence export and host-route observations.
+
+Cross-target build-selection and new-contract regressions failed at assertions
+before implementation. The calibration assertion failed with received 4 versus
+expected 4.5. Latest native source full passed all 13 gates: 433 Python tests,
+ten Node cases and 15 Chromium cases with cleanup. The unsupported x64 browser
+now fails prerequisite calibration with exit 2. Complete updated image jobs remain
+pending; the earlier passing 2.0 arm64 job is historical, not acceptance of new bytes.
+
+Rulings and costs:
+
+- Separate native developer tooling from target runtime images. End-user browsers
+  and maintainer tools are not inside the runtime image; emulating them is not a
+  requirement for testing the backend architecture. This local baseline cannot
+  establish translated x64 developer/browser compatibility, and native amd64 CI
+  remains unrun. No failed translated-tool result becomes a pass.
+- Version observations to 2.1 with explicit Docker engine, development and runtime
+  identities; retain strict historical 2.0 reading. Consumers must understand the
+  new metadata, while original protocol/result/capture contracts remain unchanged.
+- Use only verified platform-labelled public browser caches for preparation, still
+  requiring actual selected-environment installer, launch and complete checks.
+  If preparation selects the wrong archive, architecture/version checks fail;
+  preparation itself never certifies target execution.

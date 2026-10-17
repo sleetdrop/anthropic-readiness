@@ -94,7 +94,13 @@ python3 scripts/check_images.py --platform linux/amd64 --targets runtime,web
 
 Full acceptance builds both runtime targets plus dev, prepares Python/npm/Chromium,
 disconnects the disposable dev container's external network, and runs the complete
-offline graph. Separate CLI checks cover nonroot/read-only operation, replay and
+offline graph. Development tooling uses the Docker engine's native architecture;
+the requested `--platform` still selects both actual CLI/Web runtime images. For
+example, an arm64 engine tests its complete native Linux developer/browser baseline
+and separately executes requested amd64 CLI/Web images under emulation. A runtime
+image contains no browser, and this does not certify an emulated amd64 developer
+browser. Native GitHub runners select their own matching developer architecture.
+Separate CLI checks cover nonroot/read-only operation, replay and
 signals. Web checks exercise installed pages/assets, four synthetic cases, hash-
 verified exports, cancellation, persistent-volume replacement with active/queued
 jobs, preserved history and an owned synthetic Docker-host route. No real endpoint
@@ -121,9 +127,14 @@ runtime` or `web` selects that image explicitly. `--skip-build` is debug-only an
 cannot produce a passing acceptance result. Missing tools/platforms are BLOCKED,
 not PASS. Native and emulated observations are labeled separately.
 
-Version 2.0 image records include selected targets, required-check gaps, context
-hashes, inspected image identities and actual results under ignored `artifacts/images`.
-Older Stage A 1.0 records remain historical artifacts. Network preparation may be
+Version 2.1 image records separately identify the observed Docker engine, development
+platform/execution and runtime platform/execution, alongside selected targets,
+required-check gaps, context hashes and inspected image identities. Version 2.0
+records remain readable without adding facts they did not record; Stage A 1.0
+records remain historical artifacts. All observations stay under ignored
+`artifacts/images`. Browser prerequisites check numeric fidelity, and a black/white
+contrast calibration joins the full suite. An invalid browser measurement environment
+cannot pass by suppressing contrast rules or skipping tests. Network preparation may be
 slow; keep original locked sources and extended timeouts rather than silently
 switching versions. Weekly/manual GitHub jobs run the same two-architecture full
 matrix without registry publication. Docker Hub setup/pushing is a later explicitly

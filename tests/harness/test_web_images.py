@@ -5,6 +5,7 @@ from pathlib import Path
 
 import pytest
 import yaml
+from jsonschema import Draft202012Validator
 
 from anthropic_readiness.models import object_value
 from anthropic_readiness.schema import load_schema
@@ -26,7 +27,7 @@ WEB_CHECKS = (
 def test_image_contract_is_available_through_packaged_schema_loader() -> None:
     schema = load_schema("image-result")
     version = object_value(object_value(schema["properties"])["schema_version"])
-    assert version["const"] == "2.0"
+    assert version["enum"] == ["2.0", "2.1"]
 
 
 @pytest.mark.parametrize("missing", WEB_CHECKS)
@@ -165,9 +166,13 @@ def test_development_browser_cache_is_bound_to_platform_and_revision(
                         }
                     }
                 )
+            if label == "dev-image-inspect":
+                return json.dumps({"Architecture": architecture})
             return "{}"
 
     fixture = Recorded(tmp_path, "linux/" + architecture, "full")
+    fixture.development_platform = "linux/" + architecture
+    fixture.dev = "anthropic-readiness-dev:" + architecture
     fixture.run_development()
     assert (
         f"anthropic-readiness-playwright-{architecture}-1248:/home/developer/.cache/ms-playwright"
@@ -177,3 +182,92 @@ def test_development_browser_cache_is_bound_to_platform_and_revision(
     assert not fixture.volumes, (
         "development tool cache is retained separately from disposable job data"
     )
+
+
+@pytest.mark.parametrize(
+    ("engine", "development", "target"),
+    [("aarch64", "linux/arm64", "linux/amd64"), ("x86_64", "linux/amd64", "linux/arm64")],
+)
+def test_cross_target_images_keep_native_development_gates(
+    tmp_path: Path, engine: str, development: str, target: str
+) -> None:
+    commands: dict[str, list[str]] = {}
+
+    class Recorded(Acceptance):
+        def command(
+            self, label: str, argv: list[str], expected: int = 0, timeout: float = 120
+        ) -> str:
+            return "a" * 40
+
+        def docker(
+            self, label: str, args: list[str], expected: int = 0, timeout: float = 120
+        ) -> str:
+            commands[label] = args
+            return engine if label == "engine-architecture" else "{}"
+
+        def run_runtime(self) -> None:
+            pass
+
+        def run_development(self) -> None:
+            pass
+
+        def start_peer(self) -> None:
+            pass
+
+        def run_cli_live(self, host_url: str) -> None:
+            pass
+
+    fixture = Recorded(tmp_path, target, "full", ("runtime",))
+    fixture.run(False, None)
+    runtime = commands["build-runtime"]
+    dev = commands["build-dev"]
+    assert runtime[runtime.index("--platform") + 1] == target
+    assert dev[dev.index("--platform") + 1] == development
+
+
+def image_record(version: str) -> dict[str, object]:
+    return {
+        "schema_version": version,
+        "scope": "full",
+        "targets": ["runtime", "web"],
+        "platform": "linux/amd64",
+        "host_machine": "arm64",
+        "execution": "emulated",
+        "started_at": "2026-10-17T00:00:00Z",
+        "finished_at": "2026-10-17T00:01:00Z",
+        "image_context_fingerprint": "a" * 64,
+        "source_unchanged": True,
+        "skip_build": False,
+        "status": "blocked",
+        "error": "synthetic_unavailable",
+        "checks": [],
+        "missing_checks": ["dev-offline-full"],
+    }
+
+
+def test_image_v21_records_development_separately_and_keeps_v20_readable() -> None:
+    validator = Draft202012Validator(load_schema("image-result"))
+    assert not list(validator.iter_errors(image_record("2.0")))
+    current = {
+        **image_record("2.1"),
+        "engine_architecture": "aarch64",
+        "development_platform": "linux/arm64",
+        "development_execution": "native",
+    }
+    assert not list(validator.iter_errors(current))
+
+
+def test_full_pass_cannot_claim_unrun_development_and_v20_cannot_gain_v21_fields() -> None:
+    validator = Draft202012Validator(load_schema("image-result"))
+    current = {
+        **image_record("2.1"),
+        "engine_architecture": "aarch64",
+        "development_platform": None,
+        "development_execution": "not_run",
+        "status": "passed",
+        "error": None,
+        "missing_checks": [],
+    }
+    assert list(validator.iter_errors(current))
+    legacy = {**image_record("2.0"), "engine_architecture": "aarch64"}
+    assert list(validator.iter_errors(legacy))

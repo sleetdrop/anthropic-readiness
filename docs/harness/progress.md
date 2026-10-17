@@ -419,3 +419,12 @@ passed disconnected source gates and CLI checks but exposed a Web partial/final
 snapshot race during service replacement. Exact installed responses and two permanent
 RED cases now document that boundary. The fix passed 14 HTTP/page regressions and
 strict checks; full images must be rebuilt and verified before delivery claims.
+
+Task 13 now distinguishes runtime image architecture from native Linux developer
+validation. A translated amd64 browser lost fractional numbers and reported null
+for known black/white contrast; that path remains unaccepted. Image observations
+2.1 record Docker engine/runtime/developer identities, preserving 2.0 records.
+All original lifecycle/Axe assertions remain; numeric calibration blocks invalid
+tooling, and a new black/white browser case passed natively. The latest source full
+passed 433 Python tests, ten Node cases, 15 Chromium cases and all 13 gates. Updated
+native/emulated runtime image jobs and final whole-W1 review are still pending.

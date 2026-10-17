@@ -86,3 +86,12 @@ between disposable development containers. It still executes the locked installe
 and disconnected browser checks. Runtime images contain no browser cache. The
 synthetic host-route fixture uses Desktop loopback or a validated private Docker
 gateway on Linux; the user-facing Web port remains loopback on both.
+
+The image controller selects developer tooling using the Docker engine's observed
+native architecture, independently of the requested runtime image architecture.
+All Python/browser gates remain required on that Linux baseline. CLI/Web images
+still execute their own requested native/emulated runtime checks. Image-result 2.1
+records both environments; an emulated developer browser that loses fractional
+numbers is explicitly unaccepted. The prerequisite rejects invalid arithmetic before
+UI judgment, and full acceptance also calibrates black/white contrast without
+disabling any Axe rule. Native amd64 CI is a separate observation from local arm64.

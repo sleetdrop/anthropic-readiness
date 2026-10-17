@@ -1,4 +1,4 @@
-"""Build and verify one architecture locally, retaining honest image evidence."""
+"""Verify target runtime images with native developer tooling and explicit evidence."""
 
 from __future__ import annotations
 
@@ -26,7 +26,7 @@ def assess_image_checks(
     records: list[dict[str, object]], targets: tuple[str, ...], scope: str
 ) -> tuple[str, list[str]]:
     """Require each selected image's own observations rather than CLI-only success."""
-    required: set[str] = set()
+    required: set[str] = {"engine-architecture"}
     if "runtime" in targets:
         required.update(
             {
@@ -109,10 +109,13 @@ class Acceptance:
         self.output = output
         self.platform = target_platform
         self.scope = scope
+        self.engine_architecture: str | None = None
+        self.native_platform: str | None = None
+        self.development_platform: str | None = None
         self.image_context = context_hash(ROOT)
         self.records: list[dict[str, object]] = []
         self.runtime = "anthropic-readiness-runtime:" + target_platform.split("/")[1]
-        self.dev = "anthropic-readiness-dev:" + target_platform.split("/")[1]
+        self.dev = "anthropic-readiness-dev:unselected"
         self.web = "anthropic-readiness-web:" + target_platform.split("/")[1]
         self.targets = targets
         self.token = "readiness-" + uuid.uuid4().hex[:12]
@@ -198,18 +201,33 @@ class Acceptance:
 
     def run(self, skip_build: bool, host_url: str | None) -> None:
         commit = self.command("git-commit", ["git", "rev-parse", "HEAD"]).strip()
+        self.engine_architecture = (
+            self.docker("engine-architecture", ["info", "--format", "{{.Architecture}}"]).strip()
+            or None
+        )
+        self.native_platform = {
+            "aarch64": "linux/arm64",
+            "arm64": "linux/arm64",
+            "x86_64": "linux/amd64",
+            "amd64": "linux/amd64",
+        }.get(self.engine_architecture or "")
+        if self.native_platform is None:
+            raise EnvironmentUnavailable("docker_engine_architecture_unavailable")
+        if self.scope == "full":
+            self.development_platform = self.native_platform
+            self.dev = "anthropic-readiness-dev:" + self.native_platform.split("/")[1]
         if not skip_build:
-            targets = [(target, getattr(self, target)) for target in self.targets]
+            targets = [(target, getattr(self, target), self.platform) for target in self.targets]
             if self.scope == "full":
-                targets.append(("dev", self.dev))
-            for target, tag in targets:
+                targets.append(("dev", self.dev, self.native_platform))
+            for target, tag, selected_platform in targets:
                 self.docker(
                     "build-" + target,
                     [
                         "buildx",
                         "build",
                         "--platform",
-                        self.platform,
+                        selected_platform,
                         "--target",
                         target,
                         "--load",
@@ -324,6 +342,8 @@ class Acceptance:
             self.verify_output(name)
 
     def prepare_browser_cache(self) -> str:
+        if self.development_platform is None:
+            raise EnvironmentUnavailable("development_platform_unselected")
         toolchain = json.loads((ROOT / "docs/harness/web-toolchain.json").read_text())
         revision = str(
             next(
@@ -334,10 +354,15 @@ class Acceptance:
         )
         if not revision.isascii() or not revision.isdecimal():
             raise ValueError("invalid_browser_revision")
-        name = "anthropic-readiness-playwright-" + self.platform.split("/")[1] + "-" + revision
+        name = (
+            "anthropic-readiness-playwright-"
+            + self.development_platform.split("/")[1]
+            + "-"
+            + revision
+        )
         labels = {
             "io.anthropic-readiness.kind": "browser-cache",
-            "io.anthropic-readiness.platform": self.platform,
+            "io.anthropic-readiness.platform": self.development_platform,
             "io.anthropic-readiness.revision": revision,
         }
         flags = [value for key, value in labels.items() for value in ("--label", key + "=" + value)]
@@ -356,7 +381,7 @@ class Acceptance:
                 "run",
                 "--rm",
                 "--platform",
-                self.platform,
+                self.development_platform,
                 "--network",
                 "none",
                 "--user",
@@ -373,18 +398,26 @@ class Acceptance:
         return name
 
     def run_development(self) -> None:
+        if self.development_platform is None:
+            raise EnvironmentUnavailable("development_platform_unselected")
         browser_cache = self.prepare_browser_cache()
         # The disposable dev environment is retained for the offline verification.
         name = self.token + "-dev"
         self.containers.append(name)
-        self.docker("dev-image-inspect", ["image", "inspect", self.dev, "--format", "{{json .}}"])
+        image = json.loads(
+            self.docker(
+                "dev-image-inspect", ["image", "inspect", self.dev, "--format", "{{json .}} "]
+            )
+        )
+        if image.get("Architecture") != self.development_platform.split("/")[1]:
+            raise RuntimeError("development_image_platform_mismatch")
         self.docker(
             "dev-os-packages",
             [
                 "run",
                 "--rm",
                 "--platform",
-                self.platform,
+                self.development_platform,
                 "--network",
                 "none",
                 self.dev,
@@ -401,7 +434,7 @@ class Acceptance:
                 "--name",
                 name,
                 "--platform",
-                self.platform,
+                self.development_platform,
                 "-v",
                 f"{ROOT}:/workspaces/anthropic-readiness",
                 "-v",
@@ -692,15 +725,18 @@ def main() -> int:
         status = "blocked"
         missing.append("build_not_observed_debug_only")
     payload = {
-        "schema_version": "2.0",
+        "schema_version": "2.1",
         "targets": list(targets),
         "missing_checks": missing,
         "scope": args.scope,
         "platform": args.platform,
         "host_machine": platform.machine(),
-        "execution": "native"
-        if (platform.machine() in {"arm64", "aarch64"}) == args.platform.endswith("arm64")
-        else "emulated",
+        "engine_architecture": acceptance.engine_architecture,
+        "execution": "native" if acceptance.native_platform == args.platform else "emulated",
+        "development_platform": acceptance.development_platform,
+        "development_execution": "native"
+        if any(row["id"] == "dev-start" and row["status"] == "passed" for row in acceptance.records)
+        else "not_run",
         "started_at": started,
         "finished_at": datetime.now(UTC).isoformat(),
         "image_context_fingerprint": before,
