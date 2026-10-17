@@ -200,6 +200,7 @@ def run_web_checks(a: Acceptance, host_url: str) -> None:
     before = request_count(a)
     run_id = client.start("http://synthetic-peer:8080/cases")
     record = client.wait(run_id)
+    (a.output / "web-completed-response.json").write_text(json.dumps(record, indent=2) + "\n")
     if record["job"]["state"] != "completed" or record["execution"]["actual_requests"] != 4:
         raise RuntimeError("web_assessment_accounting")
     if any(case["status"] != "PASS" for case in record["report"]["cases"]):
@@ -256,6 +257,7 @@ def run_web_checks(a: Acceptance, host_url: str) -> None:
     a.docker("web-remove-first", ["rm", name])
     name, client = start("replacement")
     restored = client.json("/api/v1/runs/" + run_id)
+    (a.output / "web-restored-response.json").write_text(json.dumps(restored, indent=2) + "\n")
     if restored["job"]["state"] != "completed" or restored["report"] != record["report"]:
         raise RuntimeError("web_completed_source_changed")
     for interrupted_id in (active, queued):

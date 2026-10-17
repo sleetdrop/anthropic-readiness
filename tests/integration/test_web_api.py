@@ -3,17 +3,22 @@
 import asyncio
 import hashlib
 import json
+from copy import deepcopy
 from dataclasses import replace
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
+from typing import cast
 
 import httpx
 import pytest
 from fastapi import FastAPI
 
 from anthropic_readiness.config import load_target
+from anthropic_readiness.jobs.manager import JobManager
 from anthropic_readiness.models import JsonObject, object_value
 from anthropic_readiness.operations.reduction import objects
+from anthropic_readiness.report_models import ReportSource
+from anthropic_readiness.report_sources import load_report_source
 from anthropic_readiness.schema import load_schema
 from anthropic_readiness.web import api
 from tests.http_server import SyntheticServer
@@ -67,6 +72,66 @@ async def test_preview_and_duplicate_start_request_counts(
         stream = await client.get(f"/api/v1/runs/{run_id}/events", params={"after": cursor})
         assert stream.status_code == 200
         assert stream.headers["content-type"].startswith("text/event-stream")
+    assert len(server.requests) == 3
+
+
+@pytest.mark.parametrize("early_projection", ["partial", "unavailable"])
+async def test_terminal_response_does_not_mix_an_earlier_partial_projection(
+    client: httpx.AsyncClient,
+    server: SyntheticServer,
+    monkeypatch: pytest.MonkeyPatch,
+    web_app: FastAPI,
+    early_projection: str,
+) -> None:
+    headers = await csrf_headers(client)
+    plan = await preview(client, headers, server.url + "/cases")
+    response = await client.post(
+        "/api/v1/runs", json=start_body(plan, "projection-race"), headers=headers
+    )
+    run_id = str(response.json()["id"])
+    await wait_run(client, run_id)
+    manager = cast(JobManager, web_app.state.manager)
+    original_snapshot = manager.snapshot
+    early = deepcopy(original_snapshot(run_id))
+    early["job"] = {**object_value(early["job"]), "state": "running"}
+    execution = object_value(early["execution"])
+    execution.update(
+        {
+            "state": "running",
+            "sequence": int(str(execution["sequence"])) - 2,
+            "finished_at": None,
+            "result_sha256": None,
+        }
+    )
+    early["execution"] = execution
+    snapshots = 0
+
+    def transition_snapshot(identifier: str) -> JsonObject:
+        nonlocal snapshots
+        snapshots += 1
+        return early if snapshots == 1 else original_snapshot(identifier)
+
+    original = load_report_source
+    reads = 0
+
+    def earlier_once(root: Path, *, operations_root: Path) -> ReportSource:
+        nonlocal reads
+        source = original(root, operations_root=operations_root)
+        reads += 1
+        if reads > 1:
+            return source
+        if early_projection == "unavailable":
+            raise ValueError("source_publication_in_progress")
+        return replace(source, result=None, result_sha256=None, execution=deepcopy(execution))
+
+    monkeypatch.setattr(manager, "snapshot", transition_snapshot)
+    monkeypatch.setattr(api, "load_report_source", earlier_once)
+    observed = (await client.get("/api/v1/runs/" + run_id)).json()
+    assert observed["job"]["state"] == "completed"
+    assert observed["report"] is not None
+    assert observed["report"]["status"] == "complete"
+    assert observed["report"]["execution"] == observed["execution"]
+    assert observed["report"] == (await client.get("/api/v1/runs/" + run_id)).json()["report"]
     assert len(server.requests) == 3
 
 

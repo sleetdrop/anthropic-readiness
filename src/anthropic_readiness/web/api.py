@@ -149,7 +149,7 @@ def evidence_refs(manager: JobManager, run_id: str) -> tuple[Path, tuple[Evidenc
         raise ValueError("evidence_invalid") from exc
 
 
-def run_document(manager: JobManager, run_id: str) -> JsonObject:
+def _report_document(manager: JobManager, run_id: str) -> JsonObject | None:
     frozen = manager.store.get_admitted_plan(run_id)
     report: JsonObject | None = None
     try:
@@ -185,7 +185,24 @@ def run_document(manager: JobManager, run_id: str) -> JsonObject:
         report = build_report_view(source).document
     except (ValueError, OSError):
         pass
+    return report
+
+
+def run_document(manager: JobManager, run_id: str) -> JsonObject:
+    frozen = manager.store.get_admitted_plan(run_id)
     snapshot = manager.snapshot(run_id)
+    report: JsonObject | None = None
+    for _ in range(3):
+        before = snapshot
+        candidate = _report_document(manager, run_id)
+        snapshot = manager.snapshot(run_id)
+        if (candidate is None and snapshot == before) or (
+            candidate is not None and candidate["execution"] == snapshot["execution"]
+        ):
+            report = candidate
+            break
+        # A worker may commit while projection performs I/O. Never combine two
+        # generations, and never hold the scheduler lock during report loading.
     inventory: list[JsonObject] = []
     try:
         root, refs = evidence_refs(manager, run_id)

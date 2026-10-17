@@ -606,3 +606,26 @@ Rulings and costs:
   images and disposable job volumes. The locked installer, disconnected launch
   and browser suite still execute. An incorrect cache must fail its identity or
   launch check; retained tool volumes consume disk until explicitly removed.
+
+Native full second exposed a real nonroot preparation failure: Docker created the
+browser-volume parent as root. The dev image now creates that parent for its
+nonroot user. Native full third passed its disconnected 427-Python/Node-10/
+Chromium-14 graph and CLI/host/signal checks, but FAILED the strict completed-report
+comparison after Web service replacement. Neither attempt counts as full acceptance.
+
+A separate installed-image reproduction retained both JSON responses: the first
+combined a partial report at sequence 37 with a terminal job/execution at sequence
+39. The restored report was complete. Two deterministic HTTP cases reproduced the
+stale-partial and temporarily unavailable publication boundaries. After bounded
+snapshot matching, all 14 HTTP/page cases, strict typing, lint and formatting pass.
+The strict installed-image comparison remains unchanged and must still pass.
+
+Rulings and costs:
+
+- Create only the developer-owned public cache parent in the dev image; otherwise
+  Docker's implicit root-owned parent blocks uv/npm preparation. Runtime users and
+  permissions remain unchanged. An incorrect fix still fails nonroot preparation.
+- Retry projection up to three times against a matching execution snapshot without
+  holding the scheduler lock. A worker can finalize while report I/O runs. If work
+  changes throughout those reads, temporarily omit the projection and retain accurate
+  progress rather than combine different generations; a subsequent read can recover.

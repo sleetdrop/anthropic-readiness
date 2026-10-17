@@ -413,3 +413,9 @@ ten Node cases and 14 actual Chromium cases with fixture cleanup. Regressions co
 late credentials with equivalent alias membership, platform-specific synthetic host
 routing and revision/platform browser-cache mounts. These source observations do
 not replace the pending native/emulated full image acceptance or final W1 review.
+
+Task 13 full native attempts remain retained failures. The latest completed attempt
+passed disconnected source gates and CLI checks but exposed a Web partial/final
+snapshot race during service replacement. Exact installed responses and two permanent
+RED cases now document that boundary. The fix passed 14 HTTP/page regressions and
+strict checks; full images must be rebuilt and verified before delivery claims.
