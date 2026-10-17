@@ -72,10 +72,11 @@ def test_partial_checkpoint_is_not_final_result(tmp_path: Path) -> None:
     context = object_value(json.loads((root / "operations/execution.json").read_text()))
     cases = context["case_states"]
     assert isinstance(cases, list)
-    for item in cases[1:]:
+    for index, item in enumerate(cases[1:], 1):
         case = object_value(item)
         (root / "operations" / str(case["checkpoint_path"])).unlink()
         case.update({"state": "pending", "checkpoint_path": None, "checkpoint_sha256": None})
+        cases[index] = case
     context.update(
         {
             "case_states": cases,
@@ -83,6 +84,12 @@ def test_partial_checkpoint_is_not_final_result(tmp_path: Path) -> None:
             "result_sha256": None,
             "terminal_reason": "parent_restart",
             "sequence": 0,
+            "actual_requests": 1,
+            "spans": [
+                span
+                for span in objects(context["spans"])
+                if span["case_id"] == object_value(cases[0])["case_id"]
+            ],
         }
     )
     replace_snapshot(root / "operations", context)
@@ -96,6 +103,7 @@ def test_partial_checkpoint_is_not_final_result(tmp_path: Path) -> None:
     summary = object_value(view["summary"])
     assert summary["planned_cases"] == 3
     assert summary["completed_cases"] == 1
+    assert summary["actual_requests"] == 1
     assert object_value(summary["counts"])["pending"] == 2
     assert view["source_result_sha256"] is None
 
@@ -171,3 +179,25 @@ def test_partial_target_must_match_the_frozen_config_fingerprint(tmp_path: Path)
     replace_snapshot(root / "operations", document)
     with pytest.raises(ValueError, match="report_source_unavailable"):
         load_report_source(root)
+
+
+def test_partial_replay_retains_zero_request_mode(tmp_path: Path) -> None:
+    from anthropic_readiness.runner import replay_run
+    from tests.acceptance.test_cli import target_file
+
+    target = load_target(target_file(tmp_path))
+    root = tmp_path / "replay"
+    replay_run(
+        target,
+        resolve_contract(target.contract_id, target.contract_revision),
+        "ANT-TEXT-SSE-001",
+        ROOT
+        / "tests/fixtures/captures/valid/evidence/ANT-TEXT-SSE-001/fixture-attempt/response.json",
+        root,
+        observer=DiskExecutionObserver(root / "operations", root),
+    )
+    (root / "result.json").unlink()
+    view = build_report_view(load_report_source(root)).document
+    assert view["status"] == "partial"
+    assert view["mode"] == "replay"
+    assert object_value(view["summary"])["actual_requests"] == 0

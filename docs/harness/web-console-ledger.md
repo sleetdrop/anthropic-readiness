@@ -319,3 +319,52 @@ Rulings and costs:
 - Exact known catalog IDs define the three truthful groups, with a coverage gate;
   unknown historical IDs have an explicit other group. Catalog changes must update
   this presentation mapping before that gate passes.
+
+## Task 9: progressive visual reports and compatible CLI adapters
+
+The new presentation 2.0 renders a capability matrix, case status distribution,
+distinct finding impact and observed timing (duration-only for legacy results).
+Native SVG figures include units/captions and exact equivalent data tables. Core
+content and details are server-rendered; packaged optional JavaScript filters and
+opens the original case records without fetching. Standalone HTML inlines its
+assets with a restrictive CSP. Print/narrow styles, labels alongside colors,
+keyboard navigation, escaped local-field comparisons and explicit evidence quality
+retain the engineering reading order. JSON projection, Markdown figure tables and
+full original assertion/provenance details use the same validated view.
+
+Public CLI reporting functions are now thin adapters. Automatic reports remain;
+explicit rerender preserves original result and verified evidence bytes, writes a
+new projection/manifest, and keeps exclusive output semantics. Original run IDs
+and contract/source hashes remain in the appendix. Unsafe capture strings stay data.
+
+RED covered three initial Python visual/export failures and two JS helper failures.
+Unchanged report regressions then exposed Markdown excerpt escaping and early
+navigation-label ordering. Further RED found formatting-induced CSP digest mismatch
+and an unmarked ongoing span; both were fixed. The lone changed legacy expectation
+is the approved presentation manifest version 1.2 to 2.0. All protocol/result/capture
+expectations remain untouched. Final verification passed seven fast gates, frontend types/lint/format,
+two Node tests and all 370 pytest tests in 76.05s;
+real browser/offline/print visual acceptance remains Task 12 work.
+
+Rulings and costs:
+
+- Retain the documented public reporting calls as shared-projection adapters and
+  remove the obsolete renderer. Consumers of private legacy helper names need the
+  new public projection/rendering API.
+- Presentation 2.0 intentionally updates the old manifest expectation. Consumers
+  requiring presentation 1.2 must retain an older artifact; original source contracts
+  remain unchanged.
+- Use matched current/future frontend format globs instead of individually missing
+  later-task paths. Overall unmatched inputs still fail; future inventory/browser
+  gates must reject missing mandatory modules rather than recording zero checks.
+- Standalone reports use textual evidence pointers, avoiding silent broken local
+  attachment links. Full ZIP users navigate the verified manifest/evidence tree.
+
+The initial full attempt passed 368 tests and failed the ongoing fixture: its array
+helper validates by copying, so the edited figure was not written back. After fixing
+the fixture, marker-less rendering reproduced RED before restoring the implementation.
+The partial-checkpoint fixture now similarly writes back its one-request prefix.
+A separate actual RED found a partial replay labeled live; frozen zero planned
+requests now preserves replay mode. This is the only live/replay inference for a
+partial source; a future zero-request live plan needs an explicit mode revision.
+All prior failing attempts remain retained. Final source verification passed.

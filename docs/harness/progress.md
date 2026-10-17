@@ -330,3 +330,18 @@ available for agents. Initial 18 RED assertions and additional targeted REDs are
 recorded in the W1 ledger. Final Linux Python 3.12 verification passed seven fast
 gates and all 364 pytest tests (74.07s), including 24 new projection/source checks.
 No new renderer, GUI/browser, runtime-image or real endpoint acceptance is claimed.
+
+## W1 Task 9: visual offline reports and CLI adapters (2026-10-17)
+
+Added presentation 2.0 with server-rendered capability matrix, native SVG charts,
+exact figure tables, evidence comparisons, source/contract appendix and safe optional
+packaged interactions. CLI automatic reports and public rerender calls remain;
+original result/evidence bytes and exclusive output are preserved. HTML CSP hashes
+cover actual formatted script bytes; unclosed intervals have explicit markers.
+Corrected a copied-fixture writeback issue, reproduced marker RED against the
+corrected fixture, and fixed an observed partial replay mode regression. One old
+presentation expectation intentionally changes 1.2 to 2.0; protocol goldens do not.
+Final Linux Python 3.12 checks passed seven fast gates, strict frontend type/lint/
+format, two Node tests and all 370 pytest tests (76.05s). A prior 368-pass/one-fail
+attempt remains recorded. Browser/offline interaction/print/narrow visual acceptance
+is deferred to the required Task 12 gate; no runtime-image or live endpoint claim.

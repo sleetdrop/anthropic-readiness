@@ -107,7 +107,7 @@ def test_grouped_findings_explain_missing_fields_and_alias_without_rescoring(
         assert "未重新判定" in text
     manifest = json.loads((destination / "report-manifest.json").read_text())
     assert manifest["evidence_verification"]["status"] == "verified"
-    assert manifest["presentation_version"] == "1.2"
+    assert manifest["presentation_version"] == "2.0"
 
 
 def test_invalid_evidence_never_becomes_a_field_diagnosis(tmp_path: Path) -> None:

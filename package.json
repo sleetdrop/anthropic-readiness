@@ -9,7 +9,7 @@
   "scripts": {
     "check:types": "tsc --noEmit",
     "check:lint": "eslint src/anthropic_readiness/resources tests/frontend tests/browser --no-error-on-unmatched-pattern",
-    "check:format": "prettier --check package.json tsconfig.json eslint.config.js playwright.config.js src/anthropic_readiness/resources/web src/anthropic_readiness/resources/report-v2.js tests/frontend tests/browser",
+    "check:format": "prettier --check package.json tsconfig.json '*.config.js' 'src/anthropic_readiness/resources/{web/**/*,report-v2}.{html,css,js}' 'tests/{frontend,browser}/**/*.js'",
     "test:unit": "node --test tests/frontend/*.test.js",
     "test:browser": "playwright test"
   },

@@ -308,10 +308,10 @@ modify `reporting.py`; test `tests/acceptance/test_visual_reports.py`,
 `report-v2.js` exports `filterCapabilities(rows, mode)` and `selectFinding(view, id)`
 with JSDoc types derived from report-view; DOM bootstrap is separate from pure helpers.
 
-- [ ] **RED:** `test_report_has_matrix_charts_captions_and_equivalent_tables` checks exact figure/count equivalence; `test_embedded_hostile_text_is_not_executable` uses `</script>` and attribute payloads. `test_rerender_keeps_source_and_evidence_bytes` checks hashes and presentation 2.0 manifest. Browser-helper tests assert filters and lookup preserve original states. Run `P tests/acceptance/test_visual_reports.py` and `node --test tests/frontend/report.test.js` in the container.
-- [ ] **Implement:** Render essential HTML/SVG/table/details server-side, safely embed JSON, inline required assets for `file://`, and enhance filtering/drawers without fetch or eval. Preserve existing exclusive output behavior; `report` emits a new projection/render alongside unchanged original result/evidence. Markdown contains equivalent figure tables, captions, source references and limitations. Print reveals essential details and removes controls. CLI automatic HTML/MD remains enabled.
-- [ ] **GREEN:** Run new tests, existing readable-report/replay/regression acceptance, frontend type/lint/format and `F`. Deferred real-browser coverage is completed in Task 12; do not claim it now.
-- [ ] **Commit:** `feat: render interactive offline matrices charts and evidence details`.
+- [x] **RED:** `test_report_has_matrix_charts_captions_and_equivalent_tables` checks exact figure/count equivalence; `test_embedded_hostile_text_is_not_executable` uses `</script>` and attribute payloads. `test_rerender_keeps_source_and_evidence_bytes` checks hashes and presentation 2.0 manifest. Browser-helper tests assert filters and lookup preserve original states. Run `P tests/acceptance/test_visual_reports.py` and `node --test tests/frontend/report.test.js` in the container.
+- [x] **Implement:** Render essential HTML/SVG/table/details server-side, safely embed JSON, inline required assets for `file://`, and enhance filtering/drawers without fetch or eval. Preserve existing exclusive output behavior; `report` emits a new projection/render alongside unchanged original result/evidence. Markdown contains equivalent figure tables, captions, source references and limitations. Print reveals essential details and removes controls. CLI automatic HTML/MD remains enabled.
+- [x] **GREEN:** Run new tests, existing readable-report/replay/regression acceptance, frontend type/lint/format and `F`. Deferred real-browser coverage is completed in Task 12; do not claim it now.
+- [x] **Commit:** `feat: render interactive offline matrices charts and evidence details`.
 
 ### Task 10: Immutable exports and evidence-aware ZIP delivery
 

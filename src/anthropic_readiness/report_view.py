@@ -239,7 +239,11 @@ def build_report_view(source: ReportSource) -> ReportView:
         "schema_version": "1.0",
         "presentation_version": "2.0",
         "run_id": result.run_id if result else execution["run_id"] if execution else "",
-        "mode": result.mode if result else "live",
+        "mode": result.mode
+        if result
+        else "replay"
+        if source.plan.get("planned_requests") == 0
+        else "live",
         "status": "complete" if result else "partial",
         "source_result_sha256": source.result_sha256,
         "provenance": {

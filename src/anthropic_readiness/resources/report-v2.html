@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="Content-Security-Policy" content="$policy" />
+    <title>$title · Anthropic Readiness</title>
+    <style>
+      $styles
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">跳到报告内容</a>
+    <header class="masthead">
+      <a href="#main" class="brand">Anthropic Readiness <span> / 兼容性研究记录</span></a
+      ><span class="edition">REPORT / 2.0</span>
+    </header>
+    <div class="report-shell">
+      <nav class="report-nav" aria-label="报告导航">
+        <span class="eyebrow">本次报告</span><a href="#overview">01 运行摘要</a
+        ><a href="#capabilities">02 能力矩阵</a><a href="#findings">03 问题与证据</a
+        ><a href="#cases">04 用例清单</a><a href="#appendix">05 检查明细</a
+        ><a href="#references">06 参考资料</a>
+      </nav>
+      <main id="main" tabindex="-1">$body</main>
+    </div>
+    <footer>Anthropic Readiness · 有限样本，确定性黑盒检查 · 非官方兼容性认证</footer>
+    <script id="report-data" type="application/json">
+      $data
+    </script>
+    <script type="module">
+      $script;
+    </script>
+  </body>
+</html>
