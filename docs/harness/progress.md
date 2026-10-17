@@ -407,3 +407,9 @@ checks and all eight fast gates passed with scoped read-only Git trust and fsmon
 disabled. New image source is ready for local baseline commit; native/emulated image
 acceptance and Task 14 whole-W1 review/handoff are still pending. Network preparation
 uses original locked sources and is not counted as image acceptance.
+
+Task 13 refinement verification passed all 13 source gates: 427 Python tests,
+ten Node cases and 14 actual Chromium cases with fixture cleanup. Regressions cover
+late credentials with equivalent alias membership, platform-specific synthetic host
+routing and revision/platform browser-cache mounts. These source observations do
+not replace the pending native/emulated full image acceptance or final W1 review.

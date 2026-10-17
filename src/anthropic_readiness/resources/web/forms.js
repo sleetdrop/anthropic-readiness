@@ -15,12 +15,22 @@ function canonical(value) {
   return value;
 }
 
+/** Compare the alias membership used by the server, independent of input order.
+ * @param {JsonObject} value @returns {JsonValue}
+ */
+function comparableTarget(value) {
+  const target = { ...value };
+  if (Array.isArray(target.response_model_aliases))
+    target.response_model_aliases = [...new Set(strings(target.response_model_aliases))].sort();
+  return canonical(target);
+}
+
 /** @param {PreviewState} current @param {JsonObject} edited @returns {PreviewState} */
 export function resolvePreviewState(current, edited) {
   return {
     target: structuredClone(edited),
     previewId:
-      JSON.stringify(canonical(current.target)) === JSON.stringify(canonical(edited))
+      JSON.stringify(comparableTarget(current.target)) === JSON.stringify(comparableTarget(edited))
         ? current.previewId
         : null,
   };

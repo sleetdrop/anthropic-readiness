@@ -576,3 +576,33 @@ unchanged image context. Validating both the retained failed record and this pas
 with unknown_schema, then all 13 image harness checks and both real record validations
 passed after registration. Latest full-source verification and full image matrix
 remain in progress; this smoke does not cover restart/host-route/development checks.
+
+Additional real-browser RED showed that filling a start-only credential after a
+preview disabled Start when model aliases had equivalent unsorted/duplicate
+membership. The new Node and Chromium regressions failed before canonical alias
+comparison was fixed. All ten Node tests, 18 image-adapter tests, strict JS/Python
+typing and 14 actual Chromium cases plus owned-fixture cleanup now pass. No target
+request was made during preview; the new browser case then ran exactly four
+synthetic requests after explicit start.
+
+The first native full image attempt remains FAILED: incomplete browser preparation
+caused the required disconnected browser prerequisite to be BLOCKED. A signal to
+its owned Docker client did not stop the controller; this outcome is retained
+rather than described as successful cancellation or acceptance. Browser cache
+preparation subsequently launched the locked Chromium in the new dev image with
+network disabled. The replacement full matrix is still pending.
+
+Rulings and costs:
+
+- Compare model aliases as sets on both browser snapshots, retaining other arrays'
+  order and original values. This follows server membership semantics across
+  Unicode sort orders; changing alias semantics later requires a deliberate
+  comparison change. Different alias membership still invalidates the preview.
+- Publish only the Linux synthetic peer on the validated private Docker gateway;
+  Desktop peers and all user Web ports stay loopback. Docker documents loopback
+  publication as host-only. Unsafe/unavailable gateways fail closed, and actual
+  Linux-host CI remains unrun rather than inferred from adapter tests.
+- Retain platform/revision-labelled public-tool browser caches outside runtime
+  images and disposable job volumes. The locked installer, disconnected launch
+  and browser suite still execute. An incorrect cache must fail its identity or
+  launch check; retained tool volumes consume disk until explicitly removed.

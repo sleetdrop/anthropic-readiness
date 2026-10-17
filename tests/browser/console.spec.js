@@ -3,6 +3,29 @@ import { fixture, control, count, preview, start, completed } from "./helpers.js
 
 test.beforeEach(async ({ request }) => control(request, "reset"));
 
+test("late credentials and equivalent alias order preserve the reviewed plan", async ({
+  page,
+  request,
+}) => {
+  await page.goto("/new");
+  await page.locator("#model").fill("synthetic-pass");
+  await page.locator("#endpoint").fill(fixture().peer_url + "/v1/messages");
+  await page.locator("#aliases").fill("later-alias, earlier-alias, later-alias");
+  await page.locator("#auth-mode").selectOption("api_key");
+  await page.locator("#preview-button").click();
+  await expect(page.locator("#start-button")).toBeEnabled();
+  await page.locator("#credential").fill("synthetic-late-credential");
+  await page.locator("#preview-title").click();
+  await expect(page.locator("#start-button")).toBeEnabled();
+  await page.locator("#aliases").fill("earlier-alias, later-alias");
+  await page.locator("#preview-title").click();
+  await expect(page.locator("#start-button")).toBeEnabled();
+  expect((await count(request)).count).toBe(0);
+  await start(page);
+  await completed(page);
+  expect((await count(request)).count).toBe(4);
+});
+
 test("preview makes zero requests; duplicate explicit admission keeps one run", async ({
   page,
   request,

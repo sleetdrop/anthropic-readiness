@@ -98,8 +98,22 @@ offline graph. Separate CLI checks cover nonroot/read-only operation, replay and
 signals. Web checks exercise installed pages/assets, four synthetic cases, hash-
 verified exports, cancellation, persistent-volume replacement with active/queued
 jobs, preserved history and an owned synthetic Docker-host route. No real endpoint
-is used. The host peer is published only on loopback and cleaned up with its owned
-containers, internal network and volume. Linux adds an explicit host-gateway alias.
+is used. On Docker Desktop the owned host peer is published on loopback. On Linux,
+the controller resolves and validates Docker's private bridge gateway and publishes
+only the synthetic peer on that interface, with an explicit host-gateway alias.
+Public, loopback, multicast and unspecified gateway addresses are rejected. This
+accounts for Docker's [host-only loopback publication](https://docs.docker.com/engine/network/port-publishing/);
+the user's Web listener always remains on host loopback. Owned containers, networks
+and run-data volumes are cleaned up. Local Desktop results do not establish that
+the Linux-host CI route has executed.
+
+Disposable development containers reuse public browser tools in named volumes
+`anthropic-readiness-playwright-ARCH-REVISION`, labelled with the platform and
+npm-locked Chromium revision. The locked installer still runs before network
+disconnection, followed by actual browser launch/version and full-suite checks;
+cache presence alone cannot pass acceptance. These caches contain no target data
+and are never mounted in runtime images. They persist separately from disposable
+run volumes; remove an unused named cache explicitly to reclaim disk space.
 
 `--scope smoke` checks both selected runtime targets without the complete dev/
 restart/host-route matrix; it cannot substitute for full acceptance. `--targets

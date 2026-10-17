@@ -80,3 +80,9 @@ Image orchestration runs on the Docker host or independent runner using stdlib
 Python; product builds/tests stay in Linux containers. The default development and
 runtime configurations mount no Docker socket. See [container usage](container-usage.md)
 and [CONTRIBUTING](../CONTRIBUTING.md) for delivery checks and Agent handoff.
+
+Full image acceptance retains only platform/revision-labelled public browser caches
+between disposable development containers. It still executes the locked installer
+and disconnected browser checks. Runtime images contain no browser cache. The
+synthetic host-route fixture uses Desktop loopback or a validated private Docker
+gateway on Linux; the user-facing Web port remains loopback on both.

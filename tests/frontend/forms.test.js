@@ -47,3 +47,21 @@ test("URL helper resolves only explicit origin or v1 bases without host substitu
     assert.throws(() => resolveEndpoint(value, "base"), /invalid_url|ambiguous_base_url/);
   }
 });
+
+test("alias set equivalence preserves preview without changing other array semantics", () => {
+  const current = {
+    target: { response_model_aliases: ["\ue000", "😀", "later"], beta_headers: ["a", "b"] },
+    previewId: "frozen",
+  };
+  const edited = { ...current.target, response_model_aliases: ["later", "😀", "\ue000", "later"] };
+  assert.equal(resolvePreviewState(current, edited).previewId, "frozen");
+  assert.deepEqual(current.target.response_model_aliases, ["\ue000", "😀", "later"]);
+  assert.equal(
+    resolvePreviewState(current, { ...edited, response_model_aliases: ["different"] }).previewId,
+    null,
+  );
+  assert.equal(
+    resolvePreviewState(current, { ...edited, beta_headers: ["b", "a"] }).previewId,
+    null,
+  );
+});

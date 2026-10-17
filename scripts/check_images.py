@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import ipaddress
 import json
 import os
 import platform
@@ -75,6 +76,7 @@ def context_hash(root: Path) -> str:
             "package-lock.json",
             "compose.yaml",
             ".devcontainer/devcontainer.json",
+            "docs/harness/web-toolchain.json",
         )
         if (root / name).is_file()
     ]
@@ -321,7 +323,57 @@ class Acceptance:
             )
             self.verify_output(name)
 
+    def prepare_browser_cache(self) -> str:
+        toolchain = json.loads((ROOT / "docs/harness/web-toolchain.json").read_text())
+        revision = str(
+            next(
+                item["revision"]
+                for item in toolchain["selected_browsers"]
+                if item["name"] == "chromium"
+            )
+        )
+        if not revision.isascii() or not revision.isdecimal():
+            raise ValueError("invalid_browser_revision")
+        name = "anthropic-readiness-playwright-" + self.platform.split("/")[1] + "-" + revision
+        labels = {
+            "io.anthropic-readiness.kind": "browser-cache",
+            "io.anthropic-readiness.platform": self.platform,
+            "io.anthropic-readiness.revision": revision,
+        }
+        flags = [value for key, value in labels.items() for value in ("--label", key + "=" + value)]
+        self.docker("dev-browser-cache-create", ["volume", "create", *flags, name])
+        record = json.loads(
+            self.docker(
+                "dev-browser-cache-inspect", ["volume", "inspect", name, "--format", "{{json .}} "]
+            )
+        )
+        actual = record.get("Labels") or {}
+        if any(actual.get(key) != value for key, value in labels.items()):
+            raise EnvironmentUnavailable("browser_cache_identity_mismatch")
+        self.docker(
+            "dev-browser-cache-owner",
+            [
+                "run",
+                "--rm",
+                "--platform",
+                self.platform,
+                "--network",
+                "none",
+                "--user",
+                "0",
+                "-v",
+                name + ":/cache",
+                "--entrypoint",
+                "sh",
+                self.dev,
+                "-c",
+                'chown -R "$(id -u developer):$(id -g developer)" /cache',
+            ],
+        )
+        return name
+
     def run_development(self) -> None:
+        browser_cache = self.prepare_browser_cache()
         # The disposable dev environment is retained for the offline verification.
         name = self.token + "-dev"
         self.containers.append(name)
@@ -352,6 +404,8 @@ class Acceptance:
                 self.platform,
                 "-v",
                 f"{ROOT}:/workspaces/anthropic-readiness",
+                "-v",
+                browser_cache + ":/home/developer/.cache/ms-playwright",
                 self.dev,
             ],
         )
@@ -406,6 +460,39 @@ class Acceptance:
         )
 
     def start_peer(self) -> None:
+        binding = "127.0.0.1"
+        if platform.system() == "Linux":
+            value = self.docker(
+                "host-gateway-resolve",
+                [
+                    "run",
+                    "--rm",
+                    "--platform",
+                    self.platform,
+                    "--network",
+                    "bridge",
+                    "--add-host",
+                    "host.docker.internal:host-gateway",
+                    "--entrypoint",
+                    "python",
+                    self.runtime if "runtime" in self.targets else self.web,
+                    "-c",
+                    "import socket; print(socket.gethostbyname('host.docker.internal'))",
+                ],
+            ).strip()
+            try:
+                address = ipaddress.ip_address(value)
+            except ValueError as exc:
+                raise EnvironmentUnavailable("private_host_gateway_unavailable") from exc
+            if (
+                not isinstance(address, ipaddress.IPv4Address)
+                or not address.is_private
+                or address.is_loopback
+                or address.is_unspecified
+                or address.is_multicast
+            ):
+                raise EnvironmentUnavailable("private_host_gateway_required")
+            binding = str(address)
         self.docker("network-create", ["network", "create", "--internal", self.token])
         self.network_created = True
         self.extra_networks.append(self.web_network)
@@ -426,7 +513,7 @@ class Acceptance:
                 "--network-alias",
                 "synthetic-peer",
                 "-p",
-                "127.0.0.1::8080",
+                binding + "::8080",
                 "--platform",
                 self.platform,
                 "--read-only",
