@@ -94,6 +94,12 @@
           "items": {
             "type": "string"
           }
+        },
+        "delivery": {
+          "enum": [
+            "external_files",
+            "omitted"
+          ]
         }
       },
       "required": [

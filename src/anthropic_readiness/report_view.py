@@ -207,6 +207,8 @@ def build_report_view(source: ReportSource) -> ReportView:
     )
     if source.evidence_verification["status"] != "verified":
         limitations.append("证据未完整核验，未提取字段级说明；未附可核验的字段摘录，无法独立复核。")
+    if source.evidence_verification.get("delivery") == "omitted":
+        limitations.append("本导出未附证据文件；已核验摘录只说明生成时的来源，接收者无法独立复核。")
     for warning in source.diagnostics:
         if warning.get("kind") == "source_warning":
             limitations.append(

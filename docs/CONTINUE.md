@@ -9,7 +9,7 @@ direction. The [written W1 specification](superpowers/specs/2026-10-16-local-web
 was explicitly approved. Its [implementation plan](superpowers/plans/2026-10-16-local-web-console-implementation.md)
 has 14 sequential tasks; self-review and owner approval completed on 2026-10-17.
 The owner chose the current checkout and prepared Dev Container. Work is on branch
-`codex/local-web-console`; Tasks 1–9 are complete and Task 10 is next. Preserve current-chat sequential
+`codex/local-web-console`; Tasks 1–10 are complete and Task 11 is next. Preserve current-chat sequential
 execution and one independent whole-W1 review. See the [W1 ledger](harness/web-console-ledger.md)
 and this plan's ignored `.superpowers/sdd/` workspace for exact task/RED/GREEN state.
 No W1 real endpoint call is authorized by plan approval.

@@ -18,6 +18,7 @@ from anthropic_readiness.config import strings
 from anthropic_readiness.contracts import SUPPORTED, resolve_contract
 from anthropic_readiness.credentials import MemoryCredentials
 from anthropic_readiness.evidence import safe_path, verify_evidence
+from anthropic_readiness.exports import ExportFormat, ExportPolicy, ExportService
 from anthropic_readiness.jobs.manager import JobManager
 from anthropic_readiness.models import EvidenceRef, JsonObject, object_value
 from anthropic_readiness.operations.checkpoints import CheckpointStore, checkpoint_refs
@@ -46,6 +47,13 @@ ERRORS = {
     "invalid_history_limit": 422,
     "invalid_history_cursor": 422,
     "invalid_history_filter": 422,
+    "export_not_terminal": 409,
+    "export_not_found": 404,
+    "export_integrity": 409,
+    "export_source_invalid": 409,
+    "export_evidence_invalid": 409,
+    "export_format_unavailable": 404,
+    "export_size_limit": 413,
 }
 
 
@@ -339,6 +347,65 @@ def evidence(run_id: str, reference: str, request: Request) -> Response:
         data,
         media_type="application/octet-stream",
         headers={"Content-Disposition": 'attachment; filename="evidence-' + reference + '.bin"'},
+    )
+
+
+def export_policy(request: Request) -> ExportPolicy:
+    document = body(request, "export_request")
+    return ExportPolicy(
+        tuple(cast(ExportFormat, value) for value in strings(document["formats"])),
+        document["include_evidence"] is True,
+    )
+
+
+@router.post(
+    "/runs/{run_id}/exports/preview",
+    responses=response_contract("export_preview"),
+    openapi_extra=request_contract("export_request"),
+)
+def preview_export(run_id: str, request: Request) -> JSONResponse:
+    return api_response(
+        "export_preview",
+        ExportService(manager_for(request).store.root).preview(run_id, export_policy(request)),
+    )
+
+
+@router.post(
+    "/runs/{run_id}/exports",
+    status_code=201,
+    responses=response_contract("export_response", 201),
+    openapi_extra=request_contract("export_request"),
+)
+def create_export(run_id: str, request: Request) -> JSONResponse:
+    return api_response(
+        "export_response",
+        ExportService(manager_for(request).store.root).create(run_id, export_policy(request)),
+        status=201,
+    )
+
+
+@router.get("/runs/{run_id}/exports/{export_id}")
+def download_export(
+    run_id: str, export_id: str, request: Request, format: ExportFormat | None = None
+) -> Response:
+    data = ExportService(manager_for(request).store.root).read(run_id, export_id, format=format)
+    kind = format or "zip"
+    media = {
+        "zip": "application/zip",
+        "html": "text/html",
+        "markdown": "text/markdown",
+        "json": "application/json",
+    }[kind]
+    filename = {
+        "zip": "anthropic-readiness.zip",
+        "html": "report.html",
+        "markdown": "report.md",
+        "json": "report-view.json",
+    }[kind]
+    return Response(
+        data,
+        media_type=media,
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
     )
 
 

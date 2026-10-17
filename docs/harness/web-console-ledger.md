@@ -368,3 +368,46 @@ A separate actual RED found a partial replay labeled live; frozen zero planned
 requests now preserves replay mode. This is the only live/replay inference for a
 partial source; a future zero-request live plan needs an explicit mode revision.
 All prior failing attempts remain retained. Final source verification passed.
+
+## Task 10: immutable on-demand exports
+
+Added schema-checked export policy, preview, publication and downloads. Each export
+uses a new opaque ID and freezes selected report formats, original source identity,
+evidence-delivery policy and omissions. ZIP delivery contains Chinese README/agent
+interpretation, source/projection, selected reports, optional verified sanitized
+captures and a SHA-256/byte-count manifest. Final result/evidence/checkpoint bytes
+are preserved; partial runs include a frozen operational snapshot and advertised
+verified checkpoints without a fabricated result.json. Unrelated configuration,
+credentials and logs are excluded. Damaged sources support qualified report-only
+delivery, while full-evidence publication is rejected.
+
+Source bytes are rehashed while copied. A schema-validated exclusive record is the
+last publication barrier; interrupted generation can leave an unavailable orphan
+folder, never a downloadable committed artifact. Downloads verify the actual returned
+bytes and retain prior export IDs. Preview and publication share selection,
+omissions and evidence-delivery metadata. The default download is a ZIP; an enum
+format query offers a selected standalone HTML/Markdown/JSON without accepting paths.
+
+Observed RED: eight initial behavior failures, then mismatched preview omissions
+and delivery metadata. Initial eight-test GREEN preserved failed cases and partial
+checkpoints, detected source replacement during copying and retained exactly three
+synthetic requests across HTTP preview/export/download. Additional regressions cover
+damaged-source qualification, changed/unselected standalone files and publication
+failure. Strict type/list/nullable/re-export errors and lint failures were repaired
+without ignores or changed protocol expectations. Final verification passed seven fast gates, 39 export/source/evidence/API
+regressions and all 382 pytest tests in 83.94s.
+
+Rulings and costs:
+
+- Source verification and evidence delivery are separate optional operational
+  metadata. Locally verified excerpts do not imply captures are included; consumers
+  must read delivery notices/omissions rather than treat a report-only export as an
+  independently verifiable evidence package.
+- Always retain a ZIP transport with README/manifest and selected formats, with an
+  allowlisted format query for standalone files. Clients can use the default ZIP;
+  no client-supplied filename/path is accepted.
+- Publish the exclusive record last and verify exact returned bytes. Failed orphan
+  directories consume local disk but remain unavailable through download APIs.
+- Bound selected payloads/artifacts at 256 MiB with an actionable error. Larger
+  captures need smaller selections or a future streaming path; sources and failed
+  attempts are never erased or truncated.

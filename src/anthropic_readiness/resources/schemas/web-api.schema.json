@@ -2711,6 +2711,179 @@
         "data"
       ],
       "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "export_preview"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "run_id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "formats": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "html",
+                  "markdown",
+                  "json",
+                  "zip"
+                ]
+              },
+              "minItems": 1,
+              "uniqueItems": true
+            },
+            "include_evidence": {
+              "type": "boolean"
+            },
+            "partial": {
+              "type": "boolean"
+            },
+            "source_result_sha256": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{64}$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "files": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[A-Za-z0-9_./-]+$"
+              }
+            },
+            "omissions": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "evidence_verification": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "enum": [
+                    "verified",
+                    "missing_or_invalid",
+                    "no_evidence"
+                  ]
+                },
+                "errors": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "delivery": {
+                  "enum": [
+                    "external_files",
+                    "omitted"
+                  ]
+                }
+              },
+              "required": [
+                "status",
+                "errors"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "run_id",
+            "formats",
+            "include_evidence",
+            "partial",
+            "source_result_sha256",
+            "files",
+            "omissions",
+            "evidence_verification"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "kind",
+        "data"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "export_response"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "export_id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "run_id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "created_at": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d\\d-\\d\\dT\\d\\d:\\d\\d:\\d\\d(?:\\.\\d+)?(?:Z|[+-]\\d\\d:\\d\\d)$"
+            },
+            "artifact": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "const": "bundle.zip"
+                },
+                "sha256": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{64}$"
+                },
+                "bytes": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "path",
+                "sha256",
+                "bytes"
+              ],
+              "additionalProperties": false
+            },
+            "manifest_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "manifest": {
+              "$ref": "#/$defs/export_manifest"
+            }
+          },
+          "required": [
+            "export_id",
+            "run_id",
+            "created_at",
+            "artifact",
+            "manifest_sha256",
+            "manifest"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "kind",
+        "data"
+      ],
+      "additionalProperties": false
     }
   ],
   "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -4596,6 +4769,12 @@
               "items": {
                 "type": "string"
               }
+            },
+            "delivery": {
+              "enum": [
+                "external_files",
+                "omitted"
+              ]
             }
           },
           "required": [
@@ -5314,6 +5493,133 @@
         "references",
         "execution",
         "provenance"
+      ],
+      "additionalProperties": false
+    },
+    "export_manifest": {
+      "type": "object",
+      "properties": {
+        "schema_version": {
+          "const": "1.0"
+        },
+        "export_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "run_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "created_at": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d\\d-\\d\\dT\\d\\d:\\d\\d:\\d\\d(?:\\.\\d+)?(?:Z|[+-]\\d\\d:\\d\\d)$"
+        },
+        "presentation_version": {
+          "const": "2.0"
+        },
+        "source_result_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "partial": {
+          "type": "boolean"
+        },
+        "formats": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "html",
+              "markdown",
+              "json",
+              "zip"
+            ]
+          }
+        },
+        "include_evidence": {
+          "type": "boolean"
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[A-Za-z0-9_./-]+$"
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "bytes": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "path",
+              "sha256",
+              "bytes"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "omissions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "evidence_verification": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "enum": [
+                "verified",
+                "missing_or_invalid",
+                "no_evidence"
+              ]
+            },
+            "errors": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "delivery": {
+              "enum": [
+                "external_files",
+                "omitted"
+              ]
+            }
+          },
+          "required": [
+            "status",
+            "errors"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "schema_version",
+        "export_id",
+        "run_id",
+        "created_at",
+        "presentation_version",
+        "source_result_sha256",
+        "partial",
+        "formats",
+        "include_evidence",
+        "files",
+        "omissions",
+        "evidence_verification"
       ],
       "additionalProperties": false
     }

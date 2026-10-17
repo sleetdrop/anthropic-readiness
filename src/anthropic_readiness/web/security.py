@@ -33,6 +33,13 @@ MESSAGES = {
     "internal_error": "本机服务未能完成操作，请查看任务状态后再处理。",
     "not_found": "未找到请求的资源。",
     "invalid_request": "请求参数不符合接口约定。",
+    "export_not_terminal": "任务结束后才能冻结并导出报告；现有任务仍在执行。",
+    "export_not_found": "未找到已发布的导出，请重新生成。",
+    "export_integrity": "导出文件已变化或无法核验，请重新生成；原始失败记录会保留。",
+    "export_source_invalid": "来源记录无法绑定到本次任务，不能生成完整报告。",
+    "export_evidence_invalid": "证据存在缺失或损坏，可选择不附证据导出带诊断说明的报告。",
+    "export_format_unavailable": "本次导出未选择该文件格式。",
+    "export_size_limit": "导出超过 256 MiB 的本机处理上限，可缩小所选内容后重试。",
 }
 
 

@@ -86,6 +86,14 @@ def safe_url(value: JsonValue) -> str | None:
 
 def evidence_notice(document: JsonObject) -> str:
     quality = object_value(document["evidence_verification"])
+    if quality.get("delivery") == "omitted":
+        return (
+            "生成时已在本机核对来源证据；本导出未附证据文件，接收者无法独立复核。"
+            if quality["status"] == "verified"
+            else "本导出未附证据文件，且来源证据未完整核验；无法独立复核。"
+        )
+    if quality.get("delivery") == "external_files":
+        return "生成时已核对来源证据；HTML 不内嵌捕获，请与完整 ZIP 内的清单及证据一起复核。单独转发本文件无法独立复核。"
     return (
         "随附证据的路径、哈希与引用已核验；这不是独立的服务复测。"
         if quality["status"] == "verified"

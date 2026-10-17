@@ -345,3 +345,18 @@ Final Linux Python 3.12 checks passed seven fast gates, strict frontend type/lin
 format, two Node tests and all 370 pytest tests (76.05s). A prior 368-pass/one-fail
 attempt remains recorded. Browser/offline interaction/print/narrow visual acceptance
 is deferred to the required Task 12 gate; no runtime-image or live endpoint claim.
+
+## W1 Task 10: immutable report exports (2026-10-17)
+
+Added policy/selection preview, opaque export publication and verified downloads.
+ZIPs contain selected offline reports, original result or partial operational
+records, optional sanitized evidence, Chinese README/agent guidance and a checked
+SHA-256 inventory. Original failed/partial attempts remain intact. Source bytes
+are rehashed during copying, publication record is last, and downloads validate
+exact returned bytes. Report-only delivery explicitly distinguishes local source
+verification from omitted captures. Preview selection/omissions are checked against
+the delivered package. Initial eight RED failures and an extra preview mismatch
+preceded fixes. Final Linux Python 3.12 verification passed seven fast gates,
+39 export/source/evidence/API regressions and all 382 pytest tests (83.94s). Export
+preview/create/repeated ZIP and standalone downloads added zero requests beyond the
+three synthetic model calls. No GUI/browser/new image/live endpoint acceptance yet.

@@ -326,10 +326,10 @@ router with the approved POST/download routes; it does not require exports to ex
 earlier. `manifest.files` is an array of `{path, sha256, bytes}` records relative to
 the export root, excludes the manifest's own self-hash, and declares omitted evidence.
 
-- [ ] **RED:** `test_export_preserves_sources_and_manifest_hashes` verifies every archive entry and local link; `test_report_only_and_partial_exports_disclose_omissions` checks proper schema/labels and no clean certificate. `test_export_rejects_changed_source_between_verification_and_copy` replaces a source during copying and requires rejection or explicitly diagnostic output. `test_export_ignores_unrelated_files_and_secret_values` checks allowlisted contents and zero upstream calls. Run both files.
-- [ ] **Implement:** Freeze policy/source identity under a new export ID, use only whitelisted verified files, reject symlink/traversal/unsafe names, rehash the bytes actually copied and publish only after manifest validation. Preserve original result/evidence bytes. Include Chinese README, agent interpretation, versions, limitations, references and SHA-256 manifest; self-hash is a provenance inventory, not a source signature. Never overwrite prior exports or raw captures; damaged sources get a diagnostic-only path.
-- [ ] **GREEN:** Run export, report-source/evidence and Web API tests; reconstruct archive and compare all retained bytes, including deliberately failed/partial attempts.
-- [ ] **Commit:** `feat: export immutable offline reports and verified evidence packages`.
+- [x] **RED:** `test_export_preserves_sources_and_manifest_hashes` verifies every archive entry and local link; `test_report_only_and_partial_exports_disclose_omissions` checks proper schema/labels and no clean certificate. `test_export_rejects_changed_source_between_verification_and_copy` replaces a source during copying and requires rejection or explicitly diagnostic output. `test_export_ignores_unrelated_files_and_secret_values` checks allowlisted contents and zero upstream calls. Run both files.
+- [x] **Implement:** Freeze policy/source identity under a new export ID, use only whitelisted verified files, reject symlink/traversal/unsafe names, rehash the bytes actually copied and publish only after manifest validation. Preserve original result/evidence bytes. Include Chinese README, agent interpretation, versions, limitations, references and SHA-256 manifest; self-hash is a provenance inventory, not a source signature. Never overwrite prior exports or raw captures; damaged sources get a diagnostic-only path.
+- [x] **GREEN:** Run export, report-source/evidence and Web API tests; reconstruct archive and compare all retained bytes, including deliberately failed/partial attempts.
+- [x] **Commit:** `feat: export immutable offline reports and verified evidence packages`.
 
 ### Task 11: Configuration, live console and history pages
 
