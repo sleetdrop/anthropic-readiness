@@ -374,3 +374,22 @@ frontend type/lint/format, 37 Web/store regressions and all 388 pytest tests (88
 Targeted Chromium visual smoke/probes passed against four-case synthetic data with
 zero browser errors; full Task 12 browser/offline/print/accessibility gates, new
 runtime images, remote CI and real endpoint checks remain distinct and pending.
+
+## W1 Task 12: required browser/frontend gates (2026-10-17)
+
+Unified offline full now includes strict frontend types/lint/format, real Node JUnit,
+Jinja compilation/resource inventory and actual locked Chromium. Missing prerequisites
+are BLOCKED and zero/claimed-only/skipped test reports cannot pass. Both Python CI
+matrix jobs prepare locked Node/npm/Chromium before offline full; remote jobs remain
+unrun. Owned fixture/listener and timeout-child cleanup have assertion-level checks.
+
+Actual browser RED exposed missing initial config capability fields, ambiguous
+terminal partial labels and print overload; fixes preserve schemas/raw verdicts.
+Final unchanged-source Linux Python 3.12 full passed 405 Python tests, nine Node tests,
+13 Chromium cases and explicit fixture cleanup. Inspected configuration, summary,
+matrix/timeline, drawer, narrow and print screenshots. GUI preview/export/reconnect
+request accounting, fake secret clearing, keyboard/accessibility, hostile strings,
+network-blocked file HTML and script-disabled essentials all passed. Details and
+rulings are in the W1 ledger; failed attempts remain ignored artifacts.
+Task 13 owns new CLI/Web image acceptance and delivery docs. Whole-W1 review and
+handoff, remote CI and any real endpoint verification remain separate.

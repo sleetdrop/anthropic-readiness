@@ -23,7 +23,7 @@
   <div class="phase-strip"><span id="active-phase">{% if execution and execution.spans %}已保存的阶段与间隔见报告时间线{% else %}等待任务开始{% endif %}</span><time id="last-activity">{{ execution.updated_at if execution else job.created_at }}</time></div>
   <ol id="case-list" class="execution-cases">
     {% for case in cases %}
-    <li data-progress-case="{{ case.id }}"><span>{{ case.name }}</span><span class="status {{ case.state }}" data-case-state>{{ state_names[case.state] }} · {{ case.state }}</span></li>
+    <li data-progress-case="{{ case.id }}"><span>{{ case.name }}</span><span class="status {{ case.state }}" data-case-state>{% if job.state in ['completed','cancelled','interrupted','error'] and case.state in ['pending','running'] %}任务已停止；最后记录 {{ state_names[case.state] }}，未形成最终判定{% else %}{{ state_names[case.state] }}{% endif %} · {{ case.state }}</span></li>
     {% endfor %}
   </ol>
   <details><summary>冻结计划与端点</summary><p class="source-ref">{{ target.messages_url }}</p><p class="field-note">Run {{ job.id }} · 不重试 · 预览之后的预设修改不会影响此任务。</p></details>

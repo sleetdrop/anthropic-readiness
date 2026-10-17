@@ -77,7 +77,12 @@ def initial_target(catalog: JsonObject) -> JsonObject:
         "beta_headers": contract["beta_headers"],
         "protocol_contract": {"id": contract["id"], "revision": contract["revision"]},
         "auth": {"mode": "none"},
-        "capabilities": {"streaming": True, "tools": True},
+        "capabilities": {
+            "streaming": True,
+            "tools": True,
+            "thinking": False,
+            "parallel_tools": False,
+        },
         "response_model_policy": "request_or_alias",
         "response_model_aliases": [],
         "limits": Limits().to_json(),

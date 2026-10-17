@@ -465,3 +465,65 @@ Rulings and costs:
 Task 12 should explicitly exercise terminal partial labels and print-essential
 content as well as the required complete browser matrix. Current targeted smoke
 screenshots/data are ignored synthetic artifacts; no real model request occurred.
+
+## Task 12 — browser acceptance and unified gates (2026-10-17)
+
+Added required frontend static checks to fast/full and real Chromium acceptance to
+full. Frontend records validate against the existing packaged check-result schema;
+JUnit gates count actual testcase nodes and reject absent, empty, claimed-only,
+all-skipped or failed runs. Missing tools/browser produce BLOCKED. Source identity
+now includes npm/toolchain/browser/formatter configuration. Both Python CI matrix
+jobs prepare the frozen hash-verified Node archive, locked npm dependencies and
+Chromium before offline execution; existing read-only pinned actions and required
+child aggregation remain unchanged. CI execution itself is not claimed here.
+
+The disposable browser fixture serves only synthetic Messages data, delayed replies
+and test-only control/expiration state. It records no raw credential. Cleanup checks
+exact owned PID/start ticks and released listeners. Check timeouts stop their own
+Linux process group with bounded graceful cleanup. No production clock/control
+endpoint was introduced. Dedicated compilation and resource inventory checks cover
+Jinja templates excluded from the incompatible plain HTML formatter.
+
+Actual browser RED found an initial GUI configuration missing required capability
+flags, stale running labels after interruption and excessive raw JSON in print.
+Fixed defaults without weakening the config schema, qualified last-observed partial
+states without changing machine verdicts, and retained essential printed assertions,
+figures and references while omitting duplicate JSON dumps. Test corrections and all
+failed attempts are retained in the ignored plan workspace. Extra assertion-level
+RED checks caught missing formatter identity and incorrectly encoded hostile SSE
+fixture strings; final hostile data preserves all four behavior PASS results while
+remaining inert in rendered pages. Failed gate runs never count as acceptance.
+
+Final unchanged-source Linux/Python 3.12 Dev Container verification in
+`artifacts/w1/task12-full-final/` passed all 13 full-graph checks: 405 Python cases
+(226 unit/harness, 124 integration, 54 acceptance, one installed package), nine Node
+cases and 13 actual Chromium cases, with separate fixture cleanup. Browser coverage
+includes zero-call preview, duplicate admission, cleared start-only fake credentials,
+close/reopen accounting, queued/active cancellation, expired-session/cache recovery,
+exact figure tables, keyboard drawer focus, hostile content, on-demand ZIP download,
+390/1280 layouts, zero Axe violations, direct file HTML with network blocked and
+scripts on/off, server-rendered partials and print essentials. Manually inspected
+viewport screenshots for configuration, summary, matrix, timing, drawer, narrow and
+print views. Full records report source unchanged. Original Stage A contracts,
+source artifacts and judgments remain unchanged.
+
+Rulings and costs:
+
+- Reuse check-result 1.0 and reserve prerequisite exit 2 for BLOCKED; stop dependent
+  frontend work when prerequisites are absent. New reporters need an explicit
+  adapter rather than assuming exit zero proves executed cases.
+- Use the already frozen official Node archive and SHA instead of adding a new
+  setup action. Future tool updates must change the recorded archive identity and
+  preparation together; every full CI child still prepares the browser.
+- Compile/inventory-check Jinja plus render real pages instead of plain HTML
+  formatting. Manual template formatting remains a review responsibility until a
+  compatible formatter is explicitly pinned.
+- Preserve terminal raw states as last observations; omit duplicate raw JSON from
+  print while retaining core content. Full machine provenance remains in interactive
+  HTML/JSON and source exports if a printed reader needs more detail.
+- Standardize timeout cleanup on owned Linux process groups, allowing six seconds
+  before force termination. Timeout checks can take that extra interval; deliberately
+  detached processes require their own ownership protocol.
+
+New runtime/Web image acceptance and independent whole-W1 review remain Tasks 13–14.
+No W1 real endpoint call, remote CI run, registry publication or account setup occurred.

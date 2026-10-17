@@ -508,6 +508,9 @@ noscript {
     display: block;
     font-weight: 600;
   }
+  details.technical > pre {
+    display: none !important;
+  }
   .table-scroll {
     overflow: visible;
   }

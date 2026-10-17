@@ -29,6 +29,11 @@ jobs:
         run: |
           python -m pip install uv==0.13.1
           uv sync --locked --python '${{ matrix.python }}'
+      - name: Prepare locked Node and Chromium
+        run: |
+          python scripts/prepare_frontend.py
+      - name: Prepare browser and OS libraries
+        run: npx --no-install playwright install --with-deps chromium
       - name: Offline full graph
         env:
           UV_OFFLINE: '1'

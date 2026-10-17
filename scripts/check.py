@@ -9,6 +9,7 @@ import math
 import os
 import platform
 import re
+import signal
 import subprocess
 import sys
 import time
@@ -31,6 +32,7 @@ class CheckSpec:
     required: bool = True
     junit_path: Path | None = None
     cwd: Path | None = None
+    blocked_exit_codes: tuple[int, ...] = ()
 
     def __post_init__(self) -> None:
         if (
@@ -44,7 +46,7 @@ class CheckSpec:
             or not math.isfinite(self.timeout_s)
             or self.timeout_s <= 0
             or type(self.required) is not bool
-            or self.check_kind not in {"command", "pytest"}
+            or self.check_kind not in {"command", "pytest", "junit"}
         ):
             raise ValueError("invalid_check_configuration")
 
@@ -70,6 +72,15 @@ def source_fingerprint(root: Path) -> str:
         for p in (
             "pyproject.toml",
             "uv.lock",
+            "package.json",
+            "package-lock.json",
+            "tsconfig.json",
+            "eslint.config.js",
+            "prettier.config.js",
+            ".prettierrc.json",
+            ".prettierignore",
+            "playwright.config.js",
+            "docs/harness/web-toolchain.json",
             ".python-version",
             "Dockerfile",
             ".dockerignore",
@@ -117,17 +128,37 @@ def _run_one(spec: CheckSpec, output_dir: Path) -> dict[str, object]:
     log = output_dir / f"{spec.check_id}.log"
     with log.open("wb") as stream:
         try:
-            completed = subprocess.run(
+            process = subprocess.Popen(
                 spec.argv,
                 cwd=spec.cwd,
                 stdout=stream,
                 stderr=subprocess.STDOUT,
-                timeout=spec.timeout_s,
                 env=dict(os.environ, UV_OFFLINE="1"),
-                check=False,
+                start_new_session=True,
             )
-            code = completed.returncode
+            try:
+                code = process.wait(timeout=spec.timeout_s)
+            except subprocess.TimeoutExpired:
+                # Linux is the standard harness environment. Signal only the
+                # session created above, with time for owned services to clean up.
+                try:
+                    os.killpg(process.pid, signal.SIGTERM)
+                    deadline = time.monotonic() + 6
+                    while time.monotonic() < deadline:
+                        process.poll()
+                        os.killpg(process.pid, 0)
+                        time.sleep(0.05)
+                    os.killpg(process.pid, signal.SIGKILL)
+                except ProcessLookupError:
+                    pass
+                finally:
+                    process.wait()
+                raise
             status, reason = ("passed", "completed") if code == 0 else ("failed", "nonzero_exit")
+            if code in spec.blocked_exit_codes:
+                status, reason = "blocked", "missing_prerequisite"
+            if status == "passed" and spec.check_kind == "junit":
+                status, reason = junit_result(spec.junit_path)
             if status == "passed" and spec.check_kind == "pytest":
                 if spec.junit_path is None or not spec.junit_path.is_file():
                     status, reason = "failed", "missing_test_report"
@@ -167,6 +198,26 @@ def _run_one(spec: CheckSpec, output_dir: Path) -> dict[str, object]:
     }
 
 
+def junit_result(path: Path | None) -> tuple[str, str]:
+    """Count actual testcase nodes, never trust a reporter's claimed suite totals."""
+    if path is None or not path.is_file():
+        return "failed", "missing_test_report"
+    try:
+        tree = ET.parse(path)
+        cases = list(tree.iter("testcase"))
+        if not cases:
+            return "failed", "no_tests"
+        if any(
+            case.find("failure") is not None or case.find("error") is not None for case in cases
+        ):
+            return "failed", "test_report_failures"
+        if all(case.find("skipped") is not None for case in cases):
+            return "failed", "no_executed_tests"
+        return "passed", "completed"
+    except (ET.ParseError, ValueError):
+        return "failed", "invalid_test_report"
+
+
 def _git_state(root: Path) -> dict[str, str | bool | None]:
     try:
         commit = subprocess.run(
@@ -194,12 +245,21 @@ def _git_state(root: Path) -> dict[str, str | bool | None]:
 
 
 def run_checks(
-    checks: Sequence[CheckSpec], output_dir: Path, *, root: Path = ROOT, scope: str = "custom"
+    checks: Sequence[CheckSpec],
+    output_dir: Path,
+    *,
+    root: Path = ROOT,
+    scope: str = "custom",
+    stop_on_blocked: bool = False,
 ) -> int:
     output_dir.mkdir(parents=True, exist_ok=False)
     started = _utc()
     before = source_fingerprint(root)
-    results = [_run_one(spec, output_dir) for spec in checks]
+    results = []
+    for spec in checks:
+        results.append(_run_one(spec, output_dir))
+        if stop_on_blocked and results[-1]["status"] == "blocked":
+            break
     required = [r for r in results if r["required"]]
     status = (
         "failed"
@@ -274,9 +334,43 @@ def build_checks(root: Path, output: Path, suite: str) -> list[CheckSpec]:
             ["--cov=anthropic_readiness", f"--cov-report=xml:{output / 'coverage.xml'}"],
         ),
     ]
+    checks.append(
+        CheckSpec(
+            "frontend-static",
+            [
+                sys.executable,
+                "-m",
+                "scripts.check_frontend",
+                "--suite",
+                "static",
+                "--out",
+                str(output / "frontend-static"),
+            ],
+            180,
+            cwd=root,
+            blocked_exit_codes=(2,),
+        )
+    )
     if suite == "full":
         checks.extend(
             [
+                CheckSpec(
+                    "frontend-browser",
+                    [
+                        sys.executable,
+                        "-m",
+                        "scripts.check_frontend",
+                        "--suite",
+                        "browser",
+                        "--out",
+                        str(output / "frontend-browser"),
+                    ],
+                    420,
+                    "junit",
+                    junit_path=output / "frontend-browser/browser.xml",
+                    cwd=root,
+                    blocked_exit_codes=(2,),
+                ),
                 pytest_check("integration", ["tests/integration"]),
                 pytest_check(
                     "acceptance",

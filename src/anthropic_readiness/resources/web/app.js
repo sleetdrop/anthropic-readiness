@@ -434,7 +434,10 @@ function runPage(bootstrap) {
         const row = document.querySelector(`[data-progress-case="${CSS.escape(item.case_id)}"]`);
         const cell = row?.querySelector("[data-case-state]");
         if (cell instanceof HTMLElement) {
-          cell.textContent = `${label(item.state)} · ${item.state}`;
+          cell.textContent =
+            TERMINAL.has(jobState) && ["pending", "running"].includes(item.state)
+              ? `任务已停止；最后记录 ${label(item.state)}，未形成最终判定 · ${item.state}`
+              : `${label(item.state)} · ${item.state}`;
           cell.className = "status " + item.state;
         }
       }
