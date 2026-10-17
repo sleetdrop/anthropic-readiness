@@ -5,6 +5,8 @@ from pathlib import Path
 import pytest
 import yaml
 
+from anthropic_readiness.models import object_value
+from anthropic_readiness.schema import load_schema
 from scripts.check_images import Acceptance, assess_image_checks
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -18,6 +20,12 @@ WEB_CHECKS = (
     "web-cancellation",
     "web-host-path",
 )
+
+
+def test_image_contract_is_available_through_packaged_schema_loader() -> None:
+    schema = load_schema("image-result")
+    version = object_value(object_value(schema["properties"])["schema_version"])
+    assert version["const"] == "2.0"
 
 
 @pytest.mark.parametrize("missing", WEB_CHECKS)

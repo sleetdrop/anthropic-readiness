@@ -26,6 +26,7 @@ def load_schema(name: str) -> JsonObject:
         "target",
         "contract",
         "check-result",
+        "image-result",
         "acceptance",
         "plan",
         "job",

@@ -568,3 +568,11 @@ The failed result remains retained and does not count as Web acceptance. Initial
 dev preparation also failed at the original Debian CJK font download; dev-only APT
 retry/timeout settings now allow bounded longer waits without changing source or
 font versions. Preparation retries and image acceptance remain pending.
+
+Native arm64 smoke after the bridge fix passed on bfef157: installed CLI/Web
+images, four synthetic Web cases and the selected evidence ZIP all passed with an
+unchanged image context. Validating both the retained failed record and this passing
+2.0 record exposed a missing schema-loader registration. Its regression failed
+with unknown_schema, then all 13 image harness checks and both real record validations
+passed after registration. Latest full-source verification and full image matrix
+remain in progress; this smoke does not cover restart/host-route/development checks.
