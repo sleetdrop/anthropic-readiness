@@ -677,3 +677,22 @@ Rulings and costs:
   requiring actual selected-environment installer, launch and complete checks.
   If preparation selects the wrong archive, architecture/version checks fail;
   preparation itself never certifies target execution.
+
+Updated native full fifth passed its 433-Python/Node-10/Chromium-15 developer graph
+and CLI isolation/signals/host route, then exposed a remaining terminal-read edge:
+all three reads changed before the final transition, leaving a completed job with
+report null. Its exact response and traceback remain retained. A TypeError prevented
+that attempt's normal image-result record; its absence is explicit and is not
+retrospectively replaced with invented observations.
+
+Three permanent assertion-level REDs cover late completion and unexpected controller/
+cleanup failures. The terminal path now performs one final generation-matched read
+after immutable completion. Controller errors retain failed/blocked records and
+separate trace artifacts, and the image check explicitly requires a non-null report.
+All 39 focused HTTP/page/image checks plus strict typing/lint/format passed.
+
+Rulings and costs: one extra terminal projection read closes the bounded-retry edge
+without holding the scheduler lock; it adds local I/O but never an upstream request.
+Unexpected controller/cleanup errors become explicit failed/blocked observations,
+with traces preserved for diagnosis. An unavailable cleanup cannot downgrade an
+earlier assertion failure. Whole updated image acceptance remains pending.

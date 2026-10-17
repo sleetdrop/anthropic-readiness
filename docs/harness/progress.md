@@ -428,3 +428,9 @@ All original lifecycle/Axe assertions remain; numeric calibration blocks invalid
 tooling, and a new black/white browser case passed natively. The latest source full
 passed 433 Python tests, ten Node cases, 15 Chromium cases and all 13 gates. Updated
 native/emulated runtime image jobs and final whole-W1 review are still pending.
+
+Native image fifth passed all developer/CLI checks but caught the terminal-read
+retry-exhaustion edge in the actual installed Web image. Its response/trace remain
+retained, including the missing normal manifest. Three RED regressions now cover
+that edge and failed controller/cleanup publication; 39 focused checks and strict
+validation passed. New full image observations are required for these source bytes.

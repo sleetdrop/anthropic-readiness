@@ -203,6 +203,8 @@ def run_web_checks(a: Acceptance, host_url: str) -> None:
     (a.output / "web-completed-response.json").write_text(json.dumps(record, indent=2) + "\n")
     if record["job"]["state"] != "completed" or record["execution"]["actual_requests"] != 4:
         raise RuntimeError("web_assessment_accounting")
+    if record["report"] is None:
+        raise RuntimeError("web_completed_report_unavailable")
     if any(case["status"] != "PASS" for case in record["report"]["cases"]):
         raise RuntimeError("web_synthetic_verdict")
     if request_count(a) != before + 4:

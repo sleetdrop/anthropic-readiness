@@ -75,7 +75,7 @@ async def test_preview_and_duplicate_start_request_counts(
     assert len(server.requests) == 3
 
 
-@pytest.mark.parametrize("early_projection", ["partial", "unavailable"])
+@pytest.mark.parametrize("early_projection", ["partial", "unavailable", "late_terminal"])
 async def test_terminal_response_does_not_mix_an_earlier_partial_projection(
     client: httpx.AsyncClient,
     server: SyntheticServer,
@@ -104,11 +104,22 @@ async def test_terminal_response_does_not_mix_an_earlier_partial_projection(
         }
     )
     early["execution"] = execution
+    early["job"] = {**object_value(early["job"]), "last_sequence": execution["sequence"]}
     snapshots = 0
 
     def transition_snapshot(identifier: str) -> JsonObject:
         nonlocal snapshots
         snapshots += 1
+        if early_projection == "late_terminal" and snapshots <= 3:
+            generation = deepcopy(early)
+            object_execution = object_value(generation["execution"])
+            object_execution["sequence"] = int(str(execution["sequence"])) - 3 + snapshots
+            generation["execution"] = object_execution
+            generation["job"] = {
+                **object_value(generation["job"]),
+                "last_sequence": object_execution["sequence"],
+            }
+            return generation
         return early if snapshots == 1 else original_snapshot(identifier)
 
     original = load_report_source
@@ -118,6 +129,10 @@ async def test_terminal_response_does_not_mix_an_earlier_partial_projection(
         nonlocal reads
         source = original(root, operations_root=operations_root)
         reads += 1
+        if early_projection == "late_terminal" and reads <= 3:
+            pending = deepcopy(execution)
+            pending["sequence"] = int(str(execution["sequence"])) - 3 + reads
+            return replace(source, result=None, result_sha256=None, execution=pending)
         if reads > 1:
             return source
         if early_projection == "unavailable":

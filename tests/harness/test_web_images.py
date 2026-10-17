@@ -1,6 +1,7 @@
 """Container delivery must independently prove Web behavior and safe local defaults."""
 
 import json
+import sys
 from pathlib import Path
 
 import pytest
@@ -9,7 +10,7 @@ from jsonschema import Draft202012Validator
 
 from anthropic_readiness.models import object_value
 from anthropic_readiness.schema import load_schema
-from scripts.check_images import Acceptance, EnvironmentUnavailable, assess_image_checks
+from scripts.check_images import Acceptance, EnvironmentUnavailable, assess_image_checks, main
 
 ROOT = Path(__file__).resolve().parents[2]
 WEB_CHECKS = (
@@ -271,3 +272,37 @@ def test_full_pass_cannot_claim_unrun_development_and_v20_cannot_gain_v21_fields
     assert list(validator.iter_errors(current))
     legacy = {**image_record("2.0"), "engine_architecture": "aarch64"}
     assert list(validator.iter_errors(legacy))
+
+
+@pytest.mark.parametrize("phase", ["run", "cleanup"])
+def test_unexpected_controller_failure_still_has_a_failed_observation(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, phase: str
+) -> None:
+    output = tmp_path / "unexpected"
+
+    def fail(self: Acceptance, skip_build: bool, host_url: str | None) -> None:
+        if phase == "run":
+            raise TypeError("synthetic_controller_failure")
+
+    cleaned: list[bool] = []
+
+    def cleanup(self: Acceptance) -> None:
+        cleaned.append(True)
+        if phase == "cleanup":
+            raise TypeError("synthetic_controller_failure")
+
+    monkeypatch.setattr(Acceptance, "run", fail)
+    monkeypatch.setattr(Acceptance, "cleanup", cleanup)
+    monkeypatch.setattr(
+        sys, "argv", ["check_images", "--platform", "linux/arm64", "--out", str(output)]
+    )
+    try:
+        code = main()
+    except TypeError:
+        code = None
+    assert code == 1
+    assert cleaned == [True]
+    record = json.loads((output / "image-result.json").read_text())
+    assert record["status"] == "failed"
+    assert record["missing_checks"]
+    assert "synthetic_controller_failure" in record["error"]

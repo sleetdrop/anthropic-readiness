@@ -11,6 +11,7 @@ import platform
 import subprocess
 import sys
 import time
+import traceback
 import uuid
 from datetime import UTC, datetime
 from pathlib import Path
@@ -707,14 +708,36 @@ def main() -> int:
     before = context_hash(ROOT)
     error: str | None = None
     unavailable = False
+
+    def retain_failure(label: str, exc: Exception) -> None:
+        nonlocal error, unavailable
+        current_unavailable = isinstance(
+            exc, (OSError, subprocess.TimeoutExpired, EnvironmentUnavailable)
+        )
+        unavailable = current_unavailable if error is None else unavailable and current_unavailable
+        reason = type(exc).__name__ + ": " + str(exc)
+        error = reason if error is None else error + "; " + reason
+        log = label + ".log"
+        (output / log).write_text(traceback.format_exc())
+        acceptance.records.append(
+            {
+                "id": label,
+                "status": "blocked" if current_unavailable else "failed",
+                "reason": reason,
+                "log": log,
+            }
+        )
+        print(reason)
+
     try:
         acceptance.run(args.skip_build, args.host_url)
-    except (OSError, RuntimeError, subprocess.TimeoutExpired, ValueError, KeyError) as exc:
-        error = str(exc)
-        unavailable = isinstance(exc, (OSError, subprocess.TimeoutExpired, EnvironmentUnavailable))
-        print(error)
+    except Exception as exc:
+        retain_failure("controller-error", exc)
     finally:
-        acceptance.cleanup()
+        try:
+            acceptance.cleanup()
+        except Exception as exc:
+            retain_failure("cleanup-error", exc)
     unchanged = before == context_hash(ROOT)
     status, missing = assess_image_checks(acceptance.records, targets, args.scope)
     if error is not None:

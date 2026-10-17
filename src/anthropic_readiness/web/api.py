@@ -23,6 +23,7 @@ from anthropic_readiness.jobs.manager import JobManager
 from anthropic_readiness.models import EvidenceRef, JsonObject, object_value
 from anthropic_readiness.operations.contracts import validate_operational
 from anthropic_readiness.operations.models import JobState
+from anthropic_readiness.operations.reduction import TERMINAL
 from anthropic_readiness.operations.storage import MAX_DOCUMENT_BYTES, read_document
 from anthropic_readiness.report_sources import load_report_source
 from anthropic_readiness.report_view import build_report_view
@@ -203,6 +204,13 @@ def run_document(manager: JobManager, run_id: str) -> JsonObject:
             break
         # A worker may commit while projection performs I/O. Never combine two
         # generations, and never hold the scheduler lock during report loading.
+    if report is None and str(object_value(snapshot["job"])["state"]) in TERMINAL:
+        # The final transition can land on the last active retry. Terminal state
+        # is immutable, so one final read can now load its stable projection.
+        candidate = _report_document(manager, run_id)
+        snapshot = manager.snapshot(run_id)
+        if candidate is not None and candidate["execution"] == snapshot["execution"]:
+            report = candidate
     inventory: list[JsonObject] = []
     try:
         root, refs = evidence_refs(manager, run_id)
