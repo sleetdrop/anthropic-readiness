@@ -83,3 +83,45 @@ API/client observations are recorded separately in the validation ledger; they d
 not implement or certify the Stage B/C product. B adds tool loops/matrices, C real fixed-client workflows, and D the
 protocol-update Agent command and reviewed maintenance/publishing path. Stop at A
 unless the owner authorizes the next stage.
+
+## W1 local console and visual reports — 2026-10-18
+
+W1 is the separately approved, locally completed follow-up to the historical
+Stage A handoff above. Its [acceptance map](harness/web-console-acceptance.json),
+[evidence manifest](harness/web-console-handoff.json) and
+[review/author closure](reviews/2026-10-18-web-console-review.md) bind the new work.
+The frozen Stage A manifest was not repointed or changed.
+
+Verification source is `2297306c538c0354e9519d88716520e6b24be5b4`. All13 required
+offline gates passed: 454 Python tests, 10 Node cases, 22 Chromium cases, zero
+failures/errors/skips. New native ARM64 and emulated AMD64 CLI/Web image jobs each
+passed 58 actual checks on the same unchanged source; developer/browser checks use
+an explicitly separate native Linux ARM64 baseline. Four installed-package tests
+exercise the CLI without Web dependencies and the Web wheel outside source.
+
+The local Compose demonstration is available at `http://localhost:8765` with
+synthetic results. It supports configuration/preview/explicit start, saved live
+progress, cancellation, history/presets and on-demand HTML/Markdown/JSON/ZIP export.
+CLI operation remains independent. Use the [container guide](container-usage.md)
+for an ordinary deployment and [development guide](development.md) for the pinned
+Dev Container. The retained demo uses an ignored exact-image Compose override;
+it is not a registry-published image. No real endpoint request is made by opening
+its reports or exporting them.
+
+The final GUI export is retained locally under
+`artifacts/w1/demo-export-2297306/`;25 manifest file hashes and original result bytes
+were verified. Earlier synthetic history survived service replacement. Reports
+now retain verified interrupted checkpoints without inventing final results or
+missing timing; unknown partial provenance stays unknown. Narrow matrices have
+bounded keyboard scrolling, and state actions navigate to their matching cases.
+
+One independent review returned With fixes. One author pass reproduced and closed
+six Important findings, including the regraded selected-test skip gate; no re-review
+ran. The sole deferred Minor is separate failure/unresolved matrix filtering;
+all original statuses remain visible. This is local developer acceptance, not an
+endpoint certificate. The formal suite still has four Stage A API cases, no beta
+or version matrix, no complete tool loop and no Claude Code workflow claim.
+Remote CI, native AMD64 developer execution, Python 3.11 W1 and registry publication
+remain unobserved. No merge, push, account setup or public registry write occurred.
+Later handoff-only commits change excluded records; they are not image verification
+commits and do not alter the recorded source/context fingerprints.

@@ -394,10 +394,10 @@ explicit optional configuration, never baked into image examples or commits.
 artifacts, immutable source/lock/toolchain/image identities and unresolved limits.
 Do not repoint the frozen Stage A manifest to new source artifacts.
 
-- [ ] **Run acceptance:** Verify `A`, installed package, both runtime images and actual browser/export results for the same unchanged source commit. Re-run only checks affected by subsequent fixes; retain all failed attempts and exact check manifests.
-- [ ] **Independent review:** Request one fresh whole-W1 reviewer as authorized by `AGENTS.md`, with the approved spec/plan, immutable diff range and observed evidence. Ask specifically about source integrity, parent/worker races, credential boundaries, safe offline rendering, scope honesty and actual installed artifacts. No per-task reviewer/implementer agents.
-- [ ] **Resolve findings:** Reproduce actionable findings with assertion-level RED, fix without weakening assertions and run relevant/full gates as needed. Record rejected suggestions with evidence. Do not repeat the already completed Stage A review or suppress review findings to close the milestone.
-- [ ] **Finalize and commit:** Publish local handoff records and scoped commits; show actual GUI with synthetic data and an offline export for user review. State remote CI, public registry, live endpoints and untested platforms separately. W1 is complete only when its required evidence/review is complete; otherwise record the precise remaining check.
+- [x] **Run acceptance:** Verify `A`, installed package, both runtime images and actual browser/export results for the same unchanged source commit. Re-run only checks affected by subsequent fixes; retain all failed attempts and exact check manifests.
+- [x] **Independent review:** Request one fresh whole-W1 reviewer as authorized by `AGENTS.md`, with the approved spec/plan, immutable diff range and observed evidence. Ask specifically about source integrity, parent/worker races, credential boundaries, safe offline rendering, scope honesty and actual installed artifacts. No per-task reviewer/implementer agents.
+- [x] **Resolve findings:** Reproduce actionable findings with assertion-level RED, fix without weakening assertions and run relevant/full gates as needed. Record rejected suggestions with evidence. Do not repeat the already completed Stage A review or suppress review findings to close the milestone.
+- [x] **Finalize and commit:** Publish local handoff records and scoped commits; show actual GUI with synthetic data and an offline export for user review. State remote CI, public registry, live endpoints and untested platforms separately. W1 is complete only when its required evidence/review is complete; otherwise record the precise remaining check.
 
 ## Acceptance traceability
 

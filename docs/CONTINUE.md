@@ -1,6 +1,6 @@
-# Stage A completed locally
+# Local delivery status
 
-## Current milestone: W1 sequential implementation
+## Current milestone: W1 completed locally
 
 The owner requested a local Docker Web interface for configuration, live test
 progress and on-demand export, with independent CLI execution retained. Individual
@@ -9,9 +9,22 @@ direction. The [written W1 specification](superpowers/specs/2026-10-16-local-web
 was explicitly approved. Its [implementation plan](superpowers/plans/2026-10-16-local-web-console-implementation.md)
 has 14 sequential tasks; self-review and owner approval completed on 2026-10-17.
 The owner chose the current checkout and prepared Dev Container. Work is on branch
-`codex/local-web-console`; Tasks 1–13 are complete and Task 14 is in progress. Preserve current-chat sequential
-execution and one independent whole-W1 review. See the [W1 ledger](harness/web-console-ledger.md)
-and this plan's ignored `.superpowers/sdd/` workspace for exact task/RED/GREEN state.
+`codex/local-web-console`; all 14 tasks are complete. One independent whole-W1
+review returned With fixes; one author RED/GREEN pass closed all six Important
+findings. No re-review ran. The sole deferred Minor is separate failure/unresolved
+matrix filters; all raw statuses remain visible. See the
+[W1 ledger](harness/web-console-ledger.md),
+[acceptance map](harness/web-console-acceptance.json),
+[handoff](harness/web-console-handoff.json) and
+[review/author closure](reviews/2026-10-18-web-console-review.md).
+Verification source is `2297306c538c0354e9519d88716520e6b24be5b4`: 454 Python,
+10 Node and22 Chromium cases, zero failures/errors/skips. Fresh native ARM64 and
+emulated AMD64 CLI/Web image jobs each passed 58 checks on that unchanged source.
+Both use a separately identified native Linux ARM64 developer/browser baseline.
+The local Compose service at `http://localhost:8765` contains synthetic demonstration
+data; actual GUI export hashes and unchanged original result bytes were verified.
+No push, merge or registry publication occurred. Remote CI, native AMD64 developer
+execution and supplemental Python 3.11 W1 remain unobserved.
 No W1 real endpoint call is authorized by plan approval.
 Stage A completion and the private assessment below remain historical baselines.
 
@@ -81,7 +94,7 @@ Local commits and synthetic checks remain authorized.
 
 Use the checked-in Linux/Python 3.12 Dev Container for development. The existing
 prepared Dev Container is retained; its identifier is an ephemeral local detail.
-The completed plan's scratch workspace is archived locally and removed; its
+The completed Stage A plan's scratch workspace is archived locally and removed; its
 permanent ledger is tracked under docs/harness.
 
 For future network preparation, retain the original source and wait patiently.

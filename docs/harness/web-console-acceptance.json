@@ -91,7 +91,8 @@
       "checks": [
         "installed-packages",
         "arm64-images",
-        "amd64-images"
+        "amd64-images",
+        "owned-cleanup"
       ]
     },
     {

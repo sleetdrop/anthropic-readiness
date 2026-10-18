@@ -9,8 +9,10 @@
 - Implementation plan: [self-reviewed revision 1](../superpowers/plans/2026-10-16-local-web-console-implementation.md),
   14 sequential tasks; self-review completed and owner approval received on 2026-10-17.
 - Execution: current chat, sequentially; owner chose the current checkout/Dev Container.
-  W1 branch is `codex/local-web-console`, starting from `ad83593`. Tasks 1–6 are complete;
-  tasks 7–14 and whole-W1 acceptance remain pending.
+  W1 branch is `codex/local-web-console`, starting from `ad83593`. All 14 tasks are
+  complete locally on 2026-10-18; source verification commit is `2297306`.
+  See [acceptance](web-console-acceptance.json), [handoff](web-console-handoff.json)
+  and [review/author closure](../reviews/2026-10-18-web-console-review.md).
 
 ## Observed design checks
 
@@ -725,3 +727,38 @@ checks. The independent review is still not_run, so W1-12 and whole-W1 completio
 remain pending. The frozen Stage A handoff and 29 protected files are unchanged.
 All earlier failures remain retained; no normal manifest was fabricated for the
 failed controller attempt that did not produce one.
+
+## Task 14 completed locally — 2026-10-18
+
+Verification source is `2297306c538c0354e9519d88716520e6b24be5b4`.
+The sole independent whole-W1 review inspected `ad83593..0d1191e` and returned
+With fixes. One author pass reproduced and fixed five Important findings and the
+selected-skip gate regraded Important. All six now have RED/GREEN regressions and
+full verification; no re-review ran. Separate failure/unresolved matrix filters
+are the sole deferred Minor; raw statuses remain visible.
+
+Both fresh image jobs passed 58 checks on the same clean unchanged source:
+`artifacts/w1/final-arm64-full-2297306/image-result.json` and
+`artifacts/w1/final-amd64-full-2297306/image-result.json`.
+Their native Linux ARM64 developer graphs each passed all 13 gates, 454 Python,
+10 Node and 22 Chromium cases, zero failures/errors/skips. Requested CLI/Web
+runtime execution is native ARM64 and emulated AMD64 respectively. Source, lock,
+image-context and exact local image identities agree; no registry digest is claimed.
+Both jobs' owned containers, networks and temporary volumes were absent afterward.
+Public browser caches and the synthetic demo are intentionally retained.
+
+Actual GUI export after upgrading the retained synthetic volume produced a new
+25-file manifest ZIP, with all copied hashes and original result bytes verified.
+Interrupted checkpoint recovery preserves active publication gating and original
+journal timing, exposing verified recovered partial evidence explicitly. Final
+report acceptance binds its result hash and execution generation. Unknown origin
+stays unknown; matrices retain readable columns, native member lists and correct
+mixed-status navigation, with keyboard/no-script/print coverage.
+
+The [W1 acceptance map](web-console-acceptance.json),
+[handoff](web-console-handoff.json) and
+[review/author closure](../reviews/2026-10-18-web-console-review.md) record checks,
+artifact hashes, limits and deferred work. The frozen Stage A manifest and 29
+protected files remain byte-identical. Remote CI, actual endpoints, registry writes,
+Python 3.11 W1 and unrun native platforms are not passed. All failed attempts remain
+retained in ignored local evidence; none was overwritten to obtain a green result.

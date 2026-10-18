@@ -10,10 +10,10 @@ The same reviewer context resumed after a quota interruption; this was not a
 second review. The checkout stayed clean and unchanged throughout review.
 
 Independent verdict: **With fixes**. Five Important findings, two Minor findings,
-no verified Critical finding. Candidate W1 completion is not accepted yet.
+no verified Critical finding. The reviewed candidate did not satisfy W1 completion; author closure is recorded separately below.
 The reviewer additionally ran eight Focus-related regressions: eight passed in
 6.51 seconds. These do not cover the missing scenarios below and do not replace
-whole-stage acceptance. The author will perform one RED/GREEN fix pass; no re-review.
+whole-stage acceptance. The agreed process was one author RED/GREEN fix pass; no re-review.
 
 ## Strengths observed
 
@@ -67,7 +67,7 @@ M1 is **regraded Important**: a partially skipped selected suite could otherwise
 certify incomplete required checks. This does not change prior zero-skip results.
 M2 is **Minor, deferred**: all raw statuses remain visible; at four cases the missing
 filter is a navigation inconvenience rather than a false result or blocked task.
-Author fixes, failing regressions and final evidence will be recorded separately
+Author fixes, failing regressions and final evidence are recorded separately
 below. This report will not be rewritten as an independent approval of later code.
 
 ## Author fix pass (not a second independent review)
@@ -88,7 +88,7 @@ below. This report will not be rewritten as an independent approval of later cod
   Markdown distinguish known live, known synthetic/replay and unknown JSON context
   values. Neither live mode nor missing context establishes real endpoint origin.
 - I4: first-column width, named keyboard scrolling, bounded page layout and print
-  behavior passed actual Web/offline Chromium checks at390/573px. The first fix
+  behavior passed actual Web/offline Chromium checks at 390/573 px. The first fix
   exposed standalone Grid expansion; that failure was retained and corrected.
 - I5: state actions select matching cases; multiple matches use native disclosures
   with stable IDs and member links. Mixed PASS/FAIL navigation passed with scripts
@@ -101,14 +101,36 @@ Focused verification observed: I1 nineteen checks, then six recovery/accounting/
 barrier checks; I2 twenty-eight API/source checks; I3 twenty-eight report checks;
 I4 nineteen browser cases; I5 thirteen static report cases and twenty-two browser
 cases; M1 twenty-nine harness checks. All meaningful failures and later outputs are
-retained in ignored local artifacts. Ruff/lint and strict mypy passed126 source
+retained in ignored local artifacts. Ruff/lint and strict mypy passed 126 source
 files after explicit JSON type narrowing. Whole updated source/image acceptance
 is recorded in the W1 handoff after completion; these focused results alone are not
 whole-W1 acceptance. M2 remains deferred as recorded above.
 
-The complete author verification graph subsequently passed all13 required gates:
-454 Python tests (253 unit/harness,135 integration,62 acceptance,4 installed),
+The complete author verification graph subsequently passed all 13 required gates:
+454 Python tests (253 unit/harness, 135 integration, 62 acceptance, 4 installed),
 10 Node cases and22 Chromium cases, with zero failures/errors/skips. The initial
 full attempt retained one test-only TypeScript URL-resolution failure; it was fixed
 without suppressing types and the full graph rerun passed. Rebuilt-image acceptance
 remains separate and is bound to the clean source commit in the final W1 handoff.
+
+## Author closure evidence
+
+Verification source: `2297306c538c0354e9519d88716520e6b24be5b4`.
+Fresh native ARM64 and emulated AMD64 CLI/Web full image jobs each passed 58 checks
+on that unchanged clean source. Each independently ran the native Linux ARM64
+full developer graph: 454 Python, 10 Node, 22 Chromium, zero failures/errors/skips.
+Source/image-context/lock identities agree. These are author acceptance results,
+not a second independent review or a native AMD64 developer observation.
+
+The actual Compose GUI was upgraded to the exact accepted ARM Web image while
+preserving its earlier synthetic volume. Visible preview/export generated a new
+HTML/Markdown/JSON/evidence ZIP;25 manifest file hashes and original result bytes
+were verified. Actual narrow matrix screenshots show readable names/IDs and a
+bounded horizontal scrollbar. Both image jobs' owned containers/networks/temporary
+volumes were absent after cleanup; public tool caches and the demo remain retained.
+
+All six author-graded Important findings are closed by the recorded RED/GREEN/full
+checks. M2 is the sole deferred Minor. Remote CI, publishing, real endpoints,
+Python 3.11 W1 and unrun native platforms remain explicitly unobserved. The exact
+artifact identities and limitations are in the
+[W1 handoff](../harness/web-console-handoff.json).

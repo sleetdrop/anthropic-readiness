@@ -1,94 +1,101 @@
 {
   "schema_version": "1.0",
   "stage": "W1",
-  "source_commit": "7739ec18d8be914ec7f311311fcfabc9cc003830",
-  "source_fingerprint": "f53d36ecb0f50f5126d502e66ddc7bd332c96e1926a194afd30c5dd950dd0f94",
+  "source_commit": "2297306c538c0354e9519d88716520e6b24be5b4",
+  "source_fingerprint": "8ca83700f810dad77bd5673b6f5f8a73fa1ba81536208b095c7bbbefbd612a5f",
   "lock_sha256": "4ca7b27fc7e151188e574625fd6d9b1ef8334fa865ee9266344bed7a3987f735",
   "toolchain_sha256": "b2a1352868acbc2cf72db7393b10624778b9c8d1aac0e7a3fde3659d85274ebf",
   "checks": [
     {
       "id": "full-source",
       "status": "passed",
-      "artifact": "artifacts/checks/1792246817058713338/check-result.json",
-      "sha256": "ba180c481e75e87ad34d4cbcbe0c50b6039dc541c2e6b4c41825183c0d370ec6",
+      "artifact": "artifacts/checks/1792293076436088387/check-result.json",
+      "sha256": "ca54ad3247ee607d7323674b11984a9edac716991a474afbf3f180eb96803b38",
       "reason": "Native Linux arm64 Python 3.12.15; all 13 gates; clean verification commit; no skips."
     },
     {
       "id": "unit",
       "status": "passed",
-      "artifact": "artifacts/checks/1792246817058713338/unit.xml",
-      "sha256": "db800562195d4f285a8ab292ac4c5c3a43a4251ff5c6bc8ce4ad523148bc803a",
-      "reason": "251 unit and harness cases."
+      "artifact": "artifacts/checks/1792293076436088387/unit.xml",
+      "sha256": "6315b7222604a5fbfc586ed3ce4575dd26b455d54783dc569c4babe70f429ae8",
+      "reason": "253 unit and harness cases."
     },
     {
       "id": "integration",
       "status": "passed",
-      "artifact": "artifacts/checks/1792246817058713338/integration.xml",
-      "sha256": "7254a0511fab0fb431e09ff8cb70e54dbeea01279dc4ea3db049fdbfb401e7b4",
-      "reason": "127 integration cases."
+      "artifact": "artifacts/checks/1792293076436088387/integration.xml",
+      "sha256": "b9d82924b5d7b66502dc96beb3fce9831918368b3809ddd79ad84835bae64d75",
+      "reason": "135 integration cases."
     },
     {
       "id": "acceptance",
       "status": "passed",
-      "artifact": "artifacts/checks/1792246817058713338/acceptance.xml",
-      "sha256": "12f86db614d6f2d7f364dae2790adf7a19761894c367c27e61f203a7314a9299",
-      "reason": "54 acceptance cases."
+      "artifact": "artifacts/checks/1792293076436088387/acceptance.xml",
+      "sha256": "31995303b6551e9a02d472778c3e3f553eecfe3521418c96dbd24bdaa716c4c8",
+      "reason": "62 acceptance cases."
     },
     {
       "id": "installed-packages",
       "status": "passed",
-      "artifact": "artifacts/checks/1792246817058713338/packaging.xml",
-      "sha256": "8ef28ce82e742606d7c6b8c259de6daa36973ddbceff225e4be7a1aafd8b9cd4",
+      "artifact": "artifacts/checks/1792293076436088387/packaging.xml",
+      "sha256": "3ef072a68ef2c3edd07fa33f3dce68d7d34ed8b865b44b4eace6041dda87da0d",
       "reason": "Four outside-source CLI-only/Web wheel checks."
     },
     {
       "id": "frontend-static",
       "status": "passed",
-      "artifact": "artifacts/checks/1792246817058713338/frontend-static/check-result.json",
-      "sha256": "91ae2688aaa49753f5fc32cd3425f1b27fd9ae53944583f9b9d3b2796ecde5f8",
+      "artifact": "artifacts/checks/1792293076436088387/frontend-static/check-result.json",
+      "sha256": "e8f409fbe7918d4783094f0acf93a9194dcb1376ae425ea2bd71258a5a83c735",
       "reason": "Pinned Node, strict JSDoc types, lint/format, Jinja compilation/render and 10 Node cases."
     },
     {
       "id": "browser",
       "status": "passed",
-      "artifact": "artifacts/checks/1792246817058713338/frontend-browser/check-result.json",
-      "sha256": "958c62b87ed7bcfc6d77b8f1f05aab7f1de7fd2d9c5090ee728dc1511afb593e",
-      "reason": "15 actual locked Chromium cases with numeric calibration, Axe, keyboard, print/narrow and disconnected standalone export; verified fixture cleanup."
+      "artifact": "artifacts/checks/1792293076436088387/frontend-browser/check-result.json",
+      "sha256": "ace9f6b5eb25a1032e9326532f308d5adca90b79ded0b20078f00f3111bd709d",
+      "reason": "22 actual locked Chromium cases with numeric calibration, Axe, keyboard, print/narrow and disconnected standalone export; verified fixture cleanup."
     },
     {
       "id": "arm64-images",
       "status": "passed",
-      "artifact": "artifacts/w1/task13-arm64-full-sixth/image-result.json",
-      "sha256": "811589ca5b9da6a036bce48124273908d66f450acc70abdf452e91b46d7e90ec",
+      "artifact": "artifacts/w1/final-arm64-full-2297306/image-result.json",
+      "sha256": "06a0caf0cda1821b066d2c4866fcb1abbd7f4dc21d8f81f7d9c486814587757e",
       "reason": "Actual native CLI/Web runtime images; native arm64 development baseline."
     },
     {
       "id": "amd64-images",
       "status": "passed",
-      "artifact": "artifacts/w1/task13-amd64-full-third/image-result.json",
-      "sha256": "f12f562172f308e36edd32f6743d687c3395a79f6c8d4d57006aa7d267769826",
+      "artifact": "artifacts/w1/final-amd64-full-2297306/image-result.json",
+      "sha256": "84ccbe2880aaa72c01cfc7edb785a9f05b3a0e9117de1e708fc979b7a4b22953",
       "reason": "Actual emulated amd64 CLI/Web runtime images; separate native arm64 development baseline."
     },
     {
       "id": "stage-a-preservation",
       "status": "passed",
-      "artifact": "artifacts/w1/frozen-stage-a-proof-7739ec1.json",
-      "sha256": "0da44a002e75388029aa90a65022a87567ef03bfd6ed0607b7c689760b11b1c6",
+      "artifact": "artifacts/w1/frozen-stage-a-proof-2297306.json",
+      "sha256": "3f80735617f23860a79162a1f608a50729cf4bae0a2b184449b1df4f9b9098e6",
       "reason": "29 protected contract/schema/fixture/handoff files byte-identical to W1 branch base."
+    },
+    {
+      "id": "owned-cleanup",
+      "status": "passed",
+      "artifact": "artifacts/w1/final-cleanup-observation-2297306.json",
+      "sha256": "0a2fe98b6821d7cc4ab095581560da05e94ef4c598dd24d0fb10a93fb913570c",
+      "reason": "Both jobs owned containers, networks and temporary volumes were absent; demo and public tool caches retained."
     },
     {
       "id": "compose-demo",
       "status": "passed",
-      "artifact": "artifacts/w1/demo-observation-7739ec1.json",
-      "sha256": "154dcfcf61159d09d42c51445783378ef34035a90bb218987518d0b332f71761",
+      "artifact": "artifacts/w1/demo-observation-2297306.json",
+      "sha256": "d5bbb2f277d8ea87b863585300721557ae6362e37c5d53cf1dfa3f82c0367fe9",
       "reason": "Exact verified ARM Web image upgraded with retained synthetic volume; actual GUI export; 25 file hashes and original result bytes verified."
     },
     {
       "id": "independent-review",
-      "status": "not_run",
-      "artifact": null,
-      "sha256": null,
-      "reason": "Fresh whole-W1 review not yet dispatched."
+      "status": "passed",
+      "artifact": "docs/reviews/2026-10-18-web-console-review.md",
+      "sha256": "e4e3e113e4af888d44973a32dc4fb06e1a9ef9339cc4a3bd85ba5d1b4d2ea39f",
+      "reason": "One independent review of ad83593..0d1191e returned With fixes. One author RED/GREEN pass closed all six Important findings with full source and affected image verification. No re-review; M2 remains deferred."
     },
     {
       "id": "remote-ci",
@@ -123,37 +130,38 @@
     {
       "target": "runtime",
       "platform": "linux/arm64",
-      "digest": "sha256:33ab42fe169b8be74c23b5ab777d27dc3bd42e415b6fc1af8f794bb4ed12e550",
+      "digest": "sha256:eefc0c4ab67f4238df10132c47ae0ba778f990a851f8ad1460cb52dbf43f560f",
       "execution": "native"
     },
     {
       "target": "web",
       "platform": "linux/arm64",
-      "digest": "sha256:27d24eb0116903aba5a67ea03781de256d36d2e092ec540e458289fa573cfda2",
+      "digest": "sha256:00ba7fec34c403cc187483021f20473ae73965cadb2d4fabcbe23615fed2c8e3",
       "execution": "native"
     },
     {
       "target": "runtime",
       "platform": "linux/amd64",
-      "digest": "sha256:aa4fff5ab297fb5d7d966d58ab5b25a282d9a93078ac79ced283d5da3f38544e",
+      "digest": "sha256:18627dd73d1314ed3d3dd046ec92fc5028137fabbac7e8c43fa2b3099d9063cc",
       "execution": "emulated"
     },
     {
       "target": "web",
       "platform": "linux/amd64",
-      "digest": "sha256:95132a19039360a05c634f49829476c339b1c37b4e26232cdedc1a2e755f0892",
+      "digest": "sha256:0d93d34390a4c11e668e710c5fffa95c507016b247979b6ab97644cc1aafde69",
       "execution": "emulated"
     }
   ],
   "limitations": [
-    "Candidate handoff: independent whole-W1 review is pending; W1-12 is not yet satisfied.",
+    "Local W1 acceptance is complete with one deferred Minor: separate failure/unresolved matrix filter controls; all original statuses remain visible.",
     "Only four formal Stage A API cases, API 2023-06-01 core revision 1.0.0, no betas; no tool loops, version matrix or Claude Code workflow claim.",
     "All W1 execution evidence is synthetic. Historical private endpoint assessments are separate and unchanged.",
     "Full developer/browser gates use native Linux arm64 Python 3.12.15. Translated x64 developer/browser execution failed pidfd/numeric prerequisites and is not accepted; assertions were not weakened.",
     "AMD64 CLI/Web runtime images were actually exercised under emulation; native AMD64 CI and real Linux-host routing remain unobserved.",
     "Images identify local Docker image IDs, not pushed registry manifest digests. Remote GitHub CI and registry publication are not run.",
-    "The exact GUI export ZIP bytes were verified. Manual IAB navigation to its host file URL was policy-denied; no bypass was attempted. Approved synthetic Playwright file-based offline QA passed separately.",
+    "The exact GUI export ZIP bytes were verified. Manual IAB preview of the actual exported host file is unverified; an earlier attempt was policy-denied, with no bypass. Approved synthetic Playwright offline-file QA passed separately.",
     "Image jobs and source graph bind the clean verification commit. Later handoff-only changes are excluded from source/image fingerprints; they are not new image verification commits.",
+    "Supplemental Python 3.11 W1 and native AMD64 developer/browser execution are unobserved; prepared CI configuration is not a remote pass.",
     "Failed attempts and large evidence remain in ignored local artifacts and are not bundled in public runtime images."
   ]
 }
