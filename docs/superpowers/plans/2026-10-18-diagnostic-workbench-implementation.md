@@ -12,6 +12,27 @@
 
 **Status:** draft for owner review. The owner selected the first run-overview image, requested Chinese/English and a dark theme, then approved the paired Chinese light/dark overview refinement. Companion issue/comparison/document images, the written localization/theme amendment and this 16-task plan still require owner review. No implementation task has started. Task 0 is the added presentation foundation; existing task numbers are retained for traceability.
 
+## Owner review summary
+
+The accepted overview pair is the visual baseline for one shared light/dark
+system. Companion issue/comparison/document surfaces inherit that system while
+keeping their different operational and reading purposes. The pending review
+covers the revision-2 written amendment, those companion compositions and this
+plan together; do not request another choice among superseded overview images.
+
+| Checkpoint | Tasks | Reviewable delivery |
+| --- | --- | --- |
+| Presentation and trustworthy assessment metadata | 0–4 | Checked Chinese/English catalogs, paired theme tokens, immutable identities and full-scope retest preparation. |
+| Colleague handoff and CLI/Web operations | 5–10 | Bounded import/export, explicit local retest preview and paired-check comparison. |
+| Quiet interactive workbench | 11–12 | Single-screen overview, issue/case inspectors, comparison and activity views in both languages/themes. |
+| Independent assessment documents | 13 | Offline HTML/Markdown, coverage/difference matrices, evidence-linked findings and agent entry point. |
+| Delivery acceptance | 14–15 | Isolated repair/new-failure scenario, package/image checks and one independent whole-stage review. |
+
+Keep the previously chosen execution method: the current agent implements
+sequentially in the existing checkout/prepared Dev Container. Every task retains
+meaningful RED/GREEN evidence and a scoped local commit. This plan approval does
+not authorize registry publication or real-endpoint requests.
+
 ## Global Constraints
 
 - Use the checked-in Dev Container, Linux/Python 3.12. Preparation: `uv sync --locked`. Run verification with `UV_OFFLINE=1` and `uv run --frozen`.
@@ -39,6 +60,27 @@
 ## Design source and fixture story
 
 Selected structural reference: `artifacts/w2/visual-20261018/exec-4e87de9b-ef7e-4626-ac6e-105bedcae9ed.png` (the first displayed concept). Preserve its application rail, group progress and attention column. The owner-approved current overview visual targets are light `artifacts/w2/visual-20261018/exec-1775e6e7-1d1e-4f9f-a2c3-28ca19665826.png` and dark `artifacts/w2/visual-20261018/exec-771e5e11-ce7f-493f-bae8-d81bbbc96698.png`. Share typography, spacing and geometry, keep the target alias as title and model secondary, and implement neutral execution-completion indicators even where generated light-image colors differ. Earlier dark images are superseded. See the visual handoff for token proposals, exact hashes and image limitations.
+
+Task 0 starts from these semantic color pairs; Tasks 12/13 measure rendered
+contrast and may record justified token adjustments without changing semantics.
+Divider tokens are decorative separators, not substitutes for focus/control
+boundaries that require stronger contrast.
+
+| Role | Light | Dark |
+| --- | --- | --- |
+| Page / rail | `#fafbf9` / `#f1f3f0` | `#202226` / `#191b1f` |
+| Primary / secondary text | `#20272b` / `#59636b` | `#eeefed` / `#b1b5bd` |
+| Divider / selected navigation | `#d7dcd8` / `#e6ede7` | `#3c4047` / `#2c3035` |
+| Navigation/focus accent | `#355e50` | `#a6c8b7` |
+| Progress fill / track | `#737e7b` / `#e2e6e2` | `#abb1b8` / `#41464d` |
+| Check PASS / FAIL / waiting | `#326950` / `#a84a32` / `#8c650d` | `#a6c8b7` / `#eca798` / `#e3c18b` |
+
+Use shared system/CJK sans-serif typography, a separate monospace stack for raw
+fields/code, a 16px body baseline, 14px secondary labels, 28px run title and 40px
+tabular headline numerals at normal desktop scale. Responsive compact/reflow
+rules apply equally to both themes. Document reading typography remains distinct;
+it shares semantic colors and accessible status expression, not dashboard density.
+Use flat tokens rather than generated shading; add no remote font dependency.
 
 Companion images are design references, not golden runtime outputs. All copy/counts come from deterministic fixtures. The report's matrix explicitly labels its counts as passing cases over assessed cases; do not reproduce ambiguous `FAIL 0/4` notation. The overview must not display the full catalog as its main list when the catalog grows.
 
@@ -184,7 +226,7 @@ independent reviewer or implementer agent is dispatched.
 
 **Interfaces:** `Locale = Literal["zh-CN", "en"]`; `Theme = Literal["light", "dark", "system"]`; frozen `PresentationOptions(locale: Locale = "zh-CN", theme: Theme = "system")` with `to_json() -> JsonObject`. Pure `presentation.py` validates supported values without I/O. `load_catalog(locale: Locale) -> Mapping[str, str]` and `translate(catalog: Mapping[str, str], key: str, params: Mapping[str, str | int | float] | None = None) -> str` live in the resource adapter. Named placeholders cannot use attribute/index expressions, conversions or arbitrary format execution.
 
-- [ ] Write tests asserting identical key sets and named parameters in both catalogs, complete singular/plural message forms, strict option/cookie-value enums, missing-key/parameter errors, escaped hostile parameter rendering and original protocol/code/data values untouched. Unknown historical reason codes receive a localized generic explanation plus explicitly raw source text; they are not missing authored keys.
+- [ ] Write tests asserting identical key sets and named parameters in both catalogs, complete singular/plural message forms, strict option/cookie-value enums, missing-key/parameter errors and original protocol/code/data values untouched. Parameters remain ordinary text, never trusted markup; HTML escaping is tested at the actual template boundary in Task 11. Unknown historical reason codes receive a localized generic explanation plus explicitly raw source text; they are not missing authored keys.
 - [ ] Run `UV_OFFLINE=1 uv run --frozen pytest -q tests/unit/test_localization.py tests/unit/test_presentation_options.py`; retain RED before the new foundation exists.
 - [ ] Implement small packaged catalogs and semantic theme tokens for background/surface/text/muted/border/status/code/focus/selection/native controls. Use CSS media queries for system appearance, explicit selectors for overrides and forced light print tokens. Keep English command help and original data outside catalog translation. No translation service, i18n runtime dependency or browser storage is added.
 - [ ] Rerun focused tests and architecture/resource checks. Verify strict catalog validation rejects a deliberately removed key or mismatched placeholder. Contrast and actual layout/interaction are verified in Tasks 12/13, not claimed from token declarations.
@@ -242,7 +284,7 @@ independent reviewer or implementer agent is dispatched.
 
 **Files:** Create `diagnostics/archive.py`, `tests/unit/test_diagnostic_archive.py`.
 
-**Interfaces:** `ArchiveLimits` is a frozen dataclass with the constants above; `inspect_archive(path: Path, limits: ArchiveLimits) -> JsonObject`; `extract_checked_archive(path: Path, destination: Path, inventory: JsonObject, limits: ArchiveLimits) -> None`. Both accept a monotonic clock injection for deterministic deadline tests. Destination must be owned, new and empty.
+**Interfaces:** `ArchiveLimits` is a frozen dataclass with the constants above; `inspect_archive(path: Path, limits: ArchiveLimits, *, clock: Callable[[], float] = time.monotonic) -> JsonObject`; `extract_checked_archive(path: Path, destination: Path, inventory: JsonObject, limits: ArchiveLimits, *, clock: Callable[[], float] = time.monotonic) -> None`. Import `Callable` from `collections.abc`; both functions use the injected monotonic clock for deterministic deadline tests. Destination must be owned, new and empty.
 
 - [ ] Write parameterized tests for traversal, duplicate/case-fold names, links, ZIP64/encryption, forged sizes, CRC/hash mismatch, oversized directory/member/JSON/expansion, excess members and processing timeout. Assert no path outside staging changes, no module loads and no socket opens.
 - [ ] Run `UV_OFFLINE=1 uv run --frozen pytest -q tests/unit/test_diagnostic_archive.py`; retain RED.
@@ -320,6 +362,7 @@ independent reviewer or implementer agent is dispatched.
 - [ ] Run `UV_OFFLINE=1 uv run --frozen pytest -q tests/unit/test_workbench_view.py tests/integration/test_workbench_pages.py`; retain RED.
 - [ ] Implement selected-layout shell and distinct views with query parameters `view`, `issue`, `case`, `filter`, `baseline`, plus the import/baseline/retest-configuration HTML routes. SSR applies the checked preference and includes both catalogs; autonym language and light/dark/system controls are available globally. Render neutral completion; green denotes PASS only. Derive counts from facts; explicitly label matrix passing-count denominators. Evidence details reference checked IDs, never arbitrary paths. Configuration labels the actual installed suite/count, keeps all original profiles for retest, and groups finite execution controls into details rather than a pricing workflow.
 - [ ] Rerun focused tests and existing Web page/source recovery tests. Preserve old run URLs and map old `#capabilities`, `#finding-*`, `#case-*` links to the appropriate view/selection without changing source identities. No-JS links work.
+- [ ] Verify localized parameters containing hostile markup remain literal text through the actual escaped template boundary, without double-escaping original field values.
 - [ ] Commit: `feat: separate operational workbench views from report documents`.
 
 ### Task 12: Focus-preserving browser interaction and layout acceptance
@@ -331,6 +374,7 @@ independent reviewer or implementer agent is dispatched.
 - [ ] Write Node tests for distinct activity clocks and stale/out-of-order snapshots. Browser tests cover tabs/Back/refresh, selected-row retention on issue arrival, evidence disclosure focus, import/retest preview, keyboard filters, empty issues, cancellation and service reconnect with exact request counting. Locale/theme switching must preserve a valid execution-plan preview; changing export presentation must require a fresh export preview.
 - [ ] Run `UV_OFFLINE=1 uv run --frozen python -m scripts.check_frontend --suite static --out artifacts/w2/task12-static-red` and the new browser tests through the existing harness with a fresh output directory; preserve meaningful assertion failures.
 - [ ] Implement keyboard-accessible navigation and narrow list/detail flow, unique IDs, focused live-region summaries and bounded updates. Language/theme updates patch product-owned text/accessibility labels and CSS tokens without replacing controls, translating data, clearing inputs or restarting observation. Set `<html lang>` correctly. While active, refresh worker observation at most every five seconds via the local workbench route; this is not upstream activity. SSE events remain ordered and reconnection never starts work. Do not auto-open issues or silently reseat selection.
+- [ ] At the same viewport, locale and frozen synthetic state, switch light/dark and compare header, navigation, metric and inspector bounding boxes within one CSS pixel. Theme tokens must not change typography, spacing or panel geometry. Capture the accepted pair and actual screenshots together for visual comparison; inspect long English/Chinese names, empty and interrupted states as well as the nominal four-case run. Record justified differences rather than treating a generated PNG as a pixel-perfect runtime golden.
 - [ ] Verify 1280x800, 1440x900, 390px narrow and 200% zoom in both languages and explicit light/dark themes, plus system-theme changes and explicit overrides. Assert desktop document height does not exceed viewport height for overview attention/global state; no horizontal clipping of primary actions. Measure normal text contrast at least 4.5:1, large text at least 3:1 and meaningful non-text contrast at least 3:1, including code/status/focus/selected states. Test switching during an active synthetic run with unchanged request counts and source hashes, cookie persistence, clean first paint, no localStorage/sessionStorage, a synthetic 96-row list, no-JS links, missing evidence, unknown lineage and axe checks. Run the entire existing browser suite after updating intentional view expectations, retaining old report/source fixture outcomes.
 - [ ] Commit: `feat: make workbench monitoring quiet and context preserving`.
 
@@ -343,6 +387,7 @@ independent reviewer or implementer agent is dispatched.
 - [ ] Write tests asserting standalone HTML has conclusion/scope/matrix/findings/method/evidence links and no run tabs/cancel/export form. Assert Markdown/JSON and HTML share counts, omissions and comparison limits. Add subprocess tests for presentation flags/defaults on every report-producing command and unchanged machine stdout/exit semantics; compare original result/evidence hashes and request parameters across locales/themes. Hostile prompts/metadata remain escaped data; references cannot execute script or reference non-HTTPS external actions.
 - [ ] Run `UV_OFFLINE=1 uv run --frozen pytest -q tests/unit/test_document_view.py tests/acceptance/test_diagnostic_documents.py`; retain RED.
 - [ ] Implement the editorial report direction with explicit passing/assessed labels, numbered tables/figures and useful default-expanded findings. Reuse existing verified field extraction and reference facts; do not independently rejudge assertions. Include comparison only when present and accurately scoped. Add an agent index linking to result, recipe, comparison and evidence identifiers with content-as-data instructions. Standalone HTML/Markdown identify the endpoint by its display alias and omit raw endpoint/auth-reference fields, including embedded page data; actual requested/observed model identities remain because they are evidence. The source result in a full ZIP retains its original fields and is disclosed as such. Route fresh CLI/Web reports through presentation 3.0 while retaining existing `report_rendering` functions/assets for explicit presentation-2 tests and legacy reads; record this intentional versioned presentation change without altering original fixture outcomes.
+- [ ] Verify the coverage matrix retains passing/assessed denominators and unassessed dimensions, an issue-impact bar uses affected-case counts without adding overlapping families as unique failures, and a comparison matrix shows recovery, persistent/new failures and gaps together when supplied. Include a timing figure only when recorded boundaries explain a finding. Give every figure a caption, accessible name and equivalent table; keep all graphics local/offline and meaningful without relying on color.
 - [ ] Run focused tests and browser offline/no-script/print checks using synthetic generated reports in both languages and all three theme choices. HTML embeds two catalogs and one fact set; initial exported language works without scripts, while enabled in-file switches need no service/cookie/storage and do not mutate evidence. Markdown remains one selected language. Deny all network requests during reading, exercise direct-file fixture opening, verify print forces light while retaining selected language, inspect chart/code/control contrast and narrow tables. Existing actual private exported-file browser restrictions are not bypassed; use the normal synthetic harness.
 - [ ] Commit: `feat: publish independent diagnostic documents for humans and agents`.
 
@@ -409,10 +454,13 @@ version branch, source-summary distinction and passing-count labels were correct
 No implementation checkbox is checked and no runtime outcome is inferred from
 the generated images or this document review.
 
-Before asking the owner to approve this plan, check every spec section against the
-map, verify new module/signature names agree across tasks, remove undecided options
-and check that each Review Focus item has an owned failing test. The plan is a set
-of contracts/testable decisions, not prewritten implementation. If implementation
+The final paired-design self-review checked all seventeen acceptance IDs against
+the task map, cross-task signatures, the five Review Focus owners and dependencies.
+It pinned the shared theme/typography starting values, theme geometry acceptance,
+the archive clock-injection signatures and report-figure evidence/denominators.
+Template escaping is checked where actual rendering exists. These checks concern
+plan completeness, not an observed runtime outcome. The plan is a set of
+contracts/testable decisions, not prewritten implementation. If implementation
 reveals an unsatisfied contract, record the issue and resolve it visibly rather
 than weakening required checks or quietly expanding scope.
 

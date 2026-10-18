@@ -581,3 +581,11 @@ is now the accepted visual baseline in the handoff and implementation plan, with
 neutral execution-state semantics retained. Earlier dark treatments are superseded.
 This is visual approval, not runtime acceptance or approval of the still-pending
 written amendment/implementation plan. No product source or live request changed.
+
+The owner requested the next step after accepting the pair. The W2 plan now has
+a five-checkpoint review summary, explicit shared visual starting values and
+browser geometry/report-figure acceptance. Self-review resolved the archive clock
+signature and catalog-versus-template escaping boundary and checked all seventeen
+acceptance IDs. Current continuation text was cleaned of superseded design-stage
+instructions. The written amendment, companions and plan are ready for combined
+review; no W2 product task or new endpoint request has started.

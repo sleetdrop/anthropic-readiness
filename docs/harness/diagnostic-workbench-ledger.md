@@ -180,3 +180,24 @@ No W2 product implementation or real endpoint call occurred.
 The documentation/link/collaboration check passed offline/frozen in the retained
 Linux Python 3.12 Dev Container, and the whitespace check was clean. No runtime,
 browser or measured contrast test was run for this approval-record update.
+
+## 2026-10-18: Final written-plan consolidation
+
+After accepting the pair, the owner requested the next step. The existing plan
+was consolidated rather than restarting visual exploration or changing execution
+method. A five-checkpoint summary maps sixteen sequential tasks to reviewable
+deliveries. Self-review checked all seventeen acceptance IDs and cross-task
+interfaces; it pinned shared palette/typography starting values, added actual
+cross-theme geometry acceptance and made report-figure evidence/denominators
+explicit. Archive clock injection now has exact signatures, and parameter escaping
+is tested at the rendering boundary rather than claimed by the text catalog.
+
+The continuation guide now states the current decision instead of replaying
+superseded design iterations. The revision-2 written amendment, companion surfaces
+and plan are presented as one concrete review package. Their approval is pending;
+the accepted overview pair and previous sequential execution choice are preserved.
+No W2 source implementation, browser acceptance or endpoint request occurred.
+The consolidated documents passed the offline/frozen documentation, link and
+collaboration check in the retained Linux Python 3.12 Dev Container. Whitespace
+verification was clean; no runtime/full/browser/image gate was run for this
+documentation-only consolidation.

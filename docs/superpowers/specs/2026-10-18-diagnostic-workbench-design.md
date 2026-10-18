@@ -186,7 +186,7 @@ and readable structured diffs. Dashboard typography favors scanning; report
 typography favors sustained reading. Avoid ornamental hero sections, glowing
 cards, invented compatibility scores and excessive instructional prose.
 
-Visual approval must include the actual four-case shape and a clearly labeled
+Implementation-time visual acceptance must include the actual four-case shape and a clearly labeled
 synthetic larger catalog, long model/issue names, active and interrupted states,
 empty issues, narrow layouts and mixed comparison states. Larger fixtures prove
 layout behavior, not supported endpoint capabilities.
@@ -520,8 +520,10 @@ The amendment uses [W3C contrast guidance](https://www.w3.org/WAI/WCAG22/Underst
 and [the documented system-color preference mechanism](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@media/prefers-color-scheme)
 as implementation/verification references, not as proof that a static mock passes.
 
-Before implementation planning, review this written scope and the visual layouts
-for overview, issue inspection, comparison and the separate report. Visual work
-is design-only and needs a selected direction before product implementation.
+The paired light/dark overview has been selected and approved. The written
+revision-2 amendment, companion issue/comparison/document compositions and updated
+implementation plan are now presented together for review before source work.
+The plan preserves the owner's current-session sequential execution method.
+Static visual approval does not establish browser layout or contrast acceptance.
 Broader suite design remains a subsequent explicit milestone; W2 completion alone
 does not satisfy the owner's eventual comprehensive diagnostic coverage goal.

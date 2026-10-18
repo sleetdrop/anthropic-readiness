@@ -1,31 +1,25 @@
 # Local delivery status
 
-## Proposed next milestone: W2 visual and implementation-plan review
+## Proposed next milestone: W2 final written-plan review
 
-The owner approved a conversational direction for a focused Anthropic diagnostic
-workbench: quiet single-screen run monitoring, issue investigation, separate
-assessment documents and a portable colleague/agent handoff followed by retesting.
-The [W2 specification](superpowers/specs/2026-10-18-diagnostic-workbench-design.md)
-and [design ledger](harness/diagnostic-workbench-ledger.md) record the proposal.
-The owner approved specification revision 1 on 2026-10-18, selected the first
-overview concept and confirmed continued refinement, then requested Chinese/English
-support and a dark theme. Revision 2 incorporates that amendment. The
-[companion visual design](reviews/2026-10-18-diagnostic-workbench-visual-design.md)
-and [16-task implementation plan](superpowers/plans/2026-10-18-diagnostic-workbench-implementation.md)
-are ready for owner review. After the owner found the first dark palette weaker
-than the light design, a neutral-graphite English/dark refinement was generated;
-the visual handoff identifies both images and supersedes the green-tinted proposal.
-The owner then requested improving both themes together. The visual handoff now
-records a paired Chinese light/dark treatment with shared hierarchy and geometry.
-The owner approved this pair on 2026-10-18; use its exact references as the current
-overview visual baseline, with the documented neutral execution-state correction.
-The localization/
-theme amendment and updated plan are not yet approved. No W2 product implementation
-has started. Preserve
-sequential current-agent execution in the existing checkout/prepared Dev Container
-once the plan is approved; do not reopen the completed W1 plan.
-Formal case coverage remains the four installed cases;
-broader API/client coverage is separately scoped. No new live call is authorized.
+The owner approved W2 specification revision 1 and the paired light/dark overview
+on 2026-10-18, then requested the next step. The
+[revision-2 specification](superpowers/specs/2026-10-18-diagnostic-workbench-design.md),
+[visual handoff](reviews/2026-10-18-diagnostic-workbench-visual-design.md) and
+[16-task implementation plan](superpowers/plans/2026-10-18-diagnostic-workbench-implementation.md)
+are ready for a combined review of the written localization/theme amendment,
+companion compositions and implementation plan. The plan includes a five-checkpoint
+reading summary, paired token/typography starting values, theme geometry checks
+and evidence-based report figures. Earlier overview/dark proposals are historical;
+use the exact approved pair in the visual handoff. See the
+[design ledger](harness/diagnostic-workbench-ledger.md) for chronological decisions.
+
+No W2 product task has started. Preserve the chosen current-checkout/prepared
+Dev Container and sequential current-agent execution with one independent end
+review once the written plan is approved. Do not reopen completed W1 work.
+Formal coverage remains four installed cases, with broader API/client scope
+separate. Local synthetic development remains authorized; no new live endpoint
+call or external publication is authorized by this design/plan review.
 
 ## Current milestone: W1 completed locally
 
