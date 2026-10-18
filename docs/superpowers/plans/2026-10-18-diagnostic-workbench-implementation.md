@@ -10,7 +10,7 @@
 
 **Spec:** [W2 specification revision 2](../specs/2026-10-18-diagnostic-workbench-design.md), approved with this plan on 2026-10-18.
 
-**Status:** owner-approved for sequential implementation in the current session on 2026-10-18 ("确认，请实施"). Revision-2 written scope and companion compositions are included. Tasks 0–4 are complete; Task 5 is next, Tasks 5–15 remain pending. Existing task numbers are retained for traceability.
+**Status:** owner-approved for sequential implementation in the current session on 2026-10-18 ("确认，请实施"). Revision-2 written scope and companion compositions are included. Tasks 0–5 are complete; Task 6 is next, Tasks 6–15 remain pending. Existing task numbers are retained for traceability.
 
 ## Owner review summary
 
@@ -339,11 +339,11 @@ independent reviewer or implementer agent is dispatched.
 
 **Interfaces:** `ArchiveLimits` is a frozen dataclass with the constants above; `inspect_archive(path: Path, limits: ArchiveLimits, *, clock: Callable[[], float] = time.monotonic) -> JsonObject`; `extract_checked_archive(path: Path, destination: Path, inventory: JsonObject, limits: ArchiveLimits, *, clock: Callable[[], float] = time.monotonic) -> None`. Import `Callable` from `collections.abc`; both functions use the injected monotonic clock for deterministic deadline tests. Destination must be owned, new and empty.
 
-- [ ] Write parameterized tests for traversal, duplicate/case-fold names, links, ZIP64/encryption, forged sizes, CRC/hash mismatch, oversized directory/member/JSON/expansion, excess members and processing timeout. Assert no path outside staging changes, no module loads and no socket opens.
-- [ ] Run `UV_OFFLINE=1 uv run --frozen pytest -q tests/unit/test_diagnostic_archive.py`; retain RED.
-- [ ] Implement footer preflight, strict inventory checks and chunked bounded copy. Actual expanded-byte limits apply before publishing a file. Reject unsafe archives rather than normalizing them into acceptable ones.
-- [ ] Rerun focused tests with small injected limits and a valid archive at every permitted boundary. On failure remove only owned partial staging artifacts; do not activate a baseline.
-- [ ] Commit: `feat: inspect diagnostic archives within strict local limits`.
+- [x] Write parameterized tests for traversal, duplicate/case-fold names, links, ZIP64/encryption, forged sizes, CRC/hash mismatch, oversized directory/member/JSON/expansion, excess members and processing timeout. Assert no path outside staging changes, no module loads and no socket opens.
+- [x] Run `UV_OFFLINE=1 uv run --frozen python -m pytest -q tests/unit/test_diagnostic_archive.py`; retain RED.
+- [x] Implement footer preflight, strict inventory checks and chunked bounded copy. Actual expanded-byte limits apply before publishing a file. Reject unsafe archives rather than normalizing them into acceptable ones.
+- [x] Rerun focused tests with small injected limits and a valid archive at every permitted boundary. On failure remove only owned partial staging artifacts; do not activate a baseline.
+- [x] Commit: `feat: inspect diagnostic archives within strict local limits`.
 
 ### Task 6: Read-only import preview and immutable baseline storage
 

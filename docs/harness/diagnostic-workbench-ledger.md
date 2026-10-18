@@ -375,3 +375,28 @@ set passed 43. Latest fast-1 passed all eight children with 360 unit/harness tes
 The final complete Python regression passed 571 tests, zero failures/errors/skips;
 documentation/link and whitespace checks passed. Whole-W2 handoff/UI/image checks,
 remote CI and live endpoint outcomes remain unobserved.
+
+## 2026-10-18: Task 5 bounded classic-ZIP handling
+
+Task 4 delivery commit is `c8e6274`. Archive handling preflights the classic footer
+and actual central-record count before allocating ZipFile metadata. Only stored/
+deflated regular files with unambiguous ASCII relative paths are accepted. ZIP64,
+encryption, split archives, links/devices and path collisions are rejected. Every
+compressed/expanded/member/JSON/count/directory limit and monotonic deadline has
+finite defaults; tests inject small limits and include exact inclusive boundaries.
+
+Raw bounded decompression verifies actual expansion, size, CRC and SHA-256 without
+trusting declared expanded sizes. Extraction rechecks the archive and inventory,
+publishes each member only after verification, and removes only its newly owned
+destination on failure. Existing destinations are never reused or removed. Data
+descriptors and empty/chunk-boundary payloads are supported; no code or sockets
+are invoked by archive contents. This does not establish a valid assessment;
+schema/source/recipe verification belongs to the next import task.
+
+Retained missing-module RED is in `artifacts/w2/task5/red.log`. A nested-directory
+permission regression failed at edge-red.log (44 passed/one failure); explicit
+0700 creation at each level fixed it, with 45 focused checks passing afterward.
+The final 46-test set includes forward-only classic data descriptors. Fast-1
+passed all eight children (406 unit/harness tests); full Python regression passed
+617 tests, zero failures/errors/skips. Documentation/link and whitespace checks
+passed. No new endpoint, remote CI or image result is claimed.

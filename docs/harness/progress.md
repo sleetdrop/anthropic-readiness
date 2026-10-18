@@ -638,3 +638,11 @@ substituted request records cannot claim controlled retest. Final fast-1 passed
 all eight checks (360 unit/harness tests); full Python regression passed 571 tests,
 zero failures/errors/skips. Exact retained RED and interface ruling are in the
 W2 ledger. Tasks 5–15 remain; no endpoint or external publication occurred.
+
+Task 4 delivery is `c8e6274`. Task 5 implements bounded classic-ZIP inspection and
+new owned staging extraction. All 46 focused boundary checks passed; a nested
+directory permission RED was fixed explicitly. Final fast-1 passed all eight
+children (406 unit/harness tests); full Python regression passed 617 tests with
+zero failures/errors/skips. Limits apply to actual decompressed bytes and hashes,
+not only declared sizes; no uploaded content executes. Tasks 6–15 remain. This
+does not yet establish valid package import or completed W2 UI/image acceptance.
