@@ -527,3 +527,13 @@ targeted subsets are not implied. Author document self-review completed. Written
 specification review, visual design and implementation planning remain pending.
 No product code/dependency, runtime test, new endpoint call or external write
 occurred. This proposal does not change W1 completion or historical evidence.
+
+The owner subsequently approved W2 specification revision 1 on 2026-10-18 and
+requested the next step. Work proceeds to visual design selection before
+implementation planning; the approval does not authorize new endpoint calls.
+
+Three synthetic run-overview visual concepts were generated and displayed for
+selection. Their order/artifact mapping and a disclosed current-case title defect
+in the third image are recorded in the W2 design ledger. These are design images,
+not executable interfaces or acceptance evidence. Remaining surfaces and visual
+selection are pending; product code and test catalog remain unchanged.

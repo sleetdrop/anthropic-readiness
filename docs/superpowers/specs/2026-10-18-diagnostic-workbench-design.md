@@ -1,13 +1,13 @@
 # Anthropic compatibility diagnostic workbench and repair handoff
 
-Date: 2026-10-18. Revision: 1. Status: draft for owner review.
+Date: 2026-10-18. Revision: 1. Status: approved by the owner on 2026-10-18.
 
 The owner approved the conversational direction: a focused diagnostic workbench
 for Anthropic-compatible endpoints used by Claude Code, a separate assessment
 document, and portable handoff followed by repair verification. The owner asked
-that this be practical and evidence-backed. This written specification is not yet
-approved. Product implementation, implementation planning and new endpoint calls
-have not started. Visual layouts still require review before implementation.
+that this be practical and evidence-backed, then explicitly approved this written
+specification. Product implementation, implementation planning and new endpoint
+calls have not started. Visual layouts still require review before implementation.
 
 ## 1. Purpose and users
 

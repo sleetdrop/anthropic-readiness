@@ -39,5 +39,30 @@ identity requirements so unchanged human revision labels cannot conceal changed
 generator/validator code. This is document review, not independent stage review,
 runtime verification, visual acceptance or endpoint evidence.
 
-Current status: written specification awaits owner review; new visual layouts are
-not produced or approved. No implementation plan exists. W2 is not implemented.
+The owner explicitly approved specification revision 1 on 2026-10-18 and asked
+to proceed. The next activity is design-only visual alternatives for the run
+overview, followed by the remaining workbench/document surfaces in the selected
+direction. No implementation plan exists. W2 is not implemented.
+
+## 2026-10-18: first visual alternatives
+
+Three independent Image Gen concepts were displayed, in this order:
+
+| Display order | Layout | Local ignored artifact under `artifacts/w2/visual-20261018/` |
+| --- | --- | --- |
+| 1 | Group progress with application rail | `exec-4e87de9b-ef7e-4626-ac6e-105bedcae9ed.png` |
+| 2 | Full-width operational case table | `exec-52466fd6-dac9-4307-90e3-dee96c98c456.png` |
+| 3 | Current-case execution phases | `exec-44be50b7-d60a-4534-bbce-97e024b3a93b.png` |
+
+The existing run-overview screenshot was inspected and attached to each generation
+for palette/product grounding. All three use explicitly synthetic four-case data.
+The third image incorrectly rendered the current case title as `3 / 5`; this is
+a generation defect, not a fifth installed case or accepted copy. The intended
+title is the streaming count-from-one-to-five case. The owner was told this before
+selection. Selected-direction refinement must replace generated text with exact
+fixture-driven copy and verify counts and actual viewport geometry. Images are
+layout concepts, not working UI, browser acceptance or endpoint observations.
+
+Current status: waiting for visual direction selection. The issue, comparison and
+standalone-report surfaces still need design work in that selected direction.
+No prototype server, product implementation, new dependency or live call ran.
