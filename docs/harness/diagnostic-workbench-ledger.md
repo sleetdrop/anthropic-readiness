@@ -166,3 +166,17 @@ between themes instead of treating dark appearance as a separate design.
 The offline/frozen documentation/link/collaboration check passed in the retained
 Linux Python 3.12 Dev Container; whitespace verification was clean. Runtime,
 browser and numeric contrast checks were not run for this design-only revision.
+
+## 2026-10-18: Paired visual approval
+
+The owner explicitly confirmed that the paired light/dark treatment meets
+expectations. Both exact images in the visual handoff are now accepted overview
+targets; earlier dark treatments are superseded. The plan and continuation guide
+now resolve to this pair, preserving neutral lifecycle/completion semantics and
+shared geometry rather than copying generated shading or incorrect status colors.
+This records visual approval only. The written revision-2 amendment, companion
+surfaces and sixteen-task plan retain their existing pending-review status.
+No W2 product implementation or real endpoint call occurred.
+The documentation/link/collaboration check passed offline/frozen in the retained
+Linux Python 3.12 Dev Container, and the whitespace check was clean. No runtime,
+browser or measured contrast test was run for this approval-record update.

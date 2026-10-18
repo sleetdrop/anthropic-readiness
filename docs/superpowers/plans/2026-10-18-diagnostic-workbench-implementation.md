@@ -10,7 +10,7 @@
 
 **Spec:** [W2 specification revision 2](../specs/2026-10-18-diagnostic-workbench-design.md). Revision 1 is owner-approved; revision 2 adds the owner-requested localization/theme amendment and is submitted with this updated plan.
 
-**Status:** draft for owner review. The owner selected the first run-overview image and approved its refinement direction, then requested Chinese/English and a dark theme. Companion issue/comparison/document images, the dark-English refinement and this 16-task plan still require owner review. No implementation task has started. Task 0 is the added presentation foundation; existing task numbers are retained for traceability.
+**Status:** draft for owner review. The owner selected the first run-overview image, requested Chinese/English and a dark theme, then approved the paired Chinese light/dark overview refinement. Companion issue/comparison/document images, the written localization/theme amendment and this 16-task plan still require owner review. No implementation task has started. Task 0 is the added presentation foundation; existing task numbers are retained for traceability.
 
 ## Global Constraints
 
@@ -38,7 +38,7 @@
 
 ## Design source and fixture story
 
-Selected visual target: `artifacts/w2/visual-20261018/exec-4e87de9b-ef7e-4626-ac6e-105bedcae9ed.png` (the first displayed concept). Use its application rail, restrained sage/neutral palette, group progress and attention column. Refine the title to the target alias, keep the model secondary, and use neutral execution-completion indicators.
+Selected structural reference: `artifacts/w2/visual-20261018/exec-4e87de9b-ef7e-4626-ac6e-105bedcae9ed.png` (the first displayed concept). Preserve its application rail, group progress and attention column. The owner-approved current overview visual targets are light `artifacts/w2/visual-20261018/exec-1775e6e7-1d1e-4f9f-a2c3-28ca19665826.png` and dark `artifacts/w2/visual-20261018/exec-771e5e11-ce7f-493f-bae8-d81bbbc96698.png`. Share typography, spacing and geometry, keep the target alias as title and model secondary, and implement neutral execution-completion indicators even where generated light-image colors differ. Earlier dark images are superseded. See the visual handoff for token proposals, exact hashes and image limitations.
 
 Companion images are design references, not golden runtime outputs. All copy/counts come from deterministic fixtures. The report's matrix explicitly labels its counts as passing cases over assessed cases; do not reproduce ambiguous `FAIL 0/4` notation. The overview must not display the full catalog as its main list when the catalog grows.
 

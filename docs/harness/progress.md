@@ -575,3 +575,9 @@ system. A paired Chinese overview proposal preserves the chosen layout and
 synthetic data while sharing typography, hierarchy and neutral progress treatment.
 The visual handoff records artifact identities and remaining generated-image
 limitations. These are pending-review design references, not product acceptance.
+
+The owner then approved the paired light/dark overview treatment. The exact pair
+is now the accepted visual baseline in the handoff and implementation plan, with
+neutral execution-state semantics retained. Earlier dark treatments are superseded.
+This is visual approval, not runtime acceptance or approval of the still-pending
+written amendment/implementation plan. No product source or live request changed.

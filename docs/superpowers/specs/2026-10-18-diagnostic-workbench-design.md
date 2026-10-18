@@ -10,8 +10,9 @@ that this be practical and evidence-backed, then explicitly approved this writte
 specification revision 1. The owner subsequently selected the first overview
 layout and requested Chinese/English support and a dark theme. An implementation
 plan and companion visuals exist; this revision incorporates that amendment.
-Product implementation and new endpoint calls have not started. Updated visual
-and implementation-plan review remain outstanding.
+The owner subsequently approved the paired light/dark overview refinement.
+Product implementation and new endpoint calls have not started. Written amendment,
+companion surface and implementation-plan review remain outstanding.
 
 ## 1. Purpose and users
 

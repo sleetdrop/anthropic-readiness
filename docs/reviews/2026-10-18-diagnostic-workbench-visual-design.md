@@ -1,7 +1,8 @@
 # Diagnostic workbench: selected direction and companion surfaces
 
 Date: 2026-10-18. Status: the owner selected the first overview concept and
-approved continued refinement. Companion surfaces are submitted for review.
+approved continued refinement, then approved the paired light/dark overview
+refinement on 2026-10-18. Companion surfaces are submitted for review.
 These are static design images, not an implemented or browser-verified product.
 The subsequent Chinese/English and dark-theme amendment is included below.
 
@@ -13,10 +14,12 @@ this to a full case-table overview or a current-phase-dominated overview.
 Refinements are a smaller target-alias heading, secondary model/configuration
 identity and neutral execution completion. Only successful checks use green.
 
-The authoritative reference is the first displayed generation:
+The original structural reference is the first displayed generation:
 `artifacts/w2/visual-20261018/exec-4e87de9b-ef7e-4626-ac6e-105bedcae9ed.png`.
 The original generated title/emphasis and completion coloring are refined by the
 rules above, not copied blindly into product behavior.
+The accepted paired refinement below is the current overview visual target;
+it supersedes the original typography/palette treatment while keeping its layout.
 
 ## Companion screens
 
@@ -84,7 +87,9 @@ passes and zero protocol-passing cases despite recovery of a specific check.
 The [approved specification](../superpowers/specs/2026-10-18-diagnostic-workbench-design.md)
 governs behavior. The [implementation plan](../superpowers/plans/2026-10-18-diagnostic-workbench-implementation.md)
 maps this direction to sequential source work and explicit visual/functional
-acceptance. Companion visual review and written-plan approval are still pending.
+acceptance. The paired overview/theme treatment is owner-approved. Companion
+surface review, the written localization/theme amendment and written-plan approval
+are still pending; this visual approval alone does not approve implementation.
 No prototype server, product implementation, container acceptance or new endpoint
 call is claimed by this design follow-up.
 
@@ -110,7 +115,7 @@ image's glow/shading as a requirement; use flat semantic CSS tokens.
 The owner subsequently found this dark treatment less successful than the light
 design. This green-tinted palette is superseded as a proposal; do not implement it.
 
-### Neutral graphite refinement awaiting review
+### Intermediate neutral graphite refinement (superseded)
 
 One revised image preserves the selected overview and English labels while
 removing the green cast:
@@ -122,17 +127,18 @@ navigation `#2c3035`, primary text `#eeefed`, secondary text `#b1b5bd`, dividers
 Neutral progress fills communicate completion; small semantic accents communicate
 findings. The layout, four-case scope and synthetic counts are unchanged.
 
-This refinement is pending owner review, not an accepted replacement. The PNG
+This intermediate refinement was superseded by the accepted paired treatment. The PNG
 still contains incidental shading and amber running indicators. Implement flat
 tokens and the specified neutral lifecycle/liveness contract, rather than copying
 those generated details. Numerical contrast, small-label readability and the other
 views require implementation-time browser verification. Its SHA-256 is
 `0720386c3945b2afc2a518b325db2d6035e8c830ae0534ecdb568000a5f2f2f8`.
 
-### Paired light/dark refinement awaiting review
+### Accepted paired light/dark refinement
 
 The owner then requested improving light and dark together, as one visual system.
-Two Chinese overview mocks now form a paired proposal, not competing layouts:
+The owner confirmed that this pair meets expectations on 2026-10-18. These two
+Chinese overview mocks are the accepted paired targets, not competing layouts:
 
 - Light: `artifacts/w2/visual-20261018/exec-1775e6e7-1d1e-4f9f-a2c3-28ca19665826.png`,
   SHA-256 `4e44e8f7bc143875fa28f3ae91cf22294498c3f84ec3cd91e4d1bf26066e8a25`.
@@ -147,7 +153,7 @@ ink `#20272b`, secondary `#59636b`, rules `#d7dcd8` and limited accent `#355e50`
 Dark retains the preceding graphite token proposal. Both favor flat surfaces,
 spacing and thin rules over cards. Theme switches should preserve geometry.
 
-These are the latest proposed visual targets, pending owner review; the original
+These are the accepted overview visual targets; the original
 selected layout remains the structural reference. The light PNG still colors some
 lifecycle indicators green/amber, contrary to the neutral execution contract.
 Both PNGs contain incidental shading. Neither detail changes the specified flat
