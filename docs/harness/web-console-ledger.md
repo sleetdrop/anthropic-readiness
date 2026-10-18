@@ -762,3 +762,10 @@ artifact hashes, limits and deferred work. The frozen Stage A manifest and 29
 protected files remain byte-identical. Remote CI, actual endpoints, registry writes,
 Python 3.11 W1 and unrun native platforms are not passed. All failed attempts remain
 retained in ignored local evidence; none was overwritten to obtain a green result.
+
+The completed plan's private scratch workspace was archived byte-identically:
+252 files, including every failed log and the original review package. Only this
+plan's scratch directory was removed; sibling workspaces remain unchanged.
+Archive/proof and all 70 chronological rulings/costs are retained under ignored
+`artifacts/w1/`. The development checkout, public browser caches and synthetic
+Compose demo are retained for the owner's next iteration.

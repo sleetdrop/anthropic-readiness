@@ -505,3 +505,11 @@ The two image jobs' owned temporary resources were absent after cleanup. All
 failures remain retained. Local source and delivery commits are separate from
 unrun remote CI, publishing and real endpoint outcomes. Branch integration remains
 the owner's choice; no merge or push was performed.
+
+W1 scratch cleanup completed: all 252 files in this plan's workspace were copied
+byte-identically to `artifacts/w1/plan-workspace-20261018/`, checked against a
+per-file SHA-256 inventory, and verified again before/after removal of only that
+scratch directory. The archive proof is
+`artifacts/w1/plan-workspace-archive-proof.json`; sibling workspaces were preserved.
+The chronological 70 rulings/costs and sole deferred Minor are retained in
+`artifacts/w1/rulings-final-20261018.md` and the archived original ledger.

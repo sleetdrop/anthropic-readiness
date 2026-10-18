@@ -25,6 +25,10 @@ The local Compose service at `http://localhost:8765` contains synthetic demonstr
 data; actual GUI export hashes and unchanged original result bytes were verified.
 No push, merge or registry publication occurred. Remote CI, native AMD64 developer
 execution and supplemental Python 3.11 W1 remain unobserved.
+The W1 scratch workspace was archived byte-identically (252 files) under ignored
+`artifacts/w1/plan-workspace-20261018/` and removed only after verification; sibling
+workspaces were preserved. Use the tracked W1 ledger/handoff for current state,
+not a new scratch workspace or the historical Stage A reviewer.
 No W1 real endpoint call is authorized by plan approval.
 Stage A completion and the private assessment below remain historical baselines.
 
