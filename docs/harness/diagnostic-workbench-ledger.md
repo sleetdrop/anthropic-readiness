@@ -201,3 +201,43 @@ The consolidated documents passed the offline/frozen documentation, link and
 collaboration check in the retained Linux Python 3.12 Dev Container. Whitespace
 verification was clean; no runtime/full/browser/image gate was run for this
 documentation-only consolidation.
+
+## 2026-10-18: Execution approval and Task 0 foundation
+
+The owner approved the revision-2 specification, companions and sixteen-task
+plan ("确认，请实施"). The current checkout and prepared Linux Python 3.12 Dev
+Container are retained, with sequential current-agent implementation and one
+independent whole-stage review at the end. No repeated execution-method approval
+is needed. Baseline 91544f8 passed all eight fast children and 253 unit/harness tests.
+
+Task 0 adds pure checked presentation choices, strict preference-cookie parsing,
+packaged Chinese/English catalogs, safe named-parameter substitution, schemas and
+shared semantic color/typography tokens. Catalog parity/count forms and malformed
+placeholders fail validation; original source parameters remain plain text.
+Presentation does not enter core values/validators. The existing frontend format
+gate now includes the new catalog and theme resources. Rendering/UI integration
+remains in later tasks; no new interface is claimed here.
+
+Observed RED/GREEN and checks under ignored `artifacts/w2/task0/`:
+
+- Foundation absence was observed before implementation; 37 focused tests now pass.
+- First fast gate retained three strict-type findings; these were fixed without
+  suppression. Final `fast-3` passed all eight children and 290 unit/harness tests.
+- Full Python regression: 491 passed, zero failures/errors/skips, using
+  `uv run --frozen python -m pytest`. The earlier bare executable invocation
+  failed nine `scripts` imports during collection and remains preserved separately.
+- Browser cascade RED: two new probes found system-dark selectors defeating
+  print-light tokens; all 22 original browser tests passed in that run. Lowering
+  only the system selector specificity fixed the defect. Browser GREEN: 25 passed,
+  and prerequisite/cleanup children passed.
+
+Ruling: use the module pytest entry point for whole-repository tests, matching
+the checked-in harness — otherwise the root `scripts` namespace is missing —
+cost if wrong: an alternative invocation could expose import-path assumptions.
+Ruling: verify the isolated system/print token cascade in Task 0 rather than
+waiting for full UI acceptance — this caught a real priority defect — cost if
+wrong: one extra browser startup for a narrow foundation boundary.
+
+Tasks 1–15 remain pending. These observations do not establish finished bilingual
+pages, numeric contrast, offline-document behavior, image acceptance, remote CI
+or real endpoint compatibility. No network target or external publication was used.

@@ -589,3 +589,15 @@ signature and catalog-versus-template escaping boundary and checked all seventee
 acceptance IDs. Current continuation text was cleaned of superseded design-stage
 instructions. The written amendment, companions and plan are ready for combined
 review; no W2 product task or new endpoint request has started.
+
+The owner approved W2 revision 2 and the final sixteen-task plan ("确认，请实施").
+Sequential implementation has begun in the retained Linux Python 3.12 Dev
+Container. Task 0 is complete: checked bilingual catalogs, pure presentation
+choices and shared theme tokens are packaged, schema/architecture/format gated.
+The final fast graph passed all eight children with 290 unit/harness tests;
+the full Python regression passed 491 tests. A real browser probe caught the
+system-dark/print-light CSS priority bug RED, then passed after the specific
+selector fix; the complete browser suite passed 25 tests with cleanup observed.
+Failure artifacts, command-entry ruling and the early cascade-check ruling are
+retained in the W2 ledger. Task 1 is next. This does not claim completed W2 UI,
+measured contrast, new image acceptance, remote CI or real-endpoint outcomes.

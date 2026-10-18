@@ -1,7 +1,7 @@
 # Anthropic compatibility diagnostic workbench and repair handoff
 
-Date: 2026-10-18. Revision: 2. Status: revision 1 was approved by the owner;
-the requested bilingual/dark-theme amendment is submitted for review.
+Date: 2026-10-18. Revision: 2. Status: owner-approved with the implementation
+plan on 2026-10-18, including the bilingual/theme amendment and companion surfaces.
 
 The owner approved the conversational direction: a focused diagnostic workbench
 for Anthropic-compatible endpoints used by Claude Code, a separate assessment
@@ -11,8 +11,8 @@ specification revision 1. The owner subsequently selected the first overview
 layout and requested Chinese/English support and a dark theme. An implementation
 plan and companion visuals exist; this revision incorporates that amendment.
 The owner subsequently approved the paired light/dark overview refinement.
-Product implementation and new endpoint calls have not started. Written amendment,
-companion surface and implementation-plan review remain outstanding.
+The owner then approved the written amendment, companion surfaces and plan for
+sequential implementation. No new live endpoint call is authorized by that approval.
 
 ## 1. Purpose and users
 
@@ -38,7 +38,7 @@ dominate the primary flow or reduce the selected scope silently.
 
 W1 is locally delivered; its specification, verification records and original
 results remain historical facts. The W2 core direction was approved; its
-localization/theme amendment is under review. W2 supersedes W1's embedded
+localization/theme amendment is approved. W2 supersedes W1's embedded
 long-report interaction for new Web pages and new
 presentation exports. It does not rewrite W1 acceptance or frozen Stage A files.
 
@@ -520,9 +520,8 @@ The amendment uses [W3C contrast guidance](https://www.w3.org/WAI/WCAG22/Underst
 and [the documented system-color preference mechanism](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@media/prefers-color-scheme)
 as implementation/verification references, not as proof that a static mock passes.
 
-The paired light/dark overview has been selected and approved. The written
-revision-2 amendment, companion issue/comparison/document compositions and updated
-implementation plan are now presented together for review before source work.
+The paired light/dark overview, written revision-2 amendment, companion
+issue/comparison/document compositions and updated implementation plan are approved.
 The plan preserves the owner's current-session sequential execution method.
 Static visual approval does not establish browser layout or contrast acceptance.
 Broader suite design remains a subsequent explicit milestone; W2 completion alone

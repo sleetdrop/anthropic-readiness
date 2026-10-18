@@ -70,4 +70,10 @@ forbidden_modules = ["anthropic_readiness.schema", "anthropic_readiness.config",
 name = "Pure domain, framing and validation"
 type = "forbidden"
 source_modules = ["anthropic_readiness.models", "anthropic_readiness.sse", "anthropic_readiness.validation", "anthropic_readiness.json_validation", "anthropic_readiness.requirements", "anthropic_readiness.report_reading"]
-forbidden_modules = ["anthropic_readiness.schema", "anthropic_readiness.config", "anthropic_readiness.contracts", "anthropic_readiness.transport", "anthropic_readiness.evidence", "anthropic_readiness.runner", "anthropic_readiness.reporting", "anthropic_readiness.context", "anthropic_readiness.cli", "httpx", "yaml", "pathlib", "importlib"]
+forbidden_modules = ["anthropic_readiness.schema", "anthropic_readiness.config", "anthropic_readiness.contracts", "anthropic_readiness.transport", "anthropic_readiness.evidence", "anthropic_readiness.runner", "anthropic_readiness.reporting", "anthropic_readiness.context", "anthropic_readiness.cli", "anthropic_readiness.presentation", "anthropic_readiness.localization", "httpx", "yaml", "pathlib", "importlib"]
+
+[[tool.importlinter.contracts]]
+name = "Presentation values stay independent of adapters and execution"
+type = "forbidden"
+source_modules = ["anthropic_readiness.presentation"]
+forbidden_modules = ["anthropic_readiness.localization", "anthropic_readiness.schema", "anthropic_readiness.config", "anthropic_readiness.runner", "anthropic_readiness.reporting", "anthropic_readiness.web", "pathlib", "importlib", "httpx", "sqlite3"]

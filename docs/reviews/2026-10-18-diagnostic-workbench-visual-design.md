@@ -2,7 +2,8 @@
 
 Date: 2026-10-18. Status: the owner selected the first overview concept and
 approved continued refinement, then approved the paired light/dark overview
-refinement on 2026-10-18. Companion surfaces are submitted for review.
+refinement on 2026-10-18. Companion surfaces and the written implementation
+package were approved on the same date ("确认，请实施").
 These are static design images, not an implemented or browser-verified product.
 The subsequent Chinese/English and dark-theme amendment is included below.
 
@@ -87,11 +88,10 @@ passes and zero protocol-passing cases despite recovery of a specific check.
 The [approved specification](../superpowers/specs/2026-10-18-diagnostic-workbench-design.md)
 governs behavior. The [implementation plan](../superpowers/plans/2026-10-18-diagnostic-workbench-implementation.md)
 maps this direction to sequential source work and explicit visual/functional
-acceptance. The paired overview/theme treatment is owner-approved. Companion
-surface review, the written localization/theme amendment and written-plan approval
-are still pending; this visual approval alone does not approve implementation.
-No prototype server, product implementation, container acceptance or new endpoint
-call is claimed by this design follow-up.
+acceptance. The paired overview/theme treatment, companion compositions, written
+localization/theme amendment and implementation plan are owner-approved.
+Sequential source work has started. The design images do not claim working
+interaction, measured contrast, container acceptance or real endpoint outcomes.
 
 ## Requested bilingual and dark-theme amendment
 

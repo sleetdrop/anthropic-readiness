@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:anthropic-readiness:localization-catalog:1.0",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "locale",
+    "messages"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "locale": {
+      "enum": [
+        "zh-CN",
+        "en"
+      ]
+    },
+    "messages": {
+      "type": "object",
+      "minProperties": 1,
+      "maxProperties": 1024,
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)*$"
+      },
+      "additionalProperties": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 8192
+      }
+    }
+  },
+  "additionalProperties": false
+}

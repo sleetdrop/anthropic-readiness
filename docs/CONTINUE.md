@@ -1,22 +1,26 @@
 # Local delivery status
 
-## Proposed next milestone: W2 final written-plan review
+## Current milestone: W2 sequential implementation
 
 The owner approved W2 specification revision 1 and the paired light/dark overview
 on 2026-10-18, then requested the next step. The
 [revision-2 specification](superpowers/specs/2026-10-18-diagnostic-workbench-design.md),
 [visual handoff](reviews/2026-10-18-diagnostic-workbench-visual-design.md) and
 [16-task implementation plan](superpowers/plans/2026-10-18-diagnostic-workbench-implementation.md)
-are ready for a combined review of the written localization/theme amendment,
-companion compositions and implementation plan. The plan includes a five-checkpoint
+were approved together on 2026-10-18 ("确认，请实施"), including the written
+localization/theme amendment and companion compositions. The plan includes a five-checkpoint
 reading summary, paired token/typography starting values, theme geometry checks
 and evidence-based report figures. Earlier overview/dark proposals are historical;
 use the exact approved pair in the visual handoff. See the
 [design ledger](harness/diagnostic-workbench-ledger.md) for chronological decisions.
 
-No W2 product task has started. Preserve the chosen current-checkout/prepared
+Task 0 (bilingual/theme foundation) is complete; Task 1 is next. Tasks 1–15
+remain pending. Task 0 passed the eight-check fast graph (290 unit/harness tests),
+491 full Python regressions and 25 browser tests in the prepared Linux Python
+3.12 Dev Container. These are foundation/regression checks, not whole-W2 visual
+or container-image acceptance. Preserve the chosen current-checkout/prepared
 Dev Container and sequential current-agent execution with one independent end
-review once the written plan is approved. Do not reopen completed W1 work.
+review. Do not reopen completed W1 work.
 Formal coverage remains four installed cases, with broader API/client scope
 separate. Local synthetic development remains authorized; no new live endpoint
 call or external publication is authorized by this design/plan review.

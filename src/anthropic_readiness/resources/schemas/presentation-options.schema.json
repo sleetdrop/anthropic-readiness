@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:anthropic-readiness:presentation-options:1.0",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "locale",
+    "theme"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "locale": {
+      "enum": [
+        "zh-CN",
+        "en"
+      ]
+    },
+    "theme": {
+      "enum": [
+        "light",
+        "dark",
+        "system"
+      ]
+    }
+  },
+  "additionalProperties": false
+}

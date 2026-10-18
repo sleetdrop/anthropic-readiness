@@ -8,15 +8,15 @@
 
 **Tech Stack:** Existing Python package, FastAPI/Jinja, SQLite, stdlib ZIP/hash/filesystem support, packaged HTML/CSS/JavaScript with strict JSDoc/TypeScript checks, existing Node/Chromium harness and Docker images. No SPA, archive execution, hosted service, model judge or new runtime dependency is planned.
 
-**Spec:** [W2 specification revision 2](../specs/2026-10-18-diagnostic-workbench-design.md). Revision 1 is owner-approved; revision 2 adds the owner-requested localization/theme amendment and is submitted with this updated plan.
+**Spec:** [W2 specification revision 2](../specs/2026-10-18-diagnostic-workbench-design.md), approved with this plan on 2026-10-18.
 
-**Status:** draft for owner review. The owner selected the first run-overview image, requested Chinese/English and a dark theme, then approved the paired Chinese light/dark overview refinement. Companion issue/comparison/document images, the written localization/theme amendment and this 16-task plan still require owner review. No implementation task has started. Task 0 is the added presentation foundation; existing task numbers are retained for traceability.
+**Status:** owner-approved for sequential implementation in the current session on 2026-10-18 ("确认，请实施"). Revision-2 written scope and companion compositions are included. Task 0 is complete; Task 1 is next, Tasks 1–15 remain pending. Existing task numbers are retained for traceability.
 
 ## Owner review summary
 
 The accepted overview pair is the visual baseline for one shared light/dark
 system. Companion issue/comparison/document surfaces inherit that system while
-keeping their different operational and reading purposes. The pending review
+keeping their different operational and reading purposes. The completed review
 covers the revision-2 written amendment, those companion compositions and this
 plan together; do not request another choice among superseded overview images.
 
@@ -226,11 +226,11 @@ independent reviewer or implementer agent is dispatched.
 
 **Interfaces:** `Locale = Literal["zh-CN", "en"]`; `Theme = Literal["light", "dark", "system"]`; frozen `PresentationOptions(locale: Locale = "zh-CN", theme: Theme = "system")` with `to_json() -> JsonObject`. Pure `presentation.py` validates supported values without I/O. `load_catalog(locale: Locale) -> Mapping[str, str]` and `translate(catalog: Mapping[str, str], key: str, params: Mapping[str, str | int | float] | None = None) -> str` live in the resource adapter. Named placeholders cannot use attribute/index expressions, conversions or arbitrary format execution.
 
-- [ ] Write tests asserting identical key sets and named parameters in both catalogs, complete singular/plural message forms, strict option/cookie-value enums, missing-key/parameter errors and original protocol/code/data values untouched. Parameters remain ordinary text, never trusted markup; HTML escaping is tested at the actual template boundary in Task 11. Unknown historical reason codes receive a localized generic explanation plus explicitly raw source text; they are not missing authored keys.
-- [ ] Run `UV_OFFLINE=1 uv run --frozen pytest -q tests/unit/test_localization.py tests/unit/test_presentation_options.py`; retain RED before the new foundation exists.
-- [ ] Implement small packaged catalogs and semantic theme tokens for background/surface/text/muted/border/status/code/focus/selection/native controls. Use CSS media queries for system appearance, explicit selectors for overrides and forced light print tokens. Keep English command help and original data outside catalog translation. No translation service, i18n runtime dependency or browser storage is added.
-- [ ] Rerun focused tests and architecture/resource checks. Verify strict catalog validation rejects a deliberately removed key or mismatched placeholder. Contrast and actual layout/interaction are verified in Tasks 12/13, not claimed from token declarations.
-- [ ] Commit: `feat: define bilingual presentation catalogs and theme tokens`.
+- [x] Write tests asserting identical key sets and named parameters in both catalogs, complete singular/plural message forms, strict option/cookie-value enums, missing-key/parameter errors and original protocol/code/data values untouched. Parameters remain ordinary text, never trusted markup; HTML escaping is tested at the actual template boundary in Task 11. Unknown historical reason codes receive a localized generic explanation plus explicitly raw source text; they are not missing authored keys.
+- [x] Run `UV_OFFLINE=1 uv run --frozen pytest -q tests/unit/test_localization.py tests/unit/test_presentation_options.py`; retain RED before the new foundation exists.
+- [x] Implement small packaged catalogs and semantic theme tokens for background/surface/text/muted/border/status/code/focus/selection/native controls. Use CSS media queries for system appearance, explicit selectors for overrides and forced light print tokens. Keep English command help and original data outside catalog translation. No translation service, i18n runtime dependency or browser storage is added.
+- [x] Rerun focused tests and architecture/resource checks. Verify strict catalog validation rejects a deliberately removed key or mismatched placeholder. Contrast and actual layout/interaction are verified in Tasks 12/13, not claimed from token declarations.
+- [x] Commit: `feat: define bilingual presentation catalogs and theme tokens`.
 
 ### Task 1: Versioned diagnostic contracts and pure values
 
@@ -466,6 +466,6 @@ than weakening required checks or quietly expanding scope.
 
 Preserve the owner's execution method: current checkout/prepared Dev Container,
 sequential current-agent implementation, one independent end review. Written-plan
-approval and companion visual review remain outstanding. Until approved, do not
-check implementation steps, change product source, start tests against a real
-endpoint or reopen completed W1 work.
+approval and companion visual review completed on 2026-10-18. Execute sequentially
+without per-task permission prompts. Real endpoint requests remain separately
+authorized operations; do not reopen completed W1 work.
