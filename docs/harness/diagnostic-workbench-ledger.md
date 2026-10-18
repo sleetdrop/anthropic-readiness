@@ -63,6 +63,37 @@ selection. Selected-direction refinement must replace generated text with exact
 fixture-driven copy and verify counts and actual viewport geometry. Images are
 layout concepts, not working UI, browser acceptance or endpoint observations.
 
-Current status: waiting for visual direction selection. The issue, comparison and
+Status after the first alternatives: waiting for visual direction selection. The issue, comparison and
 standalone-report surfaces still need design work in that selected direction.
 No prototype server, product implementation, new dependency or live call ran.
+
+## 2026-10-18: selected direction, companion visuals and implementation plan
+
+The owner selected the first displayed overview, then confirmed proceeding with
+that direction. Refinements use a smaller target-alias heading, secondary model
+metadata and neutral execution completion distinct from successful checks.
+Three companion surfaces were generated: issue diagnosis, repair comparison and
+standalone report. The [visual handoff](../reviews/2026-10-18-diagnostic-workbench-visual-design.md)
+records their exact artifact mapping, consistent synthetic repair story, and
+the distinction between static concepts and real layout/interaction acceptance.
+
+The [implementation plan](../superpowers/plans/2026-10-18-diagnostic-workbench-implementation.md)
+contains 15 sequential tasks and a W2-01 through W2-14 acceptance map. It preserves
+the current checkout/Dev Container execution method and one end-of-stage review.
+Source inspection additionally covered CLI dispatch, HTTP security/body limits,
+job admission, fresh-directory behavior, report projection and check harnesses.
+
+Author self-review corrected a recipe/context task-order dependency, chose a public
+argparse interface, added a separate presentation-3 export-manifest schema rather
+than changing legacy consts, and clarified standalone summary versus original-source
+archive delivery. It also binds metadata-generation modules into core identity
+and makes matrix passing-count denominators explicit. Task checkboxes remain empty.
+
+Current status: companion visual and written implementation-plan review pending.
+No product code, new runtime dependency or real endpoint call has been introduced.
+
+The finalized documents passed `scripts/check_docs.py` in the retained Linux
+Python 3.12 Dev Container with `UV_OFFLINE=1` / `uv run --frozen`; Git whitespace
+checks were clean. The companion PNGs were retained locally and SHA-256 read.
+No product unit/integration/browser/image test was run for this documentation-only
+change, and no working prototype or real-viewport acceptance is claimed.

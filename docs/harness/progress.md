@@ -537,3 +537,16 @@ selection. Their order/artifact mapping and a disclosed current-case title defec
 in the third image are recorded in the W2 design ledger. These are design images,
 not executable interfaces or acceptance evidence. Remaining surfaces and visual
 selection are pending; product code and test catalog remain unchanged.
+
+The owner selected the first overview direction and confirmed proceeding. Issue,
+comparison and standalone-document companion images now extend that selection;
+their synthetic story and limitations are recorded in the W2 visual handoff.
+A 15-task sequential implementation plan was written and self-reviewed, including
+exact upload bounds, versioned execution identity, legacy import limits and a
+two-environment repair/new-regression acceptance flow. Companion visuals and the
+written plan await owner review; no implementation step or live call has started.
+
+The W2 planning/design documents passed the documentation/link/collaboration check
+in the prepared Linux Python 3.12 Dev Container, offline/frozen. Whitespace checks
+were clean. This is documentation verification only, not product, browser,
+container-image or endpoint acceptance.

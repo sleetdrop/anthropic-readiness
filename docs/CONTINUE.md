@@ -1,16 +1,20 @@
 # Local delivery status
 
-## Proposed next milestone: W2 visual design
+## Proposed next milestone: W2 visual and implementation-plan review
 
 The owner approved a conversational direction for a focused Anthropic diagnostic
 workbench: quiet single-screen run monitoring, issue investigation, separate
 assessment documents and a portable colleague/agent handoff followed by retesting.
 The [W2 specification](superpowers/specs/2026-10-18-diagnostic-workbench-design.md)
 and [design ledger](harness/diagnostic-workbench-ledger.md) record the proposal.
-The owner approved the written specification on 2026-10-18. New visual layouts
-are not yet owner-approved; there is no W2 implementation plan or product
-implementation. Resume visual design,
-not the completed W1 plan. Formal case coverage remains the four installed cases;
+The owner approved the written specification on 2026-10-18, selected the first
+overview concept and confirmed continued refinement. The
+[companion visual design](reviews/2026-10-18-diagnostic-workbench-visual-design.md)
+and [15-task implementation plan](superpowers/plans/2026-10-18-diagnostic-workbench-implementation.md)
+are ready for owner review. No W2 product implementation has started. Preserve
+sequential current-agent execution in the existing checkout/prepared Dev Container
+once the plan is approved; do not reopen the completed W1 plan.
+Formal case coverage remains the four installed cases;
 broader API/client coverage is separately scoped. No new live call is authorized.
 
 ## Current milestone: W1 completed locally
