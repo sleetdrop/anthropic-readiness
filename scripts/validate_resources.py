@@ -99,6 +99,7 @@ def validate_resources(root: Path) -> list[str]:
         "preferences",
         "localization-catalog",
         "diagnostic-identity-manifest",
+        "assessment-context-verification",
     }
     if set(schemas) != expected:
         errors.append("schema_inventory")

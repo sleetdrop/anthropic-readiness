@@ -15,6 +15,7 @@ CORE_SCHEMAS = frozenset(
         "retest-recipe",
         "assessment-context",
         "diagnostic-identity-manifest",
+        "assessment-context-verification",
     }
 )
 

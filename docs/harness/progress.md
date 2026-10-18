@@ -621,3 +621,12 @@ equality and a no-Git fresh process were exercised. Final fast checks passed all
 eight children (342 unit/harness tests), and full Python regression passed 543
 tests. Tasks 3–15 remain; no new image, remote CI or real endpoint acceptance
 is inferred from these checks.
+
+Task 2 was delivered locally as `a79102c`. Task 3 adds immutable pre-request
+contexts, transactional migration 3 and admission/worker guards, retaining old
+plan/result bytes and legacy status. A final identity record precedes the event
+that exposes completion. The targeted provenance/store/worker/migration checks
+passed 43 tests; the full Python regression passed 555 with no failures/errors/
+skips. Final fast verification passed all eight children (344 unit/harness tests).
+Rulings and retained RED evidence are
+recorded in the W2 ledger. No upstream call or external write was made.

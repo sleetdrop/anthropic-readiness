@@ -67,7 +67,7 @@ def test_legacy_store_migrates_without_mutating_plan_bytes(tmp_path: Path) -> No
     before = path.read_bytes()
     store = JobStore(root)
     with closing(sqlite3.connect(root / "jobs.sqlite3")) as connection:
-        assert connection.execute("PRAGMA user_version").fetchone()[0] == 2
+        assert connection.execute("PRAGMA user_version").fetchone()[0] == 3
     assert path.read_bytes() == before
     job = store.admit(frozen.id, frozen.session_id, "migrated", now=datetime.now(UTC)).job
     filtered = store.history(

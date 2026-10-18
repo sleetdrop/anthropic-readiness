@@ -3,8 +3,9 @@
   "semantic_revision": "1",
   "roots": [
     "__init__.py",
-    "runner.py",
-    "diagnostics/identity.py"
+    "application.py",
+    "diagnostics/identity.py",
+    "runner.py"
   ],
   "optional_roots": [
     "diagnostics/context.py",
@@ -22,6 +23,7 @@
     "diagnostics/context.py",
     "diagnostics/core_contracts.py",
     "diagnostics/identity.py",
+    "diagnostics/inventory.py",
     "diagnostics/models.py",
     "diagnostics/recipes.py",
     "diagnostics/reduction.py",
@@ -51,6 +53,7 @@
     "resources/contracts/anthropic-messages-2023-06-01-core/1.0.0/rules.json",
     "resources/diagnostic-identity.json",
     "resources/report-context.json",
+    "resources/schemas/assessment-context-verification.schema.json",
     "resources/schemas/assessment-context.schema.json",
     "resources/schemas/capture.schema.json",
     "resources/schemas/checkpoint.schema.json",

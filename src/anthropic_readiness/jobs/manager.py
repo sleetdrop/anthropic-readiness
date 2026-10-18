@@ -19,7 +19,8 @@ from typing import cast
 
 from anthropic_readiness.application import build_plan
 from anthropic_readiness.credentials import AllowlistedCredentials, MemoryCredentials
-from anthropic_readiness.evidence import safe_path, verify_evidence
+from anthropic_readiness.diagnostics.context import bind_run_context
+from anthropic_readiness.evidence import json_bytes, safe_path, verify_evidence
 from anthropic_readiness.jobs.store import JobStore
 from anthropic_readiness.jobs.worker import (
     MAX_CREDENTIAL_BYTES,
@@ -308,11 +309,18 @@ class JobManager:
         )
         self.store.transition(run_id, "queued", "running")
         try:
+            initialization: JsonObject = {
+                "type": "initialize",
+                "credential": self._credentials.pop(run_id),
+            }
+            diagnostic_context = self.store.get_plan_context(plan.id)
+            if diagnostic_context is not None:
+                initialization["context_sha256"] = hashlib.sha256(
+                    json_bytes(bind_run_context(diagnostic_context, run_id))
+                ).hexdigest()
             process.start()
             self._active = OwnedWorker(run_id, process, parent_control, parent_observations)
-            send_message(
-                parent_control, {"type": "initialize", "credential": self._credentials.pop(run_id)}
-            )
+            send_message(parent_control, initialization)
         except (OSError, ValueError, KeyError):
             parent_control.close()
             parent_observations.close()

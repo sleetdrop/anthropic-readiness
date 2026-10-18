@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import os
 from contextlib import suppress
 from multiprocessing.connection import Connection
@@ -11,12 +12,14 @@ from threading import Condition, Event, Thread, Timer
 from anthropic_readiness.application import build_plan, run_assessment
 from anthropic_readiness.config import strings
 from anthropic_readiness.credentials import MemoryCredentials
+from anthropic_readiness.diagnostics.context import validate_plan_context
 from anthropic_readiness.evidence import json_bytes
 from anthropic_readiness.models import EvidenceRef, JsonObject, object_value, strict_json
 from anthropic_readiness.operations.checkpoints import CheckpointStore
 from anthropic_readiness.operations.contracts import validate_operational
 from anthropic_readiness.operations.models import WorkerEvent
 from anthropic_readiness.operations.ports import CancelToken, ObservationError
+from anthropic_readiness.operations.storage import MAX_DOCUMENT_BYTES
 
 MAX_IPC_BYTES = 262144
 MAX_CREDENTIAL_BYTES = 16384
@@ -124,7 +127,14 @@ def worker_main(
     try:
         validate_operational(plan, "plan")
         initialization = receive_message(control)
-        if set(initialization) != {"type", "credential"} or initialization["type"] != "initialize":
+        if (
+            set(initialization)
+            not in (
+                {"type", "credential"},
+                {"type", "credential", "context_sha256"},
+            )
+            or initialization["type"] != "initialize"
+        ):
             raise ValueError("ipc_initialization_invalid")
         secret = initialization["credential"]
         if secret is not None and (
@@ -138,6 +148,22 @@ def worker_main(
         assessment = build_plan(object_value(plan["target"]), strings(plan["profiles"]))
         if assessment.to_json() != plan["plan"]:
             raise ValueError("plan_integrity")
+        diagnostic_context: JsonObject | None = None
+        context_path = root / "assessment-context.json"
+        context_digest = initialization.get("context_sha256")
+        if context_digest is not None:
+            if not isinstance(context_digest, str):
+                raise ValueError("diagnostic_context_integrity")
+            with context_path.open("rb") as stream:
+                context_data = stream.read(MAX_DOCUMENT_BYTES + 1)
+            if len(context_data) > MAX_DOCUMENT_BYTES:
+                raise ValueError("diagnostic_context_size_limit")
+            if hashlib.sha256(context_data).hexdigest() != context_digest:
+                raise ValueError("diagnostic_context_integrity")
+            diagnostic_context = object_value(strict_json(context_data.decode()))
+            validate_plan_context(diagnostic_context, assessment.to_json(), run_id=root.name)
+        elif context_path.exists():
+            raise ValueError("diagnostic_unexpected_context")
         run_assessment(
             assessment,
             root / "assessment",
@@ -145,6 +171,7 @@ def worker_main(
             observer=observer,
             control=token,
             run_id=root.name,
+            assessment_context=diagnostic_context,
         )
     except (Exception, KeyboardInterrupt):
         # Only a fixed code crosses the boundary. Exceptions can contain model text.

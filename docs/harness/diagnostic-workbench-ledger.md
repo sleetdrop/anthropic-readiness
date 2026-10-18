@@ -306,3 +306,42 @@ resource changes and real reverse-dependency rejection. Final full Python run
 passed 543 tests with zero failures/errors/skips. Earlier failures and the prior
 542-test run remain separate. Documentation/whitespace checks accompany delivery.
 No new browser/image acceptance or real endpoint outcome is claimed. Task 3 is next.
+
+## 2026-10-18: Task 3 pre-request provenance
+
+Task 2 delivery commit is `a79102c`. Additive database migration 3 stores checked
+plan contexts transactionally without modifying frozen plans or backfilling old
+history. Admission binds the actual run ID before queue publication; the child
+verifies the stored digest and context before sending requests. Standalone
+application execution writes its context after fresh-directory creation and
+before the first send. Original result/capture schemas and bytes remain unchanged.
+
+Ruling: preserve the pre-request header and write a separate final
+`assessment-context-verification.json` — drift must remain visible even if files
+are later restored — cost if wrong: one extra metadata artifact/schema. Import/
+export tasks require an unchanged final check bound to exact context/result bytes
+for controlled eligibility. Missing or changed verification never certifies it.
+
+Ruling: admission validation runs inside the store transaction after existing-job
+idempotency branches — lost-reply retries must return the original admission even
+after the installation changes — cost if wrong: a short identity scan holds the
+SQLite admission lock. Parent initialization supplies the original context digest;
+the child and application independently revalidate before networking.
+
+Ruling: enrich only diagnostic recipes with an explicit pure assertion-category
+mapping — frozen plans have no category field, while the new recipe requires it
+— cost if wrong: mapping maintenance for future assertions. Unknown IDs fail;
+neither old plans nor the stronger new schema are changed to hide the difference.
+
+The synthetic worker test caught completion being visible before the final
+verification file existed. Finalization now precedes forwarding result_committed;
+the application finally block still records interrupted execution when possible.
+The focused provenance/store/worker/migration/application set passed 43 tests.
+Initial missing-module, category binding, manifest registration and completion
+race failures remain under `artifacts/w2/task3/`. Strict typing found fixture-only
+list variance and a test import issue; fixes preserve assertions. Final fast/full
+regression passed 555 tests, zero failures/errors/skips. The final fast-6 graph
+passed all eight children with 344 unit/harness tests after a fixture-only
+lint/type compatibility fix. Documentation/link checks and whitespace checks
+passed. No completed W2 UI,
+image, remote CI or live result is claimed from this foundation work.

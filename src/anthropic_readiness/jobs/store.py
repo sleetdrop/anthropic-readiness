@@ -17,6 +17,8 @@ from typing import cast
 
 from anthropic_readiness.application import build_plan
 from anthropic_readiness.config import fingerprint, strings, target_from_document
+from anthropic_readiness.diagnostics.context import bind_run_context, validate_plan_context
+from anthropic_readiness.diagnostics.core_contracts import validate_core
 from anthropic_readiness.evidence import atomic_write, json_bytes, safe_path
 from anthropic_readiness.models import JsonObject, object_value, strict_json
 from anthropic_readiness.operations.contracts import validate_operational
@@ -74,7 +76,7 @@ class JobStore:
                 atomic_write(self.path, b"")
             with self._connection() as connection:
                 version = connection.execute("PRAGMA user_version").fetchone()[0]
-                if version not in {0, 1, 2}:
+                if version not in {0, 1, 2, 3}:
                     raise ValueError("unsupported_job_store_version")
                 if version == 0:
                     connection.executescript("""
@@ -133,6 +135,20 @@ class JobStore:
                         )
                         connection.execute("PRAGMA user_version=2")
                         connection.commit()
+                        version = 2
+                    except BaseException:
+                        connection.rollback()
+                        raise
+                if version == 2:
+                    connection.execute("BEGIN IMMEDIATE")
+                    try:
+                        connection.execute(
+                            "CREATE TABLE diagnostic_plan_contexts ("
+                            "plan_id TEXT PRIMARY KEY REFERENCES plans(id), "
+                            "document TEXT NOT NULL, sha256 TEXT NOT NULL)"
+                        )
+                        connection.execute("PRAGMA user_version=3")
+                        connection.commit()
                     except BaseException:
                         connection.rollback()
                         raise
@@ -160,10 +176,21 @@ class JobStore:
                 raise
 
     def create_plan(
-        self, target: JsonObject, profiles: tuple[str, ...], session_id: str, *, now: datetime
+        self,
+        target: JsonObject,
+        profiles: tuple[str, ...],
+        session_id: str,
+        *,
+        now: datetime,
+        context: JsonObject | None = None,
     ) -> FrozenPlan:
         owner(session_id)
         plan = build_plan(target, profiles)
+        if context is not None:
+            context = object_value(context)
+            validate_plan_context(context, plan.to_json())
+            if context["run_id"] is not None:
+                raise ValueError("diagnostic_context_already_bound")
         frozen = FrozenPlan(
             str(uuid.uuid4()),
             session_id,
@@ -197,7 +224,31 @@ class JobStore:
                     json.dumps(plan.target.beta_headers),
                 ),
             )
+            if context is not None:
+                context_data = json_bytes(context)
+                connection.execute(
+                    "INSERT INTO diagnostic_plan_contexts VALUES (?, ?, ?)",
+                    (frozen.id, context_data.decode(), hashlib.sha256(context_data).hexdigest()),
+                )
         return frozen
+
+    def _plan_context(self, connection: sqlite3.Connection, plan_id: str) -> JsonObject | None:
+        identifier(plan_id)
+        row = connection.execute(
+            "SELECT document, sha256 FROM diagnostic_plan_contexts WHERE plan_id=?", (plan_id,)
+        ).fetchone()
+        if row is None:
+            return None
+        data = str(row["document"]).encode()
+        if len(data) > MAX_DOCUMENT_BYTES or hashlib.sha256(data).hexdigest() != row["sha256"]:
+            raise ValueError("diagnostic_context_integrity")
+        document = object_value(strict_json(data.decode()))
+        validate_core(document, "assessment-context")
+        return document
+
+    def get_plan_context(self, plan_id: str) -> JsonObject | None:
+        with self._connection() as connection:
+            return self._plan_context(connection, plan_id)
 
     def _plan(
         self,
@@ -275,6 +326,9 @@ class JobStore:
                 )
                 return Admission(job_record(existing), False)
             frozen = self._plan(connection, plan_id, session_id, now=now)
+            context = self._plan_context(connection, plan_id)
+            if context is not None:
+                validate_plan_context(context, frozen.plan)
             waiting = connection.execute(
                 "SELECT COUNT(*) FROM jobs WHERE state='queued'"
             ).fetchone()[0]
@@ -287,6 +341,10 @@ class JobStore:
             root = safe_path(self.root, "runs/" + run_id)
             root.mkdir(mode=0o700, parents=True)
             atomic_write(root / "plan.json", json_bytes(frozen.to_json()))
+            if context is not None:
+                atomic_write(
+                    root / "assessment-context.json", json_bytes(bind_run_context(context, run_id))
+                )
             connection.execute(
                 "INSERT INTO jobs VALUES (?, ?, ?, ?, ?, ?, ?)",
                 (

@@ -10,7 +10,7 @@
 
 **Spec:** [W2 specification revision 2](../specs/2026-10-18-diagnostic-workbench-design.md), approved with this plan on 2026-10-18.
 
-**Status:** owner-approved for sequential implementation in the current session on 2026-10-18 ("确认，请实施"). Revision-2 written scope and companion compositions are included. Tasks 0–2 are complete; Task 3 is next, Tasks 3–15 remain pending. Existing task numbers are retained for traceability.
+**Status:** owner-approved for sequential implementation in the current session on 2026-10-18 ("确认，请实施"). Revision-2 written scope and companion compositions are included. Tasks 0–3 are complete; Task 4 is next, Tasks 4–15 remain pending. Existing task numbers are retained for traceability.
 
 ## Owner review summary
 
@@ -219,6 +219,28 @@ For standalone CLI, `run_assessment` gains an optional `assessment_context: Json
 
 Recipe verification compares regenerated requests excluding only URL/auth and explicit display/transport context. W2 permits a different endpoint/build label, reported prominently. Changed model/API/betas/aliases/exclusions/scope/semantic identities cannot receive controlled recovery badges. Changed time/size/event limits conservatively make the whole comparison incomparable in W2. Requests remain finite and profile-required membership stays complete.
 
+The pre-request context stays immutable. After execution, write the separate
+packaged-schema-validated `assessment-context-verification.json`, binding its
+`context_sha256` to the exact header bytes, the expected/observed implementation
+digests and `identity_status` (`unchanged`, `changed`, `unavailable`) with reason
+codes. A missing final check is not verified identity. Tasks 6/7 require an
+unchanged matching record for controlled baseline eligibility and retain it in
+exports; changed/unavailable records preserve observed result/evidence bytes.
+Task 3 adds this private core schema and hashes it with metadata-generation code.
+The application execution adapter joins the identity roots when it owns finalization.
+
+Admission validation runs inside `JobStore.admit` after its existing-job branches,
+so `JobManager.submit` reaches the same guarded transaction without breaking
+idempotent replies. The worker and `ContextObserver.begin` revalidate independently.
+Migration 3 adds the context table; old plans are not backfilled with proof.
+
+Frozen execution plans retain their original assertion fields. The pure explicit
+`diagnostics/inventory.py` mapping adds categories only to new diagnostic recipes;
+unknown assertion IDs fail rather than guessing. Worker initialization carries
+the original stored context digest, not unbounded metadata, so a missing/replaced
+sidecar is rejected before requests. The final verification is written before
+forwarding `result_committed`, since that event exposes terminal state to readers.
+
 ### CLI interface and exit semantics
 
 Add `--language {zh-CN,en}` and `--theme {light,dark,system}` to report-producing
@@ -283,11 +305,11 @@ independent reviewer or implementer agent is dispatched.
 
 **Interfaces:** `ContextObserver` implements the existing `ExecutionObserver`; `context_for_plan(plan: RunPlan, recipe: RetestRecipe, *, baseline: BaselineRecord | None = None) -> AssessmentContext`; `JobStore.get_plan_context(plan_id: str) -> JsonObject | None`; optional `context` create-plan keyword and optional `assessment_context` application keyword as specified above. This task consumes validated recipe fixtures; Task 4 supplies real recipe generation and Web planning integration.
 
-- [ ] Write `test_context_exists_before_first_request`, `test_admission_context_is_idempotent`, `test_identity_changes_between_preview_and_start`, `test_context_write_failure_sends_zero_requests` and `test_old_store_is_not_backfilled_as_verified`. Assert an observer checks sidecar bytes before the synthetic transport records its first call; an old plan remains legacy.
-- [ ] Run `UV_OFFLINE=1 uv run --frozen pytest -q tests/integration/test_diagnostic_context.py`; retain RED.
-- [ ] Implement transactional additive migration/context publication and worker/application guards. Preserve create-directory behavior, worker ownership, cancellation and finalization. Capture baseline linkage before networking, without adding fields to result 1.0.
-- [ ] Rerun the focused file plus `test_job_store.py`, `test_job_manager.py`, `test_worker_lifecycle.py`, `test_history_migration.py` and `tests/unit/test_application.py`. Inject restart between filesystem write and DB commit; no orphan record may trigger requests or overwrite a result.
-- [ ] Commit: `feat: persist immutable diagnostic context before execution`.
+- [x] Write `test_context_exists_before_first_request`, `test_admission_context_is_idempotent`, `test_identity_changes_between_preview_and_start`, `test_context_write_failure_sends_zero_requests` and `test_old_store_is_not_backfilled_as_verified`. Assert an observer checks sidecar bytes before the synthetic transport records its first call; an old plan remains legacy.
+- [x] Run `UV_OFFLINE=1 uv run --frozen python -m pytest -q tests/integration/test_diagnostic_context.py`; retain RED.
+- [x] Implement transactional additive migration/context publication and worker/application guards. Preserve create-directory behavior, worker ownership, cancellation and finalization. Capture baseline linkage before networking, without adding fields to result 1.0.
+- [x] Rerun the focused file plus `test_job_store.py`, `test_job_manager.py`, `test_worker_lifecycle.py`, `test_history_migration.py` and `tests/unit/test_application.py`. Inject restart between filesystem write and DB commit; no orphan record may trigger requests or overwrite a result.
+- [x] Commit: `feat: persist immutable diagnostic context before execution`.
 
 ### Task 4: Installed-plan recipes and retest preparation
 

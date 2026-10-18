@@ -5,6 +5,7 @@ from pathlib import Path
 
 from anthropic_readiness.config import target_from_document
 from anthropic_readiness.contracts import resolve_contract
+from anthropic_readiness.diagnostics.context import ContextObserver
 from anthropic_readiness.models import JsonObject, RunResult
 from anthropic_readiness.operations.observer import DiskExecutionObserver
 from anthropic_readiness.operations.ports import CancelToken, CredentialProvider, ExecutionObserver
@@ -27,15 +28,26 @@ def run_assessment(
     observer: ExecutionObserver | None = None,
     control: CancelToken | None = None,
     run_id: str | None = None,
+    assessment_context: JsonObject | None = None,
 ) -> RunResult:
-    return execute_run(
-        plan,
-        HttpTransport(),
-        output,
-        credentials=credentials,
-        observer=observer
-        if observer is not None
-        else DiskExecutionObserver(output / "operations", output),
-        control=control,
-        run_id=run_id,
+    delegate = (
+        observer if observer is not None else DiskExecutionObserver(output / "operations", output)
     )
+    context_observer = (
+        ContextObserver(output, assessment_context, delegate)
+        if assessment_context is not None
+        else None
+    )
+    try:
+        return execute_run(
+            plan,
+            HttpTransport(),
+            output,
+            credentials=credentials,
+            observer=context_observer if context_observer is not None else delegate,
+            control=control,
+            run_id=run_id,
+        )
+    finally:
+        if context_observer is not None:
+            context_observer.finalize()
