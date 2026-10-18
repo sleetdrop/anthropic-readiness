@@ -609,3 +609,15 @@ The latest fast graph passed all eight children (313 unit/harness tests), and
 the full Python regression passed 514 tests with no failures/errors/skips.
 The fact-schema reuse ruling and its later localization/sanitization obligations
 are in the W2 ledger. Tasks 2–15 remain; no live request or external write occurred.
+
+Task 1 was delivered locally as `f1a1d04`. Task 2 now checks the installed
+execution file/resource closure and active transitive dependencies, excluding
+presentation modules/catalogs/themes. It verifies manifest integrity, rejects
+undeclared imports/resources and missing metadata, and does not depend on Git.
+Core validation was split from the public presentation-capable adapter; already
+locked packaging 26.3 was promoted to runtime for proper marker/extras parsing.
+Both rulings and their costs are in the W2 ledger. Actual wheel/editable identity
+equality and a no-Git fresh process were exercised. Final fast checks passed all
+eight children (342 unit/harness tests), and full Python regression passed 543
+tests. Tasks 3–15 remain; no new image, remote CI or real endpoint acceptance
+is inferred from these checks.

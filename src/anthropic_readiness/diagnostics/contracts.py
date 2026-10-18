@@ -6,6 +6,7 @@ from importlib.resources import files
 
 from jsonschema import Draft202012Validator
 
+from anthropic_readiness.diagnostics.core_contracts import CORE_SCHEMAS, validate_core
 from anthropic_readiness.json_validation import checked_validator
 from anthropic_readiness.models import JsonObject, object_value, strict_json
 
@@ -40,6 +41,11 @@ def _validator(name: str) -> Draft202012Validator:
 
 def validate_diagnostic(document: JsonObject, name: str) -> None:
     """Check structure here; services own cross-file/evidence relationship checks."""
+    if name not in SCHEMAS:
+        raise ValueError("unknown_diagnostic_schema")
+    if name in CORE_SCHEMAS:
+        validate_core(document, name)
+        return
     validator = _validator(name)
     json.dumps(document, allow_nan=False)
     errors = sorted(validator.iter_errors(document), key=lambda error: str(error.path))

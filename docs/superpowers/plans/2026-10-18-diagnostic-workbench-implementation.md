@@ -6,11 +6,11 @@
 
 **Architecture:** Keep one runner and authoritative result/evidence reader. Add versioned portable metadata, bounded archive/storage adapters and pure eligibility/comparison projections. Workbench views and standalone documents compose the same checked facts independently; CLI and Web call the same diagnostic services.
 
-**Tech Stack:** Existing Python package, FastAPI/Jinja, SQLite, stdlib ZIP/hash/filesystem support, packaged HTML/CSS/JavaScript with strict JSDoc/TypeScript checks, existing Node/Chromium harness and Docker images. No SPA, archive execution, hosted service, model judge or new runtime dependency is planned.
+**Tech Stack:** Existing Python package, FastAPI/Jinja, SQLite, stdlib ZIP/hash/filesystem support, packaged HTML/CSS/JavaScript with strict JSDoc/TypeScript checks, existing Node/Chromium harness and Docker images. No SPA, archive execution, hosted service or model judge. Task 2 promotes already-locked packaging 26.3 from build tooling to a runtime dependency for standards-compliant Requires-Dist marker/extras parsing; no package version upgrade or network preparation was needed.
 
 **Spec:** [W2 specification revision 2](../specs/2026-10-18-diagnostic-workbench-design.md), approved with this plan on 2026-10-18.
 
-**Status:** owner-approved for sequential implementation in the current session on 2026-10-18 ("确认，请实施"). Revision-2 written scope and companion compositions are included. Tasks 0–1 are complete; Task 2 is next, Tasks 2–15 remain pending. Existing task numbers are retained for traceability.
+**Status:** owner-approved for sequential implementation in the current session on 2026-10-18 ("确认，请实施"). Revision-2 written scope and companion compositions are included. Tasks 0–2 are complete; Task 3 is next, Tasks 3–15 remain pending. Existing task numbers are retained for traceability.
 
 ## Owner review summary
 
@@ -160,6 +160,17 @@ Add `resources/diagnostic-identity.json` as a versioned, allowlisted dependency 
 
 The identity check traverses static package imports from these roots and rejects an unlisted reachable module/resource or undeclared dynamic local import. Permit only explicitly enumerated stdlib dynamic calls; no archive controls this manifest. Record installed non-stdlib dependencies reachable from those roots, including their installed transitive requirements, using distribution metadata; missing metadata prevents eligibility. Do not use Git HEAD, a wheel path, frontend hash or human version label as execution identity. Test installed wheel and editable checkout equivalence under identical bytes/dependencies. A report-only change must not change core identity; a validator-byte or relevant-dependency change must.
 
+Core metadata validation lives in `diagnostics/core_contracts.py`, with the
+existing `validate_diagnostic` public adapter delegating core names to it. Future
+recipe/context modules import the core adapter and use unrebound guarded
+`TYPE_CHECKING` imports for presentation-only annotations. This keeps view schemas
+out of execution closure. The internal manifest has its own packaged schema and
+is itself hashed. The repository resource check verifies its declared source root;
+only `installed_identity()` is used by assessment code. Parse dependency markers
+and selected transitive extras with packaging; ignore inactive extras, never
+install/import a dependency discovered from metadata. Check both actual wheel
+installation and a no-Git fresh process in the recorded verification.
+
 ### Archive and local storage limits
 
 Use stdlib ZIP with ZIP_STORED/ZIP_DEFLATED regular files only. Reject encrypted members, links/devices, directory ambiguity, non-ASCII or absolute member paths, backslashes, empty/dot/parent components, duplicate names and case-fold collisions. Allow only `[A-Za-z0-9_./-]` safe relative names of at most 240 bytes. No `extractall()` or path-derived execution.
@@ -260,11 +271,11 @@ independent reviewer or implementer agent is dispatched.
 
 **Interfaces:** `installed_identity() -> ImplementationIdentity`; `check_identity(expected: ImplementationIdentity, actual: ImplementationIdentity) -> tuple[str, ...]`. Identity file/resource access stays in this adapter; comparison/reduction receives its checked document.
 
-- [ ] Write `test_same_label_changed_bytes_rejects`, `test_missing_transitive_dependency_blocks`, `test_report_only_change_preserves_identity`, `test_catalog_theme_changes_preserve_identity` and `test_new_reachable_module_requires_manifest_entry`. Assert identical named revision plus changed validator bytes is unequal; no Git/host path enters the digest. Locale/theme resources stay outside the judgment dependency closure.
-- [ ] Run `UV_OFFLINE=1 uv run --frozen pytest -q tests/unit/test_diagnostic_identity.py` and retain RED.
-- [ ] Implement canonical sorted digest construction, static dependency-closure validation and distribution metadata traversal. Include actual rule/schema bytes; never load archive paths as modules.
-- [ ] Rerun identity tests, architecture checks and a fresh subprocess without `.git`; assert metadata absence gives ineligibility rather than fabricated identity.
-- [ ] Commit: `feat: bind diagnostic recipes to installed execution identities`.
+- [x] Write `test_same_label_changed_bytes_rejects`, `test_missing_transitive_dependency_blocks`, `test_report_only_change_preserves_identity`, `test_catalog_theme_changes_preserve_identity` and `test_new_reachable_module_requires_manifest_entry`. Assert identical named revision plus changed validator bytes is unequal; no Git/host path enters the digest. Locale/theme resources stay outside the judgment dependency closure.
+- [x] Run `UV_OFFLINE=1 uv run --frozen pytest -q tests/unit/test_diagnostic_identity.py` and retain RED.
+- [x] Implement canonical sorted digest construction, static dependency-closure validation and distribution metadata traversal. Include actual rule/schema bytes; never load archive paths as modules.
+- [x] Rerun identity tests, architecture checks and a fresh subprocess without `.git`; assert metadata absence gives ineligibility rather than fabricated identity.
+- [x] Commit: `feat: bind diagnostic recipes to installed execution identities`.
 
 ### Task 3: Pre-request provenance and plan-context persistence
 

@@ -14,12 +14,16 @@ and evidence-based report figures. Earlier overview/dark proposals are historica
 use the exact approved pair in the visual handoff. See the
 [design ledger](harness/diagnostic-workbench-ledger.md) for chronological decisions.
 
-Tasks 0–1 (presentation foundation and versioned diagnostic contracts) are
-complete; Task 2 is next. Tasks 2–15 remain pending. Latest Task 1 checks passed
-the eight-check fast graph (313 unit/harness tests) and 514 full Python regressions
+Tasks 0–2 (presentation foundation, diagnostic contracts and execution identity)
+are complete; Task 3 is next. Tasks 3–15 remain pending. Latest Task 2 checks passed
+the eight-check fast graph (342 unit/harness tests) and 543 full Python regressions
 in the prepared Linux Python 3.12 Dev Container. Task 0 also passed 25 browser
 tests, including a RED/GREEN system/print cascade fix. These are foundation and
 regression checks, not whole-W2 visual or container-image acceptance.
+Task 2 also verified actual wheel/editable identity equality and a fresh no-Git
+process. Core metadata now uses a separate adapter; later recipe/context modules
+must follow that boundary. Already-locked packaging 26.3 is now a runtime dependency
+for correct dependency markers/extras parsing; no package version changed.
 Preserve the chosen current-checkout/prepared
 Dev Container and sequential current-agent execution with one independent end
 review. Do not reopen completed W1 work.

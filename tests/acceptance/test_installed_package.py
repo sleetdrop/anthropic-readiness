@@ -24,6 +24,9 @@ def run(
 
 
 def test_installed_wheel_outside_repository(tmp_path: Path) -> None:
+    from anthropic_readiness.diagnostics.identity import installed_identity
+
+    expected_identity = installed_identity().document
     dist = tmp_path / "dist"
     run(["uv", "build", "--offline", "--no-build-isolation", "--out-dir", str(dist)], ROOT)
     wheel = next(dist.glob("*.whl"))
@@ -62,6 +65,16 @@ def test_installed_wheel_outside_repository(tmp_path: Path) -> None:
         outside,
     )
     assert Path(imported.stdout.strip()).is_relative_to(environment)
+    identity_result = run(
+        [
+            str(environment / "bin/python"),
+            "-c",
+            "import json; from anthropic_readiness.diagnostics.identity import installed_identity; "
+            "print(json.dumps(installed_identity().document, sort_keys=True))",
+        ],
+        outside,
+    )
+    assert json.loads(identity_result.stdout) == expected_identity
     run([command, "--help"], outside)
     shown = run(
         [command, "contracts", "show", "anthropic-messages-2023-06-01-core", "--revision", "1.0.0"],

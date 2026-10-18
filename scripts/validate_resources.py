@@ -12,6 +12,7 @@ from jsonschema.exceptions import SchemaError
 from anthropic_readiness.config import load_target, string
 from anthropic_readiness.contracts import validate_bundle
 from anthropic_readiness.diagnostics.contracts import SCHEMAS as DIAGNOSTIC_SCHEMAS
+from anthropic_readiness.diagnostics.identity import _identity_from_root
 from anthropic_readiness.localization import validate_catalogs
 from anthropic_readiness.models import CaseContract, JsonObject, object_value, strict_json
 from anthropic_readiness.schema import validate_document, validate_result_semantics
@@ -97,6 +98,7 @@ def validate_resources(root: Path) -> list[str]:
         "presentation-options",
         "preferences",
         "localization-catalog",
+        "diagnostic-identity-manifest",
     }
     if set(schemas) != expected:
         errors.append("schema_inventory")
@@ -110,6 +112,10 @@ def validate_resources(root: Path) -> list[str]:
         validate_catalogs(catalogs)
     except (OSError, ValueError) as exc:
         errors.append(f"catalog_invalid:{exc}")
+    try:
+        _identity_from_root(root / "src/anthropic_readiness")
+    except (OSError, ValueError) as exc:
+        errors.append(f"diagnostic_identity_invalid:{exc}")
     for path in (resources / "contracts").glob("*/*/manifest.json"):
         try:
             manifest = object_value(strict_json(path.read_text()))

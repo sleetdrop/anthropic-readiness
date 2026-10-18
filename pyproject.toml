@@ -7,7 +7,7 @@ name = "anthropic-readiness"
 version = "0.1.0"
 description = "Evidence-led black-box checks for Anthropic-compatible endpoints"
 requires-python = ">=3.11"
-dependencies = ["httpx>=0.28,<1", "jsonschema>=4.23,<5", "PyYAML>=6,<7"]
+dependencies = ["httpx>=0.28,<1", "jsonschema>=4.23,<5", "PyYAML>=6,<7", "packaging>=26.3,<27"]
 
 [project.optional-dependencies]
 web = ["fastapi>=0.115,<1", "uvicorn>=0.34,<1", "jinja2>=3.1,<4"]
@@ -82,4 +82,4 @@ forbidden_modules = ["anthropic_readiness.localization", "anthropic_readiness.sc
 name = "Diagnostic values stay independent of adapters"
 type = "forbidden"
 source_modules = ["anthropic_readiness.diagnostics.models"]
-forbidden_modules = ["anthropic_readiness.diagnostics.contracts", "anthropic_readiness.schema", "anthropic_readiness.config", "anthropic_readiness.runner", "anthropic_readiness.reporting", "anthropic_readiness.web", "pathlib", "importlib", "httpx", "sqlite3"]
+forbidden_modules = ["anthropic_readiness.diagnostics.contracts", "anthropic_readiness.diagnostics.core_contracts", "anthropic_readiness.diagnostics.identity", "anthropic_readiness.schema", "anthropic_readiness.config", "anthropic_readiness.runner", "anthropic_readiness.reporting", "anthropic_readiness.web", "pathlib", "importlib", "httpx", "sqlite3"]

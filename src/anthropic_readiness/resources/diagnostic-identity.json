@@ -1,0 +1,93 @@
+{
+  "schema_version": "1.0",
+  "semantic_revision": "1",
+  "roots": [
+    "__init__.py",
+    "runner.py",
+    "diagnostics/identity.py"
+  ],
+  "optional_roots": [
+    "diagnostics/context.py",
+    "diagnostics/recipes.py"
+  ],
+  "modules": [
+    "__init__.py",
+    "application.py",
+    "cases.py",
+    "config.py",
+    "context.py",
+    "contracts.py",
+    "credentials.py",
+    "diagnostics/__init__.py",
+    "diagnostics/context.py",
+    "diagnostics/core_contracts.py",
+    "diagnostics/identity.py",
+    "diagnostics/models.py",
+    "diagnostics/recipes.py",
+    "diagnostics/reduction.py",
+    "evidence.py",
+    "json_validation.py",
+    "models.py",
+    "operations/__init__.py",
+    "operations/checkpoints.py",
+    "operations/contracts.py",
+    "operations/journal.py",
+    "operations/models.py",
+    "operations/observer.py",
+    "operations/ports.py",
+    "operations/reduction.py",
+    "operations/storage.py",
+    "requirements.py",
+    "runner.py",
+    "schema.py",
+    "sse.py",
+    "transport.py",
+    "validation/__init__.py",
+    "validation/messages.py",
+    "validation/stream.py"
+  ],
+  "resources": [
+    "resources/contracts/anthropic-messages-2023-06-01-core/1.0.0/manifest.json",
+    "resources/contracts/anthropic-messages-2023-06-01-core/1.0.0/rules.json",
+    "resources/diagnostic-identity.json",
+    "resources/report-context.json",
+    "resources/schemas/assessment-context.schema.json",
+    "resources/schemas/capture.schema.json",
+    "resources/schemas/checkpoint.schema.json",
+    "resources/schemas/contract.schema.json",
+    "resources/schemas/diagnostic-identity-manifest.schema.json",
+    "resources/schemas/execution.schema.json",
+    "resources/schemas/implementation-identity.schema.json",
+    "resources/schemas/job.schema.json",
+    "resources/schemas/plan.schema.json",
+    "resources/schemas/progress-event.schema.json",
+    "resources/schemas/result.schema.json",
+    "resources/schemas/retest-recipe.schema.json",
+    "resources/schemas/target.schema.json"
+  ],
+  "resource_roots": [
+    "resources/contracts"
+  ],
+  "resource_patterns": {
+    "schema.py": [
+      "resources/schemas/{}.schema.json",
+      "resources/contracts/{}/{}/manifest.json"
+    ],
+    "contracts.py": [
+      "resources/contracts/{}/{}"
+    ],
+    "diagnostics/core_contracts.py": [
+      "resources/schemas/{}.schema.json"
+    ]
+  },
+  "dynamic_schema_loaders": [
+    "operations/contracts.py"
+  ],
+  "dynamic_imports": [],
+  "external_modules": {
+    "httpx": "httpx",
+    "jsonschema": "jsonschema",
+    "yaml": "pyyaml",
+    "packaging": "packaging"
+  }
+}

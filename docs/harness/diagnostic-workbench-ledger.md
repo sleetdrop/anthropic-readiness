@@ -268,3 +268,41 @@ all eight children with 313 unit/harness tests; full Python regression passed
 514 tests, zero failures/errors/skips. No browser/image rerun was needed for
 these data-only changes. Whole-W2 UI/portable-flow acceptance remains pending;
 no real endpoint or external publication occurred. Task 2 is next.
+
+## 2026-10-18: Task 2 execution implementation identity
+
+Task 1 delivery commit is `f1a1d04`. Task 2 implements canonical identity from
+declared package files, core resources, active transitive dependency versions
+and Python implementation/major.minor. The packaged manifest/schema are themselves
+checked and hashed. New reachable modules/resources, undeclared dynamic local
+imports, missing metadata and forged identity digests block verification. Only
+explicitly declared standard-library dynamic imports are permitted. Unrebound
+type-only imports do not drag presentation into the runtime closure.
+
+Ruling: split core metadata validation into `diagnostics/core_contracts.py` while
+retaining the public diagnostic validator — the shared loader would otherwise
+couple execution identity to view schemas — cost if wrong: loader dispatch drift.
+Existing nine-contract regressions cover that delegation. Later context/recipe
+modules must use the core adapter; their presentation annotations are type-only.
+
+Ruling: promote already-locked packaging 26.3 from build tooling to a runtime
+dependency — standards-compliant Requires-Dist markers and extras are needed to
+record actual dependencies rather than inactive extras — cost if wrong: one
+additional runtime/image library. Offline lock/sync changed only the project's
+dependency declaration; no package version upgrade or network preparation occurred.
+
+Retained RED/GREEN under `artifacts/w2/task2/`: missing identity/wheel functionality,
+then an AST false positive on `re.compile`, and later a real dependency-scope bug
+where an application-wide presentation dependency entered the core graph. Fixes
+distinguish builtin execution from regex compilation and traverse dependencies
+only from actual core external imports. The latter has a specific mutation test.
+The first fast attempt also exposed a strict TypedDict/environment mismatch;
+explicit validation fixed it without type suppression.
+
+Final `fast-3` passed all eight children with 342 unit/harness tests. Fifty-four
+focused identity/contract/architecture/actual-wheel checks passed, including a
+fresh process without `.git`, wheel/editable equality, selected/inactive extras,
+resource changes and real reverse-dependency rejection. Final full Python run
+passed 543 tests with zero failures/errors/skips. Earlier failures and the prior
+542-test run remain separate. Documentation/whitespace checks accompany delivery.
+No new browser/image acceptance or real endpoint outcome is claimed. Task 3 is next.

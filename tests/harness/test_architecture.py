@@ -1,5 +1,6 @@
 """A reversed dependency must fail the actual architecture command."""
 
+import shutil
 from pathlib import Path
 
 import pytest
@@ -21,3 +22,37 @@ def test_reversed_dependency_is_rejected(tmp_path: Path, monkeypatch: pytest.Mon
     gate = next(c for c in build_checks(tmp_path, output, "fast") if c.check_id == "architecture")
     assert run_checks([gate], output, root=tmp_path) == 1
     assert "BROKEN" in (output / "architecture.log").read_text()
+
+
+@pytest.mark.parametrize(
+    ("relative", "dependency", "contract"),
+    [
+        (
+            "diagnostics/models.py",
+            "diagnostics.core_contracts",
+            "Diagnostic values stay independent",
+        ),
+        ("validation/messages.py", "presentation", "Pure domain, framing and validation"),
+    ],
+)
+def test_real_pure_modules_reject_adapter_or_presentation_imports(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    relative: str,
+    dependency: str,
+    contract: str,
+) -> None:
+    root = Path(__file__).resolve().parents[2]
+    package = tmp_path / "src/anthropic_readiness"
+    shutil.copytree(root / "src/anthropic_readiness", package)
+    shutil.copy2(root / "pyproject.toml", tmp_path / "pyproject.toml")
+    source = package / relative
+    source.write_text(source.read_text() + f"\nimport anthropic_readiness.{dependency}\n")
+    monkeypatch.setenv("PYTHONPATH", str(tmp_path / "src"))
+    output = tmp_path / "checks"
+    gate = next(c for c in build_checks(tmp_path, output, "fast") if c.check_id == "architecture")
+    assert run_checks([gate], output, root=tmp_path) == 1
+    log = (output / "architecture.log").read_text()
+    assert contract in log
+    assert "BROKEN" in log
+    assert f"anthropic_readiness.{dependency}" in log
