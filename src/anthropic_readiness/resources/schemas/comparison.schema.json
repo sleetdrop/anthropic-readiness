@@ -1,0 +1,475 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:anthropic-readiness:comparison:1.0",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "before": {
+      "$ref": "#/$defs/source"
+    },
+    "after": {
+      "$ref": "#/$defs/source"
+    },
+    "comparable": {
+      "type": "boolean"
+    },
+    "reasons": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 0,
+      "uniqueItems": true
+    },
+    "condition_changes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/change"
+      },
+      "minItems": 0,
+      "uniqueItems": true
+    },
+    "pairs": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/pair"
+      },
+      "minItems": 0,
+      "uniqueItems": true
+    },
+    "unmatched_before": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/unmatched"
+      },
+      "minItems": 0,
+      "uniqueItems": true
+    },
+    "unmatched_after": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/unmatched"
+      },
+      "minItems": 0,
+      "uniqueItems": true
+    },
+    "coverage": {
+      "type": "object",
+      "properties": {
+        "before_checks": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "after_checks": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "matched_checks": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "missing_required_checks": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "before_cases": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "after_cases": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "matched_cases": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "missing_required_cases": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "before_checks",
+        "after_checks",
+        "matched_checks",
+        "missing_required_checks",
+        "before_cases",
+        "after_cases",
+        "matched_cases",
+        "missing_required_cases"
+      ],
+      "additionalProperties": false
+    },
+    "summary": {
+      "type": "object",
+      "properties": {
+        "unit": {
+          "const": "checks"
+        },
+        "recovered": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "persistent": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "new_failure": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "passed_both": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "gap": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "newly_evaluated": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "incomparable": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "unit",
+        "recovered",
+        "persistent",
+        "new_failure",
+        "passed_both",
+        "gap",
+        "newly_evaluated",
+        "incomparable"
+      ],
+      "additionalProperties": false
+    },
+    "all_previous_failures_passed": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "schema_version",
+    "before",
+    "after",
+    "comparable",
+    "reasons",
+    "condition_changes",
+    "pairs",
+    "unmatched_before",
+    "unmatched_after",
+    "coverage",
+    "summary",
+    "all_previous_failures_passed"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "change": {
+      "type": "object",
+      "properties": {
+        "field": {
+          "type": "string",
+          "minLength": 1
+        },
+        "before": {},
+        "after": {},
+        "kind": {
+          "enum": [
+            "context",
+            "semantic"
+          ]
+        }
+      },
+      "required": [
+        "field",
+        "before",
+        "after",
+        "kind"
+      ],
+      "additionalProperties": false
+    },
+    "evidence_ref": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/path"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "event": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "pointer": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "path",
+        "sha256",
+        "event",
+        "pointer"
+      ],
+      "additionalProperties": false
+    },
+    "pair": {
+      "type": "object",
+      "properties": {
+        "case_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "assertion_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "assertion_version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "category": {
+          "enum": [
+            "protocol",
+            "behavior",
+            "client",
+            "environment"
+          ]
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "before": {
+          "enum": [
+            "PASS",
+            "FAIL",
+            "SKIP",
+            "BLOCKED",
+            "INDETERMINATE",
+            "missing"
+          ]
+        },
+        "after": {
+          "enum": [
+            "PASS",
+            "FAIL",
+            "SKIP",
+            "BLOCKED",
+            "INDETERMINATE",
+            "missing"
+          ]
+        },
+        "transition": {
+          "enum": [
+            "recovered",
+            "persistent",
+            "new_failure",
+            "passed_both",
+            "gap",
+            "newly_evaluated",
+            "incomparable"
+          ]
+        },
+        "before_reason": {
+          "type": "string"
+        },
+        "after_reason": {
+          "type": "string"
+        },
+        "before_expected": {
+          "type": "string"
+        },
+        "before_actual": {
+          "type": "string"
+        },
+        "after_expected": {
+          "type": "string"
+        },
+        "after_actual": {
+          "type": "string"
+        },
+        "before_evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/evidence_ref"
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "after_evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/evidence_ref"
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "case_id",
+        "assertion_id",
+        "assertion_version",
+        "category",
+        "required",
+        "before",
+        "after",
+        "transition",
+        "before_reason",
+        "after_reason",
+        "before_expected",
+        "before_actual",
+        "after_expected",
+        "after_actual",
+        "before_evidence",
+        "after_evidence"
+      ],
+      "additionalProperties": false
+    },
+    "path": {
+      "type": "string",
+      "maxLength": 240,
+      "pattern": "^(?!.*(?:^|/)\\.{1,2}(?:/|$))[A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)*$"
+    },
+    "source": {
+      "type": "object",
+      "properties": {
+        "run_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "assessment_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "result_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "checkpoint_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "recipe_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "context_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "run_id",
+        "assessment_id",
+        "result_sha256",
+        "checkpoint_sha256",
+        "recipe_sha256",
+        "context_sha256"
+      ],
+      "additionalProperties": false,
+      "anyOf": [
+        {
+          "properties": {
+            "result_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        },
+        {
+          "properties": {
+            "checkpoint_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        }
+      ]
+    },
+    "unmatched": {
+      "type": "object",
+      "properties": {
+        "case_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "assertion_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "assertion_version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "case_id",
+        "assertion_id",
+        "assertion_version",
+        "reason"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

@@ -10,7 +10,7 @@
 
 **Spec:** [W2 specification revision 2](../specs/2026-10-18-diagnostic-workbench-design.md), approved with this plan on 2026-10-18.
 
-**Status:** owner-approved for sequential implementation in the current session on 2026-10-18 ("确认，请实施"). Revision-2 written scope and companion compositions are included. Task 0 is complete; Task 1 is next, Tasks 1–15 remain pending. Existing task numbers are retained for traceability.
+**Status:** owner-approved for sequential implementation in the current session on 2026-10-18 ("确认，请实施"). Revision-2 written scope and companion compositions are included. Tasks 0–1 are complete; Task 2 is next, Tasks 2–15 remain pending. Existing task numbers are retained for traceability.
 
 ## Owner review summary
 
@@ -128,6 +128,16 @@ Also package `export-manifest-v2.schema.json` with schema version 2.0 and presen
 - Comparison records both source identities, condition deltas, paired check transitions, unmatched checks/cases, baseline/new/matched denominators, evidence quality and scoped summary. Finding labels are presentation, not join keys.
 - Workbench/document views have schema version 1.0 and independently versioned presentation metadata. Existing report-view 1.0 remains readable; do not change its const in place.
 
+The new workbench/document contracts carry existing checked report-view 1.0 facts
+under `facts`, using a self-contained copy of that frozen schema boundary. Their
+root composition and presentation metadata are new and independent. No report
+body is embedded into application templates. Task 11 selects operational fields;
+Task 13 localizes controlled prose and removes raw endpoint/auth-reference context
+from document presentation without rewriting the original source. Comparison
+coverage explicitly names check and case denominators; transition counts state
+their unit as checks. These schema-valid structural fixtures alone do not prove
+an eligible baseline; source/recipe/evidence relationships remain service checks.
+
 `presentation-options`, `preferences` and `localization-catalog` schemas, created
 by Task 0, also start at 1.0. Catalog documents have `schema_version`, `locale`
 and a `messages` map with stable machine keys and text values. View/export
@@ -238,11 +248,11 @@ independent reviewer or implementer agent is dispatched.
 
 **Interfaces:** Produce the eight frozen document wrappers and `validate_diagnostic(document: JsonObject, name: str) -> None`. Consumers use these names throughout this plan.
 
-- [ ] Write `test_contract_versions_and_required_identities` asserting each valid v1 fixture validates, missing recipe/check/file identity is rejected, unknown version/additional properties are rejected, and existing result/export/report-view fixtures still validate unchanged.
-- [ ] Run `UV_OFFLINE=1 uv run --frozen pytest -q tests/unit/test_diagnostic_contracts.py`; retain the failure for missing diagnostic contracts.
-- [ ] Implement wrappers, packaged schemas, relational-validation entry boundaries and pure-module import prohibitions. Register resources without editing frozen schemas.
-- [ ] Rerun the focused file and `tests/unit/test_schemas.py tests/harness/test_architecture.py`; validate installed-resource coverage in the packaging task later.
-- [ ] Commit: `feat: define versioned diagnostic handoff contracts`.
+- [x] Write `test_contract_versions_and_required_identities` asserting each valid v1 fixture validates, missing recipe/check/file identity is rejected, unknown version/additional properties are rejected, and existing result/export/report-view fixtures still validate unchanged.
+- [x] Run `UV_OFFLINE=1 uv run --frozen pytest -q tests/unit/test_diagnostic_contracts.py`; retain the failure for missing diagnostic contracts.
+- [x] Implement wrappers, packaged schemas, relational-validation entry boundaries and pure-module import prohibitions. Register resources without editing frozen schemas.
+- [x] Rerun the focused file and `tests/unit/test_schemas.py tests/harness/test_architecture.py`; validate installed-resource coverage in the packaging task later.
+- [x] Commit: `feat: define versioned diagnostic handoff contracts`.
 
 ### Task 2: Installed implementation identity with a checked closure
 

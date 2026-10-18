@@ -11,6 +11,7 @@ from jsonschema.exceptions import SchemaError
 
 from anthropic_readiness.config import load_target, string
 from anthropic_readiness.contracts import validate_bundle
+from anthropic_readiness.diagnostics.contracts import SCHEMAS as DIAGNOSTIC_SCHEMAS
 from anthropic_readiness.localization import validate_catalogs
 from anthropic_readiness.models import CaseContract, JsonObject, object_value, strict_json
 from anthropic_readiness.schema import validate_document, validate_result_semantics
@@ -75,6 +76,7 @@ def validate_resources(root: Path) -> list[str]:
         except (ValueError, SchemaError) as exc:
             errors.append(f"schema_invalid:{path.name}:{type(exc).__name__}")
     expected = {
+        *DIAGNOSTIC_SCHEMAS,
         "result",
         "target",
         "capture",

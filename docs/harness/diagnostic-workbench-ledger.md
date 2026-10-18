@@ -241,3 +241,30 @@ wrong: one extra browser startup for a narrow foundation boundary.
 Tasks 1–15 remain pending. These observations do not establish finished bilingual
 pages, numeric contrast, offline-document behavior, image acceptance, remote CI
 or real endpoint compatibility. No network target or external publication was used.
+
+## 2026-10-18: Task 1 versioned diagnostic contracts
+
+Task 0 delivery commit is `43326db`. Task 1 adds eight data-only frozen wrappers
+and nine self-contained packaged schemas, including the independent export-manifest
+2.0 / presentation-3.0 boundary. Existing result 1.0, report-view 1.0/presentation
+2.0 and export-manifest 1.0 resources are unchanged. Schema validation is closed
+to known packaged names and rejects nonfinite JSON, absent recipe/check/file
+identities, unknown versions/fields and unsafe inventory paths. Structural
+validation does not certify source/recipe/evidence relationships or eligibility.
+
+Ruling: the new workbench/document schemas embed the existing frozen report-view
+facts shape under `facts`, with separate composition/version metadata — reuse
+checked counts and evidence without rejudging or embedding report HTML — cost if
+wrong: old controlled prose/provenance could leak into new presentation. Tasks
+11/13 must select/localize controlled labels and sanitize document-only endpoint/
+auth-reference context while preserving original source bytes. This boundary and
+explicit case/check denominators are recorded in the plan.
+
+Observed checks at `artifacts/w2/task1/`: missing package RED was retained; 27
+focused diagnostic/schema/architecture tests passed. The first fast attempt found
+one overbroad exception assertion; the test now specifically exercises nonfinite
+data inside an otherwise arbitrary protocol body. The final fast graph passed
+all eight children with 313 unit/harness tests; full Python regression passed
+514 tests, zero failures/errors/skips. No browser/image rerun was needed for
+these data-only changes. Whole-W2 UI/portable-flow acceptance remains pending;
+no real endpoint or external publication occurred. Task 2 is next.

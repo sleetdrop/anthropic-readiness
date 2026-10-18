@@ -77,3 +77,9 @@ name = "Presentation values stay independent of adapters and execution"
 type = "forbidden"
 source_modules = ["anthropic_readiness.presentation"]
 forbidden_modules = ["anthropic_readiness.localization", "anthropic_readiness.schema", "anthropic_readiness.config", "anthropic_readiness.runner", "anthropic_readiness.reporting", "anthropic_readiness.web", "pathlib", "importlib", "httpx", "sqlite3"]
+
+[[tool.importlinter.contracts]]
+name = "Diagnostic values stay independent of adapters"
+type = "forbidden"
+source_modules = ["anthropic_readiness.diagnostics.models"]
+forbidden_modules = ["anthropic_readiness.diagnostics.contracts", "anthropic_readiness.schema", "anthropic_readiness.config", "anthropic_readiness.runner", "anthropic_readiness.reporting", "anthropic_readiness.web", "pathlib", "importlib", "httpx", "sqlite3"]

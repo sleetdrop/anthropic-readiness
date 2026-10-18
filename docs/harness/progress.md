@@ -601,3 +601,11 @@ selector fix; the complete browser suite passed 25 tests with cleanup observed.
 Failure artifacts, command-entry ruling and the early cascade-check ruling are
 retained in the W2 ledger. Task 1 is next. This does not claim completed W2 UI,
 measured contrast, new image acceptance, remote CI or real-endpoint outcomes.
+
+Task 0 was delivered locally as `43326db`. Task 1 now defines the eight frozen
+diagnostic values and nine versioned packaged schemas, retaining all old result/
+report/export contracts. Structural fixtures are explicitly not verified baselines.
+The latest fast graph passed all eight children (313 unit/harness tests), and
+the full Python regression passed 514 tests with no failures/errors/skips.
+The fact-schema reuse ruling and its later localization/sanitization obligations
+are in the W2 ledger. Tasks 2–15 remain; no live request or external write occurred.
