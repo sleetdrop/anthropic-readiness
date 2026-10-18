@@ -139,3 +139,16 @@ The revised documents passed the offline/frozen documentation/link/collaboration
 check in the retained Linux Python 3.12 Dev Container. The dark PNG was retained
 with SHA-256 `94b0133e988aff92220328efd959cbbadc04a0a828c20a689d430f1280c2aed7`.
 No runtime/browser/contrast test is claimed for this documentation/design change.
+
+## 2026-10-18: Dark palette refinement
+
+The owner found the first dark design less successful than the light design.
+The selected layout is unchanged. One revised English/dark overview uses neutral
+graphite surfaces, clearer text/divider hierarchy and smaller semantic accents;
+both previous visual references were attached. The visual handoff records the
+exact artifact, hash, superseded green-tinted palette and remaining generated
+shading/lifecycle-color limitations. The refined palette awaits owner review.
+No product code, dependency, live request or browser acceptance changed.
+The documentation/link/collaboration check passed offline/frozen in the retained
+Linux Python 3.12 Dev Container; the whitespace check was clean. No runtime or
+measured theme-contrast acceptance is claimed.

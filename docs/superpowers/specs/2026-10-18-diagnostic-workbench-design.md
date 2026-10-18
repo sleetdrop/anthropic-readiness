@@ -473,8 +473,9 @@ appearance and packaged CSS tokens for surfaces, typography, statuses, code,
 charts, table selection, hover, focus and native controls. Do not invert colors
 or reuse light-theme syntax colors blindly. Theme changes make no upstream call.
 
-Dark appearance retains the chosen restrained engineering direction: charcoal
-surfaces, soft light text, muted sage accents, readable amber waits and terracotta
+Dark appearance retains the chosen restrained engineering direction: neutral
+graphite surfaces without an overall green cast, soft light text, limited sage
+accents, readable amber waits and terracotta
 failures. Execution completion remains neutral. Both palettes target at least
 4.5:1 for normal text and 3:1 for large text; meaningful controls/focus/graphics
 also need sufficient non-text contrast. Verify actual rendered token pairs and

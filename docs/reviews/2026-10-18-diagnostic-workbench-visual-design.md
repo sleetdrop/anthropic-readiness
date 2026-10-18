@@ -99,7 +99,7 @@ four planned cases, three requests started, two issue families, and the current
 streaming-count request waiting for headers. No runtime or contrast acceptance
 is implied by the generated image.
 
-The proposed dark token direction is charcoal background `#151b1a`, rail
+The first dark token proposal used charcoal background `#151b1a`, rail
 `#19221f`, surface `#1f2825`, primary text `#e4e9e6`, muted text `#adb9b2`,
 divider `#34413b`, sage `#99baa8`, failure `#e2a091` and waiting `#d8bb7e`.
 Exact rendered combinations, focus/hover states, native controls and code/chart
@@ -107,6 +107,27 @@ colors still need numeric contrast and browser checks. The image's connected/
 worker green dots are not the final execution-status color contract: lifecycle
 and service liveness remain neutral; check PASS uses green. Do not implement an
 image's glow/shading as a requirement; use flat semantic CSS tokens.
+The owner subsequently found this dark treatment less successful than the light
+design. This green-tinted palette is superseded as a proposal; do not implement it.
+
+### Neutral graphite refinement awaiting review
+
+One revised image preserves the selected overview and English labels while
+removing the green cast:
+`artifacts/w2/visual-20261018/exec-fbcf7248-0ce4-45f1-8325-91d8c5cfa5e0.png`.
+Both the selected light overview and the first dark mock were attached to its
+generation. The proposed flat tokens are page `#202226`, rail `#191b1f`, selected
+navigation `#2c3035`, primary text `#eeefed`, secondary text `#b1b5bd`, dividers
+`#3c4047`, limited sage accents `#a6c8b7`, failure `#eca798` and waiting `#e3c18b`.
+Neutral progress fills communicate completion; small semantic accents communicate
+findings. The layout, four-case scope and synthetic counts are unchanged.
+
+This refinement is pending owner review, not an accepted replacement. The PNG
+still contains incidental shading and amber running indicators. Implement flat
+tokens and the specified neutral lifecycle/liveness contract, rather than copying
+those generated details. Numerical contrast, small-label readability and the other
+views require implementation-time browser verification. Its SHA-256 is
+`0720386c3945b2afc2a518b325db2d6035e8c830ae0534ecdb568000a5f2f2f8`.
 
 The two header controls are independent: autonym locale choice (`中文`, `English`)
 and appearance (`light`, `dark`, `system`, with translated labels). Default locale

@@ -563,3 +563,9 @@ The revised bilingual/theme documents passed the documentation/link/collaboratio
 check in the retained Linux Python 3.12 Dev Container, offline/frozen. The dark
 design image was retained and hashed. Actual theme contrast, bilingual layout,
 offline switching and presentation-invariance checks remain implementation work.
+
+The owner found the first dark palette weaker than the selected light design.
+A neutral-graphite refinement now replaces the green-tinted proposal for review,
+preserving the layout and synthetic four-case story. Exact references and generated
+image limitations are recorded in the visual handoff. This is a visual/document
+revision only; the updated palette and implementation plan remain pending review.
