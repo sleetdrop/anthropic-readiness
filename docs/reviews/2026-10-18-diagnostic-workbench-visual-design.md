@@ -3,6 +3,7 @@
 Date: 2026-10-18. Status: the owner selected the first overview concept and
 approved continued refinement. Companion surfaces are submitted for review.
 These are static design images, not an implemented or browser-verified product.
+The subsequent Chinese/English and dark-theme amendment is included below.
 
 ## Selected direction
 
@@ -86,3 +87,44 @@ maps this direction to sequential source work and explicit visual/functional
 acceptance. Companion visual review and written-plan approval are still pending.
 No prototype server, product implementation, container acceptance or new endpoint
 call is claimed by this design follow-up.
+
+## Requested bilingual and dark-theme amendment
+
+The owner requested support for Chinese/English and one dark theme. The selected
+layout stays fixed. One English/dark overview was generated with the actual
+selected light overview attached, rather than reopening three layout alternatives:
+`artifacts/w2/visual-20261018/exec-e9ad2046-c067-4f4f-8784-6188721b99f7.png`.
+It is explicitly marked synthetic design data. Counts remain two evaluated of
+four planned cases, three requests started, two issue families, and the current
+streaming-count request waiting for headers. No runtime or contrast acceptance
+is implied by the generated image.
+
+The proposed dark token direction is charcoal background `#151b1a`, rail
+`#19221f`, surface `#1f2825`, primary text `#e4e9e6`, muted text `#adb9b2`,
+divider `#34413b`, sage `#99baa8`, failure `#e2a091` and waiting `#d8bb7e`.
+Exact rendered combinations, focus/hover states, native controls and code/chart
+colors still need numeric contrast and browser checks. The image's connected/
+worker green dots are not the final execution-status color contract: lifecycle
+and service liveness remain neutral; check PASS uses green. Do not implement an
+image's glow/shading as a requirement; use flat semantic CSS tokens.
+
+The two header controls are independent: autonym locale choice (`中文`, `English`)
+and appearance (`light`, `dark`, `system`, with translated labels). Default locale
+is Simplified Chinese; default appearance follows the system. Persist only those
+non-secret values in a checked application preference cookie; keep the existing
+no-localStorage/sessionStorage boundary. Locale changes preserve selected evidence,
+inputs and focus, and do not change or restart a live assessment.
+
+Standalone HTML offers both languages and themes using embedded presentation
+catalogs and a single factual dataset; it requires no service or browser storage.
+The selected initial language remains readable without JavaScript. Markdown uses
+one chosen language. Printing uses light tokens and the selected language. Original
+protocol field names, raw responses, identifiers, codes and evidence remain data,
+not translated content.
+
+The [W3C text-contrast reference](https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html)
+and [documented system-theme media feature](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@media/prefers-color-scheme)
+ground the verification targets. The updated spec adds W2-15 through W2-17 for
+complete bilingual presentation, themes and semantic invariance. The plan adds
+Task 0, totaling sixteen sequential tasks, and tests same-assessment localized
+archives as export variants rather than falsely conflicting results.

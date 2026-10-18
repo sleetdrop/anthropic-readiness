@@ -97,3 +97,45 @@ Python 3.12 Dev Container with `UV_OFFLINE=1` / `uv run --frozen`; Git whitespac
 checks were clean. The companion PNGs were retained locally and SHA-256 read.
 No product unit/integration/browser/image test was run for this documentation-only
 change, and no working prototype or real-viewport acceptance is claimed.
+
+## 2026-10-18: Chinese/English and dark-theme amendment
+
+The owner added two-language support and a dark theme before plan approval.
+Specification revision 2 and the revised sixteen-task plan incorporate this request;
+revision 1 approval and the selected light layout remain recorded. Task 0 defines
+checked catalogs and semantic theme tokens. UI/report/CLI-output integration and
+the W2-15 through W2-17 acceptance map explicitly cover language/theme behavior.
+No product implementation has begun.
+
+One requested dark theme was generated as an English overview using the selected
+light reference. Its exact artifact and generated-versus-accepted color distinction
+are recorded in the visual handoff. It is a static synthetic mock, not a working
+UI or measured contrast result.
+
+Material amendment decisions:
+
+- Workbench locales `zh-CN`/`en`, default `zh-CN`; light/dark/system, default system.
+- Persist only checked non-secret presentation choices in a preference cookie;
+  do not add browser localStorage/sessionStorage or process-global locale mutation.
+- Original requests, raw source data, codes, judgments and semantic identities
+  remain unchanged. Translate product-owned explanations and accessible labels.
+- Offline HTML embeds both catalogs; no-script initial content is readable;
+  Markdown has one language; print uses light appearance in the chosen language.
+- CLI flags select report presentation; machine fields and English command-help
+  grammar remain stable. Wire the flags with the renderer in Task 13, not earlier
+  as nonfunctional options.
+- Same authoritative result/context/recipe with different localized/theme archive
+  bytes is an export variant, not an assessment conflict. Keep each archive's
+  evidence omissions/eligibility independent; never merge proof across variants.
+- Contrast, English expansion, active-run focus preservation and no-request/hash
+  invariance require actual browser/fixture checks during implementation.
+
+Current status: amendment, dark visual and updated implementation-plan review
+pending. No new endpoint call, runtime dependency or product source change occurred.
+
+Amendment self-review checked defaults, no-script/print behavior, CLI/report task
+dependencies, preference versus execution state and export-variant identity.
+The revised documents passed the offline/frozen documentation/link/collaboration
+check in the retained Linux Python 3.12 Dev Container. The dark PNG was retained
+with SHA-256 `94b0133e988aff92220328efd959cbbadc04a0a828c20a689d430f1280c2aed7`.
+No runtime/browser/contrast test is claimed for this documentation/design change.

@@ -7,11 +7,14 @@ workbench: quiet single-screen run monitoring, issue investigation, separate
 assessment documents and a portable colleague/agent handoff followed by retesting.
 The [W2 specification](superpowers/specs/2026-10-18-diagnostic-workbench-design.md)
 and [design ledger](harness/diagnostic-workbench-ledger.md) record the proposal.
-The owner approved the written specification on 2026-10-18, selected the first
-overview concept and confirmed continued refinement. The
+The owner approved specification revision 1 on 2026-10-18, selected the first
+overview concept and confirmed continued refinement, then requested Chinese/English
+support and a dark theme. Revision 2 incorporates that amendment. The
 [companion visual design](reviews/2026-10-18-diagnostic-workbench-visual-design.md)
-and [15-task implementation plan](superpowers/plans/2026-10-18-diagnostic-workbench-implementation.md)
-are ready for owner review. No W2 product implementation has started. Preserve
+and [16-task implementation plan](superpowers/plans/2026-10-18-diagnostic-workbench-implementation.md)
+are ready for owner review, including an English/dark overview. The localization/
+theme amendment and updated plan are not yet approved. No W2 product implementation
+has started. Preserve
 sequential current-agent execution in the existing checkout/prepared Dev Container
 once the plan is approved; do not reopen the completed W1 plan.
 Formal case coverage remains the four installed cases;

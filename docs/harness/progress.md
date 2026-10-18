@@ -550,3 +550,16 @@ The W2 planning/design documents passed the documentation/link/collaboration che
 in the prepared Linux Python 3.12 Dev Container, offline/frozen. Whitespace checks
 were clean. This is documentation verification only, not product, browser,
 container-image or endpoint acceptance.
+
+The owner subsequently requested Chinese/English support and a dark theme.
+W2 specification revision 2 and the updated sixteen-task plan now cover checked
+translation catalogs, independent locale/theme controls, offline/print behavior
+and immutable diagnostic semantics. One English/dark overview extends the selected
+light layout. Same-source localized archives are export variants, not conflicting
+assessments, without merging their evidence quality. The amendment and updated
+plan await review; no product implementation or new endpoint call has started.
+
+The revised bilingual/theme documents passed the documentation/link/collaboration
+check in the retained Linux Python 3.12 Dev Container, offline/frozen. The dark
+design image was retained and hashed. Actual theme contrast, bilingual layout,
+offline switching and presentation-invariance checks remain implementation work.

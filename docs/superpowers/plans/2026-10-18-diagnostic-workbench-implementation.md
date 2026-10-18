@@ -2,20 +2,21 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking. Repository instructions require sequential implementation by the current agent and one independent whole-stage review at the end; do not create per-task implementer agents.
 
-**Goal:** Deliver an operational Anthropic diagnostic workbench and a portable, evidence-backed colleague/agent repair-verification loop over the four installed cases.
+**Goal:** Deliver a Chinese/English, light/dark diagnostic workbench and a portable, evidence-backed colleague/agent repair-verification loop over the four installed cases.
 
 **Architecture:** Keep one runner and authoritative result/evidence reader. Add versioned portable metadata, bounded archive/storage adapters and pure eligibility/comparison projections. Workbench views and standalone documents compose the same checked facts independently; CLI and Web call the same diagnostic services.
 
 **Tech Stack:** Existing Python package, FastAPI/Jinja, SQLite, stdlib ZIP/hash/filesystem support, packaged HTML/CSS/JavaScript with strict JSDoc/TypeScript checks, existing Node/Chromium harness and Docker images. No SPA, archive execution, hosted service, model judge or new runtime dependency is planned.
 
-**Spec:** [Approved W2 specification revision 1](../specs/2026-10-18-diagnostic-workbench-design.md).
+**Spec:** [W2 specification revision 2](../specs/2026-10-18-diagnostic-workbench-design.md). Revision 1 is owner-approved; revision 2 adds the owner-requested localization/theme amendment and is submitted with this updated plan.
 
-**Status:** draft for owner review. The owner selected the first run-overview image and approved its refinement direction. Companion issue/comparison/document images and this implementation plan still require owner review. No implementation task has started.
+**Status:** draft for owner review. The owner selected the first run-overview image and approved its refinement direction, then requested Chinese/English and a dark theme. Companion issue/comparison/document images, the dark-English refinement and this 16-task plan still require owner review. No implementation task has started. Task 0 is the added presentation foundation; existing task numbers are retained for traceability.
 
 ## Global Constraints
 
 - Use the checked-in Dev Container, Linux/Python 3.12. Preparation: `uv sync --locked`. Run verification with `UV_OFFLINE=1` and `uv run --frozen`.
 - Source, comments, machine fields, new documents and commits are English. Product UI and reports default to Simplified Chinese.
+- Supported presentation locales are `zh-CN` and `en`, default `zh-CN`. Themes are `light`, `dark`, `system`, default `system`. These options never change requests, rules, evidence, recipe identity or comparison semantics.
 - Four formal cases only; repeat remains one and retry zero. Full original selected-profile scope is retained for retests. Do not import the private assessment into product fixtures.
 - Preserve result 1.0, historical captures, original evidence bytes, required-profile accounting and frozen Stage A artifacts. New contracts are packaged resources with their own identities.
 - Keep framing/domain/validators pure; HTTP, archive, filesystem, package metadata and SQLite work belong to adapters.
@@ -32,8 +33,8 @@
 1. A code change retains its human revision label: compare implementation digests, not labels, and refuse a verified same-test retest when identities differ. Owned by Tasks 2, 4 and 8.
 2. A valid ZIP contains hostile paths, misleading HTML or a huge expansion: validate and stream with finite limits, never execute/serve uploaded presentation, and preserve the normal local request boundary. Owned by Tasks 5, 6 and 10.
 3. A retest changes aliases, model, scope or deadlines: show the condition change and do not manufacture a recovery or hide unmatched checks. Owned by Tasks 4, 8 and 9.
-4. A run finishes or loses its worker while the user reads evidence: preserve focus/context, bind views to a consistent result generation, and distinguish service connectivity from upstream progress. Owned by Tasks 11 and 12.
-5. A colleague has only a legacy/partial/evidence-omitted package: preserve useful reading, explain missing eligibility, and never start requests or upgrade its proof status silently. Owned by Tasks 6, 8, 10 and 14.
+4. A run finishes, loses its worker or changes language/theme while the user reads evidence: preserve focus/context, bind views to a consistent result generation, and distinguish service connectivity from upstream progress. Owned by Tasks 0, 11 and 12.
+5. A colleague has a legacy/partial/evidence-omitted package or a localized export of the same source: preserve useful reading, distinguish export variants from source conflicts, and never merge proof status or start requests silently. Owned by Tasks 6, 8, 10 and 14.
 
 ## Design source and fixture story
 
@@ -47,6 +48,7 @@ Use two isolated synthetic peers and fresh data roots. Baseline has missing stop
 
 | Files | Responsibility |
 | --- | --- |
+| `presentation.py`, `localization.py`, `resources/locales/*.json`, `resources/themes.css` | Pure presentation choices, packaged checked catalogs and theme tokens, independent of judgment logic. |
 | `diagnostics/models.py`, `diagnostics/reduction.py`, `diagnostics/comparison.py` | Pure value types, eligibility, paired-check transitions and counts. |
 | `diagnostics/contracts.py`, packaged schemas | Strict versioned diagnostic contract loading/validation. |
 | `diagnostics/identity.py`, packaged identity manifest | Installed implementation/resource/dependency identity, with no archive-supplied executable code. |
@@ -84,6 +86,15 @@ Also package `export-manifest-v2.schema.json` with schema version 2.0 and presen
 - Comparison records both source identities, condition deltas, paired check transitions, unmatched checks/cases, baseline/new/matched denominators, evidence quality and scoped summary. Finding labels are presentation, not join keys.
 - Workbench/document views have schema version 1.0 and independently versioned presentation metadata. Existing report-view 1.0 remains readable; do not change its const in place.
 
+`presentation-options`, `preferences` and `localization-catalog` schemas, created
+by Task 0, also start at 1.0. Catalog documents have `schema_version`, `locale`
+and a `messages` map with stable machine keys and text values. View/export
+metadata records locale, initial theme and available locales;
+recipe, original result and paired-check facts do not. Exclude localization/theme
+assets from core execution identity by keeping their imports in adapters/renderers.
+Export-manifest 2.0 includes the selected presentation options. A changed localized
+view/archive hash is expected and is not a changed source-result identity.
+
 Schema structural validation is necessary but insufficient: validate recipe/result/plan/request relationships and reference ownership in the services that have those inputs. A complete final result can still contain skipped or unresolved required checks; result completeness is not compatibility completeness.
 
 ### Implementation identity
@@ -103,9 +114,19 @@ Use stdlib ZIP with ZIP_STORED/ZIP_DEFLATED regular files only. Reject encrypted
 
 Limits: compressed upload 256 MiB, expanded total 512 MiB, one expanded member 256 MiB, one parsed JSON document 64 MiB, 4096 members, 64 MiB central-directory metadata. Enforce actual streamed byte counts in addition to declared ZIP sizes, CRC/hash validation and a 60-second monotonic processing deadline. Check the ZIP footer/count/directory size before constructing `ZipFile` to bound central-directory allocation; support a bounded classic ZIP only, rejecting ZIP64/split archives in W2. Tests set smaller injected limits for boundaries rather than allocating hundreds of MiB. Export must respect the same supported envelope and reject a package that its importer cannot read.
 
-Use `diagnostics/previews/<uuid>/` and `diagnostics/baselines/<uuid>/`; mode 0700 directories and 0600 files. Import previews are session-bound, expire after 15 minutes and are capped at two per local service. Cleanup removes only expired/uncommitted owned preview directories. Never automatically delete committed baselines. Store an immutable original archive and checked source files; `index.sqlite3` is a rebuildable local index with a uniqueness constraint on archive digest. Deduplicate identical bytes and retain separate records for conflicting external IDs. Atomic activation publishes no partially checked baseline. Reopen/revalidation detects later corruption rather than trusting an old green badge.
+Use `diagnostics/previews/<uuid>/` and `diagnostics/baselines/<uuid>/`; mode 0700 directories and 0600 files. Import previews are session-bound, expire after 15 minutes and are capped at two per local service. Cleanup removes only expired/uncommitted owned preview directories. Never automatically delete committed baselines. Store an immutable original archive and checked source files; `index.sqlite3` is a rebuildable local index with a uniqueness constraint on archive digest. Deduplicate identical archives. Retain different archives as separate records; link matching authoritative result/context/recipe identities as export variants, and label conflicting external IDs only when authoritative identities differ. Never merge evidence delivery/eligibility across variants. Atomic activation publishes no partially checked baseline. Reopen/revalidation detects later corruption rather than trusting an old green badge.
 
 ### HTTP boundary
+
+Add `POST /api/v1/preferences`, a normal small JSON mutation protected by the same
+session/Origin/CSRF rules. Its checked body contains locale/theme; set only the
+HttpOnly, SameSite=Strict, path=/ `readiness_preferences` cookie with max-age
+31536000 and strictly parsed format `v1.zh-CN.system` (supported values only).
+Malformed cookies fall back to `zh-CN`/`system`; unsupported explicit updates are
+rejected. No credentials/content enter the cookie or browser storage. SSR applies
+`lang`/theme before CSS paint. Both catalogs are packaged/bootstrap data, never a
+translation network call. Locale is request-local; do not use process-global
+`locale.setlocale` or mutate argparse/framework global translation functions.
 
 Keep the 64 KiB JSON body limit and all Host/Origin/session/CSRF protections. Add a single binary upload route `POST /api/v1/diagnostics/imports/preview` with `Content-Type: application/zip`; stream to an owned file, never `request.body()` or base64 JSON. Only that exact route receives the binary bounded-body branch. No multipart dependency or general content-type bypass.
 
@@ -137,6 +158,14 @@ Recipe verification compares regenerated requests excluding only URL/auth and ex
 
 ### CLI interface and exit semantics
 
+Add `--language {zh-CN,en}` and `--theme {light,dark,system}` to report-producing
+commands (`run`, `replay`, `report`, diagnostic `export`, `retest`, `compare`).
+`add_presentation_options(parser: argparse.ArgumentParser) -> None` belongs to the
+CLI adapter and returns no execution configuration. Pass a `PresentationOptions`
+value only to report/export functions. Command names, English help grammar and
+machine stdout keys/status/error codes remain stable; these flags do not enable
+terminal color or translate captured data. Defaults are `zh-CN` and `system`.
+
 Add `diagnostics import --package PATH --data-dir PATH`, `diagnostics inspect --baseline ID --data-dir PATH`, `diagnostics export --input RESULT --out PATH [--include-evidence]`, `diagnostics retest --baseline ID --data-dir PATH --target PATH --out PATH [--dry-run | --allow-live]` and `diagnostics compare --baseline ID --data-dir PATH --input RESULT --out PATH`.
 
 Import performs the same inspection/activation service as Web but is an explicit one-command local action. Inspect/export/compare are offline. Retest without either opt-in flag returns 2 and makes zero requests; dry-run writes only its preview document, not an assessment or reports. Live retest returns the existing runner exit code and automatic HTML/Markdown/JSON. Import/inspect/export/compare return 0 for a successfully represented operation, including an explicitly incomparable comparison; malformed inputs return 2 and unexpected internal faults 4. Comparison JSON states comparability explicitly; zero never means compatible. Existing commands keep their meanings and CLI imports no FastAPI/Jinja module.
@@ -148,6 +177,18 @@ reruns that test and relevant local regressions, and ends with a scoped local
 commit. Commands below execute inside the prepared Dev Container. Record RED and
 GREEN evidence in ignored `artifacts/w2/`; do not erase failures. No per-task
 independent reviewer or implementer agent is dispatched.
+
+### Task 0: Shared bilingual catalogs and appearance foundation
+
+**Files:** Create `src/anthropic_readiness/presentation.py`, `src/anthropic_readiness/localization.py`, `src/anthropic_readiness/resources/locales/{zh-CN,en}.json`, `src/anthropic_readiness/resources/themes.css`, `src/anthropic_readiness/resources/schemas/{presentation-options,preferences,localization-catalog}.schema.json`, `tests/unit/test_localization.py`, `tests/unit/test_presentation_options.py`; modify `scripts/validate_resources.py` and `pyproject.toml` architecture/resource checks.
+
+**Interfaces:** `Locale = Literal["zh-CN", "en"]`; `Theme = Literal["light", "dark", "system"]`; frozen `PresentationOptions(locale: Locale = "zh-CN", theme: Theme = "system")` with `to_json() -> JsonObject`. Pure `presentation.py` validates supported values without I/O. `load_catalog(locale: Locale) -> Mapping[str, str]` and `translate(catalog: Mapping[str, str], key: str, params: Mapping[str, str | int | float] | None = None) -> str` live in the resource adapter. Named placeholders cannot use attribute/index expressions, conversions or arbitrary format execution.
+
+- [ ] Write tests asserting identical key sets and named parameters in both catalogs, complete singular/plural message forms, strict option/cookie-value enums, missing-key/parameter errors, escaped hostile parameter rendering and original protocol/code/data values untouched. Unknown historical reason codes receive a localized generic explanation plus explicitly raw source text; they are not missing authored keys.
+- [ ] Run `UV_OFFLINE=1 uv run --frozen pytest -q tests/unit/test_localization.py tests/unit/test_presentation_options.py`; retain RED before the new foundation exists.
+- [ ] Implement small packaged catalogs and semantic theme tokens for background/surface/text/muted/border/status/code/focus/selection/native controls. Use CSS media queries for system appearance, explicit selectors for overrides and forced light print tokens. Keep English command help and original data outside catalog translation. No translation service, i18n runtime dependency or browser storage is added.
+- [ ] Rerun focused tests and architecture/resource checks. Verify strict catalog validation rejects a deliberately removed key or mismatched placeholder. Contrast and actual layout/interaction are verified in Tasks 12/13, not claimed from token declarations.
+- [ ] Commit: `feat: define bilingual presentation catalogs and theme tokens`.
 
 ### Task 1: Versioned diagnostic contracts and pure values
 
@@ -167,7 +208,7 @@ independent reviewer or implementer agent is dispatched.
 
 **Interfaces:** `installed_identity() -> ImplementationIdentity`; `check_identity(expected: ImplementationIdentity, actual: ImplementationIdentity) -> tuple[str, ...]`. Identity file/resource access stays in this adapter; comparison/reduction receives its checked document.
 
-- [ ] Write `test_same_label_changed_bytes_rejects`, `test_missing_transitive_dependency_blocks`, `test_report_only_change_preserves_identity` and `test_new_reachable_module_requires_manifest_entry`. Assert identical named revision plus changed validator bytes is unequal; no Git/host path enters the digest.
+- [ ] Write `test_same_label_changed_bytes_rejects`, `test_missing_transitive_dependency_blocks`, `test_report_only_change_preserves_identity`, `test_catalog_theme_changes_preserve_identity` and `test_new_reachable_module_requires_manifest_entry`. Assert identical named revision plus changed validator bytes is unequal; no Git/host path enters the digest. Locale/theme resources stay outside the judgment dependency closure.
 - [ ] Run `UV_OFFLINE=1 uv run --frozen pytest -q tests/unit/test_diagnostic_identity.py` and retain RED.
 - [ ] Implement canonical sorted digest construction, static dependency-closure validation and distribution metadata traversal. Include actual rule/schema bytes; never load archive paths as modules.
 - [ ] Rerun identity tests, architecture checks and a fresh subprocess without `.git`; assert metadata absence gives ineligibility rather than fabricated identity.
@@ -215,7 +256,7 @@ independent reviewer or implementer agent is dispatched.
 
 **Interfaces:** `DiagnosticStore(root: Path)` exposes `preview(archive: Path, owner: str, *, now: datetime) -> JsonObject`, `commit(preview_id: str, owner: str, *, now: datetime) -> BaselineRecord`, `get(baseline_id: str) -> BaselineRecord` and `load_source(baseline_id: str) -> ReportSource`. `DiagnosticService(root: Path)` wraps this store and exposes the same import operations for adapters.
 
-- [ ] Write `test_complete_legacy_partial_and_omitted_eligibility`, `test_duplicate_archive_deduplicates`, `test_external_id_collision_stays_separate`, `test_activation_crash_is_not_visible` and `test_changed_import_bytes_revoke_eligibility`. Assert import time is separate from external time and no local job row/event is created.
+- [ ] Write `test_complete_legacy_partial_and_omitted_eligibility`, `test_duplicate_archive_deduplicates`, `test_external_id_collision_stays_separate`, `test_localized_exports_are_variants_not_conflicts`, `test_variant_evidence_is_not_merged`, `test_activation_crash_is_not_visible` and `test_changed_import_bytes_revoke_eligibility`. Assert import time is separate from external time and no local job row/event is created. Different languages/themes with matching authoritative source/context/recipe remain export variants; genuinely changed source identities remain conflicts.
 - [ ] Run `UV_OFFLINE=1 uv run --frozen pytest -q tests/integration/test_diagnostic_import.py`; retain RED.
 - [ ] Implement session-bound 15-minute previews, the two-preview cap, atomic activation and rebuildable digest index. Regenerate views from checked structured facts; never render uploaded HTML/JS. Validate every baseline/result/evidence/recipe relationship before granting operations.
 - [ ] Rerun focused tests and export/report-source integration tests. Assert expired previews reject and cleanup never deletes committed baselines or another session's active preview. Block all sockets during inspection/commit/read.
@@ -227,7 +268,7 @@ independent reviewer or implementer agent is dispatched.
 
 **Interfaces:** `build_package_files(source: ReportSource, context: AssessmentContext | None, *, include_evidence: bool, comparison: Comparison | None = None) -> dict[str, bytes]`; `write_package(files: dict[str, bytes], destination: Path) -> JsonObject`; `DiagnosticService.export(source_dir: Path, destination: Path, *, include_evidence: bool) -> JsonObject`.
 
-- [ ] Write `test_export_preserves_source_bytes_and_binds_recipe`, `test_old_source_exports_as_legacy_not_verified`, `test_evidence_omission_lowers_delivery`, `test_source_url_is_disclosed_in_preview` and `test_package_export_import_limits_match`. Hash-check result/capture bytes before and after; a report-only package cannot claim independent verification.
+- [ ] Write `test_export_preserves_source_bytes_and_binds_recipe`, `test_old_source_exports_as_legacy_not_verified`, `test_evidence_omission_lowers_delivery`, `test_source_url_is_disclosed_in_preview` and `test_package_export_import_limits_match`. Hash-check result/capture bytes before and after; a report-only package cannot claim independent verification. Task 13 extends the actual localized export test, including invalidating only the export preview when its presentation choices change.
 - [ ] Run `UV_OFFLINE=1 uv run --frozen pytest -q tests/integration/test_diagnostic_export.py`; retain RED.
 - [ ] Implement package marker/inventory/context and a minimal agent entry point using the current checked report facts. Task 13 replaces its document composition with the final design. Preserve existing export-manifest 1.0 reads; publish presentation-3 files with the separate export-manifest 2.0 branch when Task 13 integrates them. Do not mutate an existing const/golden file. Full diagnostic archives retain the source result even when evidence is omitted; standalone HTML/Markdown provide summary sharing without those attachments. Never call the original-evidence ZIP anonymized.
 - [ ] Rerun focused tests, `test_exports.py`, `tests/acceptance/test_export_integrity.py` and `test_recovered_reports.py`. Round-trip complete, partial and omitted packages through Task 6; reject mismatches without rewriting old bytes.
@@ -242,7 +283,7 @@ independent reviewer or implementer agent is dispatched.
 - [ ] Write a transition-table test for FAIL/PASS, FAIL/FAIL, PASS/FAIL, PASS/PASS, missing baseline, unresolved new checks and unmatched checks. Add `test_changed_conditions_have_no_recovery_badge`, `test_same_label_changed_implementation_incomparable`, `test_omitted_evidence_no_verified_headline` and `test_missing_required_check_not_hidden_in_denominator`.
 - [ ] Run `UV_OFFLINE=1 uv run --frozen pytest -q tests/unit/test_diagnostic_comparison.py`; retain RED.
 - [ ] Implement canonical joins by case/generator/request/judgment identities and conservative whole-pair ineligibility for changed effective limits. Enumerate all unmatched checks; issue summaries derive from paired assertions and list their members, never from F01 or a status string. Preserve input objects unchanged.
-- [ ] Rerun focused tests and schema tests. Assert "all previous failing checks passed this sample" requires full comparable coverage, and new failures/gaps remain beside any recovery count. No claim of cause or stability is generated.
+- [ ] Rerun focused tests and schema tests. Assert "all previous failing checks passed this sample" requires full comparable coverage, and new failures/gaps remain beside any recovery count. Compare the same checked facts under different presentation choices and assert identical semantic comparison output. No claim of cause or stability is generated.
 - [ ] Commit: `feat: compare repair observations without hiding verification gaps`.
 
 ### Task 9: Standalone diagnostic CLI operations
@@ -251,9 +292,9 @@ independent reviewer or implementer agent is dispatched.
 
 **Interfaces:** `add_diagnostic_commands(parser: argparse.ArgumentParser) -> None` and `dispatch_diagnostics(args: argparse.Namespace) -> int` own the exact commands/flags defined above. The root CLI first creates `commands.add_parser("diagnostics")` and passes that parser to the helper; the helper creates only its child subcommands. No private argparse generic, Any or suppression is needed.
 
-- [ ] Write subprocess tests for each command, missing live opt-in, dry-run zero requests, immutable baseline bytes, legacy manual-current-test guidance and explicit incomparable JSON. Deny importing `fastapi`, `jinja2` and `uvicorn` in a clean CLI-only installation.
+- [ ] Write subprocess tests for each command, missing live opt-in, dry-run zero requests, immutable baseline bytes, legacy manual-current-test guidance and explicit incomparable JSON. Deny importing `fastapi`, `jinja2` and `uvicorn` in a clean CLI-only installation. Task 13 adds and tests the presentation flags when localized document rendering is available; this task does not accept and silently ignore unsupported presentation choices.
 - [ ] Run `UV_OFFLINE=1 uv run --frozen pytest -q tests/acceptance/test_diagnostic_cli.py`; retain RED.
-- [ ] Implement parser/dispatch through the shared service. Keep existing stdout machine-readable, explanations on stderr, secret values absent from errors and existing run exit meanings unchanged. Dry-run output cannot create a report that looks executed.
+- [ ] Implement parser/dispatch through the shared service. Keep existing stdout machine-readable, operation explanations on stderr, secret values absent from errors and existing run exit meanings unchanged. Dry-run output cannot create a report that looks executed. The additional language/theme helper and report-option forwarding are integrated in Task 13, preserving this task's command/exit contracts.
 - [ ] Rerun focused tests and `tests/acceptance/test_cli.py tests/acceptance/test_replay.py tests/acceptance/test_serve_command.py`. Exercise live opt-in only against the disposable local synthetic peer with a four-request plan.
 - [ ] Commit: `feat: expose portable diagnosis and repair verification in the CLI`.
 
@@ -263,9 +304,9 @@ independent reviewer or implementer agent is dispatched.
 
 **Interfaces:** The routes in the HTTP decision section call `DiagnosticService`; upload preview streams an archive to `DiagnosticStore` staging. JSON routes retain existing `LocalRoute`, error envelopes and published contracts. Retest preview produces a normal frozen plan plus its diagnostic context, not a new execution endpoint.
 
-- [ ] Write tests for valid chunked ZIP, oversized/deceptive Content-Length, disconnect cleanup, wrong media type, missing Origin/session/CSRF and applying ZIP to every other route. Assert JSON stays at 65536 bytes, expired/mismatched preview owners cannot commit, and all requests before normal start produce zero upstream calls.
+- [ ] Write tests for valid chunked ZIP, oversized/deceptive Content-Length, disconnect cleanup, wrong media type, missing Origin/session/CSRF and applying ZIP to every other route. Assert JSON stays at 65536 bytes, expired/mismatched preview owners cannot commit, and all requests before normal start produce zero upstream calls. Add checked preference-cookie update/default/malformed/expiry tests and localized human error messages with identical machine error codes; preference mutation still requires session/Origin/CSRF.
 - [ ] Run `UV_OFFLINE=1 uv run --frozen pytest -q tests/integration/test_web_diagnostics.py`; retain RED.
-- [ ] Implement the one-route streaming branch after the same security checks as JSON. Keep upload processing off the event loop using the existing threadpool pattern; cap concurrent previews and return a useful busy response. Preserve sanitized errors/CSP and never use uploaded HTML as a page.
+- [ ] Implement the one-route streaming branch after the same security checks as JSON, plus the ordinary preferences route/cookie parser and request-local error-message localization. Keep upload processing off the event loop using the existing threadpool pattern; cap concurrent previews and return a useful busy response. Preserve sanitized errors/CSP and never use uploaded HTML as a page. Add versioned diagnostic export request options rather than weakening old export-request schemas.
 - [ ] Rerun focused tests plus `test_web_security.py test_web_api.py test_web_events.py`; validate OpenAPI declares binary upload correctly and JSON response schema names match runtime validation.
 - [ ] Commit: `feat: add bounded local diagnostic import and retest endpoints`.
 
@@ -277,7 +318,7 @@ independent reviewer or implementer agent is dispatched.
 
 - [ ] Write tests for active, complete, interrupted, empty and mixed states; distinguish upstream timestamps, service connectivity and observed worker liveness. A terminal result/publication race must yield one coherent projection generation. Assert original dimensions and unassessed client state survive.
 - [ ] Run `UV_OFFLINE=1 uv run --frozen pytest -q tests/unit/test_workbench_view.py tests/integration/test_workbench_pages.py`; retain RED.
-- [ ] Implement selected-layout shell and distinct views with query parameters `view`, `issue`, `case`, `filter`, `baseline`, plus the import/baseline/retest-configuration HTML routes. Render neutral completion; green denotes PASS only. Derive counts from facts; explicitly label matrix passing-count denominators. Evidence details reference checked IDs, never arbitrary paths. Configuration labels the actual installed suite/count, keeps all original profiles for retest, and groups finite execution controls into details rather than a pricing workflow.
+- [ ] Implement selected-layout shell and distinct views with query parameters `view`, `issue`, `case`, `filter`, `baseline`, plus the import/baseline/retest-configuration HTML routes. SSR applies the checked preference and includes both catalogs; autonym language and light/dark/system controls are available globally. Render neutral completion; green denotes PASS only. Derive counts from facts; explicitly label matrix passing-count denominators. Evidence details reference checked IDs, never arbitrary paths. Configuration labels the actual installed suite/count, keeps all original profiles for retest, and groups finite execution controls into details rather than a pricing workflow.
 - [ ] Rerun focused tests and existing Web page/source recovery tests. Preserve old run URLs and map old `#capabilities`, `#finding-*`, `#case-*` links to the appropriate view/selection without changing source identities. No-JS links work.
 - [ ] Commit: `feat: separate operational workbench views from report documents`.
 
@@ -287,22 +328,22 @@ independent reviewer or implementer agent is dispatched.
 
 **Interfaces:** `deriveActivity(execution: Execution | null, nowMs: number) -> ActivityView` and `reduceWorkbench(state: WorkbenchState, event: WorkbenchEvent) -> WorkbenchState` have strict JSDoc types in `contracts.d.ts`. Browser controllers mount view-specific behavior and patch keyed facts instead of replacing inspector/root HTML.
 
-- [ ] Write Node tests for distinct activity clocks and stale/out-of-order snapshots. Browser tests cover tabs/Back/refresh, selected-row retention on issue arrival, evidence disclosure focus, import/retest preview, keyboard filters, empty issues, cancellation and service reconnect with exact request counting.
+- [ ] Write Node tests for distinct activity clocks and stale/out-of-order snapshots. Browser tests cover tabs/Back/refresh, selected-row retention on issue arrival, evidence disclosure focus, import/retest preview, keyboard filters, empty issues, cancellation and service reconnect with exact request counting. Locale/theme switching must preserve a valid execution-plan preview; changing export presentation must require a fresh export preview.
 - [ ] Run `UV_OFFLINE=1 uv run --frozen python -m scripts.check_frontend --suite static --out artifacts/w2/task12-static-red` and the new browser tests through the existing harness with a fresh output directory; preserve meaningful assertion failures.
-- [ ] Implement keyboard-accessible navigation and narrow list/detail flow, unique IDs, focused live-region summaries and bounded updates. While active, refresh worker observation at most every five seconds via the local workbench route; this is not upstream activity. SSE events remain ordered and reconnection never starts work. Do not auto-open issues or silently reseat selection.
-- [ ] Verify 1280x800, 1440x900, 390px narrow and 200% zoom. Assert desktop document height does not exceed viewport height for overview attention/global state; no horizontal clipping of primary actions. Test a synthetic 96-row stress list in Cases with a compact grouped Overview, no-JS links, missing evidence, unknown lineage and axe checks. Run the entire existing browser suite after updating intentional view expectations, retaining old report/source fixture outcomes.
+- [ ] Implement keyboard-accessible navigation and narrow list/detail flow, unique IDs, focused live-region summaries and bounded updates. Language/theme updates patch product-owned text/accessibility labels and CSS tokens without replacing controls, translating data, clearing inputs or restarting observation. Set `<html lang>` correctly. While active, refresh worker observation at most every five seconds via the local workbench route; this is not upstream activity. SSE events remain ordered and reconnection never starts work. Do not auto-open issues or silently reseat selection.
+- [ ] Verify 1280x800, 1440x900, 390px narrow and 200% zoom in both languages and explicit light/dark themes, plus system-theme changes and explicit overrides. Assert desktop document height does not exceed viewport height for overview attention/global state; no horizontal clipping of primary actions. Measure normal text contrast at least 4.5:1, large text at least 3:1 and meaningful non-text contrast at least 3:1, including code/status/focus/selected states. Test switching during an active synthetic run with unchanged request counts and source hashes, cookie persistence, clean first paint, no localStorage/sessionStorage, a synthetic 96-row list, no-JS links, missing evidence, unknown lineage and axe checks. Run the entire existing browser suite after updating intentional view expectations, retaining old report/source fixture outcomes.
 - [ ] Commit: `feat: make workbench monitoring quiet and context preserving`.
 
 ### Task 13: Standalone presentation-3 reports and agent entry point
 
-**Files:** Create `documents.py`, `document_rendering.py`, `resources/report-v3.html`, `resources/report-v3.css`, `resources/report-v3.js`, `tests/unit/test_document_view.py`, `tests/acceptance/test_diagnostic_documents.py`; modify `reporting.py`, `exports.py`, `diagnostics/packages.py`, `package.json`, `scripts/check_templates.py`, frontend resource/type/lint coverage as needed.
+**Files:** Create `documents.py`, `document_rendering.py`, `cli_presentation.py`, `resources/report-v3.html`, `resources/report-v3.css`, `resources/report-v3.js`, `tests/unit/test_document_view.py`, `tests/acceptance/test_diagnostic_documents.py`; modify `cli.py`, `diagnostics/cli.py`, `tests/acceptance/test_diagnostic_cli.py`, `reporting.py`, `exports.py`, `diagnostics/service.py`, `diagnostics/packages.py`, `package.json`, `scripts/check_templates.py`, frontend resource/type/lint coverage as needed.
 
-**Interfaces:** `build_document_view(source: ReportSource, *, comparison: Comparison | None = None) -> DocumentView`; `render_document_html(view: DocumentView) -> str`; `render_document_markdown(view: DocumentView) -> str`; `render_agent_index(view: DocumentView) -> str`. Existing public report entry points select new presentation explicitly while preserving old readers/assets and original source bytes.
+**Interfaces:** `build_document_view(source: ReportSource, *, comparison: Comparison | None = None, presentation: PresentationOptions = PresentationOptions()) -> DocumentView`; `render_document_html(view: DocumentView) -> str`; `render_document_markdown(view: DocumentView) -> str`; `render_agent_index(view: DocumentView) -> str`; `cli_presentation.add_presentation_options(parser: argparse.ArgumentParser) -> None`. Add the same optional `presentation` keyword to shared report/export service entry points and existing public report-output functions; never add it to `run_assessment` execution configuration. Existing public report entry points select new presentation explicitly while preserving old readers/assets and original source bytes.
 
-- [ ] Write tests asserting standalone HTML has conclusion/scope/matrix/findings/method/evidence links and no run tabs/cancel/export form. Assert Markdown/JSON and HTML share counts, omissions and comparison limits. Hostile prompts/metadata remain escaped data; references cannot execute script or reference non-HTTPS external actions.
+- [ ] Write tests asserting standalone HTML has conclusion/scope/matrix/findings/method/evidence links and no run tabs/cancel/export form. Assert Markdown/JSON and HTML share counts, omissions and comparison limits. Add subprocess tests for presentation flags/defaults on every report-producing command and unchanged machine stdout/exit semantics; compare original result/evidence hashes and request parameters across locales/themes. Hostile prompts/metadata remain escaped data; references cannot execute script or reference non-HTTPS external actions.
 - [ ] Run `UV_OFFLINE=1 uv run --frozen pytest -q tests/unit/test_document_view.py tests/acceptance/test_diagnostic_documents.py`; retain RED.
 - [ ] Implement the editorial report direction with explicit passing/assessed labels, numbered tables/figures and useful default-expanded findings. Reuse existing verified field extraction and reference facts; do not independently rejudge assertions. Include comparison only when present and accurately scoped. Add an agent index linking to result, recipe, comparison and evidence identifiers with content-as-data instructions. Standalone HTML/Markdown identify the endpoint by its display alias and omit raw endpoint/auth-reference fields, including embedded page data; actual requested/observed model identities remain because they are evidence. The source result in a full ZIP retains its original fields and is disclosed as such. Route fresh CLI/Web reports through presentation 3.0 while retaining existing `report_rendering` functions/assets for explicit presentation-2 tests and legacy reads; record this intentional versioned presentation change without altering original fixture outcomes.
-- [ ] Run focused tests and browser offline/no-script/print checks using synthetic generated reports. Deny all network requests during report reading, exercise direct-file fixture opening, verify print visibility of main findings and narrow table accessibility. Existing actual private exported-file browser restrictions are not bypassed; use the normal synthetic harness.
+- [ ] Run focused tests and browser offline/no-script/print checks using synthetic generated reports in both languages and all three theme choices. HTML embeds two catalogs and one fact set; initial exported language works without scripts, while enabled in-file switches need no service/cookie/storage and do not mutate evidence. Markdown remains one selected language. Deny all network requests during reading, exercise direct-file fixture opening, verify print forces light while retaining selected language, inspect chart/code/control contrast and narrow tables. Existing actual private exported-file browser restrictions are not bypassed; use the normal synthetic harness.
 - [ ] Commit: `feat: publish independent diagnostic documents for humans and agents`.
 
 ### Task 14: End-to-end two-environment repair handoff and packaging
@@ -321,7 +362,7 @@ independent reviewer or implementer agent is dispatched.
 
 **Files:** Create `docs/reviews/2026-10-18-diagnostic-workbench-review.md`, `docs/harness/diagnostic-workbench-acceptance.json`, `docs/harness/diagnostic-workbench-handoff.json`, their packaged schemas and `tests/harness/test_diagnostic_acceptance.py`; maintain `docs/harness/diagnostic-workbench-ledger.md`, `docs/harness/progress.md`, `docs/CONTINUE.md` and plan checkboxes.
 
-**Interfaces:** Acceptance maps W2-01 through W2-14 to exact source identities, executed checks and retained artifacts. Handoff separates source, offline/browser/package, container, remote CI, independent review and real endpoint outcomes. New acceptance schemas are validated by the existing resource/document harness.
+**Interfaces:** Acceptance maps W2-01 through W2-17 to exact source identities, executed checks and retained artifacts. Handoff separates source, offline/browser/package, container, remote CI, independent review and real endpoint outcomes. New acceptance schemas are validated by the existing resource/document harness.
 
 - [ ] Write an acceptance-schema regression rejecting a missing requirement, unknown source identity, zero tests or an unrun child marked passed. Run it RED, then add only the validation/recording boundary required to represent observed W2 outcomes.
 - [ ] Freeze a clean candidate commit and arrange exactly one independent whole-W2 review under repository policy. Provide the approved spec, selected design, this plan, immutable diff range, new/old contract fixtures, check records and the complete handoff scenario. Reviewer is read-only; no per-task implementers or repeated review loop.
@@ -347,6 +388,18 @@ independent reviewer or implementer agent is dispatched.
 | W2-12 CLI independence, images and restart | 9, 10, 14 |
 | W2-13 full harness and honest external status | 1, 12, 13, 14, 15 |
 | W2-14 independent whole-stage review | 15 |
+| W2-15 complete bilingual presentation and catalogs | 0, 9, 10, 11, 12, 13, 14 |
+| W2-16 light/dark/system, offline and print | 0, 11, 12, 13, 14 |
+| W2-17 presentation invariance and archive variants | 0, 2, 6, 7, 8, 9, 12, 13, 14 |
+
+The localization/theme amendment adds Task 0 and extends existing adapter/report
+tasks without changing their order. CLI presentation flags are deliberately wired
+in Task 13, after their renderer exists, rather than exposing nonfunctional options
+in Task 9. The amendment also adds tests for same-source export variants, retains
+per-archive evidence quality and keeps presentation modules out of core identity.
+Amendment self-review also distinguishes execution-preview preservation from
+export-preview invalidation, covers all three new acceptance IDs, and retains
+English CLI help/machine grammar while localizing product UI and report prose.
 
 ## Author self-review and execution handoff
 

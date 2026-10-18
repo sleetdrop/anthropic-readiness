@@ -1,13 +1,17 @@
 # Anthropic compatibility diagnostic workbench and repair handoff
 
-Date: 2026-10-18. Revision: 1. Status: approved by the owner on 2026-10-18.
+Date: 2026-10-18. Revision: 2. Status: revision 1 was approved by the owner;
+the requested bilingual/dark-theme amendment is submitted for review.
 
 The owner approved the conversational direction: a focused diagnostic workbench
 for Anthropic-compatible endpoints used by Claude Code, a separate assessment
 document, and portable handoff followed by repair verification. The owner asked
 that this be practical and evidence-backed, then explicitly approved this written
-specification. Product implementation, implementation planning and new endpoint
-calls have not started. Visual layouts still require review before implementation.
+specification revision 1. The owner subsequently selected the first overview
+layout and requested Chinese/English support and a dark theme. An implementation
+plan and companion visuals exist; this revision incorporates that amendment.
+Product implementation and new endpoint calls have not started. Updated visual
+and implementation-plan review remain outstanding.
 
 ## 1. Purpose and users
 
@@ -32,8 +36,9 @@ dominate the primary flow or reduce the selected scope silently.
 ## 2. Relationship to current delivery
 
 W1 is locally delivered; its specification, verification records and original
-results remain historical facts. This is a proposed W2 follow-up. If approved,
-it supersedes W1's embedded long-report interaction for new Web pages and new
+results remain historical facts. The W2 core direction was approved; its
+localization/theme amendment is under review. W2 supersedes W1's embedded
+long-report interaction for new Web pages and new
 presentation exports. It does not rewrite W1 acceptance or frozen Stage A files.
 
 Observed current implementation:
@@ -278,8 +283,14 @@ regression badges that imply a controlled comparison. Optional presentation file
 are not authoritative: regenerate local views from validated structured facts.
 
 Assign each imported baseline a local ID and retain its external assessment ID
-and archive digest. Identical imports deduplicate by archive digest; matching
-external IDs with different bytes remain separate and visibly conflict. Imports
+and archive digest. Identical archives deduplicate by archive digest. Different
+archives remain byte-distinct. When their validated authoritative result
+(or retained-checkpoint inventory),
+recipe and assessment-context identities match, describe them as export variants,
+including localized/theme variants or different evidence delivery selections.
+Do not merge their evidence availability or grant one variant another's proof
+status. Matching external IDs with different authoritative identities remain
+separate and visibly conflict. Presentation metadata is not a conflict key. Imports
 do not create local job-completed events or overwrite a local run with that ID.
 
 Treat archives as untrusted data. Validate bounded upload/member count, compressed
@@ -412,6 +423,9 @@ retained artifacts and observed results. No current test outcome is claimed here
 | W2-12 | CLI import/retest/compare works without Web dependencies or a running service; both shipped images and persistence survive the supported local restart path. |
 | W2-13 | Fast/full quality gates, browser coverage, installed resources and container checks pass in the checked-in Linux Dev Container; remote CI and real endpoints are reported separately. |
 | W2-14 | One independent whole-stage review is completed after sequential implementation, followed by an evidence-recorded author correction pass if required. |
+| W2-15 | Workbench labels, controlled explanations, errors, chart/table/accessibility text and new report presentation work in both `zh-CN` and `en`; unknown keys and inconsistent translation parameters fail checks. Original endpoint content and machine facts are unchanged. |
+| W2-16 | Light/dark/system appearance covers controls, matrices, charts, inspectors and offline HTML; explicit overrides win over system settings, initial rendering avoids the wrong theme, and print remains readable on a light background. Test both languages, required viewports and keyboard/contrast behavior. |
+| W2-17 | Language/theme changes retain navigation/focus/live execution and make no upstream call. Source evidence, recipe and comparison semantics remain identical; same-assessment localized/theme archives are export variants, not conflicting assessments. |
 
 Use disposable synthetic peers for cross-machine tests, including a baseline
 failure that the changed peer resolves and an independent defect introduced by
@@ -419,7 +433,73 @@ that change. This proves the actual handoff loop rather than only screenshot
 appearance. Test larger synthetic lists as layout stress data, clearly labeled.
 Real endpoint/client validation needs its own explicit live scope and budget.
 
-## 15. Reference rationale and next review
+## 15. Chinese/English presentation and light/dark appearance
+
+Supported locales are Simplified Chinese (`zh-CN`) and English (`en`). The default
+is `zh-CN`; expose autonym labels "中文" and "English" in the application header
+so either audience can find the control. Language and theme are independent.
+Translate product-owned navigation, forms, validation/error explanations, lifecycle
+and result labels, issue/impact templates, next steps, charts, captions, units,
+empty/partial states, export/import guidance, tooltips and accessibility names.
+Translate complete messages with checked named parameters and count forms rather
+than concatenating fragments or replacing text inside captured responses.
+
+Protocol field/event names, rule/check/status codes, model identifiers, original
+prompts/responses, code, captured headers, raw diagnostic strings and evidence
+bytes remain original data. Provide a localized explanation around that material;
+unknown historical diagnostics show a localized generic explanation plus the raw
+code/text explicitly marked as source data. No model translation call, dynamic
+translation service or automatic rewriting of evidence is introduced.
+
+Use packaged key/placeholder-checked catalogs, shared by Python rendering and the
+small browser controllers. Keep translation I/O and presentation out of validators,
+recipes and comparison reductions. Original result/capture/recipe/comparison facts
+and their hashes do not change with locale/theme; localized view labels and export
+presentation metadata may change. Presentation resources are excluded from the
+execution identity unless they actually enter judgment logic, which this design
+prohibits. Locale switches update `<html lang>`, visible text and accessibility
+names while preserving case/issue IDs, filters, open details, focus, input values,
+live observation and request counts. User-entered names are not translated.
+Changing presentation does not invalidate an admitted/frozen execution preview.
+Changing export language/theme does invalidate that export's preview so the
+published files and manifest reflect the newly selected presentation.
+
+The application offers `light`, `dark` and `system`; default `system`. Explicit
+light/dark overrides the operating system. A strictly parsed, non-secret
+per-browser preference cookie remembers locale/theme. Keep credentials
+and test content out of it, and do not add localStorage/sessionStorage. Apply the
+preference server-side before initial paint; use `prefers-color-scheme` for system
+appearance and packaged CSS tokens for surfaces, typography, statuses, code,
+charts, table selection, hover, focus and native controls. Do not invert colors
+or reuse light-theme syntax colors blindly. Theme changes make no upstream call.
+
+Dark appearance retains the chosen restrained engineering direction: charcoal
+surfaces, soft light text, muted sage accents, readable amber waits and terracotta
+failures. Execution completion remains neutral. Both palettes target at least
+4.5:1 for normal text and 3:1 for large text; meaningful controls/focus/graphics
+also need sufficient non-text contrast. Verify actual rendered token pairs and
+keyboard states; generated images do not establish accessibility compliance.
+
+Web export defaults to the current explicit application locale/theme, displayed
+in the export preview; the no-preference locale remains `zh-CN`. CLI report-producing
+commands accept `--language zh-CN|en` and `--theme light|dark|system`; CLI defaults
+to `zh-CN` and `system`. These options select report presentation, not terminal
+colors. Existing command names/options, machine stdout keys/codes and English CLI
+help grammar remain stable. Human operation explanations can use the chosen
+catalog without changing machine error identifiers.
+
+Offline HTML embeds both supported presentation catalogs and the single factual
+dataset. It renders the export's chosen initial language without JavaScript and
+offers in-document language/theme switching when scripts are enabled. Those
+controls work from the standalone file without a service or cookies/storage;
+changes last for that open document only. With scripts unavailable, hide controls
+that cannot work and keep the selected-language content readable. Markdown uses
+the single selected language. Record initial locale/theme and available locales
+in export/document metadata; never mix them into the frozen test plan or result.
+Printing forces the light palette while preserving the selected language and
+explicit text/status labels. Original result/evidence bytes remain unchanged.
+
+## 16. Reference rationale and next review
 
 The prior discussion reviewed official documentation for
 [Promptfoo's viewer](https://www.promptfoo.dev/docs/usage/web-ui/),
@@ -430,6 +510,10 @@ The adopted principles are filter/drill-down analysis, continuous live-to-result
 navigation, structured evidence/diffs and a distinct agent-readable entry point.
 This specification is project-specific; it does not claim an interactive audit
 of those products or copy their scoring/hosting models.
+
+The amendment uses [W3C contrast guidance](https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html)
+and [the documented system-color preference mechanism](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@media/prefers-color-scheme)
+as implementation/verification references, not as proof that a static mock passes.
 
 Before implementation planning, review this written scope and the visual layouts
 for overview, issue inspection, comparison and the separate report. Visual work
