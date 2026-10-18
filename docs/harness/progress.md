@@ -513,3 +513,17 @@ scratch directory. The archive proof is
 `artifacts/w1/plan-workspace-archive-proof.json`; sibling workspaces were preserved.
 The chronological 70 rulings/costs and sole deferred Minor are retained in
 `artifacts/w1/rulings-final-20261018.md` and the archived original ledger.
+
+## W2 diagnostic workbench design proposal (2026-10-18)
+
+The owner approved the conversational product direction after clarifying the
+colleague/agent repair workflow and quiet single-screen monitoring requirement.
+Source inspection confirmed the existing four-case scope and the absence of a
+portable retest contract. The [W2 draft specification](../superpowers/specs/2026-10-18-diagnostic-workbench-design.md)
+and [design ledger](diagnostic-workbench-ledger.md) define a separate workbench,
+independent documents, read-only package import and conditional repair comparison.
+Full original-profile retest is the proposed first scope; new tests, repeats and
+targeted subsets are not implied. Author document self-review completed. Written
+specification review, visual design and implementation planning remain pending.
+No product code/dependency, runtime test, new endpoint call or external write
+occurred. This proposal does not change W1 completion or historical evidence.
