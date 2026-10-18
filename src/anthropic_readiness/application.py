@@ -5,7 +5,10 @@ from pathlib import Path
 
 from anthropic_readiness.config import target_from_document
 from anthropic_readiness.contracts import resolve_contract
-from anthropic_readiness.diagnostics.context import ContextObserver
+from anthropic_readiness.diagnostics.context import ContextObserver, context_for_plan
+from anthropic_readiness.diagnostics.identity import installed_identity
+from anthropic_readiness.diagnostics.models import AssessmentContext
+from anthropic_readiness.diagnostics.recipes import build_recipe
 from anthropic_readiness.models import JsonObject, RunResult
 from anthropic_readiness.operations.observer import DiskExecutionObserver
 from anthropic_readiness.operations.ports import CancelToken, CredentialProvider, ExecutionObserver
@@ -18,6 +21,13 @@ def build_plan(target: JsonObject, profiles: Sequence[str]) -> RunPlan:
     return plan_run(
         config, resolve_contract(config.contract_id, config.contract_revision), profiles
     )
+
+
+def prepare_assessment(
+    target: JsonObject, profiles: Sequence[str]
+) -> tuple[RunPlan, AssessmentContext]:
+    plan = build_plan(target, profiles)
+    return plan, context_for_plan(plan, build_recipe(plan, installed_identity()))
 
 
 def run_assessment(

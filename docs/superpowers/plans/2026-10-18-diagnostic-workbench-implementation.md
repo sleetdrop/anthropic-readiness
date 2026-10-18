@@ -10,7 +10,7 @@
 
 **Spec:** [W2 specification revision 2](../specs/2026-10-18-diagnostic-workbench-design.md), approved with this plan on 2026-10-18.
 
-**Status:** owner-approved for sequential implementation in the current session on 2026-10-18 ("确认，请实施"). Revision-2 written scope and companion compositions are included. Tasks 0–3 are complete; Task 4 is next, Tasks 4–15 remain pending. Existing task numbers are retained for traceability.
+**Status:** owner-approved for sequential implementation in the current session on 2026-10-18 ("确认，请实施"). Revision-2 written scope and companion compositions are included. Tasks 0–4 are complete; Task 5 is next, Tasks 5–15 remain pending. Existing task numbers are retained for traceability.
 
 ## Owner review summary
 
@@ -241,6 +241,16 @@ the original stored context digest, not unbounded metadata, so a missing/replace
 sidecar is rejected before requests. The final verification is written before
 forwarding `result_committed`, since that event exposes terminal state to readers.
 
+Recipe/source binding uses `validate_recipe_binding` for regenerated source-plan
+semantics and `validate_recipe_evidence(recipe, source, root)` for bounded hash/
+semantic checks of actual captured requests. ReportSource has no file root or raw
+request bytes. Tasks 6/7 must require both checks; exact recorded case/attempt paths
+are required, not only equal request counts. `baseline_eligibility` accepts explicit
+source_valid, complete, recipe_valid, recipe_bound, context_verified and
+evidence_verified booleans plus identity_reasons; missing proof blocks controlled
+operations. Changed installed identities block same-test preparation; target
+semantic changes return a declared difference document without repair eligibility.
+
 ### CLI interface and exit semantics
 
 Add `--language {zh-CN,en}` and `--theme {light,dark,system}` to report-producing
@@ -317,11 +327,11 @@ independent reviewer or implementer agent is dispatched.
 
 **Interfaces:** `build_recipe(plan: RunPlan, identity: ImplementationIdentity) -> RetestRecipe`; `validate_recipe_binding(recipe: RetestRecipe, source: ReportSource) -> tuple[str, ...]`; `prepare_retest(recipe: RetestRecipe, target: JsonObject, identity: ImplementationIdentity) -> tuple[RunPlan, JsonObject]`; `baseline_eligibility(metadata: JsonObject) -> JsonObject` is pure and returns named operations/reasons.
 
-- [ ] Write `test_recipe_contains_no_endpoint_or_auth`, `test_retest_preserves_all_profiles_and_required_cases`, `test_missing_revision_never_selects_latest`, `test_changed_alias_model_or_limit_is_declared` and `test_redacted_semantic_input_blocks_exact_retest`. Assert all original cases remain even if previously PASS or SKIP; changed semantic inputs are not treated as transport rebinding.
-- [ ] Run `UV_OFFLINE=1 uv run --frozen pytest -q tests/unit/test_diagnostic_recipes.py`; retain RED.
-- [ ] Implement installed fixed-case regeneration and binding to actual plan/captures; no arbitrary imported request execution. Keep an explicit difference document even when a new test is permitted but controlled comparison is ineligible. An execution-identity mismatch blocks same-test retest and requires a separately configured current test.
-- [ ] Rerun focused tests and `tests/unit/test_cases.py tests/acceptance/test_runner.py`; assert preview/rebinding calls no transport and caps cannot silently remove cases.
-- [ ] Commit: `feat: prepare explicit full-scope retests from portable recipes`.
+- [x] Write `test_recipe_contains_no_endpoint_or_auth`, `test_retest_preserves_all_profiles_and_required_cases`, `test_missing_revision_never_selects_latest`, `test_changed_alias_model_or_limit_is_declared` and `test_redacted_semantic_input_blocks_exact_retest`. Assert all original cases remain even if previously PASS or SKIP; changed semantic inputs are not treated as transport rebinding.
+- [x] Run `UV_OFFLINE=1 uv run --frozen python -m pytest -q tests/unit/test_diagnostic_recipes.py`; retain RED.
+- [x] Implement installed fixed-case regeneration and binding to actual plan/captures; no arbitrary imported request execution. Keep an explicit difference document even when a new test is permitted but controlled comparison is ineligible. An execution-identity mismatch blocks same-test retest and requires a separately configured current test.
+- [x] Rerun focused tests and `tests/unit/test_cases.py tests/acceptance/test_runner.py`; assert preview/rebinding calls no transport and caps cannot silently remove cases.
+- [x] Commit: `feat: prepare explicit full-scope retests from portable recipes`.
 
 ### Task 5: Bounded ZIP inspection and extraction
 

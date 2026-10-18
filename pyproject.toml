@@ -81,5 +81,5 @@ forbidden_modules = ["anthropic_readiness.localization", "anthropic_readiness.sc
 [[tool.importlinter.contracts]]
 name = "Diagnostic values stay independent of adapters"
 type = "forbidden"
-source_modules = ["anthropic_readiness.diagnostics.models", "anthropic_readiness.diagnostics.inventory"]
+source_modules = ["anthropic_readiness.diagnostics.models", "anthropic_readiness.diagnostics.inventory", "anthropic_readiness.diagnostics.reduction"]
 forbidden_modules = ["anthropic_readiness.diagnostics.contracts", "anthropic_readiness.diagnostics.core_contracts", "anthropic_readiness.diagnostics.identity", "anthropic_readiness.schema", "anthropic_readiness.config", "anthropic_readiness.runner", "anthropic_readiness.reporting", "anthropic_readiness.web", "pathlib", "importlib", "httpx", "sqlite3"]

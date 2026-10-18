@@ -630,3 +630,11 @@ passed 43 tests; the full Python regression passed 555 with no failures/errors/
 skips. Final fast verification passed all eight children (344 unit/harness tests).
 Rulings and retained RED evidence are
 recorded in the W2 ledger. No upstream call or external write was made.
+
+Task 4 adds installed full-scope recipes, explicit semantic condition differences,
+conservative eligibility and request-capture binding. Web previews now retain new
+contexts; no plan API shape changed. Unknown revisions/identities and redacted or
+substituted request records cannot claim controlled retest. Final fast-1 passed
+all eight checks (360 unit/harness tests); full Python regression passed 571 tests,
+zero failures/errors/skips. Exact retained RED and interface ruling are in the
+W2 ledger. Tasks 5–15 remain; no endpoint or external publication occurred.

@@ -47,13 +47,18 @@ def start_body(plan: JsonObject, operation: str) -> JsonObject:
 
 
 async def test_preview_and_duplicate_start_request_counts(
-    client: httpx.AsyncClient, server: SyntheticServer
+    client: httpx.AsyncClient, server: SyntheticServer, web_app: FastAPI
 ) -> None:
     headers = await csrf_headers(client)
     catalog = await client.get("/api/v1/catalog")
     assert catalog.status_code == 200
     assert len(catalog.json()["cases"]) == 4
     plan = await preview(client, headers, server.url + "/cases")
+    manager = cast(JobManager, web_app.state.manager)
+    context = manager.store.get_plan_context(str(plan["id"]))
+    assert context is not None
+    assert context["run_id"] is None
+    assert object_value(context["recipe"])["profiles"] == object_value(plan["plan"])["profiles"]
     assert not server.requests
     assert (await client.get("/api/v1/plans/" + str(plan["id"]))).json() == plan
     response = await client.post(

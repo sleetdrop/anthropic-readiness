@@ -15,6 +15,7 @@ from anthropic_readiness.diagnostics.models import (
     ImplementationIdentity,
     RetestRecipe,
 )
+from anthropic_readiness.diagnostics.recipes import build_recipe
 from anthropic_readiness.evidence import atomic_write, json_bytes
 from anthropic_readiness.models import EvidenceRef, JsonObject, object_value
 from anthropic_readiness.operations.models import WorkerEvent
@@ -51,6 +52,8 @@ def context_for_plan(
     plan: RunPlan, recipe: RetestRecipe, *, baseline: BaselineRecord | None = None
 ) -> AssessmentContext:
     validate_core(recipe.document, "retest-recipe")
+    if build_recipe(plan, installed_identity()).document != recipe.document:
+        raise ValueError("diagnostic_recipe_plan")
     expected = {
         "requested": plan.target.model,
         "policy": plan.target.response_model_policy,

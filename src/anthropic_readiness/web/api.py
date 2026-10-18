@@ -13,6 +13,7 @@ from fastapi import APIRouter, Request
 from fastapi.routing import APIRoute
 from starlette.responses import JSONResponse, Response, StreamingResponse
 
+from anthropic_readiness.application import prepare_assessment
 from anthropic_readiness.cases import PROFILES, list_cases
 from anthropic_readiness.config import strings
 from anthropic_readiness.contracts import SUPPORTED, resolve_contract
@@ -302,11 +303,15 @@ def catalog(request: Request) -> JSONResponse:
 )
 def create_plan(request: Request) -> JSONResponse:
     document = body(request, "plan_request")
+    assessment, context = prepare_assessment(
+        object_value(document["target"]), strings(document["profiles"])
+    )
     plan = manager_for(request).store.create_plan(
-        object_value(document["target"]),
-        strings(document["profiles"]),
+        assessment.target.to_json(),
+        assessment.profiles,
         owner(request),
         now=utc_now(),
+        context=context.document,
     )
     return api_response("plan_response", plan.to_json(), status=201)
 

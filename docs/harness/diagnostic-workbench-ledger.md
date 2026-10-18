@@ -345,3 +345,33 @@ passed all eight children with 344 unit/harness tests after a fixture-only
 lint/type compatibility fix. Documentation/link checks and whitespace checks
 passed. No completed W2 UI,
 image, remote CI or live result is claimed from this foundation work.
+
+## 2026-10-18: Task 4 installed recipes and full-scope preparation
+
+Task 3 delivery commit is `458c464`. Recipes use installed generators for every
+selected case, fixed request parameters, rule/check inventory and effective limits,
+excluding endpoint/auth references. Retest preparation regenerates the complete
+original profile scope, including previously passed/skipped cases; insufficient
+budgets reject rather than dropping cases. Unknown rule revisions or mismatched
+execution identities never silently select a current replacement. Changed model,
+aliases, capability declarations or limits are explicit semantic changes, and
+cannot earn controlled repair badges. Ordinary Web previews now persist generated
+contexts without changing their existing HTTP response contract or making calls.
+
+Ruling: keep recipe/source plan validation and add the I/O adapter
+`validate_recipe_evidence(recipe, source, root)` — ReportSource contains references
+but not a root/raw request bytes, so the planned argument alone cannot establish
+capture binding — cost if wrong: one extra adapter call in import/export. Tasks
+6/7 must require both. A failing mutation exposed equal-count inventory substitution;
+validation now requires the exact recorded case/attempt paths as well as hashes
+and semantic request content. Redacted semantic requests cannot claim exact retest.
+
+Eligibility is pure and requires explicit positive source/completeness/recipe/
+context/evidence facts and checked identity reasons. Missing proof stays limited.
+Missing-feature, forged-request, context-binding and substituted-attempt RED
+evidence is retained in `artifacts/w2/task4/`. The focused recipes/cases/runner
+checks passed 32 tests before the final inventory test; the Web adapter regression
+set passed 43. Latest fast-1 passed all eight children with 360 unit/harness tests.
+The final complete Python regression passed 571 tests, zero failures/errors/skips;
+documentation/link and whitespace checks passed. Whole-W2 handoff/UI/image checks,
+remote CI and live endpoint outcomes remain unobserved.
