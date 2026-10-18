@@ -10,7 +10,7 @@
 
 **Spec:** [W2 specification revision 2](../specs/2026-10-18-diagnostic-workbench-design.md), approved with this plan on 2026-10-18.
 
-**Status:** owner-approved for sequential implementation in the current session on 2026-10-18 ("确认，请实施"). Revision-2 written scope and companion compositions are included. Tasks 0–5 are complete; Task 6 is next, Tasks 6–15 remain pending. Existing task numbers are retained for traceability.
+**Status:** owner-approved for sequential implementation in the current session on 2026-10-18 ("确认，请实施"). Revision-2 written scope and companion compositions are included. Tasks 0–6 are complete; Task 7 is next, Tasks 7–15 remain pending. Existing task numbers are retained for traceability.
 
 ## Owner review summary
 
@@ -178,6 +178,19 @@ Use stdlib ZIP with ZIP_STORED/ZIP_DEFLATED regular files only. Reject encrypted
 Limits: compressed upload 256 MiB, expanded total 512 MiB, one expanded member 256 MiB, one parsed JSON document 64 MiB, 4096 members, 64 MiB central-directory metadata. Enforce actual streamed byte counts in addition to declared ZIP sizes, CRC/hash validation and a 60-second monotonic processing deadline. Check the ZIP footer/count/directory size before constructing `ZipFile` to bound central-directory allocation; support a bounded classic ZIP only, rejecting ZIP64/split archives in W2. Tests set smaller injected limits for boundaries rather than allocating hundreds of MiB. Export must respect the same supported envelope and reject a package that its importer cannot read.
 
 Use `diagnostics/previews/<uuid>/` and `diagnostics/baselines/<uuid>/`; mode 0700 directories and 0600 files. Import previews are session-bound, expire after 15 minutes and are capped at two per local service. Cleanup removes only expired/uncommitted owned preview directories. Never automatically delete committed baselines. Store an immutable original archive and checked source files; `index.sqlite3` is a rebuildable local index with a uniqueness constraint on archive digest. Deduplicate identical archives. Retain different archives as separate records; link matching authoritative result/context/recipe identities as export variants, and label conflicting external IDs only when authoritative identities differ. Never merge evidence delivery/eligibility across variants. Atomic activation publishes no partially checked baseline. Reopen/revalidation detects later corruption rather than trusting an old green badge.
+
+Activation uses a final versioned `committed.json` marker, bound to baseline-record
+and original archive hashes, only after source validation and final-directory
+publication. SQLite rebuilds lookup rows from marked records; unmarked staging is
+inert. A restart after marker publication can recover an already committed import
+whose response was lost. Failed unmarked staging may remain private after a hard
+crash; no committed baseline files are automatically deleted.
+Private import previews and commit markers use separate packaged storage schemas
+through `validate_storage`, preserving the public diagnostic allowlist. Imported
+snapshots use `load_report_source(..., frozen_operations=True)`; they retain
+packaged schema/plan/checkpoint checks without creating writer locks/events or
+requiring the omitted mutable journal. `DiagnosticStore(root)` takes the diagnostic
+directory; `DiagnosticService(root)` takes app data and appends `diagnostics`.
 
 ### HTTP boundary
 
@@ -351,11 +364,11 @@ independent reviewer or implementer agent is dispatched.
 
 **Interfaces:** `DiagnosticStore(root: Path)` exposes `preview(archive: Path, owner: str, *, now: datetime) -> JsonObject`, `commit(preview_id: str, owner: str, *, now: datetime) -> BaselineRecord`, `get(baseline_id: str) -> BaselineRecord` and `load_source(baseline_id: str) -> ReportSource`. `DiagnosticService(root: Path)` wraps this store and exposes the same import operations for adapters.
 
-- [ ] Write `test_complete_legacy_partial_and_omitted_eligibility`, `test_duplicate_archive_deduplicates`, `test_external_id_collision_stays_separate`, `test_localized_exports_are_variants_not_conflicts`, `test_variant_evidence_is_not_merged`, `test_activation_crash_is_not_visible` and `test_changed_import_bytes_revoke_eligibility`. Assert import time is separate from external time and no local job row/event is created. Different languages/themes with matching authoritative source/context/recipe remain export variants; genuinely changed source identities remain conflicts.
-- [ ] Run `UV_OFFLINE=1 uv run --frozen pytest -q tests/integration/test_diagnostic_import.py`; retain RED.
-- [ ] Implement session-bound 15-minute previews, the two-preview cap, atomic activation and rebuildable digest index. Regenerate views from checked structured facts; never render uploaded HTML/JS. Validate every baseline/result/evidence/recipe relationship before granting operations.
-- [ ] Rerun focused tests and export/report-source integration tests. Assert expired previews reject and cleanup never deletes committed baselines or another session's active preview. Block all sockets during inspection/commit/read.
-- [ ] Commit: `feat: import diagnostic baselines without executing their content`.
+- [x] Write `test_complete_legacy_partial_and_omitted_eligibility`, `test_duplicate_archive_deduplicates`, `test_external_id_collision_stays_separate`, `test_localized_exports_are_variants_not_conflicts`, `test_variant_evidence_is_not_merged`, `test_activation_crash_is_not_visible` and `test_changed_import_bytes_revoke_eligibility`. Assert import time is separate from external time and no local job row/event is created. Different languages/themes with matching authoritative source/context/recipe remain export variants; genuinely changed source identities remain conflicts.
+- [x] Run `UV_OFFLINE=1 uv run --frozen python -m pytest -q tests/integration/test_diagnostic_import.py`; retain RED.
+- [x] Implement session-bound 15-minute previews, the two-preview cap, atomic activation and rebuildable digest index. Regenerate views from checked structured facts; never render uploaded HTML/JS. Validate every baseline/result/evidence/recipe relationship before granting operations.
+- [x] Rerun focused tests and export/report-source integration tests. Assert expired previews reject and cleanup never deletes committed baselines or another session's active preview. Block all sockets during inspection/commit/read.
+- [x] Commit: `feat: import diagnostic baselines without executing their content`.
 
 ### Task 7: New portable packages for CLI and Web sources
 

@@ -25,9 +25,12 @@ SCHEMAS = frozenset(
 )
 
 
-@lru_cache(maxsize=len(SCHEMAS))
+STORAGE_SCHEMAS = frozenset({"diagnostic-import-preview", "diagnostic-commit"})
+
+
+@lru_cache(maxsize=len(SCHEMAS) + len(STORAGE_SCHEMAS))
 def _validator(name: str) -> Draft202012Validator:
-    if name not in SCHEMAS:
+    if name not in SCHEMAS | STORAGE_SCHEMAS:
         raise ValueError("unknown_diagnostic_schema")
     schema = object_value(
         strict_json(
@@ -49,5 +52,15 @@ def validate_diagnostic(document: JsonObject, name: str) -> None:
     validator = _validator(name)
     json.dumps(document, allow_nan=False)
     errors = sorted(validator.iter_errors(document), key=lambda error: str(error.path))
+    if errors:
+        raise ValueError("schema:" + "; ".join(f"{list(e.path)}:{e.message}" for e in errors))
+
+
+def validate_storage(document: JsonObject, name: str) -> None:
+    """Private durable formats do not extend the public diagnostic allowlist."""
+    if name not in STORAGE_SCHEMAS:
+        raise ValueError("unknown_diagnostic_storage_schema")
+    json.dumps(document, allow_nan=False)
+    errors = sorted(_validator(name).iter_errors(document), key=lambda error: str(error.path))
     if errors:
         raise ValueError("schema:" + "; ".join(f"{list(e.path)}:{e.message}" for e in errors))

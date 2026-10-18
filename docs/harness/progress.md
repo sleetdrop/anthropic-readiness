@@ -646,3 +646,14 @@ children (406 unit/harness tests); full Python regression passed 617 tests with
 zero failures/errors/skips. Limits apply to actual decompressed bytes and hashes,
 not only declared sizes; no uploaded content executes. Tasks 6–15 remain. This
 does not yet establish valid package import or completed W2 UI/image acceptance.
+
+Task 5 delivery is `fcb9502`. Task 6 provides read-only import preview/activation,
+immutable original archives and revalidated baselines, archive deduplication and
+separate export-variant/conflict identities. Preview ownership, expiry, capacity,
+publication failure/index recovery, changed bytes/local identities and frozen
+partial sources are covered. Packaged private storage contracts preserve the
+public allowlist. Undeclared evidence/conflicting snapshots, FIFO input blocking
+and post-validation deadline failures were observed RED and fixed. Final fast-4
+passed all eight checks (408 unit/harness tests); full-3 passed 643 tests with no
+failures/errors/skips. Rulings and prior 639/642-test checkpoints are retained in
+the W2 ledger. Tasks 7–15 remain; no new image, remote CI or real endpoint ran.

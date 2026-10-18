@@ -400,3 +400,52 @@ The final 46-test set includes forward-only classic data descriptors. Fast-1
 passed all eight children (406 unit/harness tests); full Python regression passed
 617 tests, zero failures/errors/skips. Documentation/link and whitespace checks
 passed. No new endpoint, remote CI or image result is claimed.
+
+## 2026-10-18: Task 6 read-only import and baseline activation
+
+Task 5 delivery commit is `fcb9502`. Imports copy the original archive into owned
+15-minute, session-bound previews, capped at two active previews. Archive and
+extracted-file inventories, packaged schemas, source IDs, plan/context/recipe
+bindings, final implementation verification and captured request semantics are
+checked before granting operations. Old/partial/omitted inputs remain limited.
+Preview, activation and read perform no upstream call and create no live job.
+Current dependency/code mismatches revoke retest/comparison without rewriting
+original bytes. Reopening detects changed archives or extracted evidence.
+
+Identical archives deduplicate by digest. Byte-distinct localized or evidence
+delivery variants keep separate records and eligibility; shared external IDs with
+different authoritative identities are conflicts. An omitted variant never borrows
+the full variant's evidence. Uploaded HTML is data only and is never rendered as
+local application content. New view composition remains in Tasks 11/13.
+
+Ruling: add `load_report_source(..., frozen_operations=True)` for imported snapshots
+— normal journal reads create a writer lock and require the deliberately omitted
+mutable journal — cost if wrong: two read modes require consistent schema/plan/
+checkpoint validation. The frozen branch preserves those checks and creates no
+local event, timestamp or worker state. RED/GREEN and exact unchanged-file tests
+cover imported partial snapshots.
+
+Ruling: use final `committed.json` as activation boundary and SQLite as rebuildable
+lookup — checked source and hashed baseline metadata precede marker publication
+— cost if wrong: unmarked private staging may remain after a hard crash. Before-
+marker failures are inert; after-marker restart may recover a completed commit
+whose reply was lost. Tests cover injected publication failure and index rebuild;
+no committed baseline files are automatically deleted. Private preview and commit
+formats have packaged schemas separate from the public diagnostic allowlist and
+execution identity.
+
+Initial focused checks passed 38. Cross-document mutations exposed two accepted
+contradictions (undeclared evidence files and inconsistent execution snapshot);
+both now reject with specific codes. Missing storage-contract RED and initial
+consumer-name correction are retained. A real FIFO input blocked a disposable
+subprocess RED; nonblocking descriptor open plus regular-file validation fixes
+the input boundary before copying. All logs remain under `artifacts/w2/task6/`.
+The first full regression passed 639; subsequent packaged storage checks passed
+55 focused cases. Latest fast-2 passed all eight children (408 unit/harness tests).
+Full-2 passed 642 tests. A subsequent deadline RED proved that expiration during
+metadata validation could still publish a preview; final deadline checks now
+guard preview, commit and baseline read. Its two focused late-boundary tests pass.
+Full-3 passed 643 tests, zero failures/errors/skips; final fast-4 passed all eight
+children with 408 unit/harness tests, including the fixture-only explicit-import
+typing correction. Documentation/link and whitespace checks passed. No new image,
+remote CI or real endpoint result is claimed.

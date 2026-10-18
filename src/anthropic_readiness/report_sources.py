@@ -10,6 +10,7 @@ from anthropic_readiness.config import target_from_document
 from anthropic_readiness.evidence import safe_path, verify_evidence
 from anthropic_readiness.models import EvidenceRef, JsonObject, RunResult, object_value, strict_json
 from anthropic_readiness.operations.checkpoints import checkpoint_refs, validate_checkpoint
+from anthropic_readiness.operations.contracts import validate_operational
 from anthropic_readiness.operations.journal import RunJournal
 from anthropic_readiness.operations.reduction import objects
 from anthropic_readiness.operations.storage import MAX_DOCUMENT_BYTES
@@ -165,7 +166,9 @@ def bind_execution(context: JsonObject, result: RunResult | None, digest: str | 
             raise ValueError("sidecar_span_identity")
 
 
-def load_report_source(root: Path, *, operations_root: Path | None = None) -> ReportSource:
+def load_report_source(
+    root: Path, *, operations_root: Path | None = None, frozen_operations: bool = False
+) -> ReportSource:
     operations = operations_root if operations_root is not None else root / "operations"
     result: RunResult | None = None
     digest: str | None = None
@@ -183,9 +186,13 @@ def load_report_source(root: Path, *, operations_root: Path | None = None) -> Re
                 initial = object_value(
                     strict_json(source_bytes(operations, "execution.json").decode())
                 )
-                execution = RunJournal(
-                    operations, str(initial["run_id"]), evidence_root=root
-                ).snapshot()
+                if frozen_operations:
+                    validate_operational(initial, "execution")
+                    execution = initial
+                else:
+                    execution = RunJournal(
+                        operations, str(initial["run_id"]), evidence_root=root
+                    ).snapshot()
                 bind_execution(execution, result, digest)
         except (OSError, ValueError, KeyError):
             execution = None
