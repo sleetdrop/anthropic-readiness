@@ -179,6 +179,8 @@ def _run_one(spec: CheckSpec, output_dir: Path) -> dict[str, object]:
                             status, reason = "failed", "test_report_failures"
                         elif count <= skipped:
                             status, reason = "failed", "no_executed_tests"
+                        elif skipped:
+                            status, reason = "failed", "unexpected_skipped_tests"
                     except (ET.ParseError, ValueError):
                         status, reason = "failed", "invalid_test_report"
         except FileNotFoundError:
@@ -214,6 +216,8 @@ def junit_result(path: Path | None) -> tuple[str, str]:
             return "failed", "test_report_failures"
         if all(case.find("skipped") is not None for case in cases):
             return "failed", "no_executed_tests"
+        if any(case.find("skipped") is not None for case in cases):
+            return "failed", "unexpected_skipped_tests"
         return "passed", "completed"
     except (ET.ParseError, ValueError):
         return "failed", "invalid_test_report"

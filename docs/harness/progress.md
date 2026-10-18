@@ -463,3 +463,28 @@ checks. The independent review is still not_run, so W1-12 and whole-W1 completio
 remain pending. The frozen Stage A handoff and 29 protected files are unchanged.
 All earlier failures remain retained; no normal manifest was fabricated for the
 failed controller attempt that did not produce one.
+
+## W1 independent review and author fixes (2026-10-18)
+
+The sole whole-W1 reviewer completed review of `ad83593..0d1191e`, resuming the
+same context after a quota interruption. Verdict: With fixes; five Important,
+two Minor, no verified Critical. The author accepted all five Important findings
+and regraded the partial-skip gate as Important because it could certify missing
+selected checks. Separate failure/unresolved capability filters remain deferred.
+See the [review and author disposition](../reviews/2026-10-18-web-console-review.md).
+
+One author RED/GREEN fix pass covers recovered interrupted checkpoints, final
+publication/source-hash consistency, honest unknown origin, readable keyboard-
+scrollable matrices, matching matrix navigation and selected-test skip rejection.
+Focused regressions passed, including actual parent termination, HTTP evidence,
+ZIP hashes, mixed-state offline/no-script navigation and Web focus/refresh.
+Strict formatting/lint/types passed. Whole new-source and rebuilt-image acceptance
+remain pending until their exact observed records are read; old image observations
+continue to bind their original verification source only. No real endpoint or
+remote publication occurred during W1 review/fixes.
+
+The corrected full author graph passed all13 required gates:454 Python tests,
+10 Node cases and22 actual Chromium cases, zero failures/errors/skips. The retained
+first full attempt failed a test-only TypeScript module-URL resolution check;
+that was corrected without type suppression, then the whole graph reran green.
+Fresh native ARM64/emulated AMD64 image jobs are required for this updated source.

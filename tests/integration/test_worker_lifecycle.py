@@ -1,5 +1,6 @@
 """Owned subprocesses stop on cancellation and loss of the parent control pipe."""
 
+import asyncio
 import json
 import multiprocessing
 import os
@@ -20,6 +21,7 @@ from anthropic_readiness.models import object_value, strict_json
 from tests.fixtures.http.slow_peer import parent_with_checkpoint_barrier, unresponsive_worker
 from tests.http_server import SyntheticServer
 from tests.integration.test_job_manager import ROOT, SESSION, preview, wait_terminal
+from tests.recovery_assertions import assert_recovered_interfaces
 
 
 def test_force_stop_after_five_seconds_is_interrupted(
@@ -125,6 +127,8 @@ def test_parent_loss_after_checkpoint_never_sends_next_request(
         manager.start()
         try:
             assert manager.store.get_job(run_id).state == "interrupted"
+            assert len(server.requests) == 1
+            asyncio.run(assert_recovered_interfaces(tmp_path, run_id, manager))
             assert len(server.requests) == 1
         finally:
             manager.close()

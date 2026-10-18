@@ -21,6 +21,7 @@ class ReportSource:
     diagnostics: tuple[JsonObject, ...]
     plan: JsonObject
     evidence_refs: tuple[EvidenceRef, ...] = ()
+    checkpoint_inventory: tuple[JsonObject, ...] | None = None
 
 
 @dataclass(frozen=True)

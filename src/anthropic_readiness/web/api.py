@@ -189,6 +189,20 @@ def _report_document(manager: JobManager, run_id: str) -> JsonObject | None:
     return report
 
 
+def report_matches_snapshot(candidate: JsonObject, snapshot: JsonObject) -> bool:
+    if candidate["execution"] != snapshot["execution"]:
+        return False
+    execution = snapshot["execution"]
+    expected = execution.get("result_sha256") if isinstance(execution, dict) else None
+    if expected is not None:
+        return candidate["status"] == "complete" and candidate["source_result_sha256"] == expected
+    if object_value(snapshot["job"])["state"] == "completed":
+        return candidate["status"] == "complete" and isinstance(
+            candidate["source_result_sha256"], str
+        )
+    return True
+
+
 def run_document(manager: JobManager, run_id: str) -> JsonObject:
     frozen = manager.store.get_admitted_plan(run_id)
     snapshot = manager.snapshot(run_id)
@@ -198,7 +212,7 @@ def run_document(manager: JobManager, run_id: str) -> JsonObject:
         candidate = _report_document(manager, run_id)
         snapshot = manager.snapshot(run_id)
         if (candidate is None and snapshot == before) or (
-            candidate is not None and candidate["execution"] == snapshot["execution"]
+            candidate is not None and report_matches_snapshot(candidate, snapshot)
         ):
             report = candidate
             break
@@ -209,7 +223,7 @@ def run_document(manager: JobManager, run_id: str) -> JsonObject:
         # is immutable, so one final read can now load its stable projection.
         candidate = _report_document(manager, run_id)
         snapshot = manager.snapshot(run_id)
-        if candidate is not None and candidate["execution"] == snapshot["execution"]:
+        if candidate is not None and report_matches_snapshot(candidate, snapshot):
             report = candidate
     inventory: list[JsonObject] = []
     try:

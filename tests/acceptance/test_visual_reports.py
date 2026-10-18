@@ -8,12 +8,14 @@ from pathlib import Path
 
 import pytest
 
-from anthropic_readiness.models import object_value
+from anthropic_readiness.models import JsonValue, object_value
 from anthropic_readiness.operations.reduction import objects
 from anthropic_readiness.report_rendering import render_report_html, render_report_markdown
+from anthropic_readiness.report_sources import load_report_source
 from anthropic_readiness.report_view import build_report_view
 from anthropic_readiness.reporting import render_from_file
 from tests.acceptance.test_readable_reports import assessment
+from tests.export_fixtures import prepared_run
 from tests.unit.test_report_view import source
 
 
@@ -157,3 +159,41 @@ def test_unclosed_span_has_an_explicit_ongoing_marker() -> None:
     html = render_report_html(ReportView(document))
     assert 'data-ongoing="true"' in html
     assert "进行中（未闭合）" in html
+
+
+def test_partial_live_origin_is_unknown_without_a_persisted_marker(tmp_path: Path) -> None:
+    run_id = prepared_run(tmp_path, partial=True)
+    root = tmp_path / "runs" / run_id
+    view = build_report_view(
+        load_report_source(root / "assessment", operations_root=root / "operations")
+    )
+    assert view.document["mode"] == "live"
+    context = object_value(object_value(view.document["provenance"])["report_context"])
+    assert context.get("data_kind") == "unknown"
+    for report in (render_report_html(view), render_report_markdown(view)):
+        assert "来源信息未完整记录" in report
+        assert "离线合成数据／捕获回放" not in report
+        assert "显式真实端点测试" not in report
+
+
+@pytest.mark.parametrize(
+    ("data_kind", "label"),
+    [
+        ("live_endpoint", "显式真实端点测试"),
+        ("synthetic", "离线合成数据／捕获回放"),
+        ("unknown", "来源信息未完整记录"),
+        ({"unexpected": True}, "来源信息未完整记录"),
+        (["unexpected"], "来源信息未完整记录"),
+    ],
+)
+def test_report_origin_follows_explicit_context(data_kind: JsonValue, label: str) -> None:
+    original = source()
+    assert original.result is not None
+    result = replace(
+        original.result,
+        mode="live",
+        report_context={**original.result.report_context, "data_kind": data_kind},
+    )
+    view = build_report_view(replace(original, result=result))
+    for report in (render_report_html(view), render_report_markdown(view)):
+        assert label in report

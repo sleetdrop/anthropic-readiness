@@ -163,3 +163,19 @@ def test_gate_timeout_stops_owned_descendants(tmp_path: Path) -> None:
     finally:
         if alive():
             os.kill(child["pid"], signal.SIGTERM)
+
+
+@pytest.mark.parametrize("kind", ["junit", "pytest"])
+def test_selected_suite_with_any_unexpected_skip_is_not_green(tmp_path: Path, kind: str) -> None:
+    junit = tmp_path / "mixed.xml"
+    junit.write_text(
+        '<testsuites><testsuite tests="2" skipped="1" failures="0" errors="0">'
+        '<testcase name="executed"/><testcase name="omitted"><skipped/></testcase>'
+        "</testsuite></testsuites>"
+    )
+    output = tmp_path / "checks"
+    gate = CheckSpec("selected-suite", [sys.executable, "-c", "pass"], 5, kind, junit_path=junit)
+    assert run_checks([gate], output, root=tmp_path) == 1
+    document = json.loads((output / "check-result.json").read_text())
+    assert document["status"] == "failed"
+    assert document["checks"][0]["reason"] == "unexpected_skipped_tests"

@@ -103,6 +103,7 @@ def evidence_notice(document: JsonObject) -> str:
 
 def matrix(document: JsonObject) -> str:
     rows: list[str] = []
+    cases = {str(case["case_id"]): case for case in objects(document["cases"])}
     for group in objects(document["groups"]):
         dimensions = object_value(group["dimensions"])
         attention = any(
@@ -119,20 +120,38 @@ def matrix(document: JsonObject) -> str:
         cells = []
         for dimension in DIMENSIONS:
             cell = object_value(dimensions[dimension])
-            counts = " ".join(
-                f"<span>{status(state)} <strong>{h(cell[state])}</strong></span>"
-                for state in STATES
-                if cell[state] != 0
-            )
-            cells.append(
-                f'<td><a class="matrix-link" href="#case-{h(members[0])}" data-open-detail><span class="matrix-counts">{counts}</span></a></td>'
-            )
+            actions: list[str] = []
+            for state in STATES:
+                if cell[state] == 0:
+                    continue
+                matching = [
+                    str(member)
+                    for member in members
+                    if object_value(cases[str(member)]["dimensions"])[dimension] == state
+                ]
+                label = f"{status(state)} <strong>{h(cell[state])}</strong>"
+                identifier = f"matrix-{group['key']}-{dimension}-{state}"
+                if len(matching) == 1:
+                    actions.append(
+                        f'<a class="matrix-link" id="{h(identifier)}" href="#case-{h(matching[0])}" data-open-detail>{label}</a>'
+                    )
+                elif matching:
+                    member_links = "".join(
+                        f'<li><a class="matrix-link" id="{h(identifier)}-{h(member)}" href="#case-{h(member)}" data-open-detail>{h(cases[member]["name"])}<small>{h(member)}</small></a></li>'
+                        for member in matching
+                    )
+                    actions.append(
+                        f'<details class="matrix-members" id="{h(identifier)}"><summary class="matrix-summary" id="{h(identifier)}-summary">{label}</summary><ul>{member_links}</ul></details>'
+                    )
+                else:
+                    actions.append(f"<span>{label}</span>")
+            cells.append('<td><div class="matrix-counts">' + "".join(actions) + "</div></td>")
         rows.append(
             f'<tr data-capability-row data-attention="{str(attention).lower()}"><th scope="row">{h(group["name"])}<br><small>{len(members)} 个用例</small><div class="source-ref">{links}</div></th>{"".join(cells)}</tr>'
         )
     headings = "".join(f'<th scope="col">{h(LABELS[key])}</th>' for key in DIMENSIONS)
     return (
-        '<div class="table-scroll"><table class="capability-matrix"><caption>每格按原用例维度统计；混合状态逐项保留。点击可查看对应原始用例。</caption><thead><tr><th scope="col">测试能力 / 样本范围</th>'
+        '<div class="table-scroll" role="region" aria-label="能力矩阵，可横向滚动" tabindex="0"><table class="capability-matrix"><caption>每格按原用例维度统计；混合状态逐项保留。多用例计数可展开对应成员；窄窗口可横向滚动。</caption><thead><tr><th scope="col">测试能力 / 样本范围</th>'
         + headings
         + "</tr></thead><tbody>"
         + "".join(rows)
@@ -308,13 +327,21 @@ def appendix_html(document: JsonObject) -> str:
     return "".join(body) + "</dl></section>"
 
 
+def report_origin(document: JsonObject) -> str:
+    context = object_value(object_value(document["provenance"])["report_context"])
+    kind = context.get("data_kind")
+    if document["mode"] == "replay" or kind in ("synthetic", "synthetic_or_user_capture"):
+        return "离线合成数据／捕获回放"
+    if kind == "live_endpoint":
+        return "显式真实端点测试"
+    return "来源信息未完整记录"
+
+
 def render_report_body(view: ReportView) -> str:
     document = view.document
     identity = object_value(document["identity"])
     summary = object_value(document["summary"])
-    provenance = object_value(document["provenance"])
-    context = object_value(provenance["report_context"])
-    synthetic = document["mode"] == "replay" or context.get("data_kind") != "live_endpoint"
+    origin = report_origin(document)
     quality = object_value(document["evidence_verification"])
     groups = objects(document["findings"])
     metrics = [
@@ -333,7 +360,7 @@ def render_report_body(view: ReportView) -> str:
         for number, label in metrics
     )
     parts = [
-        f'<section class="section" id="overview"><span class="eyebrow">先看结论 · {"离线合成数据／捕获回放" if synthetic else "显式真实端点测试"} · {"部分记录" if document["status"] == "partial" else "最终结果"}</span><h1>{h(summary["title"])}</h1><p class="lead">{h(summary["description"])}</p><h2>运行摘要</h2><div class="meta-strip"><span>{h(identity["target_name"])}</span><span>请求模型 {h(identity["model"])}</span><span>API {h(identity["api_version"])}</span><span>规则 {h(identity["contract_revision"])}</span><span>beta：{h(", ".join(str(beta) for beta in values(identity["betas"])) or "无")}</span><span>{h(summary["started_at"])}</span></div><p class="notice {"verified" if quality["status"] == "verified" else ""}">{h(evidence_notice(document))}</p><div class="metrics">{metric_html}</div><p class="muted">{h(finding_count(groups))}。客户端工作流未测试；所有结论仅对应本次固定规则与样本。</p><noscript>交互脚本未启用；完整结论、图表、等价数据表与检查明细仍可阅读。</noscript></section>'
+        f'<section class="section" id="overview"><span class="eyebrow">先看结论 · {h(origin)} · {"部分记录" if document["status"] == "partial" else "最终结果"}</span><h1>{h(summary["title"])}</h1><p class="lead">{h(summary["description"])}</p><h2>运行摘要</h2><div class="meta-strip"><span>{h(identity["target_name"])}</span><span>请求模型 {h(identity["model"])}</span><span>API {h(identity["api_version"])}</span><span>规则 {h(identity["contract_revision"])}</span><span>beta：{h(", ".join(str(beta) for beta in values(identity["betas"])) or "无")}</span><span>{h(summary["started_at"])}</span></div><p class="notice {"verified" if quality["status"] == "verified" else ""}">{h(evidence_notice(document))}</p><div class="metrics">{metric_html}</div><p class="muted">{h(finding_count(groups))}。客户端工作流未测试；所有结论仅对应本次固定规则与样本。</p><noscript>交互脚本未启用；完整结论、图表、等价数据表与检查明细仍可阅读。</noscript></section>'
     ]
     figures = objects(document["figures"])
     parts.append(
@@ -413,12 +440,12 @@ def render_report_markdown(view: ReportView) -> str:
     identity = object_value(document["identity"])
     provenance = object_value(document["provenance"])
     context = object_value(provenance["report_context"])
-    synthetic = document["mode"] == "replay" or context.get("data_kind") != "live_endpoint"
+    origin = report_origin(document)
     groups = objects(document["findings"])
     lines = [
         "# Anthropic 接口兼容性报告",
         "",
-        "**离线合成数据／捕获回放**" if synthetic else "**显式真实端点测试**",
+        f"**{origin}**",
         "",
         "## 先看结论",
         "",

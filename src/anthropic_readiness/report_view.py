@@ -207,6 +207,10 @@ def build_report_view(source: ReportSource) -> ReportView:
     )
     if source.evidence_verification["status"] != "verified":
         limitations.append("证据未完整核验，未提取字段级说明；未附可核验的字段摘录，无法独立复核。")
+    if any(item.get("kind") == "source_recovery" for item in source.diagnostics):
+        limitations.append(
+            "已恢复并核验父进程中断前落盘、尚未登记的检查点；原始执行快照和未闭合时间线保持原状，未补造最终结果。"
+        )
     if source.evidence_verification.get("delivery") == "omitted":
         limitations.append("本导出未附证据文件；已核验摘录只说明生成时的来源，接收者无法独立复核。")
     for warning in source.diagnostics:
@@ -256,7 +260,9 @@ def build_report_view(source: ReportSource) -> ReportView:
             "contract": deepcopy(contract),
             "target": deepcopy(target),
             "profiles": profiles,
-            "report_context": deepcopy(result.report_context) if result else {},
+            "report_context": deepcopy(result.report_context)
+            if result
+            else {"data_kind": "unknown"},
         },
         "identity": {
             "target_name": target["name"],

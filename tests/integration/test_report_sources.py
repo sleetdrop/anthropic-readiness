@@ -196,8 +196,26 @@ def test_partial_replay_retains_zero_request_mode(tmp_path: Path) -> None:
         root,
         observer=DiskExecutionObserver(root / "operations", root),
     )
+    context = object_value(json.loads((root / "operations/execution.json").read_text()))
+    context.update(
+        {
+            "state": "interrupted",
+            "sequence": 0,
+            "result_sha256": None,
+            "terminal_reason": "fixture_interruption",
+        }
+    )
+    replace_snapshot(root / "operations", context)
+    (root / "operations/events.jsonl").write_bytes(b"")
     (root / "result.json").unlink()
     view = build_report_view(load_report_source(root)).document
     assert view["status"] == "partial"
     assert view["mode"] == "replay"
     assert object_value(view["summary"])["actual_requests"] == 0
+
+
+def test_missing_bound_final_result_is_not_a_clean_partial(tmp_path: Path) -> None:
+    root = observed(tmp_path / "source")
+    (root / "result.json").unlink()
+    with pytest.raises(ValueError, match="report_source_unavailable"):
+        load_report_source(root)

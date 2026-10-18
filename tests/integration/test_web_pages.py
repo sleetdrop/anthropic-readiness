@@ -88,7 +88,7 @@ async def test_history_exposes_frozen_rule_identity_and_filters(
 
 
 @pytest.mark.parametrize("seeded_run", ["unpublished"], indirect=True)
-async def test_unpublished_checkpoint_is_not_exposed_as_browsable_evidence(
+async def test_interrupted_checkpoint_is_recovered_as_browsable_evidence(
     client: httpx.AsyncClient, seeded_run: str
 ) -> None:
     await client.get("/api/v1/session")
@@ -96,4 +96,6 @@ async def test_unpublished_checkpoint_is_not_exposed_as_browsable_evidence(
     assert response.status_code == 200
     paths = [item["path"] for item in response.json()["evidence"]]
     assert any("ANT-MESSAGE-001" in path for path in paths)
-    assert not any("ANT-TEXT-SSE-001" in path for path in paths)
+    assert any("ANT-TEXT-SSE-001" in path for path in paths)
+    assert response.json()["report"]["summary"]["completed_cases"] == 2
+    assert any("恢复" in note for note in response.json()["report"]["limitations"])

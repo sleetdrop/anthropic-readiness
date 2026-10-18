@@ -35,6 +35,7 @@ from anthropic_readiness.web.settings import WebSettings
 from scripts.check import ROOT
 from tests.acceptance.test_readable_reports import MissingFieldsTransport
 from tests.export_fixtures import prepared_run
+from tests.unit.test_report_view import source as mixed_report_source
 
 FIXTURES = ROOT / "tests/fixtures/contracts/core-1.0.0"
 HOSTILE = '</script><img src="https://invalid.example/escape" onerror="window.injected=true">'
@@ -110,7 +111,14 @@ def seed(root: Path) -> JsonObject:
             )
         )
     )
-    return {"completed_id": job.id, "partial_id": partial_id, "offline_path": str(offline)}
+    mixed_path = root / "mixed-report.html"
+    mixed_path.write_text(render_report_html(build_report_view(mixed_report_source())))
+    return {
+        "completed_id": job.id,
+        "partial_id": partial_id,
+        "offline_path": str(offline),
+        "mixed_path": str(mixed_path),
+    }
 
 
 def main() -> None:

@@ -75,7 +75,9 @@ async def test_preview_and_duplicate_start_request_counts(
     assert len(server.requests) == 3
 
 
-@pytest.mark.parametrize("early_projection", ["partial", "unavailable", "late_terminal"])
+@pytest.mark.parametrize(
+    "early_projection", ["partial", "unavailable", "late_terminal", "terminal_partial"]
+)
 async def test_terminal_response_does_not_mix_an_earlier_partial_projection(
     client: httpx.AsyncClient,
     server: SyntheticServer,
@@ -135,6 +137,8 @@ async def test_terminal_response_does_not_mix_an_earlier_partial_projection(
             return replace(source, result=None, result_sha256=None, execution=pending)
         if reads > 1:
             return source
+        if early_projection == "terminal_partial":
+            return replace(source, result=None, result_sha256=None)
         if early_projection == "unavailable":
             raise ValueError("source_publication_in_progress")
         return replace(source, result=None, result_sha256=None, execution=deepcopy(execution))
@@ -367,3 +371,63 @@ async def test_cancel_api_is_idempotent_and_does_not_dispatch_queued_work(
     ).status_code == 200
     assert object_value((await wait_run(client, active_id))["job"])["state"] == "cancelled"
     assert all(path == "/pings" for path, _, _ in server.requests)
+
+
+async def test_final_publication_after_absence_check_retries_the_source_generation(
+    client: httpx.AsyncClient,
+    server: SyntheticServer,
+    tmp_path: Path,
+    web_app: FastAPI,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    headers = await csrf_headers(client)
+    plan = await preview(client, headers, server.url + "/cases")
+    started = await client.post(
+        "/api/v1/runs", json=start_body(plan, "presence-race"), headers=headers
+    )
+    run_id = started.json()["id"]
+    await wait_run(client, run_id)
+    manager = cast(JobManager, web_app.state.manager)
+    original_snapshot = manager.snapshot
+    terminal = original_snapshot(run_id)
+    active = deepcopy(terminal)
+    execution = object_value(active["execution"])
+    execution.update(state="running", sequence=0, result_sha256=None, finished_at=None)
+    active["job"] = {**object_value(active["job"]), "state": "running", "last_sequence": 0}
+    root = tmp_path / "runs" / run_id
+    result_path = root / "assessment/result.json"
+    result = result_path.read_bytes()
+    paths = (root / "operations/execution.json", root / "operations/events.jsonl")
+    final_metadata = [path.read_bytes() for path in paths]
+    paths[0].write_text(json.dumps(execution))
+    paths[1].write_bytes(b"")
+    result_path.unlink()
+    exists = Path.exists
+    published = False
+
+    def publish_after_absence(path: Path) -> bool:
+        nonlocal published
+        present = exists(path)
+        if path == result_path and not published:
+            assert not present
+            result_path.write_bytes(result)
+            for destination, data in zip(paths, final_metadata, strict=True):
+                destination.write_bytes(data)
+            published = True
+        return present
+
+    monkeypatch.setattr(Path, "exists", publish_after_absence)
+    monkeypatch.setattr(
+        manager,
+        "snapshot",
+        lambda identifier: original_snapshot(identifier) if published else active,
+    )
+    response = await client.get("/api/v1/runs/" + run_id)
+    assert response.status_code == 200
+    document = response.json()
+    assert published
+    assert document["job"]["state"] == "completed"
+    assert document["report"]["status"] == "complete"
+    assert document["report"]["source_result_sha256"] == hashlib.sha256(result).hexdigest()
+    assert document["report"]["execution"] == document["execution"]
+    assert len(server.requests) == 3

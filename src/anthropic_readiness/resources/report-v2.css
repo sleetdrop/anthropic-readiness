@@ -107,6 +107,9 @@ small,
   gap: 3rem;
   padding: 2.5rem 3vw 4rem;
 }
+.report-shell > main {
+  min-width: 0;
+}
 .report-nav {
   position: sticky;
   top: 2rem;
@@ -221,6 +224,13 @@ small,
   overflow-x: auto;
   max-width: 100%;
 }
+.table-scroll:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+.capability-matrix th:first-child {
+  min-width: 12rem;
+}
 table {
   width: 100%;
   border-collapse: collapse;
@@ -279,6 +289,20 @@ caption {
   text-decoration: none;
   display: block;
   min-width: 6rem;
+}
+.matrix-members {
+  margin: 0;
+}
+.matrix-summary {
+  min-width: 6rem;
+  padding: 0;
+}
+.matrix-members ul {
+  padding-left: 1rem;
+  margin: 0.4rem 0;
+}
+.matrix-members small {
+  display: block;
 }
 .legend {
   display: flex;
@@ -513,6 +537,11 @@ noscript {
   }
   .table-scroll {
     overflow: visible;
+  }
+  .capability-matrix th:first-child,
+  .matrix-link,
+  .matrix-summary {
+    min-width: 0;
   }
   pre {
     white-space: pre-wrap;

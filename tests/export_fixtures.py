@@ -18,7 +18,9 @@ from tests.acceptance.test_readable_reports import MissingFieldsTransport
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def prepared_run(root: Path, *, partial: bool = False, keep_unpublished: bool = False) -> str:
+def prepared_run(
+    root: Path, *, partial: bool = False, keep_unpublished: bool = False, reconcile: bool = True
+) -> str:
     store = JobStore(root)
     plan = store.create_plan(
         load_target(ROOT / "examples/target.yaml").to_json(),
@@ -66,6 +68,8 @@ def prepared_run(root: Path, *, partial: bool = False, keep_unpublished: bool = 
         replace_snapshot(operations, context)
         (operations / "events.jsonl").write_bytes(b"")
         (assessment / "result.json").unlink()
+    if not reconcile:
+        return job.id
     manager = JobManager(store, credential_allowlist={})
     manager.start()
     manager.close()

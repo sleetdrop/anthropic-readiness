@@ -111,6 +111,8 @@ def verified_diagnostics(
 
 
 def bind_execution(context: JsonObject, result: RunResult | None, digest: str | None) -> None:
+    if result is None and context["result_sha256"] is not None:
+        raise ValueError("sidecar_requires_final_result")
     plan = object_value(context["plan"])
     planned = objects(plan["cases"])
     states = objects(context["case_states"])
@@ -168,6 +170,8 @@ def load_report_source(root: Path, *, operations_root: Path | None = None) -> Re
     result: RunResult | None = None
     digest: str | None = None
     warnings: list[JsonObject] = []
+    recoveries: list[JsonObject] = []
+    inventory: list[JsonObject] = []
     if safe_path(root, "result.json").exists():
         data = source_bytes(root, "result.json")
         result = result_from_document(object_value(strict_json(data.decode())))
@@ -196,19 +200,56 @@ def load_report_source(root: Path, *, operations_root: Path | None = None) -> Re
         for state in objects(execution["case_states"]):
             relative = state["checkpoint_path"]
             if relative is None:
-                continue
+                # Active reads only expose the parent's advertised inventory.
+                # Interrupted terminal reads may recover an atomic worker commit,
+                # while preserving the original journal and its open timing spans.
+                if execution["state"] not in {"interrupted", "cancelled", "error"}:
+                    continue
+                relative = "checkpoints/" + str(state["case_id"]) + ".json"
+                if not safe_path(operations, str(relative)).exists():
+                    continue
             try:
                 if relative != "checkpoints/" + str(state["case_id"]) + ".json":
                     raise ValueError("checkpoint_reference_path")
                 data = source_bytes(operations, str(relative))
-                if hashlib.sha256(data).hexdigest() != state["checkpoint_sha256"]:
+                actual_hash = hashlib.sha256(data).hexdigest()
+                recovering = state["checkpoint_path"] is None
+                if recovering and state["state"] != "running":
+                    raise ValueError("checkpoint_case_not_started")
+                if not recovering and actual_hash != state["checkpoint_sha256"]:
                     raise ValueError("checkpoint_hash_mismatch")
                 document = object_value(strict_json(data.decode()))
                 validate_checkpoint(document, execution, root)
-                if object_value(document["case_record"])["status"] != state["state"]:
+                if document["case_id"] != state["case_id"]:
+                    raise ValueError("checkpoint_reference_identity")
+                if (
+                    not recovering
+                    and object_value(document["case_record"])["status"] != state["state"]
+                ):
                     raise ValueError("checkpoint_state_mismatch")
+                if recovering and sum(
+                    int(str(attempt["actual_requests"]))
+                    for case in (*committed, object_value(document["case_record"]))
+                    for attempt in objects(case["attempts"])
+                ) > int(str(execution["actual_requests"])):
+                    raise ValueError("checkpoint_request_count")
                 committed.append(object_value(document["case_record"]))
                 retained.extend(checkpoint_refs(document))
+                inventory.append(
+                    {
+                        "case_id": state["case_id"],
+                        "checkpoint_path": relative,
+                        "checkpoint_sha256": actual_hash,
+                    }
+                )
+                if recovering:
+                    recoveries.append(
+                        {
+                            "kind": "source_recovery",
+                            "code": "unpublished_checkpoint_recovered",
+                            "case_id": state["case_id"],
+                        }
+                    )
             except (OSError, ValueError, KeyError):
                 warnings.append(
                     {
@@ -240,11 +281,12 @@ def load_report_source(root: Path, *, operations_root: Path | None = None) -> Re
         cases,
         execution,
         quality,
-        (*diagnostics, *warnings),
+        (*diagnostics, *warnings, *recoveries),
         result.plan
         if result is not None
         else object_value(execution["plan"])
         if execution is not None
         else {},
         refs,
+        tuple(inventory),
     )
