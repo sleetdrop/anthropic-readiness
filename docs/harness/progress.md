@@ -569,3 +569,9 @@ A neutral-graphite refinement now replaces the green-tinted proposal for review,
 preserving the layout and synthetic four-case story. Exact references and generated
 image limitations are recorded in the visual handoff. This is a visual/document
 revision only; the updated palette and implementation plan remain pending review.
+
+At the owner's request, light and dark were then refined together as one visual
+system. A paired Chinese overview proposal preserves the chosen layout and
+synthetic data while sharing typography, hierarchy and neutral progress treatment.
+The visual handoff records artifact identities and remaining generated-image
+limitations. These are pending-review design references, not product acceptance.

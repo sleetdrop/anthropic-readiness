@@ -129,6 +129,31 @@ those generated details. Numerical contrast, small-label readability and the oth
 views require implementation-time browser verification. Its SHA-256 is
 `0720386c3945b2afc2a518b325db2d6035e8c830ae0534ecdb568000a5f2f2f8`.
 
+### Paired light/dark refinement awaiting review
+
+The owner then requested improving light and dark together, as one visual system.
+Two Chinese overview mocks now form a paired proposal, not competing layouts:
+
+- Light: `artifacts/w2/visual-20261018/exec-1775e6e7-1d1e-4f9f-a2c3-28ca19665826.png`,
+  SHA-256 `4e44e8f7bc143875fa28f3ae91cf22294498c3f84ec3cd91e4d1bf26066e8a25`.
+- Dark: `artifacts/w2/visual-20261018/exec-771e5e11-ce7f-493f-bae8-d81bbbc96698.png`,
+  SHA-256 `45e1e53a01d3097f501d8a341995d77ae2705296b3f5cfcf1a8878551a2386d6`.
+
+The light generation attached the selected light and neutral-graphite references;
+the dark generation attached the newly refined light image and graphite reference.
+The pair shares title/metadata hierarchy, typography, density, row rhythm, data
+and neutral progress treatment. Light uses proposed page `#fafbf9`, rail `#f1f3f0`,
+ink `#20272b`, secondary `#59636b`, rules `#d7dcd8` and limited accent `#355e50`.
+Dark retains the preceding graphite token proposal. Both favor flat surfaces,
+spacing and thin rules over cards. Theme switches should preserve geometry.
+
+These are the latest proposed visual targets, pending owner review; the original
+selected layout remains the structural reference. The light PNG still colors some
+lifecycle indicators green/amber, contrary to the neutral execution contract.
+Both PNGs contain incidental shading. Neither detail changes the specified flat
+tokens or status semantics. No measured contrast, exact cross-theme geometry or
+English-layout acceptance follows from generated PNGs; verify those in browsers.
+
 The two header controls are independent: autonym locale choice (`中文`, `English`)
 and appearance (`light`, `dark`, `system`, with translated labels). Default locale
 is Simplified Chinese; default appearance follows the system. Persist only those

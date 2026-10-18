@@ -152,3 +152,17 @@ No product code, dependency, live request or browser acceptance changed.
 The documentation/link/collaboration check passed offline/frozen in the retained
 Linux Python 3.12 Dev Container; the whitespace check was clean. No runtime or
 measured theme-contrast acceptance is claimed.
+
+## 2026-10-18: Paired light/dark refinement
+
+The owner requested raising the light design alongside the dark design. One
+Chinese light/dark pair now refines the selected overview together, with shared
+typography, spacing, title/metadata hierarchy and semantic progress treatment.
+The visual handoff records exact images/hashes and remaining generated shading
+and light-theme lifecycle-color discrepancies. The pair awaits owner review;
+it is not two competing layout options. No product code, browser test or live
+request occurred. The specification now explicitly shares geometry and semantics
+between themes instead of treating dark appearance as a separate design.
+The offline/frozen documentation/link/collaboration check passed in the retained
+Linux Python 3.12 Dev Container; whitespace verification was clean. Runtime,
+browser and numeric contrast checks were not run for this design-only revision.

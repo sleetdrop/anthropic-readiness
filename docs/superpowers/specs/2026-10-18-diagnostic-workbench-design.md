@@ -480,6 +480,9 @@ failures. Execution completion remains neutral. Both palettes target at least
 4.5:1 for normal text and 3:1 for large text; meaningful controls/focus/graphics
 also need sufficient non-text contrast. Verify actual rendered token pairs and
 keyboard states; generated images do not establish accessibility compliance.
+Light and dark are one visual system: share typography, spacing, geometry and
+status semantics; use theme-specific surface/text/contrast tokens. The paired
+visual refinement improves both appearances while preserving the selected layout.
 
 Web export defaults to the current explicit application locale/theme, displayed
 in the export preview; the no-preference locale remains `zh-CN`. CLI report-producing
