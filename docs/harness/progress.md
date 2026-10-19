@@ -717,3 +717,8 @@ the corrected same-position test passed with its original one-pixel tolerance.
 A synthetic worker supplies the actual active visual state, and local API request
 counts remain checked. Final browser/fast gates, visual documentation and the
 Task 12 commit are pending. Do not treat this as whole-W2 acceptance.
+
+W2 Task 12 completed locally at 0abc160: final fast graph passed (443 Python,
+20 Node), focused backend checks passed 56, and post-commit task-done browser
+acceptance passed 61 with unchanged source and successful cleanup. The workbench
+uses context-preserving operational views; standalone document delivery is Task 13.

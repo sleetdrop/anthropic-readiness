@@ -811,3 +811,10 @@ JSON list variance and a reused tuple/string variable; fast-5 passed typing but
 caught unnecessary comprehensions. Typed list extension preserves the same output
 without suppressions; final fast-6 is running. The previous full Python baseline
 remains Task 9's 687 tests; whole-W2 packaging, images and final review are pending.
+
+Task 12 final acceptance: fast-6 passed all eight children, 443 Python tests and
+20 Node tests; focused-2 passed 56 backend regressions. After the lint-only typed
+list rewrite and local commit 0abc160, taskdone-browser passed all 61 Chromium
+checks in 3.3 minutes on unchanged source; prerequisite and cleanup checks passed.
+The operational visual record is design-qa.md. Tasks 13–15 remain unaccepted;
+no full-W2 Python/image/remote CI or real endpoint result is implied.

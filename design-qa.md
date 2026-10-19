@@ -64,7 +64,7 @@ All actionable P0/P1/P2 findings below are closed.
 | P2: repeated issue blocks recreated a report | The first four-case inspector stacked every field variant and showed protocol identifiers in the list. | Show one explicitly selected case, retain four member controls and all evidence, and move raw identifiers/paths into technical disclosure. `inspector-green1` and full `browser-all7` retain scope, focus, text selection, native disclosure and source hashes. |
 | P2: raw comparison buried the changes | The initial mixed view displayed 52 raw pair rows before the meaningful changes could be scanned. | Add a pure five-group observation matrix for the real fixture, retaining all 52 original pairs in a native disclosure. `group-browser-green1` passed original-scope/mixed checks; full `browser-all7` also verified keyboard expansion, localization retention and narrow layout. |
 | P2: duplicate unnamed landmarks | Axe reported duplicate complementary landmarks. | Name the application rail; both viewport accessibility checks pass across configuration, history, import, overview, issues and cases. |
-| P2: one-pixel vertical tab scrolling | Manual narrow-browser measurement found 49px content in a 48px horizontal tab rail. | Remove the negative narrow-tab bottom margin. Narrow layouts retain reachable controls and no document-width overflow. |
+| P2: one-pixel vertical tab scrolling | Manual narrow-browser measurement found 49px content in a 48px horizontal tab rail. | Remove the negative narrow-tab bottom margin. Narrow automated layouts retain reachable controls and no document-width overflow. Manual post-fix desktop measurement had visible vertical overflow and fractional 49.5px geometry (integer scrollHeight/clientHeight round differently); it is not evidence of a remaining vertical scrollbar. |
 | P2: evidence failure hidden behind modal | A failed evidence request left the dialog loading while an error appeared behind it. | Render failure inside the dialog, bound streamed display bytes, cancel closed reads and recover a read session once. Both faults were observed RED/GREEN, with no repeated model request. |
 
 A separate inspector geometry failure was a capture calibration issue: the
@@ -108,7 +108,7 @@ tolerance. It was not a theme-token layout difference.
 - [x] Close actionable layout, hierarchy, accessibility and evidence-state issues.
 - [x] Verify global controls, keyboard navigation and context-preserving updates.
 - [x] Retain all raw facts and pairing members behind accessible disclosures.
-- [ ] Finish the post-lint fast gate and Task 12 completion record.
+- [x] Finish the post-lint fast gate and Task 12 completion record (443 Python, 20 Node, 61 browser tests).
 - [ ] Perform separate document QA in Task 13 and whole-stage acceptance/review.
 
 Residual scope: this record does not claim a real endpoint test, an image build,

@@ -14,16 +14,13 @@ and evidence-based report figures. Earlier overview/dark proposals are historica
 use the exact approved pair in the visual handoff. See the
 [design ledger](harness/diagnostic-workbench-ledger.md) for chronological decisions.
 
-Tasks 0–11 (presentation foundation, diagnostic contracts, execution identity,
-pre-request provenance, full-scope preparation, bounded archives and read-only
-baseline import, portable exports, paired comparison, diagnostic CLI and Web
-diagnostic/preferences APIs and independent operational workbench views) are complete; Task 12 is next. Tasks 12–15 remain
-pending. Latest Task 11 checks include 54 focused workbench/page/source/API
-regressions and two legacy-link Node tests; final fast results are recorded in the
-W2 ledger. Task 10 passed its eight-check fast graph (433 unit/harness tests) and
-71 focused Web/import regressions in the prepared Linux Python 3.12
-Dev Container. The last completed full Python regression is Task 9's 687 tests,
-before the Task 10 Web changes; whole-stage acceptance remains pending.
+Tasks 0–12 are complete, including the independent operational workbench and
+context-preserving browser interaction. Task 13 is next; Tasks 13–15 remain
+pending. Task 12 final checks passed all eight fast children (443 Python and
+20 Node tests), 56 focused backend regressions and 61 Chromium tests with
+unchanged source and successful cleanup. These are operational UI checks;
+independent documents, whole-W2 package/image acceptance and the final review
+remain pending. The last full Python baseline is Task 9's 687 tests.
 Task 0 also passed 25 browser
 tests, including a RED/GREEN system/print cascade fix. These are foundation and
 regression checks, not whole-W2 visual or container-image acceptance.
