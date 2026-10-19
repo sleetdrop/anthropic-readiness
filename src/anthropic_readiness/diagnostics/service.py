@@ -41,12 +41,18 @@ from anthropic_readiness.diagnostics.recipes import (
 )
 from anthropic_readiness.diagnostics.reduction import baseline_eligibility, comparison_inventory
 from anthropic_readiness.diagnostics.store import DiagnosticStore
+from anthropic_readiness.document_rendering import (
+    render_agent_index,
+    render_document_html,
+    render_document_markdown,
+    render_package_readme,
+)
+from anthropic_readiness.documents import build_document_view
 from anthropic_readiness.evidence import json_bytes, safe_path
 from anthropic_readiness.models import JsonObject, JsonValue, object_value, strict_json
+from anthropic_readiness.presentation import DEFAULT_PRESENTATION, PresentationOptions
 from anthropic_readiness.report_models import ReportSource
-from anthropic_readiness.report_rendering import render_report_html, render_report_markdown
 from anthropic_readiness.report_sources import load_report_source
-from anthropic_readiness.report_view import build_report_view
 from anthropic_readiness.runner import RunPlan
 
 
@@ -116,7 +122,12 @@ class DiagnosticService:
         return source, evidence_root, operations
 
     def _export_files(
-        self, source_dir: Path, *, include_evidence: bool
+        self,
+        source_dir: Path,
+        *,
+        include_evidence: bool,
+        presentation: PresentationOptions = DEFAULT_PRESENTATION,
+        comparison: Comparison | None = None,
     ) -> tuple[ReportSource, dict[str, bytes]]:
         source, evidence_root, operations = self._read_source(source_dir)
         if include_evidence and (
@@ -150,20 +161,38 @@ class DiagnosticService:
                 else "omitted",
             },
         )
-        view = build_report_view(projected)
+        view = build_document_view(projected, presentation=presentation, comparison=comparison)
         data.update(
             {
-                "report.html": render_report_html(view).encode(),
-                "report.md": render_report_markdown(view).encode(),
-                "report-view.json": json_bytes(view.document),
+                "report.html": render_document_html(view).encode(),
+                "report.md": render_document_markdown(view).encode(),
+                "document-view.json": json_bytes(view.document),
+                "README.md": render_package_readme(view).encode(),
             }
         )
         return projected, build_package_files(
-            projected, context, raw_files=data, include_evidence=include_evidence
+            projected,
+            context,
+            raw_files=data,
+            include_evidence=include_evidence,
+            agent_index=render_agent_index(view),
+            comparison=comparison,
         )
 
-    def preview_export(self, source_dir: Path, *, include_evidence: bool) -> JsonObject:
-        source, files = self._export_files(source_dir, include_evidence=include_evidence)
+    def preview_export(
+        self,
+        source_dir: Path,
+        *,
+        include_evidence: bool,
+        presentation: PresentationOptions = DEFAULT_PRESENTATION,
+        comparison: Comparison | None = None,
+    ) -> JsonObject:
+        source, files = self._export_files(
+            source_dir,
+            include_evidence=include_evidence,
+            presentation=presentation,
+            comparison=comparison,
+        )
         names: list[JsonValue] = []
         names.extend(sorted((*files, "manifest.json")))
         return {
@@ -173,14 +202,34 @@ class DiagnosticService:
             "partial": source.result is None,
             "files": names,
             "disclosures": ["source_contains_target_context"],
+            "presentation": presentation.to_json(),
             "evidence_verification": source.evidence_verification,
         }
 
-    def export(self, source_dir: Path, destination: Path, *, include_evidence: bool) -> JsonObject:
-        source, files = self._export_files(source_dir, include_evidence=include_evidence)
+    def export(
+        self,
+        source_dir: Path,
+        destination: Path,
+        *,
+        include_evidence: bool,
+        presentation: PresentationOptions = DEFAULT_PRESENTATION,
+        comparison: Comparison | None = None,
+    ) -> JsonObject:
+        source, files = self._export_files(
+            source_dir,
+            include_evidence=include_evidence,
+            presentation=presentation,
+            comparison=comparison,
+        )
         formats: list[JsonValue] = ["zip"]
         files["manifest.json"] = json_bytes(
-            build_export_manifest(files, source, include_evidence=include_evidence, formats=formats)
+            build_export_manifest(
+                files,
+                source,
+                include_evidence=include_evidence,
+                formats=formats,
+                presentation=presentation,
+            )
         )
         return write_package(files, destination)
 

@@ -26,7 +26,9 @@ SCHEMAS = frozenset(
 
 
 STORAGE_SCHEMAS = frozenset({"diagnostic-import-preview", "diagnostic-commit"})
-PROJECTION_SCHEMAS = frozenset({"diagnostic-comparison-facts", "diagnostic-retest-preview"})
+PROJECTION_SCHEMAS = frozenset(
+    {"diagnostic-comparison-facts", "diagnostic-retest-preview", "document-manifest"}
+)
 
 
 @lru_cache(maxsize=len(SCHEMAS) + len(STORAGE_SCHEMAS) + len(PROJECTION_SCHEMAS))

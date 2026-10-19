@@ -1,3 +1,5 @@
+import { writeFileSync } from "node:fs";
+import { pathToFileURL } from "node:url";
 import { test, expect } from "@playwright/test";
 import { fixture, control, count, preview, start, completed } from "./helpers.js";
 
@@ -137,5 +139,43 @@ test("comparison keeps recoveries, persistent failures, regressions and gaps tog
   await page.setViewportSize({ width: 390, height: 844 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await page.screenshot({ path: info.outputPath("mixed-comparison-narrow.png"), fullPage: true });
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.locator("#open-export").click();
+  await page.locator('#export-form input[value="json"]').check();
+  await page.locator("#preview-export").click();
+  await expect(page.locator("#export-preview")).toContainText("comparison.json");
+  await expect(page.locator("#export-preview")).toContainText("en");
+  const created = page.waitForResponse(
+    (response) => response.url().endsWith("/exports") && response.request().method() === "POST",
+  );
+  await page.locator("#create-export").click();
+  const response = await created;
+  expect(response.status()).toBe(201);
+  const record = await response.json();
+  const runId = new URL(page.url()).pathname.split("/").pop();
+  const exported = await page.request.get(
+    `/api/v1/runs/${runId}/exports/${record.export_id}?format=json`,
+  );
+  expect(exported.ok()).toBe(true);
+  const document = await exported.json();
+  expect(document.comparison.summary).toEqual(comparison.summary);
+  expect(document.comparison.pairs).toHaveLength(comparison.pairs.length);
+  expect(JSON.stringify(document)).not.toContain(fixture().peer_url);
+  const report = await page.request.get(
+    `/api/v1/runs/${runId}/exports/${record.export_id}?format=html`,
+  );
+  expect(report.ok()).toBe(true);
+  const reportPath = info.outputPath("mixed-assessment.html");
+  writeFileSync(reportPath, await report.text());
+  const reading = await page.context().newPage();
+  await reading.route(/https?:\/\//u, (route) => route.abort());
+  await reading.goto(pathToFileURL(reportPath).href);
+  await expect(reading.locator("#comparison-matrix tbody tr")).toHaveCount(5);
+  for (const theme of ["light", "dark"]) {
+    await reading.locator("#document-theme").selectOption(theme);
+    await reading.screenshot({ path: info.outputPath(`report-${theme}-viewport.png`) });
+    await reading.screenshot({ path: info.outputPath(`report-${theme}.png`), fullPage: true });
+  }
+  await reading.close();
   expect((await count(request)).count).toBe(8);
 });

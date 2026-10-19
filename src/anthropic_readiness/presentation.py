@@ -39,3 +39,6 @@ def parse_preferences(value: str | None) -> PresentationOptions:
 
 def serialize_preferences(options: PresentationOptions) -> str:
     return f"v1.{options.locale}.{options.theme}"
+
+
+DEFAULT_PRESENTATION = PresentationOptions()

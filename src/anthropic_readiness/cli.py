@@ -9,6 +9,11 @@ from collections.abc import Sequence
 from pathlib import Path
 
 from anthropic_readiness.application import prepare_assessment, run_assessment
+from anthropic_readiness.cli_presentation import (
+    add_presentation_options,
+    load_comparison,
+    presentation_options,
+)
 from anthropic_readiness.config import load_target
 from anthropic_readiness.contracts import SUPPORTED, resolve_contract, validate_target_contract
 from anthropic_readiness.credentials import EnvironmentCredentials
@@ -44,6 +49,11 @@ def main(argv: Sequence[str] | None = None) -> int:
     report = commands.add_parser("report", help="Render an existing result offline")
     report.add_argument("--input", type=Path, required=True)
     report.add_argument("--out", type=Path, required=True)
+    report.add_argument(
+        "--comparison", type=Path, help="Attach a checked comparison for this source"
+    )
+    for command in (run, replay, report):
+        add_presentation_options(command)
     add_diagnostic_commands(
         commands.add_parser("diagnostics", help="Portable diagnosis and repair verification")
     )
@@ -74,7 +84,12 @@ def main(argv: Sequence[str] | None = None) -> int:
                 ),
             )
         if args.command == "report":
-            render_from_file(args.input, args.out)
+            render_from_file(
+                args.input,
+                args.out,
+                presentation=presentation_options(args),
+                comparison=load_comparison(args.comparison),
+            )
             return 0
         if args.command == "contracts":
             if args.contract_command == "list":
@@ -128,7 +143,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 args.out,
                 observer=DiskExecutionObserver(args.out / "operations", args.out),
             )
-        write_reports(result, args.out)
+        write_reports(result, args.out, presentation=presentation_options(args))
         print(
             json.dumps(
                 {

@@ -7,8 +7,17 @@ from collections.abc import Sequence
 from dataclasses import replace
 from pathlib import Path
 
+from anthropic_readiness.diagnostics.contracts import validate_projection
+from anthropic_readiness.diagnostics.models import Comparison
+from anthropic_readiness.document_rendering import (
+    render_agent_index,
+    render_document_html,
+    render_document_markdown,
+)
+from anthropic_readiness.documents import build_document_view
 from anthropic_readiness.evidence import atomic_write, create_run_directory, json_bytes, safe_path
 from anthropic_readiness.models import JsonObject, RunResult, object_value, strict_json
+from anthropic_readiness.presentation import DEFAULT_PRESENTATION, PresentationOptions
 from anthropic_readiness.report_models import ReportSource
 from anthropic_readiness.report_rendering import render_report_html, render_report_markdown
 from anthropic_readiness.report_sources import (
@@ -43,42 +52,79 @@ def memory_source(result: RunResult, diagnostics: Sequence[JsonObject] = ()) -> 
     )
 
 
-def render_html(result: RunResult, diagnostics: Sequence[JsonObject] = ()) -> str:
+def render_html(
+    result: RunResult,
+    diagnostics: Sequence[JsonObject] = (),
+    *,
+    presentation: PresentationOptions | None = None,
+) -> str:
+    if presentation is not None:
+        return render_document_html(
+            build_document_view(memory_source(result, diagnostics), presentation=presentation)
+        )
     return render_report_html(build_report_view(memory_source(result, diagnostics)))
 
 
-def render_markdown(result: RunResult, diagnostics: Sequence[JsonObject] = ()) -> str:
+def render_markdown(
+    result: RunResult,
+    diagnostics: Sequence[JsonObject] = (),
+    *,
+    presentation: PresentationOptions | None = None,
+) -> str:
+    if presentation is not None:
+        return render_document_markdown(
+            build_document_view(memory_source(result, diagnostics), presentation=presentation)
+        )
     return render_report_markdown(build_report_view(memory_source(result, diagnostics)))
 
 
-def write_projection(source: ReportSource, output_dir: Path) -> None:
-    view = build_report_view(source)
-    atomic_write(output_dir / "report.html", render_report_html(view).encode())
-    atomic_write(output_dir / "report.md", render_report_markdown(view).encode())
-    atomic_write(output_dir / "report-view.json", json_bytes(view.document))
-    atomic_write(
-        output_dir / "report-manifest.json",
-        json_bytes(
-            {
-                "schema_version": "1.0",
-                "presentation_version": "2.0",
-                "run_id": view.document["run_id"],
-                "assessment_id": source.result.assessment_id if source.result else None,
-                "source_result_sha256": source.result_sha256,
-                "evidence_verification": source.evidence_verification,
-            }
-        ),
-    )
+def write_projection(
+    source: ReportSource,
+    output_dir: Path,
+    *,
+    presentation: PresentationOptions = DEFAULT_PRESENTATION,
+    comparison: Comparison | None = None,
+) -> None:
+    view = build_document_view(source, presentation=presentation, comparison=comparison)
+    atomic_write(output_dir / "report.html", render_document_html(view).encode())
+    atomic_write(output_dir / "report.md", render_document_markdown(view).encode())
+    atomic_write(output_dir / "document-view.json", json_bytes(view.document))
+    atomic_write(output_dir / "AGENT.md", render_agent_index(view).encode())
+    if comparison is not None:
+        atomic_write(output_dir / "comparison.json", json_bytes(comparison.document))
+    manifest: JsonObject = {
+        "schema_version": "2.0",
+        "presentation_version": "3.0",
+        "run_id": object_value(view.document["facts"])["run_id"],
+        "source_result_sha256": source.result_sha256,
+        "presentation": presentation.to_json(),
+        "available_locales": ["zh-CN", "en"],
+        "evidence_verification": source.evidence_verification,
+    }
+    validate_projection(manifest, "document-manifest")
+    atomic_write(output_dir / "report-manifest.json", json_bytes(manifest))
 
 
-def write_reports(result: RunResult, output_dir: Path) -> None:
+def write_reports(
+    result: RunResult,
+    output_dir: Path,
+    *,
+    presentation: PresentationOptions = DEFAULT_PRESENTATION,
+    comparison: Comparison | None = None,
+) -> None:
     source = load_report_source(output_dir)
     if source.result is None or source.result.to_json() != result.to_json():
         raise ValueError("report_result_identity")
-    write_projection(source, output_dir)
+    write_projection(source, output_dir, presentation=presentation, comparison=comparison)
 
 
-def render_from_file(source: Path, destination: Path) -> None:
+def render_from_file(
+    source: Path,
+    destination: Path,
+    *,
+    presentation: PresentationOptions = DEFAULT_PRESENTATION,
+    comparison: Comparison | None = None,
+) -> None:
     original = source_bytes(source.parent, source.name)
     result = result_from_document(object_value(strict_json(original.decode())))
     if any(not safe_reference_path(ref.path) for ref in result.evidence):
@@ -108,7 +154,7 @@ def render_from_file(source: Path, destination: Path) -> None:
                 *(item for item in observed.diagnostics if item.get("kind") == "source_warning"),
             ),
         )
-    write_projection(copied, destination)
+    write_projection(copied, destination, presentation=presentation, comparison=comparison)
     atomic_write(
         destination / "source-result.sha256", (hashlib.sha256(original).hexdigest() + "\n").encode()
     )

@@ -1,0 +1,320 @@
+* {
+  box-sizing: border-box;
+}
+html {
+  scroll-behavior: smooth;
+}
+body {
+  margin: 0;
+  background: var(--readiness-page);
+  color: var(--readiness-text);
+  font: 16px/1.65 var(--readiness-font-ui);
+}
+a {
+  color: var(--readiness-accent);
+  text-underline-offset: 3px;
+  overflow-wrap: anywhere;
+}
+a:focus-visible,
+select:focus-visible,
+summary:focus-visible,
+[tabindex]:focus-visible {
+  outline: 3px solid var(--readiness-focus);
+  outline-offset: 3px;
+}
+.document-rail {
+  position: fixed;
+  inset: 0 auto 0 0;
+  width: 230px;
+  padding: 28px 26px;
+  background: var(--readiness-rail);
+  border-right: 1px solid var(--readiness-divider);
+}
+.brand {
+  color: var(--readiness-accent);
+  font: 600 18px var(--readiness-font-document);
+}
+.document-rail ol {
+  padding: 0;
+  list-style: none;
+  margin-top: 48px;
+}
+.document-rail a {
+  display: block;
+  padding: 10px 0;
+  text-decoration: none;
+  font-size: 14px;
+}
+main {
+  max-width: 1360px;
+  margin-left: 230px;
+  padding: 24px 48px 60px;
+}
+.document-controls {
+  display: none;
+  gap: 18px;
+  align-items: center;
+}
+.document-controls label {
+  font-size: 13px;
+}
+select {
+  background: var(--readiness-surface);
+  color: var(--readiness-text);
+  border: 1px solid var(--readiness-control-border);
+  border-radius: 3px;
+  padding: 5px;
+  font: inherit;
+}
+.document-top {
+  display: flex;
+  gap: 18px;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--readiness-divider);
+  padding-bottom: 16px;
+  color: var(--readiness-muted);
+  font-size: 13px;
+}
+h1,
+h2,
+h3 {
+  font-family: var(--readiness-font-document);
+  line-height: 1.35;
+}
+h1 {
+  font-size: clamp(28px, 3vw, 42px);
+  margin: 18px 0 4px;
+}
+h2 {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  font-size: 23px;
+  color: var(--readiness-accent);
+  margin: 32px 0 12px;
+}
+h2::after {
+  content: "";
+  height: 1px;
+  background: var(--readiness-divider);
+  flex: 1;
+}
+h3 {
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+.document-identity {
+  font-family: var(--readiness-font-document);
+  font-size: 23px;
+  margin: 0 0 8px;
+  overflow-wrap: anywhere;
+}
+.document-meta,
+.muted,
+figcaption,
+caption {
+  color: var(--readiness-muted);
+  font-size: 14px;
+}
+.document-meta {
+  border-bottom: 1px solid var(--readiness-divider);
+  padding-bottom: 20px;
+}
+.conclusion {
+  font-family: var(--readiness-font-document);
+  font-size: 25px;
+  line-height: 1.45;
+  font-weight: 600;
+  margin: 8px 0;
+}
+.notice {
+  padding-left: 14px;
+  border-left: 3px solid var(--readiness-control-border);
+}
+.table-scroll {
+  overflow-x: auto;
+}
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 14px;
+  margin: 10px 0;
+}
+caption {
+  text-align: left;
+  margin-bottom: 8px;
+}
+th,
+td {
+  border-bottom: 1px solid var(--readiness-divider);
+  text-align: left;
+  vertical-align: top;
+  padding: 10px 12px;
+}
+th {
+  font-weight: 600;
+}
+thead {
+  background: var(--readiness-rail);
+}
+.coverage-table {
+  min-width: 690px;
+}
+.status {
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.status-PASS,
+.transition-recovered {
+  color: var(--readiness-pass);
+}
+.status-FAIL,
+.transition-new_failure,
+.transition-persistent {
+  color: var(--readiness-fail);
+}
+.status-INDETERMINATE,
+.status-BLOCKED,
+.transition-gap {
+  color: var(--readiness-waiting);
+}
+.finding {
+  padding: 6px 0 24px;
+  border-bottom: 1px solid var(--readiness-divider);
+}
+.finding-number {
+  font: 600 14px var(--readiness-font-code);
+  color: var(--readiness-accent);
+  margin-right: 14px;
+}
+.field-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+pre,
+code {
+  font-family: var(--readiness-font-code);
+  font-size: 13px;
+}
+pre {
+  background: var(--readiness-code-surface);
+  color: var(--readiness-code-text);
+  padding: 14px;
+  border: 1px solid var(--readiness-divider);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+code {
+  overflow-wrap: anywhere;
+}
+summary {
+  cursor: pointer;
+  color: var(--readiness-accent);
+  padding: 8px 0;
+}
+figure {
+  margin: 22px 0;
+}
+.impact-row {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) 2fr 80px;
+  align-items: center;
+  gap: 12px;
+  margin: 9px 0;
+  font-size: 14px;
+}
+progress {
+  width: 100%;
+  height: 10px;
+  accent-color: var(--readiness-progress-fill);
+  background: var(--readiness-progress-track);
+}
+progress::-webkit-progress-bar {
+  background: var(--readiness-progress-track);
+}
+progress::-webkit-progress-value {
+  background: var(--readiness-progress-fill);
+}
+progress::-moz-progress-bar {
+  background: var(--readiness-progress-fill);
+}
+#evidence li {
+  overflow-wrap: anywhere;
+  margin: 8px 0;
+}
+footer {
+  margin-top: 38px;
+  padding-top: 18px;
+  border-top: 1px solid var(--readiness-divider);
+  font-size: 13px;
+  color: var(--readiness-muted);
+}
+@media (max-width: 900px) {
+  .document-rail {
+    position: static;
+    width: auto;
+    padding: 18px 22px;
+    border-right: 0;
+    border-bottom: 1px solid var(--readiness-divider);
+  }
+  .document-rail ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 18px;
+    margin: 8px 0 0;
+  }
+  .document-rail a {
+    padding: 3px 0;
+  }
+  main {
+    margin-left: 0;
+    padding: 22px;
+  }
+  .field-pair {
+    grid-template-columns: 1fr;
+  }
+  .impact-row {
+    grid-template-columns: 1fr 1fr 55px;
+  }
+}
+@media print {
+  .document-rail,
+  .document-controls {
+    display: none !important;
+  }
+  main {
+    margin: 0;
+    padding: 0;
+    max-width: none;
+  }
+  body {
+    font-size: 11pt;
+  }
+  h1 {
+    font-size: 25pt;
+  }
+  h2 {
+    break-after: avoid;
+  }
+  pre,
+  tr,
+  .finding {
+    break-inside: avoid;
+  }
+  .table-scroll {
+    overflow: visible;
+  }
+  .coverage-table {
+    min-width: 0;
+  }
+  a {
+    color: var(--readiness-text);
+  }
+}
+/* Content digests remain readable without widening the document viewport. */
+footer {
+  overflow-wrap: anywhere;
+}

@@ -722,3 +722,17 @@ W2 Task 12 completed locally at 0abc160: final fast graph passed (443 Python,
 20 Node), focused backend checks passed 56, and post-commit task-done browser
 acceptance passed 61 with unchanged source and successful cleanup. The workbench
 uses context-preserving operational views; standalone document delivery is Task 13.
+
+W2 Task 13 is in progress (uncommitted). Independent presentation-3 HTML/Markdown,
+privacy projection, report-only CLI flags and versioned diagnostic exports are
+implemented. Observed checks: 21 focused backend passes, 12 direct-file browser
+passes after a final-output CSP-hash RED/GREEN, and one actual eight-request
+synthetic mixed-comparison export/read pass. Later locale-option, grouping and
+manifest-contract refinements are awaiting final rerun. Whole-stage acceptance
+and final independent review remain pending; no new real endpoint was contacted.
+
+W2 Task 13 final iteration passed 453 Python/20 Node fast checks and 32 focused
+checks, with 16 direct-file/narrow/contrast/print browser checks after a measured
+footer-overflow fix. The earlier full browser run passed 73 before four new narrow
+checks were introduced. Version-3 GUI export was also observed manually on the
+owned synthetic preview. Post-commit whole-browser completion remains pending.

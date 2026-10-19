@@ -10,18 +10,28 @@ from typing import Literal
 from uuid import UUID, uuid4
 
 from anthropic_readiness.config import target_from_document
+from anthropic_readiness.diagnostics.contracts import validate_diagnostic
+from anthropic_readiness.diagnostics.models import Comparison
 from anthropic_readiness.diagnostics.packages import (
     build_export_manifest,
     build_package_files,
     portable_context,
     write_package,
 )
+from anthropic_readiness.document_rendering import (
+    render_agent_index,
+    render_document_html,
+    render_document_markdown,
+    render_package_readme,
+)
+from anthropic_readiness.documents import build_document_view
 from anthropic_readiness.evidence import atomic_write, json_bytes, safe_path
 from anthropic_readiness.jobs.store import JobStore
 from anthropic_readiness.models import EvidenceRef, JsonObject, JsonValue, object_value, strict_json
 from anthropic_readiness.operations.contracts import validate_operational
 from anthropic_readiness.operations.reduction import TERMINAL, objects
 from anthropic_readiness.operations.storage import read_document
+from anthropic_readiness.presentation import PresentationOptions
 from anthropic_readiness.report_models import ReportSource
 from anthropic_readiness.report_rendering import render_report_html, render_report_markdown
 from anthropic_readiness.report_sources import load_report_source, source_bytes
@@ -185,15 +195,32 @@ class ExportService:
             names.extend(ref.path for ref in refs)
         return sorted(set(names))
 
-    def preview(self, run_id: str, policy: ExportPolicy) -> JsonObject:
+    def preview(
+        self,
+        run_id: str,
+        policy: ExportPolicy,
+        *,
+        presentation: PresentationOptions | None = None,
+        comparison: Comparison | None = None,
+    ) -> JsonObject:
         source = self._source(run_id)
         refs = self._refs(source)
         selected_names: list[JsonValue] = list(self._names(source, policy, refs))
+        if comparison is not None:
+            if presentation is None:
+                raise ValueError("comparison_requires_presentation_three")
+            build_document_view(source, presentation=presentation, comparison=comparison)
+            selected_names.append("comparison.json")
         root = self._job_root(run_id)
         context, metadata = portable_context(root / "assessment", fallback_root=root)
         if context is not None:
             selected_names.extend([*metadata, "retest-recipe.json", "diagnostic-package.json"])
             selected_names = list(dict.fromkeys(str(name) for name in selected_names))
+        if presentation is not None:
+            selected_names = [
+                "document-view.json" if name == "report-view.json" else name
+                for name in selected_names
+            ]
         excluded: list[JsonValue] = list(omissions(policy))
         result: JsonObject = {
             "run_id": run_id,
@@ -204,11 +231,25 @@ class ExportService:
             "omissions": excluded,
             "evidence_verification": delivery_quality(source, policy, refs),
         }
-        validate_operational({"kind": "export_preview", "data": result}, "web-api")
+        if presentation is not None:
+            result.update({"schema_version": "2.0", "presentation": presentation.to_json()})
+        validate_operational(
+            {
+                "kind": "diagnostic_export_preview" if presentation else "export_preview",
+                "data": result,
+            },
+            "web-api",
+        )
         return result
 
     def _files(
-        self, run_id: str, policy: ExportPolicy, source: ReportSource
+        self,
+        run_id: str,
+        policy: ExportPolicy,
+        source: ReportSource,
+        *,
+        presentation: PresentationOptions | None = None,
+        comparison: Comparison | None = None,
     ) -> tuple[dict[str, bytes], ReportSource]:
         refs = self._refs(source)
         if policy.include_evidence and (
@@ -226,6 +267,19 @@ class ExportService:
             data["report.md"] = render_report_markdown(view).encode()
         if "json" in selected:
             data["report-view.json"] = json_bytes(view.document)
+        document_view = (
+            build_document_view(projected, presentation=presentation, comparison=comparison)
+            if presentation
+            else None
+        )
+        if document_view is not None:
+            if "html" in selected:
+                data["report.html"] = render_document_html(document_view).encode()
+            if "markdown" in selected:
+                data["report.md"] = render_document_markdown(document_view).encode()
+            if "json" in selected:
+                del data["report-view.json"]
+                data["document-view.json"] = json_bytes(document_view.document)
         root = self._job_root(run_id)
         if source.result is not None and source.result_sha256 is not None:
             data["result.json"] = copied_bytes(
@@ -264,15 +318,29 @@ class ExportService:
             + "## 文件与完整性\n\nmanifest.json 的 files 列出相对路径、字节数与 SHA-256；不包含清单自身，也不构成来源数字签名或官方认证。ZIP 只收录该清单列出的文件及清单本身。原始证据和检查点原样复制；部分执行的 execution.json 是冻结观测快照，不能冒充最终结果。\n\n"
             + "## 阅读方式\n\nreport.html 可离线打开，无需服务或网络；等价数据表和核心内容不依赖脚本。Markdown 与 JSON 保存同一投影事实。参考资料的 URL 是规则出处，打开报告不会自动更新规范。CLI 与 Web 使用同一规则引擎；本包不证明未测客户端或未来版本兼容。\n"
         ).encode()
+        if document_view is not None:
+            data["README.md"] = render_package_readme(document_view).encode()
         if sum(len(value) for value in data.values()) > MAX_EXPORT_BYTES:
             raise ValueError("export_size_limit")
         context, metadata = portable_context(root / "assessment", fallback_root=root)
         data.update(metadata)
         return build_package_files(
-            projected, context, raw_files=data, include_evidence=policy.include_evidence
+            projected,
+            context,
+            raw_files=data,
+            include_evidence=policy.include_evidence,
+            agent_index=render_agent_index(document_view) if document_view else None,
+            comparison=comparison,
         ), projected
 
-    def create(self, run_id: str, policy: ExportPolicy) -> JsonObject:
+    def create(
+        self,
+        run_id: str,
+        policy: ExportPolicy,
+        *,
+        presentation: PresentationOptions | None = None,
+        comparison: Comparison | None = None,
+    ) -> JsonObject:
         source = self._source(run_id)
         export_id = str(uuid4())
         created_at = datetime.now(UTC).isoformat()
@@ -280,7 +348,9 @@ class ExportService:
         parent.mkdir(mode=0o700, exist_ok=True)
         directory = safe_path(parent, export_id)
         directory.mkdir(mode=0o700)
-        data, projected = self._files(run_id, policy, source)
+        data, projected = self._files(
+            run_id, policy, source, presentation=presentation, comparison=comparison
+        )
         for relative, content in data.items():
             target = safe_path(directory, relative)
             target.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
@@ -293,8 +363,12 @@ class ExportService:
             formats=formats,
             export_id=export_id,
             created_at=created_at,
+            presentation=presentation,
         )
-        validate_operational(manifest, "export-manifest")
+        if presentation is None:
+            validate_operational(manifest, "export-manifest")
+        else:
+            validate_diagnostic(manifest, "export-manifest-v2")
         manifest_bytes = json_bytes(manifest)
         atomic_write(directory / "manifest.json", manifest_bytes)
         archive = safe_path(directory, "bundle.zip")
@@ -315,7 +389,13 @@ class ExportService:
             "manifest_sha256": digest(manifest_bytes),
             "manifest": manifest,
         }
-        validate_operational({"kind": "export_response", "data": record}, "web-api")
+        validate_operational(
+            {
+                "kind": "diagnostic_export_response" if presentation else "export_response",
+                "data": record,
+            },
+            "web-api",
+        )
         # Publication barrier: an orphan directory without this record is not downloadable.
         atomic_write(directory / "record.json", json_bytes(record))
         return record
@@ -330,7 +410,14 @@ class ExportService:
         except FileNotFoundError as exc:
             raise ValueError("export_not_found") from exc
         try:
-            validate_operational({"kind": "export_response", "data": record}, "web-api")
+            current = object_value(record["manifest"])["schema_version"] == "2.0"
+            validate_operational(
+                {
+                    "kind": "diagnostic_export_response" if current else "export_response",
+                    "data": record,
+                },
+                "web-api",
+            )
             if record["run_id"] != run_id or record["export_id"] != export_id:
                 raise ValueError("export_record_identity")
             manifest_bytes = copied_bytes(
@@ -343,7 +430,10 @@ class ExportService:
                 or manifest["export_id"] != export_id
             ):
                 raise ValueError("export_manifest_identity")
-            validate_operational(manifest, "export-manifest")
+            if current:
+                validate_diagnostic(manifest, "export-manifest-v2")
+            else:
+                validate_operational(manifest, "export-manifest")
             entry: JsonObject | None
             if format is None or format == "zip":
                 entry = object_value(record["artifact"])
@@ -352,7 +442,12 @@ class ExportService:
                     (
                         item
                         for item in objects(manifest["files"])
-                        if item["path"] == FILENAMES[format]
+                        if item["path"]
+                        == (
+                            "document-view.json"
+                            if current and format == "json"
+                            else FILENAMES[format]
+                        )
                     ),
                     None,
                 )
@@ -365,13 +460,24 @@ class ExportService:
             raise ValueError("export_integrity") from exc
 
     def read(self, run_id: str, export_id: str, *, format: ExportFormat | None = None) -> bytes:
+        return self.read_named(run_id, export_id, format=format)[0]
+
+    def read_named(
+        self, run_id: str, export_id: str, *, format: ExportFormat | None = None
+    ) -> tuple[bytes, str]:
+
         try:
             path, entry = self._artifact(run_id, export_id, format)
             with path.open("rb") as stream:
                 data = stream.read(MAX_EXPORT_BYTES + 1)
             if len(data) != entry["bytes"] or digest(data) != entry["sha256"]:
                 raise ValueError("export_integrity")
-            return data
+            filename = (
+                "document-view.json"
+                if format == "json" and path.name == "document-view.json"
+                else FILENAMES[format or "zip"]
+            )
+            return data, filename
         except OSError as exc:
             raise ValueError("export_integrity") from exc
 

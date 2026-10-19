@@ -23,10 +23,13 @@ from anthropic_readiness import runner
 from anthropic_readiness.application import build_plan
 from anthropic_readiness.config import load_target
 from anthropic_readiness.context import build_report_context
+from anthropic_readiness.document_rendering import render_document_html
+from anthropic_readiness.documents import build_document_view
 from anthropic_readiness.jobs.store import JobStore
 from anthropic_readiness.models import JsonObject, object_value
 from anthropic_readiness.operations.observer import DiskExecutionObserver
 from anthropic_readiness.operations.reduction import objects
+from anthropic_readiness.presentation import PresentationOptions
 from anthropic_readiness.report_rendering import render_report_html
 from anthropic_readiness.report_sources import load_report_source
 from anthropic_readiness.report_view import build_report_view
@@ -112,7 +115,21 @@ def seed(root: Path) -> JsonObject:
             )
         )
     )
+    document_paths: JsonObject = {}
+    for locale in ("zh-CN", "en"):
+        for theme in ("light", "dark", "system"):
+            path = root / f"document-{locale}-{theme}.html"
+            path.write_text(
+                render_document_html(
+                    build_document_view(
+                        load_report_source(output, operations_root=output.parent / "operations"),
+                        presentation=PresentationOptions(locale, theme),
+                    )
+                )
+            )
+            document_paths[f"{locale}-{theme}"] = str(path)
     mixed_path = root / "mixed-report.html"
+
     mixed_path.write_text(render_report_html(build_report_view(mixed_report_source())))
     archive, original_source = portable_archive(root / "portable-input")
     omitted, _ = portable_archive(
@@ -125,6 +142,7 @@ def seed(root: Path) -> JsonObject:
         "legacy_path": str(legacy),
         "completed_id": job.id,
         "partial_id": partial_id,
+        "document_paths": document_paths,
         "offline_path": str(offline),
         "mixed_path": str(mixed_path),
     }

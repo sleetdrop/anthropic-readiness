@@ -19,6 +19,7 @@ from anthropic_readiness.diagnostics.models import AssessmentContext, Comparison
 from anthropic_readiness.evidence import json_bytes, safe_path
 from anthropic_readiness.models import JsonObject, JsonValue, object_value, strict_json
 from anthropic_readiness.operations.contracts import validate_operational
+from anthropic_readiness.presentation import PresentationOptions
 from anthropic_readiness.report_models import ReportSource
 from anthropic_readiness.report_sources import source_bytes
 
@@ -64,6 +65,7 @@ def build_package_files(
     raw_files: dict[str, bytes],
     include_evidence: bool,
     comparison: Comparison | None = None,
+    agent_index: str | None = None,
 ) -> dict[str, bytes]:
     """Return payload only; the export adapter adds its own delivery manifest."""
     if any(name in raw_files for name in ("manifest.json", "diagnostic-package.json")):
@@ -142,6 +144,8 @@ def build_package_files(
         "Original result/partial records retain target context, including endpoint/auth-reference names. "
         "Selected captures can contain business data. This archive is not anonymized; review before sharing.\n"
     ).encode()
+    if agent_index is not None:
+        data["AGENT.md"] = agent_index.encode()
     if context is not None:
         marker: JsonObject = {
             "schema_version": "1.0",
@@ -169,6 +173,7 @@ def build_export_manifest(
     formats: list[JsonValue],
     export_id: str | None = None,
     created_at: str | None = None,
+    presentation: PresentationOptions | None = None,
 ) -> JsonObject:
     value: JsonObject = {
         "schema_version": "1.0",
@@ -195,7 +200,18 @@ def build_export_manifest(
             else "omitted",
         },
     }
-    validate_operational(value, "export-manifest")
+    if presentation is not None:
+        value.update(
+            {
+                "schema_version": "2.0",
+                "presentation_version": "3.0",
+                "presentation": presentation.to_json(),
+            }
+        )
+        validate_diagnostic(value, "export-manifest-v2")
+    else:
+        validate_operational(value, "export-manifest")
+
     return value
 
 

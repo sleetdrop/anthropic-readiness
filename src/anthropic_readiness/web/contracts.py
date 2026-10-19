@@ -20,19 +20,24 @@ def api_shape(kind: str) -> JsonObject:
     raise ValueError("unknown_api_contract")
 
 
-def response_contract(kind: str, status: int = 200) -> dict[int | str, dict[str, object]]:
+def _references(kinds: tuple[str, ...]) -> dict[str, object]:
+    references = [{"$ref": "#/components/schemas/" + kind} for kind in kinds]
+    return dict(references[0]) if len(references) == 1 else {"oneOf": references}
+
+
+def response_contract(
+    kind: str, status: int = 200, *, alternatives: tuple[str, ...] = ()
+) -> dict[int | str, dict[str, object]]:
     return {
-        status: {
-            "content": {"application/json": {"schema": {"$ref": "#/components/schemas/" + kind}}}
-        }
+        status: {"content": {"application/json": {"schema": _references((kind, *alternatives))}}}
     }
 
 
-def request_contract(kind: str) -> dict[str, object]:
+def request_contract(kind: str, *, alternatives: tuple[str, ...] = ()) -> dict[str, object]:
     return {
         "requestBody": {
             "required": True,
-            "content": {"application/json": {"schema": {"$ref": "#/components/schemas/" + kind}}},
+            "content": {"application/json": {"schema": _references((kind, *alternatives))}},
         }
     }
 

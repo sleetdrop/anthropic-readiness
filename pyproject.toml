@@ -87,5 +87,5 @@ forbidden_modules = ["anthropic_readiness.diagnostics.contracts", "anthropic_rea
 [[tool.importlinter.contracts]]
 name = "Workbench composition stays independent of I/O adapters"
 type = "forbidden"
-source_modules = ["anthropic_readiness.workbench"]
+source_modules = ["anthropic_readiness.workbench", "anthropic_readiness.documents"]
 forbidden_modules = ["anthropic_readiness.web", "anthropic_readiness.jobs", "anthropic_readiness.diagnostics.service", "anthropic_readiness.reporting", "anthropic_readiness.runner", "httpx", "sqlite3"]

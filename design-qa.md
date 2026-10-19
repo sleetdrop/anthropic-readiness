@@ -116,3 +116,69 @@ remote CI, native zoom-control integration or independent review. There is no
 remaining actionable visual P0/P1/P2 in the inspected operational surfaces.
 
 final result: passed
+
+## W2 independent document QA — Task 13
+
+Source: the approved editorial companion
+`artifacts/w2/visual-20261018/exec-f7a2a61a-532a-4816-968d-59f18b89f94f.png`.
+It was opened alongside the actual paired document captures. The document keeps
+its own contents rail, serif title/section hierarchy, numbered matrix/findings,
+rule citations and evidence index. It includes all four recorded dimensions rather
+than omitting execution conditions to match the concept's sample. Comparison is
+optional and follows findings per the written specification. Actual sample counts
+replace concept numbers; no illustration or synthetic chart image is shipped.
+
+Actual paired comparison captures are in
+`artifacts/w2/task13/browser-all2/browser-artifacts/diagnostics-comparison-kee-acd73-gressions-and-gaps-together/`:
+`report-light-viewport.png`, `report-dark-viewport.png`, full-page equivalents and
+`mixed-assessment.html`. These come from actual two-run synthetic requests and
+exported files, with recovery/persistent/new-failure/gap groups retained together.
+The later footer wrapping changes no first-viewport geometry. Final narrow and
+print evidence is under `artifacts/w2/task13/browser-doc-final/captures/`.
+
+Fonts use the shared system/CJK and document-serif stacks; there is no remote
+font request. Both themes use identical type/spacing with the shared flat semantic
+tokens. Main matrix states are localized reader labels; exact machine states
+remain in the original-check appendix and embedded factual dataset. Identical
+field excerpts share a block, retaining every affected case and original evidence
+member. Native impact bars encode distinct affected cases, not a compatibility
+score, and have captions and equivalent tables. Overlapping findings are never
+summed as unique cases. Timing-only figures are omitted because no current finding
+is explained by their boundaries; actual summary/attempt durations remain data.
+
+Closed findings:
+
+- Final-asset CSP hashes now include template whitespace/semicolon bytes; 12 initial
+  direct-file failures were observed before correction. The restrictive policy
+  remains, with no network/telemetry dependency.
+- Theme option text and region accessible names now follow in-file language changes;
+  a language-switch failure was observed before correction. Initial language remains
+  readable without scripts; unavailable controls are hidden.
+- A 390px document-width failure was measured as MAIN 479px / FOOTER 457px against
+  a 390px viewport and 346px content area. Long footer digests now wrap. All four
+  locale/appearance narrow cases pass without document overflow; matrix tables
+  retain named, keyboard-scrollable regions.
+- Main tables no longer repeat raw state identifiers such as not_evaluated. These
+  remain available in technical data; the readability check observed RED first.
+- Markdown matrices have contiguous CommonMark rows. Version-3 JSON downloads use
+  document-view.json while the old export path retains report-view.json.
+- Privacy omission no longer performs global replacement of credential-reference
+  words that can equal verdict/model strings. Both collisions observed RED/GREEN.
+  Routing/configuration omission is distinct from changing source evidence.
+
+Observed author QA: browser-all1 passed 73; browser-all2 passed 73 with four new
+narrow failures; after the measured fix, browser-doc-final passed 16. These include
+both locales, three initial appearances, scripts on/off, zero attempted HTTP reads,
+unchanged embedded data, selected-language light printing, code/status/control/
+progress contrast, and narrow keyboard table navigation. Fast-4 passed all eight
+children (453 Python and 20 Node); focused-final passed 32. A separate six-request
+synthetic CLI comparison confirms identical request bodies/API headers and verdicts
+across presentation choices; it is now a formal acceptance test.
+
+Manual browser verification of the refreshed 8766 synthetic service retained the
+same selected issue/case and produced a version-3 export through the actual dialog.
+The preview showed its en/dark choice, document-view.json and explicit omissions;
+ZIP/HTML/Markdown/JSON download links appeared. No model request was started.
+
+Task 13 post-commit whole-browser completion remains pending. Whole-W2 image,
+remote CI, real endpoint and independent review acceptance are outside this record.

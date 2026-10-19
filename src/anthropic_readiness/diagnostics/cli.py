@@ -9,6 +9,11 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 
 from anthropic_readiness.application import run_assessment
+from anthropic_readiness.cli_presentation import (
+    add_presentation_options,
+    load_comparison,
+    presentation_options,
+)
 from anthropic_readiness.config import load_target
 from anthropic_readiness.credentials import EnvironmentCredentials
 from anthropic_readiness.diagnostics.contracts import validate_projection
@@ -33,6 +38,9 @@ def add_diagnostic_commands(parser: argparse.ArgumentParser) -> None:
     export.add_argument("--input", type=Path, required=True)
     export.add_argument("--out", type=Path, required=True)
     export.add_argument("--include-evidence", action="store_true")
+    export.add_argument(
+        "--comparison", type=Path, help="Attach a checked comparison for this source"
+    )
     retest = commands.add_parser(
         "retest", help="Preview or explicitly execute the original full scope"
     )
@@ -43,6 +51,8 @@ def add_diagnostic_commands(parser: argparse.ArgumentParser) -> None:
     opt_in = retest.add_mutually_exclusive_group()
     opt_in.add_argument("--allow-live", action="store_true")
     opt_in.add_argument("--dry-run", action="store_true")
+    for command in (export, retest):
+        add_presentation_options(command)
     compare = commands.add_parser(
         "compare", help="Compare checked observations offline; zero is not a pass"
     )
@@ -72,7 +82,11 @@ def dispatch_diagnostics(args: argparse.Namespace) -> int:
         print("Archive retains original target context; review before sharing.", file=sys.stderr)
         with TemporaryDirectory(prefix="anthropic-readiness-export-") as temporary:
             value = DiagnosticService(Path(temporary)).export(
-                _source(args.input), args.out, include_evidence=args.include_evidence
+                _source(args.input),
+                args.out,
+                include_evidence=args.include_evidence,
+                presentation=presentation_options(args),
+                comparison=load_comparison(args.comparison),
             )
         _print(value)
         return 0
@@ -126,7 +140,12 @@ def dispatch_diagnostics(args: argparse.Namespace) -> int:
         credentials=EnvironmentCredentials(target),
         assessment_context=context.document,
     )
-    write_reports(result, args.out)
+    write_reports(
+        result,
+        args.out,
+        presentation=presentation_options(args),
+        comparison=service.compare(args.baseline, args.out),
+    )
     _print(
         {
             "run_id": result.run_id,

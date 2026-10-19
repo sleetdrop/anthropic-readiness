@@ -7,7 +7,7 @@ import re
 from collections.abc import Callable, Coroutine
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import cast
+from typing import Literal, cast
 
 from fastapi import APIRouter, Request
 from fastapi.routing import APIRoute
@@ -18,6 +18,7 @@ from anthropic_readiness.cases import PROFILES, list_cases
 from anthropic_readiness.config import strings
 from anthropic_readiness.contracts import SUPPORTED, resolve_contract
 from anthropic_readiness.credentials import MemoryCredentials
+from anthropic_readiness.diagnostics.models import Comparison
 from anthropic_readiness.evidence import safe_path, verify_evidence
 from anthropic_readiness.exports import ExportFormat, ExportPolicy, ExportService
 from anthropic_readiness.jobs.manager import JobManager
@@ -26,6 +27,7 @@ from anthropic_readiness.operations.contracts import validate_operational
 from anthropic_readiness.operations.models import JobState
 from anthropic_readiness.operations.reduction import TERMINAL
 from anthropic_readiness.operations.storage import MAX_DOCUMENT_BYTES, read_document
+from anthropic_readiness.presentation import PresentationOptions
 from anthropic_readiness.report_sources import load_report_source
 from anthropic_readiness.report_view import build_report_view
 from anthropic_readiness.schema import result_from_document
@@ -477,35 +479,77 @@ def evidence(run_id: str, reference: str, request: Request) -> Response:
 
 
 def export_policy(request: Request) -> ExportPolicy:
-    document = body(request, "export_request")
+    kind = (
+        "diagnostic_export_request"
+        if object_value(request.state.document).get("schema_version") == "2.0"
+        else "export_request"
+    )
+    document = body(request, kind)
     return ExportPolicy(
         tuple(cast(ExportFormat, value) for value in strings(document["formats"])),
         document["include_evidence"] is True,
     )
 
 
+def export_presentation(request: Request) -> PresentationOptions | None:
+    document = object_value(request.state.document)
+    if document.get("schema_version") != "2.0":
+        return None
+    document = body(request, "diagnostic_export_request")
+    options = object_value(document["presentation"])
+    return PresentationOptions(
+        cast(Literal["zh-CN", "en"], options["locale"]),
+        cast(Literal["light", "dark", "system"], options["theme"]),
+    )
+
+
+def export_comparison(request: Request, run_id: str) -> Comparison | None:
+    document = object_value(request.state.document)
+    if document.get("schema_version") != "2.0" or "baseline" not in document:
+        return None
+    document = body(request, "diagnostic_export_request")
+    # Resolve through the same owned-source boundary as the comparison route.
+    from anthropic_readiness.web.diagnostics import _owned_source, service_for
+
+    before = _owned_source(request, object_value(document["baseline"]))
+    after = _owned_source(request, {"kind": "run", "id": run_id})
+    return service_for(request).compare_sources(before, after)
+
+
 @router.post(
     "/runs/{run_id}/exports/preview",
-    responses=response_contract("export_preview"),
-    openapi_extra=request_contract("export_request"),
+    responses=response_contract("export_preview", alternatives=("diagnostic_export_preview",)),
+    openapi_extra=request_contract("export_request", alternatives=("diagnostic_export_request",)),
 )
 def preview_export(run_id: str, request: Request) -> JSONResponse:
     return api_response(
-        "export_preview",
-        ExportService(manager_for(request).store.root).preview(run_id, export_policy(request)),
+        "diagnostic_export_preview" if export_presentation(request) else "export_preview",
+        ExportService(manager_for(request).store.root).preview(
+            run_id,
+            export_policy(request),
+            presentation=export_presentation(request),
+            comparison=export_comparison(request, run_id),
+        ),
     )
 
 
 @router.post(
     "/runs/{run_id}/exports",
     status_code=201,
-    responses=response_contract("export_response", 201),
-    openapi_extra=request_contract("export_request"),
+    responses=response_contract(
+        "export_response", 201, alternatives=("diagnostic_export_response",)
+    ),
+    openapi_extra=request_contract("export_request", alternatives=("diagnostic_export_request",)),
 )
 def create_export(run_id: str, request: Request) -> JSONResponse:
     return api_response(
-        "export_response",
-        ExportService(manager_for(request).store.root).create(run_id, export_policy(request)),
+        "diagnostic_export_response" if export_presentation(request) else "export_response",
+        ExportService(manager_for(request).store.root).create(
+            run_id,
+            export_policy(request),
+            presentation=export_presentation(request),
+            comparison=export_comparison(request, run_id),
+        ),
         status=201,
     )
 
@@ -514,7 +558,9 @@ def create_export(run_id: str, request: Request) -> JSONResponse:
 def download_export(
     run_id: str, export_id: str, request: Request, format: ExportFormat | None = None
 ) -> Response:
-    data = ExportService(manager_for(request).store.root).read(run_id, export_id, format=format)
+    data, filename = ExportService(manager_for(request).store.root).read_named(
+        run_id, export_id, format=format
+    )
     kind = format or "zip"
     media = {
         "zip": "application/zip",
@@ -522,12 +568,8 @@ def download_export(
         "markdown": "text/markdown",
         "json": "application/json",
     }[kind]
-    filename = {
-        "zip": "anthropic-readiness.zip",
-        "html": "report.html",
-        "markdown": "report.md",
-        "json": "report-view.json",
-    }[kind]
+    if kind == "zip":
+        filename = "anthropic-readiness.zip"
     return Response(
         data,
         media_type=media,

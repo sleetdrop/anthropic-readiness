@@ -625,7 +625,21 @@ export function setupExports(runId, terminal) {
   const form = element("export-form");
   let reviewed = "";
   /** @returns {JsonObject} */
+  const comparisonSelection = () => {
+    const value = new URL(window.location.href).searchParams.get("baseline");
+    if (!value) return {};
+    const [kind, id] = value.includes(":") ? value.split(":", 2) : ["baseline", value];
+    return { baseline: { kind, id } };
+  };
   const policy = () => ({
+    ...comparisonSelection(),
+
+    schema_version: "2.0",
+    presentation: {
+      schema_version: "1.0",
+      locale: document.documentElement.lang,
+      theme: document.documentElement.dataset.theme || "system",
+    },
     formats: checked(form, "format"),
     include_evidence: input("include-evidence").checked,
   });
@@ -656,6 +670,16 @@ export function setupExports(runId, terminal) {
           ),
         );
         const list = document.createElement("ul");
+        const presentation = object(value.presentation);
+        content.append(
+          node(
+            "p",
+            message("export.presentation", {
+              language: String(presentation.locale),
+              theme: String(presentation.theme),
+            }),
+          ),
+        );
         for (const name of strings(value.files)) list.append(node("li", name));
         content.append(
           list,
@@ -688,7 +712,7 @@ export function setupExports(runId, terminal) {
                 ? "report.html"
                 : format === "markdown"
                   ? "report.md"
-                  : "report-view.json",
+                  : "document-view.json",
           })),
         ];
         for (const option of options) {

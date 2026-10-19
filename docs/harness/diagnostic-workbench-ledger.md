@@ -818,3 +818,88 @@ list rewrite and local commit 0abc160, taskdone-browser passed all 61 Chromium
 checks in 3.3 minutes on unchanged source; prerequisite and cleanup checks passed.
 The operational visual record is design-qa.md. Tasks 13–15 remain unaccepted;
 no full-W2 Python/image/remote CI or real endpoint result is implied.
+
+### Task 13 — standalone documents (in progress)
+
+BASE 30d8696. Initial 14 document/CLI checks observed RED. The first implementation
+passed seven projection/render checks; a file-edit boundary accidentally omitted
+reporting entry points and was restored from the preceding committed version.
+Green-2 passed 14; export RED then Green-4 passed 17. A foreign-comparison binding
+check observed RED and now rejects a comparison whose after source differs from
+this document's run/result/checkpoint identity. Green-5 passed 18.
+
+The first 12 direct-file browser checks failed because template formatting added
+whitespace/semicolon bytes around inline assets, invalidating pre-template CSP
+hashes. Hashing the final trusted asset text retained the restrictive policy;
+browser-doc2 passed all 12 combinations of locale, initial theme and script mode,
+with zero attempted network calls/errors and light printing in the selected
+language. Strict typing passed 174 files after the first typing corrections.
+
+Comparison export checks observed RED in CLI/shared service and HTTP. New explicit
+comparison inputs bind to the current source, and the workbench's chosen baseline
+uses the same owned-source resolver as comparison. The first browser-comparison
+attempt assumed a nonexistent ZIP checkbox; the existing form selects HTML/MD/JSON
+and always delivers the bundle. Correcting that fixture assumption produced one
+passing actual two-run mixed-comparison export, eight synthetic model requests
+unchanged, five report groups and all original pairs. A legacy self-comparison
+correctly remains incomparable; the HTTP test now asserts that rather than
+expecting a fabricated persistent-failure count. Green-7 passed 21 checks.
+
+Markdown table separation and the presentation-3 JSON Content-Disposition name
+were observed RED and fixed. A subsequent locale switch check observed untranslated
+theme options; its correction is awaiting rerun. Identical excerpt grouping also
+observed RED; it retains every original case/evidence member. A packaged version-2
+document-manifest contract is being added after an unknown-contract RED; the
+frozen report-view/result/export-manifest-1 contracts remain unchanged.
+
+Ruling: omit the operational execution object and timing-only figures from the
+presentation-3 document facts, retaining actual summary/attempt durations and all
+case/check facts — the embedded operational target has required private routing
+fields, and no current finding is explained by its timing boundaries — cost if
+wrong: readers use the original package snapshot to inspect detailed spans. No
+start/finish boundary or latency is synthesized.
+
+Ruling: keep the existing export-request/response and manifest-1 path as explicit
+presentation-2 compatibility, and add checked diagnostic-export variants for
+presentation 3 — accepting preferences without honoring them would be misleading —
+cost if wrong: both readers/render paths must remain covered. Fresh CLI/file reports
+and current Web controls select presentation 3; original bytes remain unchanged.
+
+The account limit interrupted an approval review before the proposed command ran;
+no action was executed on that rejection. After the owner confirmed reset, the
+ordinary approved container checks resumed. No bypass, real endpoint call,
+external write, image acceptance or independent review occurred.
+
+Fast-2 passed all eight children, 451 Python tests and 20 Node tests. Focused-1
+passed 67 and failed one stale presentation-2 filename assertion for a new CLI
+retest; it now expects document-view.json/presentation 3.0, retaining all four-call,
+lineage, source-result and FAIL exit assertions. Browser-all1 passed all 73 tests
+in 4.4 minutes with unchanged source and successful cleanup, including selected
+comparison export and offline in-file theme/language changes.
+
+A separate ignored probe first failed on its own import path, then observed a
+real privacy collision: globally replacing a credential-reference name FAIL or
+example rewrote verdict/model strings. Two formal tests observed RED. Credential
+references are now omitted by configuration field, while only complete endpoint
+addresses are scrubbed from prose. Comparison credential-reference deltas are
+explicitly omitted; original source files are unchanged. This corrects presentation
+without altering the source judgments. Final rerun is pending.
+
+Ruling: retain legacy in-memory renderers as presentation 2 when no presentation
+option is supplied; an explicit presentation-3 request without a bound ReportSource
+raises document_source_identity_required — a RunResult alone has no observed
+source-file digest — cost if wrong: library callers must load a checked source
+and use the new document builder for presentation 3. CLI/file/export entry points
+already use that source boundary and default to presentation 3.
+
+Final Task 13 iteration: focused-2 passed 31. Fast-3 passed all eight children
+(453 Python and 20 Node). Browser-all2 passed 73 and failed four newly added narrow
+checks. The retained overflow attachment identified MAIN 479px and FOOTER 457px
+against a 390px viewport/346px content area; wrapping the long footer digest fixed
+it without hiding content or widening tolerances. Browser-doc-final passed all 16
+report combinations, including narrow keyboard scrolling and measured contrast.
+Fast-4 again passed all eight children with 453 Python and 20 Node tests;
+focused-final passed 32, including the formal six-request presentation-invariance
+check. The refreshed owned preview has no active jobs and retains its original
+synthetic records; actual GUI preview/generation produced version-3 downloads.
+The final post-commit whole-browser task-done run remains pending.

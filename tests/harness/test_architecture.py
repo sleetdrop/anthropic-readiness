@@ -37,6 +37,7 @@ def test_reversed_dependency_is_rejected(tmp_path: Path, monkeypatch: pytest.Mon
             "diagnostics.service",
             "Diagnostic values stay independent",
         ),
+        ("documents.py", "web", "Workbench composition stays independent of I/O adapters"),
         ("validation/messages.py", "presentation", "Pure domain, framing and validation"),
     ],
 )

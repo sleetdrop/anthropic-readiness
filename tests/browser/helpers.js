@@ -5,7 +5,7 @@ import { expect } from "@playwright/test";
 export function fixture() {
   const root = process.env.READINESS_BROWSER_ROOT;
   if (!root) throw new Error("missing_fixture_root");
-  return /** @type {{peer_url:string,import_path:string,omitted_path:string,legacy_path:string,completed_id:string,partial_id:string,offline_path:string,mixed_path:string}} */ (
+  return /** @type {{document_paths:Record<string,string>,peer_url:string,import_path:string,omitted_path:string,legacy_path:string,completed_id:string,partial_id:string,offline_path:string,mixed_path:string}} */ (
     JSON.parse(readFileSync(root + "/fixture.json", "utf8"))
   );
 }

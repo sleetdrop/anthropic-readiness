@@ -150,8 +150,9 @@ def test_live_retest_runs_all_four_cases_and_retains_lineage(
     assert "messages_url" in str(context["declared_changes"])
     assert (output / "assessment-context-verification.json").exists()
     assert all(
-        (output / name).exists() for name in ("report.html", "report.md", "report-view.json")
+        (output / name).exists() for name in ("report.html", "report.md", "document-view.json")
     )
+    assert json.loads((output / "document-view.json").read_text())["presentation_version"] == "3.0"
     assert files(data_dir / "diagnostics/baselines" / baseline_id) == original
 
 
