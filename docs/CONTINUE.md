@@ -14,13 +14,16 @@ and evidence-based report figures. Earlier overview/dark proposals are historica
 use the exact approved pair in the visual handoff. See the
 [design ledger](harness/diagnostic-workbench-ledger.md) for chronological decisions.
 
-Tasks 0–12 are complete, including the independent operational workbench and
-context-preserving browser interaction. Task 13 is next; Tasks 13–15 remain
-pending. Task 12 final checks passed all eight fast children (443 Python and
-20 Node tests), 56 focused backend regressions and 61 Chromium tests with
-unchanged source and successful cleanup. These are operational UI checks;
-independent documents, whole-W2 package/image acceptance and the final review
-remain pending. The last full Python baseline is Task 9's 687 tests.
+Tasks 0–13 are complete, including the independent operational workbench and
+presentation-3 standalone documents. Task 14 is next; Tasks 14–15 remain pending.
+Task 13 source commit is 5780956. Its final fast graph passed all eight children
+(453 Python and 20 Node tests); focused-final passed 32; post-commit task-done
+passed 77 Chromium tests on unchanged source with successful cleanup. The paired
+document/operational author visual record is design-qa.md. A six-request synthetic
+CLI check confirms equal request bodies/API headers and verdicts across language/
+theme choices. No new real endpoint was called. Whole-W2 wheel/container acceptance
+and the single independent review remain pending. The last whole-Python baseline
+is Task 9's 687 tests, before later source changes.
 Task 0 also passed 25 browser
 tests, including a RED/GREEN system/print cascade fix. These are foundation and
 regression checks, not whole-W2 visual or container-image acceptance.

@@ -903,3 +903,9 @@ focused-final passed 32, including the formal six-request presentation-invarianc
 check. The refreshed owned preview has no active jobs and retains its original
 synthetic records; actual GUI preview/generation produced version-3 downloads.
 The final post-commit whole-browser task-done run remains pending.
+
+Task 13 completed at source commit 5780956. The post-commit task-done run passed
+all 77 Chromium tests in 3.8 minutes on unchanged source; prerequisites and cleanup
+passed. Final fast-4 passed eight children (453 Python/20 Node), and focused-final
+passed 32. No original result/evidence/legacy golden was changed. Tasks 14–15,
+whole-W2 image/full-Python acceptance and the sole independent review remain open.

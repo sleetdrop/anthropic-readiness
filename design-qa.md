@@ -180,5 +180,7 @@ same selected issue/case and produced a version-3 export through the actual dial
 The preview showed its en/dark choice, document-view.json and explicit omissions;
 ZIP/HTML/Markdown/JSON download links appeared. No model request was started.
 
-Task 13 post-commit whole-browser completion remains pending. Whole-W2 image,
+Task 13 post-commit task-done passed all 77 browser tests in 3.8 minutes on unchanged source, with prerequisite/cleanup checks passed. Whole-W2 image,
 remote CI, real endpoint and independent review acceptance are outside this record.
+
+Task 13 document author QA final result: passed. Independent whole-W2 review remains pending.

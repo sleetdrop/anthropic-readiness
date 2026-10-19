@@ -736,3 +736,9 @@ checks, with 16 direct-file/narrow/contrast/print browser checks after a measure
 footer-overflow fix. The earlier full browser run passed 73 before four new narrow
 checks were introduced. Version-3 GUI export was also observed manually on the
 owned synthetic preview. Post-commit whole-browser completion remains pending.
+
+W2 Task 13 completed locally at 5780956: post-commit task-done passed all 77 browser
+checks on unchanged source with successful cleanup. Fast-4 passed 453 Python and
+20 Node tests; focused-final passed 32. Presentation-3 documents are separate from
+the workbench, with bilingual offline controls, paired themes, matrices, grouped
+findings/comparison and agent guidance. Task 14 delivery acceptance is next.
