@@ -11,8 +11,8 @@ from jsonschema.exceptions import SchemaError
 
 from anthropic_readiness.config import load_target, string
 from anthropic_readiness.contracts import validate_bundle
+from anthropic_readiness.diagnostics.contracts import PROJECTION_SCHEMAS, STORAGE_SCHEMAS
 from anthropic_readiness.diagnostics.contracts import SCHEMAS as DIAGNOSTIC_SCHEMAS
-from anthropic_readiness.diagnostics.contracts import STORAGE_SCHEMAS
 from anthropic_readiness.diagnostics.identity import _identity_from_root
 from anthropic_readiness.localization import validate_catalogs
 from anthropic_readiness.models import CaseContract, JsonObject, object_value, strict_json
@@ -80,6 +80,7 @@ def validate_resources(root: Path) -> list[str]:
     expected = {
         *DIAGNOSTIC_SCHEMAS,
         *STORAGE_SCHEMAS,
+        *PROJECTION_SCHEMAS,
         "result",
         "target",
         "capture",

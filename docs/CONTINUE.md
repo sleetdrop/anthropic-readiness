@@ -14,11 +14,12 @@ and evidence-based report figures. Earlier overview/dark proposals are historica
 use the exact approved pair in the visual handoff. See the
 [design ledger](harness/diagnostic-workbench-ledger.md) for chronological decisions.
 
-Tasks 0–7 (presentation foundation, diagnostic contracts, execution identity,
+Tasks 0–8 (presentation foundation, diagnostic contracts, execution identity,
 pre-request provenance, full-scope preparation, bounded archives and read-only
-baseline import, portable exports) are complete; Task 8 is next. Tasks 8–15 remain pending.
-Latest Task 7 checks passed the eight-check fast graph (408 unit/harness tests),
-67 focused source/import/export regressions and 654 full Python regressions
+baseline import, portable exports and paired comparison) are complete; Task 9 is next.
+Tasks 9–15 remain pending. Latest Task 8 checks passed the eight-check fast graph
+(433 unit/harness tests), 66 focused comparison/contract/export regressions and
+681 full Python regressions
 in the prepared Linux Python 3.12 Dev Container. Task 0 also passed 25 browser
 tests, including a RED/GREEN system/print cascade fix. These are foundation and
 regression checks, not whole-W2 visual or container-image acceptance.

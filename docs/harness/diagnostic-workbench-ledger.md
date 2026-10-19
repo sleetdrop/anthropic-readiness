@@ -490,3 +490,42 @@ Final focused-1 passed 67 tests. Fast-2 passed all eight children (408 unit/harn
 tests) with an unchanged source fingerprint. Full Python regression passed 654
 tests, zero failures/errors/skips. Documentation collaboration and whitespace
 checks passed. No new image, remote CI, or real endpoint acceptance is claimed.
+
+## W2 Task 8 — paired check comparison
+
+Task 7 delivery commit is `c98fb68`. The comparison service reads the same
+validated local/imported artifacts as export, without executing or reusing
+uploaded HTML. Its pure projection joins by case/version, deterministic request,
+implementation/rule and assertion/version/category/required identities. Target
+endpoint, delivery label and auth references are declared context differences;
+changed semantic settings or effective limits remove controlled recovery claims.
+All planned cases/checks remain in normalized facts, including missing records.
+Paired assertions retain statuses, reasons, expected/actual details and both
+evidence reference sets. Unmatched identities and both original denominators are
+explicit; neither a missing required item nor an unresolved new check is a pass.
+
+Ruling: package a separate internal comparison-facts schema — the plan specifies
+checked normalized facts but leaves their internal JSON shape to implementation
+— cost if wrong: common source/evidence definitions must remain consistent with
+the frozen public comparison contract. Public diagnostic schema names and core
+execution identity are unchanged. Adapter validation precedes pure comparison;
+architecture checks now explicitly forbid comparison-to-adapter dependencies.
+
+Ruling: suppress the clean previous-failures headline when a new failure or any
+unmatched/gap item remains — the recovery count and its member pairs still show
+observed recoveries alongside regressions — cost if wrong: a literally narrower
+statement about old failures may be withheld; no observed result is hidden.
+Repeated identical check identities are explicitly rejected rather than adopting
+last-pass-wins; W2 remains one sample and no retries.
+
+Missing module/service operations were observed RED. The first transition set
+passed 21 cases. Later RED exposed borrowing an old `verified` status despite
+omitted delivery, and classifying a new BLOCKED check as newly evaluated; both
+were fixed. Full synthetic source/imported-source service comparisons preserve
+all four planned cases for a one-checkpoint, evidence-omitted baseline. Static
+type narrowing and an unused loop variable were corrected after the retained
+first fast run. Logs remain under `artifacts/w2/task8/`.
+
+Final focused-2 passed 66 tests. Fast-2 passed all eight children (433 unit/harness
+tests) on an unchanged source fingerprint; full Python passed 681 tests, zero
+failures/errors/skips. No real endpoint, remote CI or new image acceptance ran.

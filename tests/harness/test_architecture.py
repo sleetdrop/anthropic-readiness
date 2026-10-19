@@ -32,6 +32,11 @@ def test_reversed_dependency_is_rejected(tmp_path: Path, monkeypatch: pytest.Mon
             "diagnostics.core_contracts",
             "Diagnostic values stay independent",
         ),
+        (
+            "diagnostics/comparison.py",
+            "diagnostics.service",
+            "Diagnostic values stay independent",
+        ),
         ("validation/messages.py", "presentation", "Pure domain, framing and validation"),
     ],
 )

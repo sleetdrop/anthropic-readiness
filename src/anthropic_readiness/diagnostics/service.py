@@ -6,8 +6,22 @@ from dataclasses import replace
 from datetime import datetime
 from pathlib import Path
 
-from anthropic_readiness.diagnostics.importing import read_manifest, validate_import
-from anthropic_readiness.diagnostics.models import BaselineRecord
+from anthropic_readiness.config import fingerprint
+from anthropic_readiness.diagnostics.comparison import compare_assessments
+from anthropic_readiness.diagnostics.contracts import validate_diagnostic, validate_projection
+from anthropic_readiness.diagnostics.identity import check_identity, installed_identity
+from anthropic_readiness.diagnostics.importing import (
+    context_binding,
+    read_manifest,
+    source_identity,
+    validate_import,
+)
+from anthropic_readiness.diagnostics.models import (
+    BaselineRecord,
+    Comparison,
+    ImplementationIdentity,
+    RetestRecipe,
+)
 from anthropic_readiness.diagnostics.packages import (
     ARCHIVE_LIMITS,
     build_export_manifest,
@@ -15,9 +29,14 @@ from anthropic_readiness.diagnostics.packages import (
     portable_context,
     write_package,
 )
+from anthropic_readiness.diagnostics.recipes import (
+    validate_recipe_binding,
+    validate_recipe_evidence,
+)
+from anthropic_readiness.diagnostics.reduction import baseline_eligibility, comparison_inventory
 from anthropic_readiness.diagnostics.store import DiagnosticStore
 from anthropic_readiness.evidence import json_bytes, safe_path
-from anthropic_readiness.models import JsonObject, JsonValue
+from anthropic_readiness.models import JsonObject, JsonValue, object_value, strict_json
 from anthropic_readiness.report_models import ReportSource
 from anthropic_readiness.report_rendering import render_report_html, render_report_markdown
 from anthropic_readiness.report_sources import load_report_source
@@ -54,9 +73,7 @@ class DiagnosticService:
             raise ValueError("export_integrity")
         return data
 
-    def _export_files(
-        self, source_dir: Path, *, include_evidence: bool
-    ) -> tuple[ReportSource, dict[str, bytes]]:
+    def _read_source(self, source_dir: Path) -> tuple[ReportSource, Path, Path]:
         evidence_root = source_dir
         if not (source_dir / "result.json").exists() and (
             (source_dir / "assessment").is_dir()
@@ -87,6 +104,12 @@ class DiagnosticService:
             source = load_report_source(
                 evidence_root, operations_root=operations, frozen_operations=True
             )
+        return source, evidence_root, operations
+
+    def _export_files(
+        self, source_dir: Path, *, include_evidence: bool
+    ) -> tuple[ReportSource, dict[str, bytes]]:
+        source, evidence_root, operations = self._read_source(source_dir)
         if include_evidence and (
             source.evidence_verification["status"] == "missing_or_invalid"
             or any(item.get("kind") == "source_warning" for item in source.diagnostics)
@@ -151,3 +174,90 @@ class DiagnosticService:
             build_export_manifest(files, source, include_evidence=include_evidence, formats=formats)
         )
         return write_package(files, destination)
+
+    def source_facts(self, source_dir: Path) -> JsonObject:
+        source, evidence_root, _ = self._read_source(source_dir)
+        context, files = portable_context(evidence_root, fallback_root=source_dir)
+        recipe = object_value(context.document["recipe"]) if context is not None else None
+        identity = source_identity(source)
+        metadata: JsonObject = {
+            "source_valid": True,
+            "complete": source.result is not None,
+            "recipe_valid": False,
+            "recipe_bound": False,
+            "context_verified": False,
+            "evidence_verified": source.evidence_verification["status"] == "verified",
+            "identity_reasons": ["diagnostic_legacy_source"],
+        }
+        if context is not None and recipe is not None:
+            digest = hashlib.sha256(files["assessment-context.json"]).hexdigest()
+            if (
+                fingerprint(
+                    {key: value for key, value in recipe.items() if key != "content_sha256"}
+                )
+                != recipe["content_sha256"]
+            ):
+                raise ValueError("diagnostic_recipe_integrity")
+            final = (
+                object_value(strict_json(files["assessment-context-verification.json"].decode()))
+                if "assessment-context-verification.json" in files
+                else None
+            )
+            verified, final_reasons = context_binding(
+                recipe, context.document, digest, source, final
+            )
+            try:
+                reasons = list(
+                    check_identity(
+                        ImplementationIdentity(object_value(recipe["implementation"])),
+                        installed_identity(),
+                    )
+                )
+            except ValueError:
+                reasons = ["diagnostic_identity_unavailable"]
+            binding = (
+                *validate_recipe_binding(RetestRecipe(recipe), source),
+                *validate_recipe_evidence(RetestRecipe(recipe), source, evidence_root),
+            )
+            metadata.update(
+                recipe_valid=True,
+                recipe_bound=not binding,
+                context_verified=verified,
+                identity_reasons=list(dict.fromkeys((*reasons, *final_reasons, *binding))),
+            )
+            identity = source_identity(
+                source, recipe_sha256=recipe["content_sha256"], context_sha256=digest
+            )
+        cases, checks = comparison_inventory(source.plan, source.case_records, recipe)
+        target = (
+            source.result.target
+            if source.result is not None
+            else object_value(source.execution["target"])
+            if source.execution is not None
+            else {}
+        )
+        facts: JsonObject = {
+            "schema_version": "1.0",
+            "source": identity,
+            "plan": source.plan,
+            "recipe": recipe,
+            "context": context.document if context is not None else None,
+            "target": target,
+            "cases": cases,
+            "checks": checks,
+            "eligibility": baseline_eligibility(metadata),
+            "evidence_verification": source.evidence_verification,
+        }
+        validate_projection(facts, "diagnostic-comparison-facts")
+        return facts
+
+    def compare_sources(self, before_dir: Path, after_dir: Path) -> Comparison:
+        value = compare_assessments(self.source_facts(before_dir), self.source_facts(after_dir))
+        validate_diagnostic(value.document, "comparison")
+        return value
+
+    def compare(self, baseline_id: str, source_dir: Path) -> Comparison:
+        baseline = self.get(baseline_id).document
+        return self.compare_sources(
+            safe_path(self.store.root, str(baseline["artifact_root"])), source_dir
+        )

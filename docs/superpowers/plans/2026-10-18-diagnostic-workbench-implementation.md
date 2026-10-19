@@ -10,7 +10,7 @@
 
 **Spec:** [W2 specification revision 2](../specs/2026-10-18-diagnostic-workbench-design.md), approved with this plan on 2026-10-18.
 
-**Status:** owner-approved for sequential implementation in the current session on 2026-10-18 ("确认，请实施"). Revision-2 written scope and companion compositions are included. Tasks 0–7 are complete; Task 8 is next, Tasks 8–15 remain pending. Existing task numbers are retained for traceability.
+**Status:** owner-approved for sequential implementation in the current session on 2026-10-18 ("确认，请实施"). Revision-2 written scope and companion compositions are included. Tasks 0–8 are complete; Task 9 is next, Tasks 9–15 remain pending. Existing task numbers are retained for traceability.
 
 ## Owner review summary
 
@@ -388,11 +388,11 @@ independent reviewer or implementer agent is dispatched.
 
 **Interfaces:** `compare_assessments(before: JsonObject, after: JsonObject) -> Comparison` consumes normalized checked source facts prepared by the service; `DiagnosticService.compare(baseline_id: str, source_dir: Path) -> Comparison`; `DiagnosticService.compare_sources(before_dir: Path, after_dir: Path) -> Comparison`; `DiagnosticService.source_facts(source_dir: Path) -> JsonObject`. The imported-baseline convenience method delegates to `compare_sources`; Web adapters resolve run/baseline IDs to owned roots before calling it, never user-supplied paths. Facts contain source identity, plan/check inventory, original statuses, recipe/context and evidence quality, not HTML.
 
-- [ ] Write a transition-table test for FAIL/PASS, FAIL/FAIL, PASS/FAIL, PASS/PASS, missing baseline, unresolved new checks and unmatched checks. Add `test_changed_conditions_have_no_recovery_badge`, `test_same_label_changed_implementation_incomparable`, `test_omitted_evidence_no_verified_headline` and `test_missing_required_check_not_hidden_in_denominator`.
-- [ ] Run `UV_OFFLINE=1 uv run --frozen pytest -q tests/unit/test_diagnostic_comparison.py`; retain RED.
-- [ ] Implement canonical joins by case/generator/request/judgment identities and conservative whole-pair ineligibility for changed effective limits. Enumerate all unmatched checks; issue summaries derive from paired assertions and list their members, never from F01 or a status string. Preserve input objects unchanged.
-- [ ] Rerun focused tests and schema tests. Assert "all previous failing checks passed this sample" requires full comparable coverage, and new failures/gaps remain beside any recovery count. Compare the same checked facts under different presentation choices and assert identical semantic comparison output. No claim of cause or stability is generated.
-- [ ] Commit: `feat: compare repair observations without hiding verification gaps`.
+- [x] Write a transition-table test for FAIL/PASS, FAIL/FAIL, PASS/FAIL, PASS/PASS, missing baseline, unresolved new checks and unmatched checks. Add `test_changed_conditions_have_no_recovery_badge`, `test_same_label_changed_implementation_incomparable`, `test_omitted_evidence_no_verified_headline` and `test_missing_required_check_not_hidden_in_denominator`.
+- [x] Run `UV_OFFLINE=1 uv run --frozen pytest -q tests/unit/test_diagnostic_comparison.py`; retain RED.
+- [x] Implement canonical joins by case/generator/request/judgment identities and conservative whole-pair ineligibility for changed effective limits. Enumerate all unmatched checks; issue summaries derive from paired assertions and list their members, never from F01 or a status string. Preserve input objects unchanged.
+- [x] Rerun focused tests and schema tests. Assert "all previous failing checks passed this sample" requires full comparable coverage, and new failures/gaps remain beside any recovery count. Compare the same checked facts under different presentation choices and assert identical semantic comparison output. No claim of cause or stability is generated.
+- [x] Commit: `feat: compare repair observations without hiding verification gaps`.
 
 ### Task 9: Standalone diagnostic CLI operations
 

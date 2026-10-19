@@ -1,0 +1,363 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:anthropic-readiness:diagnostic-comparison-facts:1.0",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "source": {
+      "$ref": "#/$defs/source"
+    },
+    "plan": {
+      "type": "object"
+    },
+    "recipe": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "context": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "target": {
+      "type": "object"
+    },
+    "cases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "status": {
+            "enum": [
+              "PASS",
+              "FAIL",
+              "SKIP",
+              "BLOCKED",
+              "INDETERMINATE",
+              "missing"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "version",
+          "required",
+          "status"
+        ],
+        "additionalProperties": false
+      },
+      "uniqueItems": true
+    },
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "case_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "case_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "assertion_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "assertion_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "category": {
+            "enum": [
+              "protocol",
+              "behavior",
+              "client",
+              "environment"
+            ]
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "status": {
+            "enum": [
+              "PASS",
+              "FAIL",
+              "SKIP",
+              "BLOCKED",
+              "INDETERMINATE",
+              "missing"
+            ]
+          },
+          "reason": {
+            "type": "string"
+          },
+          "expected": {
+            "type": "string"
+          },
+          "actual": {
+            "type": "string"
+          },
+          "evidence_refs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/evidence_ref"
+            },
+            "uniqueItems": true
+          }
+        },
+        "required": [
+          "case_id",
+          "case_version",
+          "assertion_id",
+          "assertion_version",
+          "category",
+          "required",
+          "status",
+          "reason",
+          "expected",
+          "actual",
+          "evidence_refs"
+        ],
+        "additionalProperties": false
+      },
+      "uniqueItems": true
+    },
+    "eligibility": {
+      "$ref": "#/$defs/eligibility"
+    },
+    "evidence_verification": {
+      "$ref": "#/$defs/evidence_quality"
+    }
+  },
+  "required": [
+    "schema_version",
+    "source",
+    "plan",
+    "recipe",
+    "context",
+    "target",
+    "cases",
+    "checks",
+    "eligibility",
+    "evidence_verification"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "source": {
+      "type": "object",
+      "properties": {
+        "run_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "assessment_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "result_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "checkpoint_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "recipe_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "context_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "run_id",
+        "assessment_id",
+        "result_sha256",
+        "checkpoint_sha256",
+        "recipe_sha256",
+        "context_sha256"
+      ],
+      "additionalProperties": false,
+      "anyOf": [
+        {
+          "properties": {
+            "result_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        },
+        {
+          "properties": {
+            "checkpoint_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        }
+      ]
+    },
+    "evidence_ref": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/path"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "event": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "pointer": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "path",
+        "sha256",
+        "event",
+        "pointer"
+      ],
+      "additionalProperties": false
+    },
+    "path": {
+      "type": "string",
+      "maxLength": 240,
+      "pattern": "^(?!.*(?:^|/)\\.{1,2}(?:/|$))[A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)*$"
+    },
+    "eligibility": {
+      "type": "object",
+      "properties": {
+        "read": {
+          "type": "boolean"
+        },
+        "retest": {
+          "type": "boolean"
+        },
+        "compare": {
+          "type": "boolean"
+        },
+        "reasons": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "read",
+        "retest",
+        "compare",
+        "reasons"
+      ],
+      "additionalProperties": false
+    },
+    "evidence_quality": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "enum": [
+            "verified",
+            "missing_or_invalid",
+            "no_evidence"
+          ]
+        },
+        "errors": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "delivery": {
+          "enum": [
+            "external_files",
+            "omitted"
+          ]
+        }
+      },
+      "required": [
+        "status",
+        "errors"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

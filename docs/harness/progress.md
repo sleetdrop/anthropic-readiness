@@ -668,3 +668,13 @@ reader rulings are recorded in the W2 ledger. Final fast-2 passed all eight
 children (408 unit/harness tests); focused checks passed 67; full Python passed
 654 with no failures/errors/skips. Tasks 8–15 remain; no new live call, image
 acceptance or external publication occurred.
+
+Task 7 delivery is `c98fb68`. Task 8 adds checked source facts, pure semantic
+pairing and shared local/imported comparison operations. Both original scope
+denominators, unmatched identities, unresolved checks and new failures remain
+explicit. Semantic condition changes and omitted evidence cannot yield recovery
+badges. A closed internal facts schema and comparison architecture gate preserve
+adapter boundaries. Final focused-2 passed 66 tests; fast-2 passed all eight
+children (433 unit/harness tests); full Python passed 681 with no failures,
+errors or skips. Rulings and RED evidence remain in the W2 ledger. Tasks 9–15
+remain; new CLI/Web surfaces, visual acceptance and image acceptance are pending.
