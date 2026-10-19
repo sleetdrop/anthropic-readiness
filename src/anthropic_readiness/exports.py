@@ -8,9 +8,14 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Literal
 from uuid import UUID, uuid4
-from zipfile import ZIP_DEFLATED, ZipFile
 
 from anthropic_readiness.config import target_from_document
+from anthropic_readiness.diagnostics.packages import (
+    build_export_manifest,
+    build_package_files,
+    portable_context,
+    write_package,
+)
 from anthropic_readiness.evidence import atomic_write, json_bytes, safe_path
 from anthropic_readiness.jobs.store import JobStore
 from anthropic_readiness.models import EvidenceRef, JsonObject, JsonValue, object_value, strict_json
@@ -164,7 +169,7 @@ class ExportService:
     ) -> list[str]:
         selected = ("html", "markdown", "json") if "zip" in policy.formats else policy.formats
         names = [FILENAMES[item] for item in selected]
-        names.extend(("README.md", "manifest.json"))
+        names.extend(("README.md", "AGENT.md", "manifest.json"))
         if source.result is not None:
             names.append("result.json")
         else:
@@ -180,6 +185,11 @@ class ExportService:
         source = self._source(run_id)
         refs = self._refs(source)
         selected_names: list[JsonValue] = list(self._names(source, policy, refs))
+        root = self._job_root(run_id)
+        context, metadata = portable_context(root / "assessment", fallback_root=root)
+        if context is not None:
+            selected_names.extend([*metadata, "retest-recipe.json", "diagnostic-package.json"])
+            selected_names = list(dict.fromkeys(str(name) for name in selected_names))
         excluded: list[JsonValue] = list(omissions(policy))
         result: JsonObject = {
             "run_id": run_id,
@@ -252,7 +262,11 @@ class ExportService:
         ).encode()
         if sum(len(value) for value in data.values()) > MAX_EXPORT_BYTES:
             raise ValueError("export_size_limit")
-        return data, projected
+        context, metadata = portable_context(root / "assessment", fallback_root=root)
+        data.update(metadata)
+        return build_package_files(
+            projected, context, raw_files=data, include_evidence=policy.include_evidence
+        ), projected
 
     def create(self, run_id: str, policy: ExportPolicy) -> JsonObject:
         source = self._source(run_id)
@@ -267,31 +281,20 @@ class ExportService:
             target = safe_path(directory, relative)
             target.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
             atomic_write(target, content)
-        excluded: list[JsonValue] = list(omissions(policy))
-        manifest: JsonObject = {
-            "schema_version": "1.0",
-            "export_id": export_id,
-            "run_id": run_id,
-            "created_at": created_at,
-            "presentation_version": "2.0",
-            "source_result_sha256": source.result_sha256,
-            "partial": source.result is None,
-            **policy.to_json(),
-            "files": [
-                {"path": name, "sha256": digest(content), "bytes": len(content)}
-                for name, content in sorted(data.items())
-            ],
-            "omissions": excluded,
-            "evidence_verification": projected.evidence_verification,
-        }
+        formats: list[JsonValue] = list(policy.formats)
+        manifest = build_export_manifest(
+            data,
+            projected,
+            include_evidence=policy.include_evidence,
+            formats=formats,
+            export_id=export_id,
+            created_at=created_at,
+        )
         validate_operational(manifest, "export-manifest")
         manifest_bytes = json_bytes(manifest)
         atomic_write(directory / "manifest.json", manifest_bytes)
         archive = safe_path(directory, "bundle.zip")
-        with ZipFile(archive, "x", compression=ZIP_DEFLATED, compresslevel=6) as package:
-            for name, content in sorted({**data, "manifest.json": manifest_bytes}.items()):
-                package.writestr(name, content)
-        archive.chmod(0o600)
+        write_package({**data, "manifest.json": manifest_bytes}, archive)
         with archive.open("rb") as stream:
             archive_bytes = stream.read(MAX_EXPORT_BYTES + 1)
         if len(archive_bytes) > MAX_EXPORT_BYTES:

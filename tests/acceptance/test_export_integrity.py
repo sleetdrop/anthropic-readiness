@@ -45,6 +45,7 @@ async def test_export_downloads_are_verified_and_make_zero_extra_requests(
     assert response.headers["content-disposition"].startswith("attachment;")
     assert hashlib.sha256(response.content).hexdigest() == exported.json()["artifact"]["sha256"]
     with ZipFile(BytesIO(response.content)) as package:
+        assert "diagnostic-package.json" in package.namelist()
         html = package.read("report.html").decode()
         ids = set(re.findall(r'\bid="([^"]+)"', html))
         assert all(reference in ids for reference in re.findall(r'href="#([^"]+)"', html))

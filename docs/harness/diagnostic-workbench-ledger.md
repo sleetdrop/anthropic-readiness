@@ -449,3 +449,44 @@ Full-3 passed 643 tests, zero failures/errors/skips; final fast-4 passed all eig
 children with 408 unit/harness tests, including the fixture-only explicit-import
 typing correction. Documentation/link and whitespace checks passed. No new image,
 remote CI or real endpoint result is claimed.
+
+## W2 Task 7 — portable exports
+
+CLI-facing diagnostic sources and Web exports now share package composition and
+the same bounded classic-ZIP writer accepted by import. New context-bearing
+exports carry the diagnostic marker, exact source/context/checkpoint/capture
+bytes, recipe and a small untrusted-data reading guide. Legacy sources retain
+legacy eligibility. Fresh reports are generated from checked facts; uploaded
+HTML is never reused. Previews disclose retained target context, and archives
+are explicitly not described as anonymized.
+
+Ruling: require `raw_files` in the package composer — parsed ReportSource values
+and digests cannot recover exact original result/capture bytes — cost if wrong:
+one additional adapter input and binding checks at each caller. The adapters
+collect verified artifacts; the composer does not add filesystem paths to the
+ReportSource contract.
+
+Ruling: provide an explicit declared-only checkpoint reader for frozen,
+evidence-omitted imports — dropping valid retained records when captures were
+deliberately excluded breaks partial-source identity and coverage — cost if
+wrong: two reader modes must preserve the same structural/accounting checks.
+Strict writer/default reads still require actual evidence; the declared reader
+does not grant proof or comparison eligibility. Its use requires a frozen
+snapshot and an explicit manifest policy. Changing the checkpoint module also
+conservatively changes execution identity under the existing file-hash contract.
+
+The missing package module and Web diagnostic marker were observed RED. The
+partial/omitted round-trip exposed a dropped checkpoint and was fixed without
+changing its bytes or status. Boundary tests cover noncanonical legacy result
+bytes, partial/omitted re-export and unchanged source files. An added accounting
+test initially mutated only an object_value copy; assigning that copy back
+corrected the test input. Logs remain under `artifacts/w2/task7/`. Before resume,
+an automatic approval usage-limit rejection prevented a run; after reset the
+stopped Dev Container was restored and focused green-4 passed 25 tests. Fast-1
+passed all eight children but source edits during that run invalidated its
+overall fingerprint; it is not recorded as acceptance.
+
+Final focused-1 passed 67 tests. Fast-2 passed all eight children (408 unit/harness
+tests) with an unchanged source fingerprint. Full Python regression passed 654
+tests, zero failures/errors/skips. Documentation collaboration and whitespace
+checks passed. No new image, remote CI, or real endpoint acceptance is claimed.

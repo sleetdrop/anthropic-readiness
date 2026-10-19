@@ -657,3 +657,14 @@ and post-validation deadline failures were observed RED and fixed. Final fast-4
 passed all eight checks (408 unit/harness tests); full-3 passed 643 tests with no
 failures/errors/skips. Rulings and prior 639/642-test checkpoints are retained in
 the W2 ledger. Tasks 7–15 remain; no new image, remote CI or real endpoint ran.
+
+Task 7 adds shared portable export composition, a bounded atomic ZIP writer,
+exact source/context/checkpoint/capture retention and an agent reading guide.
+Legacy, partial and evidence-omitted variants retain their limits. Original
+uploaded HTML is never reused; target-context disclosure precedes sharing.
+Retained checkpoint claims can be read without supplied captures only through
+the explicit frozen/omitted mode, without evidence proof. The interface and
+reader rulings are recorded in the W2 ledger. Final fast-2 passed all eight
+children (408 unit/harness tests); focused checks passed 67; full Python passed
+654 with no failures/errors/skips. Tasks 8–15 remain; no new live call, image
+acceptance or external publication occurred.

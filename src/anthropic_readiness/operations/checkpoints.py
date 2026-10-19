@@ -33,6 +33,19 @@ def checkpoint_refs(document: JsonObject) -> tuple[EvidenceRef, ...]:
 
 
 def validate_checkpoint(document: JsonObject, context: JsonObject, evidence_root: Path) -> None:
+    if not isinstance(evidence_root, Path):
+        raise ValueError("checkpoint_evidence_root_required")
+    _validate_checkpoint(document, context, evidence_root)
+
+
+def validate_declared_checkpoint(document: JsonObject, context: JsonObject) -> None:
+    """Validate retained claims only; this grants no filesystem evidence proof."""
+    _validate_checkpoint(document, context, None)
+
+
+def _validate_checkpoint(
+    document: JsonObject, context: JsonObject, evidence_root: Path | None
+) -> None:
     validate_operational(document, "checkpoint")
     if (
         document["run_id"] != context["run_id"]
@@ -50,7 +63,7 @@ def validate_checkpoint(document: JsonObject, context: JsonObject, evidence_root
     ):
         raise ValueError("checkpoint_case_identity")
     refs = checkpoint_refs(document)
-    if verify_evidence(evidence_root, refs):
+    if evidence_root is not None and verify_evidence(evidence_root, refs):
         raise ValueError("checkpoint_evidence_invalid")
     inventory = {(ref.path, ref.sha256) for ref in refs}
     assertions = objects(case["preconditions"])
@@ -93,7 +106,7 @@ def validate_checkpoint(document: JsonObject, context: JsonObject, evidence_root
             if (str(ref["path"]), str(ref["sha256"])) not in inventory:
                 raise ValueError("checkpoint_evidence_inventory")
         wrapped: JsonObject = {"evidence_refs": list(asserted_refs)}
-        if verify_evidence(evidence_root, checkpoint_refs(wrapped)):
+        if evidence_root is not None and verify_evidence(evidence_root, checkpoint_refs(wrapped)):
             raise ValueError("checkpoint_assertion_evidence_invalid")
 
 

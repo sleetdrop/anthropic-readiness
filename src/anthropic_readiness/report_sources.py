@@ -9,7 +9,11 @@ from pathlib import Path
 from anthropic_readiness.config import target_from_document
 from anthropic_readiness.evidence import safe_path, verify_evidence
 from anthropic_readiness.models import EvidenceRef, JsonObject, RunResult, object_value, strict_json
-from anthropic_readiness.operations.checkpoints import checkpoint_refs, validate_checkpoint
+from anthropic_readiness.operations.checkpoints import (
+    checkpoint_refs,
+    validate_checkpoint,
+    validate_declared_checkpoint,
+)
 from anthropic_readiness.operations.contracts import validate_operational
 from anthropic_readiness.operations.journal import RunJournal
 from anthropic_readiness.operations.reduction import objects
@@ -167,8 +171,14 @@ def bind_execution(context: JsonObject, result: RunResult | None, digest: str | 
 
 
 def load_report_source(
-    root: Path, *, operations_root: Path | None = None, frozen_operations: bool = False
+    root: Path,
+    *,
+    operations_root: Path | None = None,
+    frozen_operations: bool = False,
+    evidence_omitted: bool = False,
 ) -> ReportSource:
+    if evidence_omitted and not frozen_operations:
+        raise ValueError("declared_source_requires_frozen_snapshot")
     operations = operations_root if operations_root is not None else root / "operations"
     result: RunResult | None = None
     digest: str | None = None
@@ -226,7 +236,10 @@ def load_report_source(
                 if not recovering and actual_hash != state["checkpoint_sha256"]:
                     raise ValueError("checkpoint_hash_mismatch")
                 document = object_value(strict_json(data.decode()))
-                validate_checkpoint(document, execution, root)
+                if evidence_omitted:
+                    validate_declared_checkpoint(document, execution)
+                else:
+                    validate_checkpoint(document, execution, root)
                 if document["case_id"] != state["case_id"]:
                     raise ValueError("checkpoint_reference_identity")
                 if (
@@ -267,6 +280,8 @@ def load_report_source(
                 )
         cases, refs = tuple(committed), tuple(retained)
     quality = evidence_quality(root, cases, refs)
+    if evidence_omitted:
+        quality = {**quality, "delivery": "omitted"}
     if warnings and result is None:
         quality = {
             "status": "missing_or_invalid",

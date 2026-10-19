@@ -10,7 +10,7 @@
 
 **Spec:** [W2 specification revision 2](../specs/2026-10-18-diagnostic-workbench-design.md), approved with this plan on 2026-10-18.
 
-**Status:** owner-approved for sequential implementation in the current session on 2026-10-18 ("确认，请实施"). Revision-2 written scope and companion compositions are included. Tasks 0–6 are complete; Task 7 is next, Tasks 7–15 remain pending. Existing task numbers are retained for traceability.
+**Status:** owner-approved for sequential implementation in the current session on 2026-10-18 ("确认，请实施"). Revision-2 written scope and companion compositions are included. Tasks 0–7 are complete; Task 8 is next, Tasks 8–15 remain pending. Existing task numbers are retained for traceability.
 
 ## Owner review summary
 
@@ -374,13 +374,13 @@ independent reviewer or implementer agent is dispatched.
 
 **Files:** Create `diagnostics/packages.py`, `tests/integration/test_diagnostic_export.py`; modify `exports.py` to delegate portable-package composition while retaining legacy export reads.
 
-**Interfaces:** `build_package_files(source: ReportSource, context: AssessmentContext | None, *, include_evidence: bool, comparison: Comparison | None = None) -> dict[str, bytes]`; `write_package(files: dict[str, bytes], destination: Path) -> JsonObject`; `DiagnosticService.export(source_dir: Path, destination: Path, *, include_evidence: bool) -> JsonObject`.
+**Interfaces:** `build_package_files(source: ReportSource, context: AssessmentContext | None, *, raw_files: dict[str, bytes], include_evidence: bool, comparison: Comparison | None = None) -> dict[str, bytes]`; `write_package(files: dict[str, bytes], destination: Path) -> JsonObject`; `DiagnosticService.export(source_dir: Path, destination: Path, *, include_evidence: bool) -> JsonObject`. The required raw_files input is a Task 7 ruling: parsed ReportSource values/digests cannot supply exact original source/evidence bytes. I/O adapters collect selected verified artifacts and freshly generated documents; composition checks their binding without adding filesystem paths to ReportSource or reusing uploaded HTML.
 
-- [ ] Write `test_export_preserves_source_bytes_and_binds_recipe`, `test_old_source_exports_as_legacy_not_verified`, `test_evidence_omission_lowers_delivery`, `test_source_url_is_disclosed_in_preview` and `test_package_export_import_limits_match`. Hash-check result/capture bytes before and after; a report-only package cannot claim independent verification. Task 13 extends the actual localized export test, including invalidating only the export preview when its presentation choices change.
-- [ ] Run `UV_OFFLINE=1 uv run --frozen pytest -q tests/integration/test_diagnostic_export.py`; retain RED.
-- [ ] Implement package marker/inventory/context and a minimal agent entry point using the current checked report facts. Task 13 replaces its document composition with the final design. Preserve existing export-manifest 1.0 reads; publish presentation-3 files with the separate export-manifest 2.0 branch when Task 13 integrates them. Do not mutate an existing const/golden file. Full diagnostic archives retain the source result even when evidence is omitted; standalone HTML/Markdown provide summary sharing without those attachments. Never call the original-evidence ZIP anonymized.
-- [ ] Rerun focused tests, `test_exports.py`, `tests/acceptance/test_export_integrity.py` and `test_recovered_reports.py`. Round-trip complete, partial and omitted packages through Task 6; reject mismatches without rewriting old bytes.
-- [ ] Commit: `feat: export portable diagnostic packages with honest provenance`.
+- [x] Write `test_export_preserves_source_bytes_and_binds_recipe`, `test_old_source_exports_as_legacy_not_verified`, `test_evidence_omission_lowers_delivery`, `test_source_url_is_disclosed_in_preview` and `test_package_export_import_limits_match`. Hash-check result/capture bytes before and after; a report-only package cannot claim independent verification. Task 13 extends the actual localized export test, including invalidating only the export preview when its presentation choices change.
+- [x] Run `UV_OFFLINE=1 uv run --frozen pytest -q tests/integration/test_diagnostic_export.py`; retain RED.
+- [x] Implement package marker/inventory/context and a minimal agent entry point using the current checked report facts. Task 13 replaces its document composition with the final design. Preserve existing export-manifest 1.0 reads; publish presentation-3 files with the separate export-manifest 2.0 branch when Task 13 integrates them. Do not mutate an existing const/golden file. Full diagnostic archives retain the source result even when evidence is omitted; standalone HTML/Markdown provide summary sharing without those attachments. Never call the original-evidence ZIP anonymized.
+- [x] Rerun focused tests, `test_exports.py`, `tests/acceptance/test_export_integrity.py` and `test_recovered_reports.py`. Round-trip complete, partial and omitted packages through Task 6; reject mismatches without rewriting old bytes.
+- [x] Commit: `feat: export portable diagnostic packages with honest provenance`.
 
 ### Task 8: Pure paired-check comparison and scoped conclusions
 

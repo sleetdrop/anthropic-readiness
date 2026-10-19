@@ -7,6 +7,7 @@ import time
 from pathlib import Path
 
 from anthropic_readiness.config import fingerprint
+from anthropic_readiness.diagnostics.archive import ArchiveLimits
 from anthropic_readiness.diagnostics.contracts import validate_diagnostic
 from anthropic_readiness.diagnostics.core_contracts import validate_core
 from anthropic_readiness.diagnostics.identity import check_identity, installed_identity
@@ -66,7 +67,21 @@ def _inventory(value: JsonValue) -> dict[str, JsonObject]:
 def verify_extracted(
     root: Path, inventory: JsonObject, *, deadline: float
 ) -> dict[str, JsonObject]:
-    entries = _inventory(inventory["members"])
+    limits = ArchiveLimits()
+    members = inventory["members"]
+    if not isinstance(members, list) or len(members) > limits.max_members:
+        raise ValueError("archive_member_count_limit")
+    entries = _inventory(members)
+    total = 0
+    for name, entry in entries.items():
+        size = int(str(entry["bytes"]))
+        if size < 0 or size > limits.max_member_bytes:
+            raise ValueError("archive_member_limit")
+        if name.endswith((".json", ".jsonl")) and size > limits.max_json_bytes:
+            raise ValueError("archive_json_limit")
+        total += size
+    if total > limits.max_expanded_bytes:
+        raise ValueError("archive_expansion_limit")
     paths: set[str] = set()
     pending = [root]
     maximum = 1 + len(entries) * 120
@@ -109,6 +124,19 @@ def verify_extracted(
 def _context_check(
     root: Path, recipe: JsonObject, context: JsonObject, context_digest: str, source: ReportSource
 ) -> tuple[bool, list[str]]:
+    final: JsonObject | None = None
+    if safe_path(root, "assessment-context-verification.json").exists():
+        final, _ = read_json(root, "assessment-context-verification.json")
+    return context_binding(recipe, context, context_digest, source, final)
+
+
+def context_binding(
+    recipe: JsonObject,
+    context: JsonObject,
+    context_digest: str,
+    source: ReportSource,
+    final: JsonObject | None,
+) -> tuple[bool, list[str]]:
     plan = {**source.plan, "actual_requests": 0}
     identity = source_identity(source)
     if (
@@ -119,9 +147,8 @@ def _context_check(
         or context["recipe_sha256"] != recipe["content_sha256"]
     ):
         raise ValueError("diagnostic_context_mismatch")
-    if not safe_path(root, "assessment-context-verification.json").exists():
+    if final is None:
         return False, ["diagnostic_final_identity_missing"]
-    final, _ = read_json(root, "assessment-context-verification.json")
     validate_core(final, "assessment-context-verification")
     if (
         final["run_id"] != identity["run_id"]
@@ -141,19 +168,24 @@ def _context_check(
     return False, ["diagnostic_final_identity_" + str(final["identity_status"])]
 
 
-def validate_import(
-    root: Path, inventory: JsonObject, *, deadline: float
-) -> tuple[ReportSource, JsonObject]:
-    entries = verify_extracted(root, inventory, deadline=deadline)
-    if "manifest.json" not in entries:
-        raise ValueError("diagnostic_manifest_missing")
-    manifest, _ = read_json(root, "manifest.json")
+def read_manifest(root: Path) -> tuple[JsonObject, str]:
+    manifest, digest = read_json(root, "manifest.json")
     if manifest.get("schema_version") == "1.0":
         validate_operational(manifest, "export-manifest")
     elif manifest.get("schema_version") == "2.0":
         validate_diagnostic(manifest, "export-manifest-v2")
     else:
         raise ValueError("diagnostic_manifest_version")
+    return manifest, digest
+
+
+def validate_import(
+    root: Path, inventory: JsonObject, *, deadline: float
+) -> tuple[ReportSource, JsonObject]:
+    entries = verify_extracted(root, inventory, deadline=deadline)
+    if "manifest.json" not in entries:
+        raise ValueError("diagnostic_manifest_missing")
+    manifest, _ = read_manifest(root)
     if _inventory(manifest["files"]) != {
         key: value for key, value in entries.items() if key != "manifest.json"
     }:
@@ -163,7 +195,9 @@ def validate_import(
     ):
         raise ValueError("diagnostic_evidence_delivery_mismatch")
     # Imported execution.json is a frozen snapshot, never a live writer journal.
-    source = load_report_source(root, frozen_operations=True)
+    source = load_report_source(
+        root, frozen_operations=True, evidence_omitted=manifest["include_evidence"] is False
+    )
     if any(item.get("code") == "sidecar_invalid" for item in source.diagnostics):
         raise ValueError("diagnostic_source_mismatch")
     identity = source_identity(source)
