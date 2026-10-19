@@ -5,7 +5,7 @@ import { expect } from "@playwright/test";
 export function fixture() {
   const root = process.env.READINESS_BROWSER_ROOT;
   if (!root) throw new Error("missing_fixture_root");
-  return /** @type {{peer_url:string,completed_id:string,partial_id:string,offline_path:string,mixed_path:string}} */ (
+  return /** @type {{peer_url:string,import_path:string,omitted_path:string,legacy_path:string,completed_id:string,partial_id:string,offline_path:string,mixed_path:string}} */ (
     JSON.parse(readFileSync(root + "/fixture.json", "utf8"))
   );
 }
@@ -41,6 +41,8 @@ export async function start(page) {
 }
 /** @param {Page} page */
 export async function completed(page) {
-  await expect(page.locator("#job-state")).toHaveText("执行完成");
-  await expect(page.locator("#report-panel #overview")).toBeVisible();
+  await expect(page.locator("#job-state")).toHaveAttribute("data-lifecycle", "completed", {
+    timeout: 30000,
+  });
+  await expect(page.locator("#workbench[data-active-view=overview]")).toBeVisible();
 }

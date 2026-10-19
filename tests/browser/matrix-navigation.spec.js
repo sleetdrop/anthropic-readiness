@@ -41,27 +41,24 @@ for (const javaScriptEnabled of [true, false]) {
   });
 }
 
-test("Web matrix member selection and refresh preserve the correct target and focus", async ({
+test("Web case selection and keyed refresh preserve the correct target and focus", async ({
   page,
 }) => {
-  await page.goto("/runs/" + fixture().completed_id);
-  const members = page.locator("#matrix-streaming-protocol-FAIL");
-  const summary = members.locator("summary");
+  await page.goto(`/runs/${fixture().completed_id}?view=cases&case=ANT-TEXT-SSE-002`);
+  const target = page.locator('[data-case-id="ANT-TEXT-SSE-002"]');
+  await expect(target).toHaveAttribute("aria-current", "true");
+  const summary = page.locator("#case-inspector details summary").first();
+  await summary.click();
   await summary.focus();
-  await summary.press("Enter");
-  await expect(members.locator("a")).toHaveCount(2);
+  const open = await summary.locator("..").evaluate((node) => node.hasAttribute("open"));
   await page.evaluate(async () => {
-    const path = "/assets/web/report.js";
-    const { mountReport } = await import(path);
-    const panel = document.getElementById("report-panel");
-    if (panel) mountReport(panel, panel.innerHTML);
+    const path = "/assets/web/workbench.js";
+    const { patchElement } = await import(path);
+    const root = document.getElementById("workbench");
+    if (root) patchElement(root, root.cloneNode(true));
   });
-  await expect(members).toHaveJSProperty("open", true);
   await expect(summary).toBeFocused();
-  const second = members.locator('a[href="#case-ANT-TEXT-SSE-002"]');
-  await second.focus();
-  await second.press("Enter");
-  const target = page.locator("#case-ANT-TEXT-SSE-002");
-  await expect(target).toHaveJSProperty("open", true);
-  await expect(target).toBeFocused();
+  expect(await summary.locator("..").evaluate((node) => node.hasAttribute("open"))).toBe(open);
+  await expect(target).toHaveAttribute("aria-current", "true");
+  await expect(page.locator("#case-inspector")).toContainText("ANT-TEXT-SSE-002");
 });

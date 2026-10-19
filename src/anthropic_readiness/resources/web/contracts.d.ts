@@ -49,3 +49,25 @@ export interface DiagnosticExportRequest extends JsonObject {
   include_evidence: boolean;
   presentation: PresentationOptions;
 }
+
+export interface ActivityView {
+  updatedAt: string | null;
+  ageMs: number | null;
+  clockDifference: boolean;
+  recordedElapsedMs: number | null;
+  phase: string | null;
+  phaseElapsedMs: number | null;
+  caseId: string | null;
+}
+export type ConnectionState = "loading" | "connected" | "reconnecting" | "ended";
+export interface WorkbenchState {
+  snapshot: JsonObject | null;
+  readOrder: number;
+  selectedIssue: string | null;
+  selectedCase: string | null;
+  connection: ConnectionState;
+}
+export type WorkbenchEvent =
+  | { type: "snapshot"; value: JsonObject; order: number }
+  | { type: "connection"; value: ConnectionState }
+  | { type: "selection"; issue: string | null; caseId: string | null };

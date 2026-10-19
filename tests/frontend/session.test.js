@@ -19,7 +19,7 @@ test("session recovery retries reads once and then stops", async (context) => {
     );
   };
   context.mock.method(globalThis, "fetch", peer);
-  await assert.rejects(api("/api/v1/runs/synthetic"), /会话/);
+  await assert.rejects(api("/api/v1/runs/synthetic"), /session_recovery_failed/);
   assert.equal(reads, 2);
   assert.equal(sessions, 1);
 });
@@ -36,6 +36,9 @@ test("recovering a session never automatically resubmits a start", async (contex
     );
   };
   context.mock.method(globalThis, "fetch", peer);
-  await assert.rejects(api("/api/v1/runs", { method: "POST", body: {} }), /未自动重发/);
+  await assert.rejects(
+    api("/api/v1/runs", { method: "POST", body: {} }),
+    /session_restored_not_resent/,
+  );
   assert.equal(posts, 1);
 });

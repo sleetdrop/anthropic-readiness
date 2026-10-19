@@ -708,3 +708,12 @@ Final fast-3 passed all eight children and 442 unit/harness tests on unchanged
 source. Tasks 12–15 remain: live interaction, actual browser visual acceptance,
 independent documents, end-to-end packaging and the single final review.
 No browser/image or real endpoint acceptance is inferred from these checks.
+
+W2 Task 12 is in progress after Task 11 commit `fff8e41`. Keyed live updates,
+checked preferences, binary import, normal original-scope retest preview, matrix
+drill-down and selected-case field comparison are implemented. Browser iteration
+3 passed 56 and failed a crop-induced scroll mismatch in the new geometry test;
+the corrected same-position test passed with its original one-pixel tolerance.
+A synthetic worker supplies the actual active visual state, and local API request
+counts remain checked. Final browser/fast gates, visual documentation and the
+Task 12 commit are pending. Do not treat this as whole-W2 acceptance.

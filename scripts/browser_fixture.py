@@ -34,6 +34,7 @@ from anthropic_readiness.web.app import create_app
 from anthropic_readiness.web.settings import WebSettings
 from scripts.check import ROOT
 from tests.acceptance.test_readable_reports import MissingFieldsTransport
+from tests.diagnostic_fixtures import portable_archive
 from tests.export_fixtures import prepared_run
 from tests.unit.test_report_view import source as mixed_report_source
 
@@ -113,7 +114,15 @@ def seed(root: Path) -> JsonObject:
     )
     mixed_path = root / "mixed-report.html"
     mixed_path.write_text(render_report_html(build_report_view(mixed_report_source())))
+    archive, original_source = portable_archive(root / "portable-input")
+    omitted, _ = portable_archive(
+        root / "omitted-input", source_dir=original_source, include_evidence=False
+    )
+    legacy, _ = portable_archive(root / "legacy-input", source_dir=original_source, legacy=True)
     return {
+        "import_path": str(archive),
+        "omitted_path": str(omitted),
+        "legacy_path": str(legacy),
         "completed_id": job.id,
         "partial_id": partial_id,
         "offline_path": str(offline),
@@ -141,6 +150,7 @@ def main() -> None:
     lock = threading.Lock()
     calls: list[JsonObject] = []
     release = threading.Event()
+    repair_phase = ["before"]
 
     def unfinished() -> list[str]:
         manager = app.state.manager
@@ -178,6 +188,8 @@ def main() -> None:
             if self.path.startswith("/__fixture/"):
                 if self.path == "/__fixture/release":
                     release.set()
+                elif self.path == "/__fixture/repair-after":
+                    repair_phase[0] = "after"
                 elif self.path == "/__fixture/expire":
                     elapsed[0] += 28801
                 elif self.path == "/__fixture/reset":
@@ -191,6 +203,7 @@ def main() -> None:
                     if unfinished():
                         self.send_error(500, "fixture_cleanup_timeout")
                         return
+                    repair_phase[0] = "before"
                     with lock:
                         calls.clear()
                         release = threading.Event()
@@ -213,11 +226,20 @@ def main() -> None:
                     }
                 )
                 barrier = release
-            if model == "synthetic-hold":
+            visual = model == "synthetic-design"
+            repair = model == "synthetic-repair"
+            broken_fields = visual or (repair and repair_phase[0] == "before")
+            if model == "synthetic-hold" or (visual and "Count" in str(payload.get("messages"))):
                 barrier.wait(timeout=30)
             time.sleep(0.08)
             streaming = bool(payload.get("stream"))
-            response_model = HOSTILE if model == "synthetic-hostile" else model
+            response_model = (
+                HOSTILE
+                if model == "synthetic-hostile"
+                else "synthetic-upstream-model"
+                if visual or repair
+                else model
+            )
             if streaming:
                 data = (FIXTURES / "stream-valid.sse").read_bytes()
                 data = data.replace(b'"example-model"', json.dumps(response_model).encode())
@@ -227,9 +249,36 @@ def main() -> None:
                 name = "message-valid-tool.json" if "tools" in payload else "message-valid.json"
                 message = object_value(json.loads((FIXTURES / name).read_bytes()))
                 message["model"] = response_model
+                if broken_fields:
+                    message.pop("stop_sequence", None)
+                if repair and repair_phase[0] == "after" and "tools" in payload:
+                    message = {"error": {"type": "synthetic_missing_tool_result"}}
                 data = json.dumps(message).encode()
+            if broken_fields and streaming:
+                lines = []
+                for line in data.decode().splitlines():
+                    if line.startswith("data: "):
+                        value = object_value(json.loads(line[6:]))
+                        if isinstance(value.get("message"), dict):
+                            message_value = object_value(value["message"])
+                            message_value.pop("stop_reason", None)
+                            message_value.pop("stop_sequence", None)
+                        if isinstance(value.get("delta"), dict):
+                            object_value(value["delta"]).pop("stop_sequence", None)
+                        line = "data: " + json.dumps(value)
+                    lines.append(line)
+                data = ("\n".join(lines) + "\n\n").encode()
+            if (
+                repair
+                and repair_phase[0] == "after"
+                and streaming
+                and "Count" in str(payload.get("messages"))
+            ):
+                data += b'event: message_stop\ndata: {"type":"message_stop"}\n\n'
             try:
-                self.send_response(200)
+                self.send_response(
+                    503 if repair and repair_phase[0] == "after" and "tools" in payload else 200
+                )
                 self.send_header(
                     "Content-Type", "text/event-stream" if streaming else "application/json"
                 )

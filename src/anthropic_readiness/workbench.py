@@ -154,3 +154,72 @@ def build_workbench_view(run: JsonObject, *, worker_observation: JsonObject) -> 
             }
         )
     )
+
+
+def group_comparison(comparison: JsonObject) -> list[JsonObject]:
+    """Group observed transitions for navigation without rejudging any check."""
+    buckets: dict[tuple[str, str, str], list[JsonObject]] = {}
+    transitions = (
+        "recovered",
+        "persistent",
+        "new_failure",
+        "gap",
+        "newly_evaluated",
+        "incomparable",
+    )
+    for pair in objects(comparison["pairs"]):
+        transition, identifier = str(pair["transition"]), str(pair["assertion_id"])
+        if transition == "passed_both":
+            continue
+        if transition not in transitions:
+            raise ValueError("invalid_comparison_transition")
+        scoped = transition in {"gap", "newly_evaluated", "incomparable"}
+        family = (
+            "gap"
+            if scoped
+            else "model"
+            if identifier == "MSG-MODEL"
+            else "fields"
+            if identifier == "MSG-CORE"
+            else "stream"
+            if identifier.startswith(("STR-", "SSE-"))
+            else "http"
+            if identifier.startswith("HTTP-")
+            else "capture"
+            if identifier.startswith("CAPTURE-")
+            else "behavior"
+            if identifier.startswith(("TOOL-", "BHV-", "TASK-"))
+            else "check"
+        )
+        bucket_key = family, transition, str(pair["case_id"]) if scoped else ""
+        buckets.setdefault(bucket_key, []).append(pair)
+    groups: list[JsonObject] = []
+    for (family, transition, case_id), members in sorted(
+        buckets.items(), key=lambda item: (transitions.index(item[0][1]), item[0][0], item[0][2])
+    ):
+        ordered = sorted(
+            members, key=lambda pair: (str(pair["case_id"]), str(pair["assertion_id"]))
+        )
+        key = hashlib.sha256(json.dumps((family, transition, case_id)).encode()).hexdigest()
+        case_ids: list[JsonValue] = []
+        case_ids.extend(sorted({str(pair["case_id"]) for pair in members}))
+        before_states: list[JsonValue] = []
+        before_states.extend(sorted({str(pair["before"]) for pair in members}))
+        after_states: list[JsonValue] = []
+        after_states.extend(sorted({str(pair["after"]) for pair in members}))
+        member_rows: list[JsonValue] = [deepcopy(pair) for pair in ordered]
+        groups.append(
+            {
+                "key": key,
+                "family": family,
+                "transition": transition,
+                "case_id": case_id or None,
+                "check_count": len(members),
+                "case_ids": case_ids,
+                "affected_cases": len({str(pair["case_id"]) for pair in members}),
+                "before_states": before_states,
+                "after_states": after_states,
+                "members": member_rows,
+            }
+        )
+    return groups

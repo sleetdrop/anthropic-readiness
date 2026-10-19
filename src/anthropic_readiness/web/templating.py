@@ -28,6 +28,7 @@ STATE_KEYS = {
     "BLOCKED": "check.blocked",
     "SKIP": "check.skip",
     "not_evaluated": "check.unassessed",
+    "missing": "check.missing",
 }
 CASE_KEYS = {
     "ANT-MESSAGE-001": "case.message",

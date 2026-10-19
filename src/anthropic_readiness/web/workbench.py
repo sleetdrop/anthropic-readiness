@@ -18,13 +18,13 @@ from anthropic_readiness.models import JsonObject, JsonValue, object_value
 from anthropic_readiness.operations.contracts import validate_operational
 from anthropic_readiness.operations.reduction import TERMINAL, objects
 from anthropic_readiness.report_sources import source_bytes
-from anthropic_readiness.report_view import build_report_view
+from anthropic_readiness.report_view import DIMENSIONS, build_report_view
 from anthropic_readiness.web.api import LocalRoute, evidence_id, manager_for, run_document
 from anthropic_readiness.web.contracts import response_contract
 from anthropic_readiness.web.diagnostics import _owned_source, service_for
 from anthropic_readiness.web.security import api_response, preferences_for
-from anthropic_readiness.web.templating import CASE_KEYS, page
-from anthropic_readiness.workbench import build_workbench_view
+from anthropic_readiness.web.templating import CASE_KEYS, STATE_KEYS, page
+from anthropic_readiness.workbench import build_workbench_view, group_comparison
 
 router = APIRouter(route_class=LocalRoute)
 VIEWS = ("overview", "issues", "cases", "compare", "activity")
@@ -158,8 +158,61 @@ def workbench_context(
     facts = object_value(value["facts"])
     cases = objects(facts["cases"])
     selected_filter = request.query_params.get("filter", "all")
+    matrix_scope: tuple[str, str, str] | None = None
+    matrix_members: set[str] = set()
+    matrix_label: str | None = None
     if selected_filter not in FILTERS:
-        raise ValueError("invalid_request")
+        parts = selected_filter.split(":")
+        known_groups = {str(group["key"]): group for group in objects(facts["groups"])}
+        if (
+            selected_view != "cases"
+            or len(parts) != 4
+            or parts[0] != "matrix"
+            or parts[1] not in known_groups
+            or parts[2] not in DIMENSIONS
+            or parts[3] not in STATE_KEYS
+        ):
+            raise ValueError("invalid_request")
+        group_key, dimension, status = parts[1:]
+        if status not in {
+            "PASS",
+            "FAIL",
+            "INDETERMINATE",
+            "BLOCKED",
+            "SKIP",
+            "pending",
+            "running",
+            "not_evaluated",
+        }:
+            raise ValueError("invalid_request")
+        matrix_scope = (group_key, dimension, status)
+        group_cases = known_groups[group_key]["case_ids"]
+        matrix_members = (
+            {str(item) for item in group_cases} if isinstance(group_cases, list) else set()
+        )
+        matrix_label = text(
+            "filter.matrix_scope",
+            group=text("group." + ("additional" if group_key == "other" else group_key)),
+            dimension=text("dimension." + dimension),
+            state=text(STATE_KEYS[status]),
+        )
+
+    def matrix_link(group: JsonObject, dimension: str, status: str) -> str:
+        members = (
+            [
+                case
+                for case in cases
+                if case["case_id"] in group["case_ids"]
+                and object_value(case["dimensions"])[dimension] == status
+            ]
+            if isinstance(group["case_ids"], list)
+            else []
+        )
+        query = {"filter": "matrix:" + str(group["key"]) + ":" + dimension + ":" + status}
+        if members:
+            query["case"] = str(members[0]["case_id"])
+        return link("cases", **query)
+
     target = object_value(object_value(facts["provenance"])["target"])
     summary = object_value(facts["summary"])
     findings: list[JsonObject] = []
@@ -175,7 +228,9 @@ def workbench_context(
             }
         )
     shown_findings = [
-        finding for finding in findings if _matches(finding["status"], selected_filter)
+        finding
+        for finding in findings
+        if _matches(finding["status"], "all" if matrix_scope else selected_filter)
     ]
     requested_issue = request.query_params.get("issue")
     selected_issue = (
@@ -187,7 +242,16 @@ def workbench_context(
         else (shown_findings[0] if shown_findings else None)
     )
     requested_case = request.query_params.get("case")
-    shown_cases = [case for case in cases if _matches(case["status"], selected_filter)]
+    shown_cases = [
+        case
+        for case in cases
+        if (
+            case["case_id"] in matrix_members
+            and object_value(case["dimensions"])[matrix_scope[1]] == matrix_scope[2]
+            if matrix_scope
+            else _matches(case["status"], selected_filter)
+        )
+    ]
     selected_case = (
         next((case for case in cases if case["case_id"] == requested_case), None)
         if requested_case
@@ -238,6 +302,20 @@ def workbench_context(
             )
         )
     ]
+    issue_members = tuple(dict.fromkeys(str(check["case_id"]) for check in issue_checks))
+    issue_case = requested_case or (issue_members[0] if issue_members else None)
+    if selected_view == "issues" and requested_case and requested_case not in issue_members:
+        raise ValueError("invalid_request")
+    issue_observations = (
+        [
+            observation
+            for observation in objects(selected_issue.get("observations"))
+            if observation["case_id"] == issue_case
+        ]
+        if selected_issue is not None
+        else []
+    )
+    displayed_issue_checks = [check for check in issue_checks if check["case_id"] == issue_case]
     case_checks = [
         check
         for check in checks
@@ -310,6 +388,14 @@ def workbench_context(
                 age_text = text("activity.age_" + unit, count=age // divisor)
         except ValueError:
             age_text = "—"
+    comparison = value.get("comparison")
+    baseline_ref = request.query_params.get("baseline", "")
+    before_url = ""
+    if isinstance(comparison, dict) and baseline_ref:
+        reference = _reference(baseline_ref)
+        before_url = ("/runs/" if reference["kind"] == "run" else "/baselines/") + str(
+            reference["id"]
+        )
     return {
         "title": str(target["name"]),
         "active": "run",
@@ -327,12 +413,18 @@ def workbench_context(
         "issue": selected_issue,
         "selected_case": selected_case,
         "issue_checks": issue_checks,
+        "displayed_issue_checks": displayed_issue_checks,
+        "issue_observations": issue_observations,
+        "issue_cases": [{"case_id": member, "name": case_name(member)} for member in issue_members],
+        "issue_case": issue_case,
         "case_checks": case_checks,
         "case_name": case_name,
         "view_url": link,
         "active_view": selected_view,
         "view_template": "workbench-" + selected_view + ".html",
         "selected_filter": selected_filter,
+        "matrix_label": matrix_label,
+        "matrix_link": matrix_link,
         "read_only": read_only,
         "terminal": terminal,
         "installed_count": len(list_cases()),
@@ -341,11 +433,19 @@ def workbench_context(
         "last_activity": last_activity,
         "last_activity_text": age_text,
         "spans": spans,
+        "recorded_case_states": {
+            str(item["case_id"]): str(item["state"])
+            for item in objects(execution.get("case_states"))
+        }
+        if isinstance(execution, dict)
+        else {},
         "evidence_prefix": "/api/v1/runs/" + str(facts["run_id"]) + "/evidence/",
         "baseline_options": _scope_options(request, str(facts["run_id"]))
         if selected_view == "compare"
         else [],
-        "baseline_ref": request.query_params.get("baseline", ""),
+        "baseline_ref": baseline_ref,
+        "comparison_groups": group_comparison(comparison) if isinstance(comparison, dict) else [],
+        "comparison_before_url": before_url,
         "behavior_pass": sum(
             object_value(case["dimensions"])["behavior"] == "PASS" for case in cases
         ),

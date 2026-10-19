@@ -21,6 +21,25 @@ const LABELS = {
 };
 let csrf = "";
 
+/** @param {string} key @param {Record<string,string|number>} [params] @returns {string} */
+export function message(key, params = {}) {
+  const bootstrap = object(JSON.parse(document.getElementById("bootstrap")?.textContent ?? "{}"));
+  const catalog = object(object(bootstrap.catalogs)[document.documentElement.lang]);
+  if (typeof catalog[key] !== "string") throw new Error("missing_message:" + key);
+  return String(catalog[key]).replace(/\{([a-z_]+)\}/gu, (_, name) => String(params[name] ?? ""));
+}
+/** @param {HTMLElement} target @param {string} key @param {Record<string,string|number>} [params] */
+function setMessage(target, key, params = {}) {
+  target.dataset.i18n = key;
+  target.dataset.i18nParams = JSON.stringify(params);
+  target.textContent = message(key, params);
+}
+/** @param {string} tag @param {string} key @param {Record<string,string|number>} [params] */
+function localized(tag, key, params = {}) {
+  const target = document.createElement(tag);
+  setMessage(target, key, params);
+  return target;
+}
 /** @param {string} id @returns {HTMLElement} */
 function element(id) {
   const found = document.getElementById(id);
@@ -56,31 +75,27 @@ function node(tag, value) {
   return created;
 }
 /** @param {unknown} error */
-function showError(error) {
-  const message = element("app-message");
-  const code = error instanceof Error ? error.message : "操作未完成";
-  message.textContent =
+export function showError(error) {
+  const output = element("app-message");
+  const code = error instanceof Error ? error.message : message("error.operation");
+  output.textContent =
     {
-      invalid_url: "请输入不含认证、查询参数或片段的有效 HTTP 地址。",
-      ambiguous_base_url: "Base URL 只能是源站或 /v1；其他路径请使用完整 Messages URL。",
-      invalid_document: "本机响应格式异常，请刷新页面查看已有记录。",
+      session_required: message("error.session"),
+      session_recovery_failed: message("error.session_failed"),
+      session_restored_not_resent: message("error.session_restored"),
+      invalid_url: message("error.invalid_url"),
+      ambiguous_base_url: message("error.ambiguous_url"),
+      invalid_document: message("error.invalid_document"),
     }[/** @type {"invalid_url"} */ (code)] ?? code;
-  message.hidden = false;
+  output.hidden = false;
 }
-/** @param {string} message */
-function announce(message) {
-  element("app-message").textContent = message;
-  element("app-message").hidden = false;
-}
-
 async function session() {
   const response = await fetch("/api/v1/session", {
     credentials: "same-origin",
     cache: "no-store",
   });
   const value = object(await response.json());
-  if (!response.ok || typeof value.csrf_token !== "string")
-    throw new Error("无法恢复本机会话，请刷新页面；已有任务仍保留。 ");
+  if (!response.ok || typeof value.csrf_token !== "string") throw new Error("session_required");
   csrf = value.csrf_token;
 }
 
@@ -98,19 +113,18 @@ export async function api(path, options = {}, recovered = false) {
   if (!response.ok) {
     const failure = object(value.error);
     if (["session_required", "csrf_invalid"].includes(String(failure.code))) {
-      if (recovered)
-        throw new Error("本机会话恢复未成功，请检查浏览器是否允许本机 Cookie；已有任务仍保留。 ");
+      if (recovered) throw new Error("session_recovery_failed");
       await session();
       if (method === "GET") return api(path, options, true);
-      throw new Error("本机会话已恢复；未自动重发操作。请先查看历史任务，再重新预览或明确重试。 ");
+      throw new Error("session_restored_not_resent");
     }
-    throw new Error(String(failure.message ?? "本机操作未完成"));
+    throw new Error(String(failure.message ?? message("error.operation")));
   }
   return value;
 }
 
 /** @param {string} path @param {string} filename */
-async function download(path, filename) {
+export async function download(path, filename) {
   let response = await fetch(path, { credentials: "same-origin", cache: "no-store" });
   if (response.status === 401) {
     await session();
@@ -118,7 +132,7 @@ async function download(path, filename) {
   }
   if (!response.ok) {
     const failure = object(object(await response.json()).error);
-    throw new Error(String(failure.message ?? "下载未完成"));
+    throw new Error(String(failure.message ?? message("error.download")));
   }
   const url = URL.createObjectURL(await response.blob());
   const link = document.createElement("a");
@@ -159,7 +173,7 @@ function configure(bootstrap) {
   /** @returns {JsonObject} */
   function target() {
     const contract = contracts[Number(select("contract").value)];
-    if (!contract) throw new Error("请选择已安装规则快照。");
+    if (!contract) throw new Error(message("form.select_contract"));
     const credentialSource = select("credential-source").value;
     /** @type {JsonObject} */
     const limits = {};
@@ -172,7 +186,7 @@ function configure(bootstrap) {
         value <= 0 ||
         (!name.endsWith("_s") && !Number.isInteger(value))
       )
-        throw new Error("预算必须为有限正数；请求、事件和字节上限必须为整数。 ");
+        throw new Error(message("form.positive_limits"));
       limits[name] = value;
     }
     return {
@@ -259,7 +273,9 @@ function configure(bootstrap) {
   }
   function presetOptions() {
     const picker = select("preset");
-    picker.replaceChildren(new Option("新配置", ""));
+    const option = new Option(message("form.new_config"), "");
+    option.dataset.i18n = "form.new_config";
+    picker.replaceChildren(option);
     for (const preset of presets) {
       const value = object(preset.target);
       picker.add(new Option(`${value.name} · ${value.model}`, String(preset.id)));
@@ -289,7 +305,8 @@ function configure(bootstrap) {
     selectedPreset = String(saved.id);
     presets = objects((await api("/api/v1/presets")).items);
     presetOptions();
-    announce("预设已保存；不包含凭据，也不会改变已有任务。 ");
+    setMessage(element("app-message"), "form.preset_saved");
+    element("app-message").hidden = false;
   }
   button("save-preset").addEventListener("click", () => {
     void save(false).catch(showError);
@@ -305,11 +322,13 @@ function configure(bootstrap) {
     void (async () => {
       const value = target();
       const profiles = checked(form, "profile");
-      if (!profiles.length) throw new Error("至少选择一个配置组。");
-      const frozen = await api("/api/v1/plans", {
+      if (!profiles.length) throw new Error(message("form.select_profile"));
+      const retest = typeof bootstrap.baseline_id === "string" && bootstrap.baseline_id;
+      const prepared = await api(retest ? "/api/v1/diagnostics/retests/preview" : "/api/v1/plans", {
         method: "POST",
-        body: { target: value, profiles },
+        body: retest ? { baseline_id: retest, target: value } : { target: value, profiles },
       });
+      const frozen = retest ? object(prepared.plan) : prepared;
       const current = target();
       if (
         JSON.stringify(
@@ -318,7 +337,7 @@ function configure(bootstrap) {
         JSON.stringify(checked(form, "profile")) !== JSON.stringify(profiles)
       ) {
         invalidate();
-        throw new Error("预览期间配置已变化，请重新预览。 ");
+        throw new Error(message("preview.changed"));
       }
       state = { target: object(frozen.target), previewId: String(frozen.id) };
       operation = crypto.randomUUID();
@@ -327,34 +346,68 @@ function configure(bootstrap) {
       const resolved = object(frozen.target);
       const limits = object(plan.limits);
       const content = element("plan-preview");
-      content.replaceChildren(node("h3", "已冻结的执行计划"));
+      content.replaceChildren(localized("h3", "preview.frozen"));
       const facts = document.createElement("dl");
       facts.className = "preview-facts";
       for (const [key, value] of [
-        ["有效地址", resolved.messages_url],
-        ["请求模型", resolved.model],
+        ["preview.address", resolved.messages_url],
+        ["preview.model", resolved.model],
         [
-          "API / beta",
-          `${resolved.api_version} / ${strings(resolved.beta_headers).join(", ") || "无"}`,
+          "preview.api",
+          `${resolved.api_version} / ${strings(resolved.beta_headers).join(", ") || message("common.none")}`,
         ],
-        ["计划 / 上限", `${plan.planned_requests} / ${limits.max_requests} 次请求`],
-        ["时间上限", `${limits.run_timeout_s} 秒 / 单次 ${limits.attempt_timeout_s} 秒`],
-        ["模型策略", resolved.response_model_policy],
-        ["允许别名", strings(resolved.response_model_aliases).join(", ") || "无"],
-        ["执行方式", "每用例一次；不重试"],
+        [
+          "preview.requests",
+          message("preview.request_limits", {
+            planned: String(plan.planned_requests),
+            limit: String(limits.max_requests),
+          }),
+        ],
+        [
+          "preview.time",
+          message("preview.time_limits", {
+            run: String(limits.run_timeout_s),
+            attempt: String(limits.attempt_timeout_s),
+          }),
+        ],
+        ["preview.policy", resolved.response_model_policy],
+        [
+          "preview.aliases",
+          strings(resolved.response_model_aliases).join(", ") || message("common.none"),
+        ],
+        ["preview.method", message("preview.single_attempt")],
       ]) {
-        facts.append(node("dt", String(key)), node("dd", String(value)));
+        const detail = node("dd", String(value));
+        if (key === "preview.requests")
+          setMessage(detail, "preview.request_limits", {
+            planned: String(plan.planned_requests),
+            limit: String(limits.max_requests),
+          });
+        if (key === "preview.time")
+          setMessage(detail, "preview.time_limits", {
+            run: String(limits.run_timeout_s),
+            attempt: String(limits.attempt_timeout_s),
+          });
+        if (key === "preview.method") setMessage(detail, "preview.single_attempt");
+        if (key === "preview.aliases" && !strings(resolved.response_model_aliases).length)
+          setMessage(detail, "common.none");
+        facts.append(localized("dt", String(key)), detail);
       }
       content.append(facts);
       const list = document.createElement("ol");
       list.className = "preview-list";
       for (const item of objects(plan.cases))
         list.append(
-          node("li", `${item.id} · v${item.version} · ${item.required ? "必需" : "诊断"}`),
+          localized("li", item.required ? "preview.case_required" : "preview.case_optional", {
+            id: String(item.id),
+            version: String(item.version),
+          }),
         );
       content.append(list);
-      element("preview-state").textContent =
-        `有效至 ${new Date(String(frozen.expires_at)).toLocaleTimeString()}；规则 ${object(resolved.protocol_contract).revision}。`;
+      setMessage(element("preview-state"), "preview.expiry", {
+        time: new Date(String(frozen.expires_at)).toLocaleTimeString(),
+        revision: String(object(resolved.protocol_contract).revision),
+      });
       button("start-button").disabled = false;
     })()
       .catch(showError)
@@ -376,8 +429,7 @@ function configure(bootstrap) {
         if (source !== "browser") body.credential_ref = source;
         else {
           const credential = input("credential").value;
-          if (!credential.trim())
-            throw new Error("开始前请输入本次凭据，或选择已允许的服务器变量。 ");
+          if (!credential.trim()) throw new Error(message("form.need_credential"));
           body.credential = credential;
         }
       }
@@ -569,7 +621,7 @@ function runPage(bootstrap) {
 }
 
 /** @param {string} runId @param {()=>boolean} terminal */
-function setupExports(runId, terminal) {
+export function setupExports(runId, terminal) {
   const form = element("export-form");
   let reviewed = "";
   /** @returns {JsonObject} */
@@ -585,7 +637,7 @@ function setupExports(runId, terminal) {
     if (!terminal()) return;
     const chosen = policy();
     if (!strings(chosen.formats).length) {
-      showError(new Error("至少选择一种导出格式。 "));
+      showError(new Error(message("export.choose_format")));
       return;
     }
     void api(`/api/v1/runs/${runId}/exports/preview`, { method: "POST", body: chosen })
@@ -593,24 +645,22 @@ function setupExports(runId, terminal) {
         if (JSON.stringify(policy()) !== JSON.stringify(chosen)) return;
         const content = element("export-preview");
         content.replaceChildren(
-          node(
-            "p",
-            value.partial
-              ? "部分执行记录；不包含最终 result.json。"
-              : "冻结本次结果与所选报告格式。",
-          ),
+          node("p", value.partial ? message("export.partial") : message("export.freeze")),
         );
         content.append(
           node(
             "p",
             chosen.include_evidence
-              ? "ZIP 包含所列证据；单独 HTML 不内嵌捕获。分享前请检查业务内容。"
-              : "未附证据文件；接收者无法独立复核。",
+              ? message("export.with_evidence")
+              : message("export.without_evidence"),
           ),
         );
         const list = document.createElement("ul");
         for (const name of strings(value.files)) list.append(node("li", name));
-        content.append(list, node("p", "省略项：" + strings(value.omissions).join(", ")));
+        content.append(
+          list,
+          node("p", message("export.omissions", { items: strings(value.omissions).join(", ") })),
+        );
         reviewed = JSON.stringify(chosen);
         button("create-export").disabled = false;
       })
@@ -627,12 +677,12 @@ function setupExports(runId, terminal) {
         const options = [
           {
             format: "zip",
-            title: "下载 ZIP（所选格式与清单）",
+            title: message("export.zip_download"),
             filename: "anthropic-readiness.zip",
           },
           ...strings(chosen.formats).map((format) => ({
             format,
-            title: "单独下载 " + format.toUpperCase(),
+            title: message("export.file_download", { format: format.toUpperCase() }),
             filename:
               format === "html"
                 ? "report.html"
@@ -652,7 +702,8 @@ function setupExports(runId, terminal) {
           });
           links.append(link);
         }
-        announce("导出已生成；旧导出继续保留，可重复下载。 ");
+        setMessage(element("app-message"), "export.created");
+        element("app-message").hidden = false;
       })
       .catch(showError)
       .finally(() => {
@@ -667,4 +718,8 @@ async function bootstrap() {
   if (data.page === "configure") configure(data);
   if (data.page === "run") runPage(data);
 }
-if (typeof document !== "undefined") void bootstrap().catch(showError);
+export const ready =
+  typeof document !== "undefined" ? bootstrap().catch(showError) : Promise.resolve();
+export function csrfToken() {
+  return csrf;
+}

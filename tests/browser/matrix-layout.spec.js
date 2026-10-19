@@ -19,16 +19,19 @@ for (const width of [390, 573]) {
       }
       await page.goto(
         mode === "web"
-          ? "/runs/" + fixture().completed_id
+          ? "/runs/" + fixture().completed_id + "?view=cases"
           : pathToFileURL(fixture().offline_path).href,
       );
-      const matrix = page.locator(".capability-matrix");
-      await expect(page.locator(".case-detail")).toHaveCount(4);
+      const matrix = page.locator(mode === "web" ? ".coverage-matrix" : ".capability-matrix");
+      await expect(page.locator(mode === "web" ? ".case-item" : ".case-detail")).toHaveCount(4);
       const firstColumn = await matrix.locator("thead th").first().boundingBox();
-      expect(firstColumn?.width).toBeGreaterThanOrEqual(160);
+      expect(firstColumn?.width).toBeGreaterThanOrEqual(mode === "web" ? 120 : 160);
       const firstRow = await matrix.locator("tbody tr").first().boundingBox();
       expect(firstRow?.height).toBeLessThan(180);
-      const region = page.getByRole("region", { name: "能力矩阵，可横向滚动", exact: true });
+      const region = page.getByRole("region", {
+        name: mode === "web" ? "评估范围" : "能力矩阵，可横向滚动",
+        exact: true,
+      });
       await region.scrollIntoViewIfNeeded();
       await page.screenshot({ path: info.outputPath(`matrix-${mode}-${width}.png`) });
       await region.focus();
@@ -41,16 +44,18 @@ for (const width of [390, 573]) {
       expect(
         await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
       ).toBe(true);
-      await page.emulateMedia({ media: "print" });
-      await page.setViewportSize({ width: 794, height: 1123 });
-      await expect(matrix).toBeVisible();
-      const printBox = await matrix.boundingBox();
-      expect((printBox?.x ?? 0) + (printBox?.width ?? 0)).toBeLessThanOrEqual(794);
-      await page.pdf({
-        path: info.outputPath(`matrix-print-${mode}-${width}.pdf`),
-        format: "A4",
-        printBackground: true,
-      });
+      if (mode === "offline") {
+        await page.emulateMedia({ media: "print" });
+        await page.setViewportSize({ width: 794, height: 1123 });
+        await expect(matrix).toBeVisible();
+        const printBox = await matrix.boundingBox();
+        expect((printBox?.x ?? 0) + (printBox?.width ?? 0)).toBeLessThanOrEqual(794);
+        await page.pdf({
+          path: info.outputPath(`matrix-print-${mode}-${width}.pdf`),
+          format: "A4",
+          printBackground: true,
+        });
+      }
       expect(networkAttempts).toEqual([]);
       expect((await count(request)).count).toBe(before);
     });

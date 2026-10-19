@@ -7,7 +7,14 @@ for (const width of [390, 1280]) {
     page,
   }, info) => {
     await page.setViewportSize({ width, height: 900 });
-    for (const path of ["/new", "/runs/" + fixture().completed_id, "/history"]) {
+    for (const path of [
+      "/new",
+      "/runs/" + fixture().completed_id,
+      "/history",
+      "/imports",
+      "/runs/" + fixture().completed_id + "?view=issues",
+      "/runs/" + fixture().completed_id + "?view=cases",
+    ]) {
       await page.goto(path);
       const violations = (await new AxeBuilder({ page }).analyze()).violations;
       expect(
@@ -35,11 +42,11 @@ for (const width of [390, 1280]) {
           `${path === "/new" ? "configure" : path === "/history" ? "history" : "report"}-${width}-viewport.png`,
         ),
       });
-      if (path.startsWith("/runs/")) {
+      if (path.startsWith("/runs/") && !path.includes("?")) {
         await page.locator("#capabilities").scrollIntoViewIfNeeded();
         await page.screenshot({ path: info.outputPath(`matrix-${width}.png`) });
-        await page.locator("#fig-timing").scrollIntoViewIfNeeded();
-        await page.screenshot({ path: info.outputPath(`timeline-${width}.png`) });
+        await page.locator('.view-tabs a[href*="view=activity"]').click();
+        await page.screenshot({ path: info.outputPath(`activity-${width}.png`) });
       }
     }
   });

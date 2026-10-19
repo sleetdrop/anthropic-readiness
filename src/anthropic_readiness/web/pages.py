@@ -20,6 +20,8 @@ from anthropic_readiness.web.templating import page
 router = APIRouter(route_class=LocalRoute)
 ASSETS = {
     "web/workbench-links.js",
+    "web/workbench.js",
+    "web/diagnostics.js",
     "web/app.css",
     "web/app.js",
     "web/forms.js",

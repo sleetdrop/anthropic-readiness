@@ -35,6 +35,8 @@ ROOT = Path(__file__).resolve().parents[2]
 def seeded_run(tmp_path: Path, request: pytest.FixtureRequest) -> str:
     scenario = getattr(request, "param", "complete")
     target = load_target(ROOT / "examples/target.yaml")
+    if scenario == "larger-cap":
+        target = replace(target, limits=replace(target.limits, max_requests=7))
     if scenario == "hostile":
         target = replace(target, model='model <img src=x onerror="window.unsafe=1"> & co')
     return prepared_run(
@@ -205,3 +207,34 @@ async def test_workbench_terminal_projection_rejects_an_earlier_generation(
     assert facts["status"] == "complete"
     assert facts["source_result_sha256"] == hashlib.sha256(original_bytes).hexdigest()
     assert result_path.read_bytes() == original_bytes
+
+
+@pytest.mark.parametrize("seeded_run", ["larger-cap"], indirect=True)
+async def test_request_denominator_uses_admitted_cap_not_selected_case_count(
+    client: httpx.AsyncClient, seeded_run: str
+) -> None:
+    response = await client.get("/runs/" + seeded_run)
+    assert response.status_code == 200
+    assert 'id="request-progress">3 / 7</strong>' in response.text
+
+
+async def test_matrix_filter_is_closed_and_opens_only_matching_dimension_members(
+    client: httpx.AsyncClient, seeded_run: str
+) -> None:
+    path = "/runs/" + seeded_run
+    matrix = await client.get(path, params={"view": "cases"})
+    assert "filter=matrix%3Astreaming%3Aprotocol%3AFAIL" in matrix.text
+    filtered = await client.get(
+        path, params={"view": "cases", "filter": "matrix:streaming:protocol:FAIL"}
+    )
+    assert filtered.status_code == 200
+    assert filtered.text.count('class="case-item"') == 2
+    assert 'data-case-id="ANT-MESSAGE-001"' not in filtered.text
+    assert 'data-case-id="ANT-TEXT-SSE-001"' in filtered.text
+    for invalid in (
+        "matrix:streaming:unknown:FAIL",
+        "matrix:../../outside:protocol:FAIL",
+        "matrix:streaming:protocol:unknown",
+    ):
+        response = await client.get(path, params={"view": "cases", "filter": invalid})
+        assert response.status_code == 422

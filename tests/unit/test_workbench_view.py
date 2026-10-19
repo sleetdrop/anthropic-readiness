@@ -5,7 +5,7 @@ from copy import deepcopy
 import pytest
 
 from anthropic_readiness.diagnostics.contracts import validate_diagnostic
-from anthropic_readiness.models import JsonObject, object_value
+from anthropic_readiness.models import JsonObject, JsonValue, object_value
 from anthropic_readiness.report_view import build_report_view
 from anthropic_readiness.workbench import build_workbench_view
 from tests.operation_fixtures import NOW, context
@@ -120,3 +120,73 @@ def test_projection_performs_no_resource_io(monkeypatch: pytest.MonkeyPatch) -> 
         assert build_workbench_view(
             frame, worker_observation={"state": "unknown", "observed_at": None}
         ).document["facts"]
+
+
+def test_comparison_groups_preserve_check_counts_case_overlap_and_raw_members() -> None:
+    from anthropic_readiness.workbench import group_comparison
+
+    pairs: list[JsonValue] = [
+        {
+            "case_id": "case-one",
+            "assertion_id": "MSG-CORE",
+            "transition": "recovered",
+            "before": "FAIL",
+            "after": "PASS",
+        },
+        {
+            "case_id": "case-one",
+            "assertion_id": "MSG-MODEL",
+            "transition": "persistent",
+            "before": "FAIL",
+            "after": "FAIL",
+        },
+        {
+            "case_id": "case-two",
+            "assertion_id": "MSG-MODEL",
+            "transition": "persistent",
+            "before": "FAIL",
+            "after": "FAIL",
+        },
+        {
+            "case_id": "case-two",
+            "assertion_id": "STR-STOP",
+            "transition": "new_failure",
+            "before": "PASS",
+            "after": "FAIL",
+        },
+        {
+            "case_id": "case-three",
+            "assertion_id": "MSG-CORE",
+            "transition": "gap",
+            "before": "FAIL",
+            "after": "missing",
+        },
+        {
+            "case_id": "case-three",
+            "assertion_id": "TOOL-NAME",
+            "transition": "gap",
+            "before": "PASS",
+            "after": "missing",
+        },
+        {
+            "case_id": "case-one",
+            "assertion_id": "HTTP-STATUS",
+            "transition": "passed_both",
+            "before": "PASS",
+            "after": "PASS",
+        },
+    ]
+    original = deepcopy(pairs)
+    groups = group_comparison({"pairs": list(pairs)})
+    assert len(groups) == 4
+    assert sum(int(str(group["check_count"])) for group in groups) == 6
+    persistent = next(group for group in groups if group["transition"] == "persistent")
+    assert persistent["family"] == "model"
+    assert persistent["affected_cases"] == 2
+    gap = next(group for group in groups if group["transition"] == "gap")
+    assert gap["check_count"] == 2
+    assert gap["affected_cases"] == 1
+    assert gap["before_states"] == ["FAIL", "PASS"]
+    assert gap["after_states"] == ["missing"]
+    assert pairs == original
+    assert group_comparison({"pairs": list(reversed(pairs))}) == groups

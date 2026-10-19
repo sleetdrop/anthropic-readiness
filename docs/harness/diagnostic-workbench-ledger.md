@@ -677,3 +677,137 @@ missing strict JSDoc annotations in that new module. After adding checked JSON
 access and explicit parameter/tuple types, final fast-3 passed all eight children
 with 442 unit/harness tests on unchanged source. No assertions or fixture outcomes
 were weakened. Logs remain under `artifacts/w2/task11/`.
+
+## W2 Task 12 — interaction and browser acceptance in progress
+
+Task 11 delivery is `fff8e41`. Its final task-done run passed 41 named
+projection/page/recovery/source checks. Task 12 retains the existing DOM controls,
+inspectors, disclosure state, selected source text and keyboard focus through
+keyed patches of escaped server templates. Local reads never start model work.
+The frozen execution preview survives locale/theme changes; export review is
+invalidated. Import uses the selected File as a bounded binary body, without
+base64 or uploaded-HTML execution. Retest preview uses the shared original-scope
+service and normal explicit admission path.
+
+Initial static checks observed the missing state module; six pure state/activity
+checks then passed. Initial browser checks observed three missing preference/live
+interaction failures and one ordinary-link pass. Actual iteration found and fixed
+a navigation/Back race, 1280x800 overview overflow, dynamic preview localization,
+a non-scrolling 96-row list, duplicate unnamed complementary landmarks, and a
+terminal activity-age display frozen at page load. The first clock test was a
+false positive because the initial read had not settled; after waiting for that
+read it observed RED, and a local display timer fixed the issue without changing
+recorded activity or adding requests. Theme geometry and semantic contrast checks
+passed in both locales/appearances; this is not yet whole-task acceptance.
+
+Ruling: continue using server-escaped operational templates for keyed patches,
+never replace the workbench/inspector root or render uploaded HTML — one renderer
+avoids divergent fact formatting — cost if wrong: extra local read bandwidth and
+a bounded five-second persisted-fact refresh. SSE signals changes; persisted
+snapshots remain authoritative, with ordered read/sequence/terminal guards.
+Worker observation is separate from upstream activity and the local age timer.
+
+Ruling: represent 200-percent browser reflow with a 640x400 CSS viewport at device
+scale factor 2, producing the 1280x800 physical-pixel surface — this reproduces
+layout viewport and density without changing host browser settings — cost if
+wrong: native browser-chrome zoom integration is not exercised. This is an explicit
+reflow/scale test, not a claimed observation of native zoom controls.
+
+Ruling: the 96-row scaling test expands only labeled synthetic DOM data through
+the real keyed renderer — four formal installed cases remain unchanged — cost if
+wrong: this stresses layout/identity retention rather than a future 96-case engine
+or schema catalog. No generated row grants a capability or extra coverage.
+
+The first full browser iteration passed 34 and failed 12. The second passed 48
+and failed three, including stale legacy copy expectations and missing display of
+an interrupted case's last operational state alongside retained checks. Assertions
+on request counts, credentials, evidence, original report files and source hashes
+remain. Legacy presentation-2 direct-file/matrix/print fixtures are retained; only
+Web expectations intentionally move from embedded reports to operational views.
+Session errors now use stable internal codes and request-local UI translation;
+Node tests still prove bounded read recovery and no automatic mutation resend.
+Final browser, visual and quality-gate results remain pending below.
+
+Further visual/interaction verification found a real active-overview overflow:
+a natural in-progress partial source was shown as a partial-record warning. The
+warning now appears after termination, with active progress retained in counters.
+Group/attention typography was raised and table padding tightened against the
+accepted pair. Active 2/4 checkpoints and 3/4 requests are produced by a real
+owned worker waiting at a controllable synthetic peer, not assigned UI statuses.
+The admitted request cap is now the counter denominator: a separate 3-case,
+7-request-cap RED/GREEN guards against the equal-default-count masking this bug.
+
+Ruling: encode matrix drill-down as a closed `matrix:group:dimension:state` variant
+of the existing filter query — preserve the approved five query parameter names
+and select actual matching members — cost if wrong: an additional finite filter
+grammar must remain synchronized with matrix navigation. Invalid groups/dimensions/
+states reject, and browser Back restores the full list and control value.
+
+Ruling: show one explicitly selected case's field comparison within an issue while
+retaining all affected members and evidence — repeated full field blocks recreated
+the report-like scroll the redesign removes — cost if wrong: reviewing another
+variant needs a case-selection click. The default selection is pinned before live
+updates; original facts and assertions are unchanged. Protocol/reason identifiers,
+full evidence paths and rule references remain in the technical disclosure.
+
+The third full browser iteration passed 56 and failed one new inspector geometry
+check. Its crop capture scrolled the document between measurements; resetting the
+same scroll position retained the one-pixel tolerance and passed. Four targeted
+inspector/selection checks passed. The two-case matrix filter and 7-request-cap
+integration checks passed; focused-1 passed 55 backend regressions before the last
+inspector refinement. Fast-1 passed seven children but failed strict Python typing
+on repeated nested JSON indexing; binding the checked group member list fixes the
+type issue without suppressions. Final fast-2 and browser-all4 remain in progress.
+
+Final browser-all4 passed 58 tests with unchanged source. A subsequent explicit
+evidence-failure check observed a loading message left visible while the error
+was behind the modal. The dialog now shows failure locally, bounds streamed
+display to 256 KiB without splitting a UTF-8 prefix, cancels unread/closed streams,
+and recovers a 401 read session once. Both browser faults were observed RED then
+GREEN; two new Node reader tests pass. Original evidence bytes are unchanged.
+Fast-3 passed all eight children with 442 Python and 20 Node tests.
+
+Browser-all5 passed 59 and failed one terminal-state wait. The retained trace
+shows admission at 09:51:33, actual worker start at 09:51:38, completion at
+09:51:44.669, and the five-second local read started at 09:51:43 still in flight
+when the old 12-second assertion ended. Execution sent exactly four requests.
+Ruling: give controlled execution-completion assertions a 30-second wait within
+the existing 40-second browser-test budget — process startup plus the approved
+five-second observation cadence can exceed 12 seconds under concurrent checks —
+cost if wrong: a genuine terminal-display stall can take up to 30 seconds to fail.
+No retry, verdict, request-count, evidence or source-hash assertion was weakened.
+This is an explicit test observation budget, not an increased endpoint budget.
+
+A further mixed-comparison visual fixture changes only the synthetic peer phase:
+stop fields recover, model mismatch persists, a duplicate stop appears, and a
+tool request receives HTTP 503. Both executions retain identical configuration
+and four-case scope. An initial malformed 200 response produced resolved failures
+rather than a verification gap; the fixture now expresses the intended unavailable
+verification through an actual 503, without editing runner outcomes or captures.
+Final mixed-state, full browser and task-done observations remain pending.
+
+Browser-all6 passed all 61 tests on unchanged source, including the real mixed
+comparison. Visual comparison then identified a remaining presentation defect:
+52 raw check rows buried the meaningful differences. The new pure grouping
+projection presents observation types with separate transition/check counts and
+unique affected-case scope, while retaining all 52 original pairs in a native
+technical disclosure. Missing checks stay visibly missing; gaps are grouped by
+case, rather than assigned a common cause. Group keys and disclosure state survive
+language/theme updates. Original assertions and comparison JSON are unchanged.
+The grouping test was observed RED then GREEN and verifies input immutability,
+member/check accounting, overlap and order independence. The browser grouping
+check also observed RED; original-scope and mixed-sample targeted checks passed.
+
+Ruling: group the primary comparison by observation family/transition and group
+verification gaps by affected case — the accepted companion calls for a scannable
+repair matrix, not a report-sized raw-check table — cost if wrong: distinct variants
+need expansion. Every raw member and both record links remain available; this is
+presentation grouping, not a root-cause claim or a new compatibility judgment.
+
+Browser-all7 passed all 61 tests on unchanged source, including keyboard group
+expansion, preserved disclosure after localization, complete raw pairs and narrow
+comparison layout. Focused-2 passed 56 backend regressions. Fast-4 exposed strict
+JSON list variance and a reused tuple/string variable; fast-5 passed typing but
+caught unnecessary comprehensions. Typed list extension preserves the same output
+without suppressions; final fast-6 is running. The previous full Python baseline
+remains Task 9's 687 tests; whole-W2 packaging, images and final review are pending.

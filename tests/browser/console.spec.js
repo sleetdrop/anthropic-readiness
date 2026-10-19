@@ -103,7 +103,6 @@ test("closing and reopening only observes; saved progress matches real requests"
   expect((await count(request)).count).toBe(1);
   await control(request, "release");
   await completed(reopened);
-  await reopened.locator("#execution-panel summary").first().click();
   await expect(reopened.locator("#case-progress")).toHaveText("4 / 4");
   await expect(reopened.locator("#request-progress")).toHaveText(/^4 \/ /u);
   expect((await count(request)).count).toBe(4);
@@ -122,20 +121,22 @@ test("active and queued cancellation preserve honest partial states", async ({
   await start(queued);
   await expect(queued.locator("#job-state")).toHaveText("排队中");
   await queued.locator("#cancel-run").click();
-  await expect(queued.locator("#job-state")).toHaveText("已取消");
-  await queued.locator("#execution-panel summary").first().click();
-  await expect(queued.locator("[data-case-state].pending").first()).toContainText("最后记录");
+  await expect(queued.locator("#job-state")).toHaveAttribute("data-lifecycle", "cancelled");
+  await queued.locator('.view-tabs a[href*="view=cases"]').click();
+  await expect(queued.locator(".case-item .status").first()).toHaveText("待评估");
   await page.locator("#cancel-run").click();
-  await expect(page.locator("#job-state")).toHaveText(/已取消|已中断/u);
+  await expect(page.locator("#job-state")).toHaveAttribute(
+    "data-lifecycle",
+    /cancelled|interrupted/u,
+  );
   expect((await count(request)).count).toBe(1);
-  await page.locator("#execution-panel summary").first().click();
+  await page.locator('.view-tabs a[href*="view=cases"]').click();
   const saved = await (
     await page.request.get(page.url().replace("/runs/", "/api/v1/runs/"))
   ).json();
   for (const item of saved.execution.case_states) {
-    const cell = page.locator(`[data-progress-case="${item.case_id}"] [data-case-state]`);
-    await expect(cell).toContainText(item.state);
-    if (["pending", "running"].includes(item.state)) await expect(cell).toContainText("最后记录");
+    const cell = page.locator(`[data-case-id="${item.case_id}"] .status`);
+    await expect(cell).toHaveClass(new RegExp("status-" + item.state.toLowerCase()));
   }
 });
 
@@ -161,41 +162,33 @@ test("expired session and persisted pageshow recover reads without resending", a
   expect((await count(request)).count).toBe(4);
 });
 
-test("matrix, figure tables, drawer and focus preserve the verified data", async ({
+test("coverage counts, checked field observations and evidence dialog preserve source facts", async ({
   page,
 }, info) => {
-  await page.goto("/runs/" + fixture().completed_id);
+  await page.goto(`/runs/${fixture().completed_id}?view=cases`);
   const data = await page.locator("#bootstrap").textContent();
-  const report = /** @type {{cases:unknown[],figures:{id:string,rows:unknown[][]}[]}} */ (
-    JSON.parse(data ?? "{}").run.report
-  );
-  expect(report.cases).toHaveLength(4);
-  await expect(page.locator(".capability-matrix tbody tr")).toHaveCount(3);
-  for (const figure of report.figures) {
-    const table = page.locator(`table[data-figure="${figure.id}"]`);
-    await expect(table.locator("tbody tr")).toHaveCount(figure.rows.length);
-    expect(await table.locator("tbody tr").allTextContents()).toEqual(
-      figure.rows.map((row) => row.map((value) => (value === null ? "—" : String(value))).join("")),
-    );
-  }
-  const filter = page.locator("[data-capability-filter]");
-  await filter.selectOption("attention");
+  const facts = JSON.parse(data ?? "{}").workbench.facts;
+  expect(facts.cases).toHaveLength(4);
+  await expect(page.locator(".coverage-matrix tbody tr")).toHaveCount(3);
+  await expect(page.locator(".case-item")).toHaveCount(4);
+  const filter = page.locator("#case-filter");
+  await filter.selectOption("FAIL");
   await filter.focus();
   await page.evaluate(async () => {
-    // The same module used by live fragment refreshes must preserve keyboard location.
-    const path = "/assets/web/report.js";
-    const { mountReport } = await import(path);
-    const panel = document.getElementById("report-panel");
-    if (panel) mountReport(panel, panel.innerHTML);
+    const path = "/assets/web/workbench.js";
+    const { patchElement } = await import(path);
+    const root = document.getElementById("workbench");
+    if (root) patchElement(root, root.cloneNode(true));
   });
   await expect(filter).toBeFocused();
-  await expect(filter).toHaveValue("attention");
-  const opener = page.locator('a[href^="#finding-"]').first();
+  await expect(filter).toHaveValue("FAIL");
+  await page.locator('.view-tabs a[href*="view=issues"]').click();
+  await expect(page.locator("#issue-inspector")).toContainText("stop_sequence");
+  const opener = page.locator("a[data-evidence-id]").first();
   await opener.focus();
-  await page.keyboard.press("Enter");
-  await expect(page.locator("#finding-drawer")).toBeVisible();
-  await expect(page.locator("#drawer-content")).toContainText("stop_sequence");
-  await page.screenshot({ path: info.outputPath("finding-drawer.png") });
+  await opener.press("Enter");
+  await expect(page.locator("#evidence-dialog")).toBeVisible();
+  await page.screenshot({ path: info.outputPath("evidence-dialog.png") });
   await page.keyboard.press("Escape");
   await expect(opener).toBeFocused();
 });
@@ -205,6 +198,7 @@ test("on-demand export previews selected files and downloads without model reque
   request,
 }, info) => {
   await page.goto("/runs/" + fixture().completed_id);
+  await page.locator("#open-export").click();
   await page.locator("#include-evidence").check();
   await page.locator("#preview-export").click();
   await expect(page.locator("#create-export")).toBeEnabled();
@@ -231,7 +225,9 @@ test("hostile upstream strings remain inert in source and live fragments", async
   await preview(page, "synthetic-hostile");
   await start(page);
   await completed(page);
-  await expect(page.locator("#findings")).toContainText("</script>");
+  await page.locator('.view-tabs a[href*="view=issues"]').click();
+  await page.locator("[data-issue-key]").last().click();
+  await expect(page.locator("#issue-inspector")).toContainText("</script>");
   const saved = await (
     await page.request.get(page.url().replace("/runs/", "/api/v1/runs/"))
   ).json();

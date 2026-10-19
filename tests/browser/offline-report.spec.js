@@ -60,12 +60,13 @@ test("server-rendered completed and interrupted records retain essentials withou
   const page = await context.newPage();
   const web = `http://127.0.0.1:${process.env.READINESS_BROWSER_PORT ?? "18765"}`;
   await page.goto(web + "/runs/" + fixture().completed_id);
-  await expect(page.locator("#overview h1")).toBeVisible();
-  const box = await page.locator("#overview h1").boundingBox();
+  await expect(page.locator(".run-heading h1")).toBeVisible();
+  const box = await page.locator(".run-heading h1").boundingBox();
   expect(box?.y).toBeLessThan(450);
-  await page.goto(web + "/runs/" + fixture().partial_id);
-  await expect(page.locator("#overview")).toContainText("部分记录");
-  await page.locator("#execution-panel summary").first().click();
-  await expect(page.locator("[data-case-state].running")).toContainText("最后记录");
+  await page.goto(web + "/runs/" + fixture().partial_id + "?view=cases");
+  await expect(page.locator(".source-notice").first()).toContainText("部分记录");
+  await expect(
+    page.locator(".case-item .last-recorded-state").filter({ hasText: "执行中" }),
+  ).toContainText("执行中");
   await context.close();
 });

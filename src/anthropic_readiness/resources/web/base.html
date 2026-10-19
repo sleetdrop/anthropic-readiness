@@ -10,7 +10,7 @@
   <body data-page="{{ bootstrap.page }}">
     <a class="skip-link" href="#main" data-i18n="shell.skip">{{ t('shell.skip') }}</a>
     <div class="app-layout">
-      <aside class="app-rail">
+      <aside class="app-rail" aria-label="{{ t('shell.local') }}" data-i18n-aria-label="shell.local">
         <a class="brand" href="/history">Anthropic Readiness</a>
         <nav class="side-nav" aria-label="{{ t('shell.local') }}">
           <a href="/history" {% if active in ['history','run'] %}aria-current="page"{% endif %}><img src="/assets/web/icons/document-text.svg" alt="" width="20" height="20" /><span data-i18n="nav.runs">{{ t('nav.runs') }}</span></a>
@@ -23,8 +23,8 @@
         <header class="topbar">
           <div class="breadcrumbs"><a href="/history" data-i18n="nav.runs">{{ t('nav.runs') }}</a>{% if target is defined and target.name %}<span aria-hidden="true">/</span><span class="truncate">{{ target.name }}</span>{% endif %}</div>
           <div class="presentation-controls">
-            <label class="sr-only" for="locale-choice" data-i18n="language.label">{{ t('language.label') }}</label><select id="locale-choice" aria-label="{{ t('language.label') }}"><option value="zh-CN" {% if presentation.locale == 'zh-CN' %}selected{% endif %}>中文</option><option value="en" {% if presentation.locale == 'en' %}selected{% endif %}>English</option></select>
-            <label class="sr-only" for="theme-choice" data-i18n="appearance.label">{{ t('appearance.label') }}</label><select id="theme-choice" aria-label="{{ t('appearance.label') }}">{% for theme in ['light','dark','system'] %}<option value="{{ theme }}" data-i18n="appearance.{{ theme }}" {% if presentation.theme == theme %}selected{% endif %}>{{ t('appearance.' + theme) }}</option>{% endfor %}</select>
+            <label class="sr-only" for="locale-choice" data-i18n="language.label">{{ t('language.label') }}</label><select id="locale-choice" data-i18n-aria-label="language.label" aria-label="{{ t('language.label') }}"><option value="zh-CN" {% if presentation.locale == 'zh-CN' %}selected{% endif %}>中文</option><option value="en" {% if presentation.locale == 'en' %}selected{% endif %}>English</option></select>
+            <label class="sr-only" for="theme-choice" data-i18n="appearance.label">{{ t('appearance.label') }}</label><select id="theme-choice" data-i18n-aria-label="appearance.label" aria-label="{{ t('appearance.label') }}">{% for theme in ['light','dark','system'] %}<option value="{{ theme }}" data-i18n="appearance.{{ theme }}" {% if presentation.theme == theme %}selected{% endif %}>{{ t('appearance.' + theme) }}</option>{% endfor %}</select>
             <span class="workspace-label" data-i18n="shell.local">{{ t('shell.local') }}</span>
           </div>
         </header>
@@ -36,6 +36,7 @@
     </div>
     <script id="bootstrap" type="application/json">{{ bootstrap | tojson }}</script>
     <script type="module" src="/assets/web/app.js"></script>
+    <script type="module" src="/assets/web/diagnostics.js"></script>
     {% if bootstrap.page == 'workbench' %}<script type="module" src="/assets/web/workbench-links.js"></script>{% endif %}
   </body>
 </html>

@@ -478,9 +478,10 @@ progress::-moz-progress-bar {
   display: grid;
   grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
   gap: 28px;
-  padding: 26px 0 34px;
+  padding: 26px 0;
 }
 .overview-columns h2 {
+  font-size: 22px;
   margin-bottom: 18px;
 }
 .attention {
@@ -522,23 +523,28 @@ tbody th {
 }
 .group-progress table {
   table-layout: fixed;
+  font-size: 15px;
+}
+.group-progress thead th {
+  font-size: 13px;
 }
 .group-progress thead th:first-child {
   width: 26%;
 }
 .group-progress thead th:nth-child(2) {
-  width: 43%;
+  width: 40%;
 }
 .group-progress thead th:nth-child(3) {
-  width: 23%;
+  width: 24%;
 }
 .group-progress thead th:last-child {
-  width: 8%;
+  width: 10%;
+  white-space: nowrap;
 }
 .group-progress th,
 .group-progress td {
-  padding-top: 15px;
-  padding-bottom: 15px;
+  padding-top: 12px;
+  padding-bottom: 12px;
 }
 .group-bar {
   display: flex;
@@ -581,6 +587,7 @@ tbody th {
 }
 .attention-title {
   min-width: 0;
+  font-size: 15px;
   font-weight: 550;
 }
 .attention-title.tone-fail {
@@ -597,7 +604,7 @@ tbody th {
 .dimension-summary {
   margin-top: 24px;
   color: var(--muted);
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.8;
 }
 .empty-attention {
@@ -816,6 +823,8 @@ details[open] > summary {
   font-size: 13px;
 }
 .view-toolbar label {
+  min-width: 0;
+  max-width: 100%;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -833,6 +842,9 @@ details[open] > summary {
 }
 .issue-list,
 .case-list {
+  max-height: min(65vh, 720px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
   padding-right: 22px;
 }
 .issue-item,
@@ -883,6 +895,24 @@ details[open] > summary {
   font-size: 12px;
   color: var(--muted);
 }
+.observation-cases {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.observation-cases a {
+  padding: 5px 9px;
+  border: 1px solid var(--readiness-control-border);
+  border-radius: 3px;
+  font-size: 12px;
+  color: var(--ink);
+  text-decoration: none;
+}
+.observation-cases a[aria-current] {
+  background: var(--readiness-selected);
+  border-color: var(--readiness-accent);
+}
 .field-comparison {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -928,6 +958,20 @@ details[open] > summary {
 }
 .coverage-matrix table {
   min-width: 600px;
+}
+.coverage-matrix th:first-child {
+  min-width: 140px;
+}
+.matrix-count {
+  font-weight: 600;
+}
+.matrix-state {
+  display: inline-block;
+  margin-right: 8px;
+}
+.status-pending,
+.status-running {
+  color: var(--readiness-neutral);
 }
 .coverage-matrix td {
   min-width: 100px;
@@ -1200,6 +1244,7 @@ dialog::backdrop {
     overflow-x: auto;
   }
   .view-tabs a {
+    margin-bottom: 0;
     font-size: 13px;
   }
   .run-metrics {
@@ -1298,4 +1343,35 @@ dialog::backdrop {
   :root {
     --app-alert-surface: #f4e8e2;
   }
+}
+
+.comparison-observations {
+  margin: 26px 0;
+}
+.comparison-group-table {
+  min-width: 700px;
+}
+.comparison-group-table th:first-child {
+  width: 34%;
+}
+.comparison-group-table details {
+  margin: 0;
+}
+.comparison-group-table summary {
+  font-weight: 600;
+}
+.comparison-member-list {
+  margin: 14px 0 0;
+  padding-left: 16px;
+  font-weight: 400;
+}
+.comparison-member-list li {
+  margin-bottom: 12px;
+}
+.comparison-member-list a {
+  font-size: 12px;
+}
+.comparison-coverage {
+  font-size: 13px;
+  margin: 14px 0;
 }
