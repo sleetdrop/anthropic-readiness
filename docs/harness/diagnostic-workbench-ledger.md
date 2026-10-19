@@ -564,6 +564,7 @@ unchanged. Focused-1 passed 18 new/legacy CLI, replay, serve and installation ch
 Logs remain under `artifacts/w2/task9/`.
 
 Final fast-1 passed all eight children (433 unit/harness tests), unchanged source
-fingerprint. Supplemental full Python regression is still running at this commit;
-its result must be recorded before subsequent source changes. No new image,
+fingerprint. At delivery commit `a1ba449`, supplemental full Python regression was
+still running. It subsequently passed 687 tests, zero failures/errors/skips,
+before any subsequent source changes. No new image,
 remote CI, or real endpoint acceptance is claimed.

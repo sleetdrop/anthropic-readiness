@@ -18,9 +18,8 @@ Tasks 0–9 (presentation foundation, diagnostic contracts, execution identity,
 pre-request provenance, full-scope preparation, bounded archives and read-only
 baseline import, portable exports, paired comparison and diagnostic CLI) are complete;
 Task 10 is next. Tasks 10–15 remain pending. Latest Task 9 checks passed the
-eight-check fast graph (433 unit/harness tests) and 18 focused CLI/install checks.
-Its supplemental full Python regression is still running; the last completed
-full baseline is Task 8's 681 tests in the prepared Linux Python 3.12 Dev Container.
+eight-check fast graph (433 unit/harness tests), 18 focused CLI/install checks and
+687 full Python regressions in the prepared Linux Python 3.12 Dev Container.
 Task 0 also passed 25 browser
 tests, including a RED/GREEN system/print cascade fix. These are foundation and
 regression checks, not whole-W2 visual or container-image acceptance.

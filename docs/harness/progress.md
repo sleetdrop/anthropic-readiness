@@ -683,6 +683,6 @@ Task 9 exposes standalone import, inspect, export, explicit retest and compariso
 Normal CLI live runs also retain pre-request/final provenance. All 18 focused
 new/legacy CLI, replay, serve and actual wheel-install checks passed; the clean
 CLI-only installation denies Web imports. Fast-1 passed all eight children
-(433 unit/harness tests) on unchanged source. Supplemental full regression is
-still running; Task 8's 681-test run remains the last completed full baseline.
+(433 unit/harness tests) on unchanged source. Supplemental full regression passed
+687 tests with no failures/errors/skips on the same source.
 Tasks 10–15 remain; no real endpoint or external publication was authorized.
