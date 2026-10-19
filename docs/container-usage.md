@@ -139,3 +139,28 @@ slow; keep original locked sources and extended timeouts rather than silently
 switching versions. Weekly/manual GitHub jobs run the same two-architecture full
 matrix without registry publication. Docker Hub setup/pushing is a later explicitly
 authorized operation, not part of these local checks.
+
+## Portable diagnosis in a local Web volume
+
+The workbench imports a ZIP through an explicit checked preview/activation flow;
+importing or opening it sends no model request. A baseline is a retained read-only
+source, not a credential or reusable arbitrary request template. Configure this
+computer's endpoint/key, review the full original scope and conditions, then start
+an explicit retest. Select that baseline in Compare before exporting if the new
+report should include the paired checks. Closing/restarting never starts a job.
+
+New exports use presentation 3.0, explicit Chinese/English and light/dark/system
+choices, a document-view and agent guide. An export preview is invalidated by a
+presentation change. Standalone files read offline; full ZIPs also retain original
+source/evidence and are not anonymized. Review endpoint/model/business context
+before sharing. Legacy/partial/evidence-omitted imports cannot establish verified
+repair; hashes are not signatures or provider authentication.
+
+The existing full image controller now requires `web-diagnostic-import`,
+`web-diagnostic-retest` and `web-import-persistence` observations. It transfers only
+the source ZIP to a separate receiver volume, supplies an ephemeral receiver key,
+executes all four cases, exports the comparison and restarts that receiver. Exact
+archive/export bytes and unchanged request counts are checked after restart.
+Old JSON export compatibility is checked separately from current presentation.
+The installed-template probe compiles the current template inventory. These are
+synthetic observations of the selected image, not endpoint certification.

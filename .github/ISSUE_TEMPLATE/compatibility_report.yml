@@ -18,3 +18,17 @@ body:
       description: "Checks run, versions, sanitized reproduction and remaining unknown or not_run checks. See CONTRIBUTING.md."
     validations:
       required: true
+  - type: textarea
+    id: source_identity
+    attributes:
+      label: Source identity and delivered evidence
+      description: "Public run/result/recipe/implementation digests or unknown; report language/theme, partial/complete, evidence delivered/omitted. A report alias does not anonymize the full ZIP. Review archives before privately sharing; do not upload an unreviewed archive here."
+    validations:
+      required: true
+  - type: textarea
+    id: repair_comparison
+    attributes:
+      label: Repair verification, when applicable
+      description: "Original and retest scope; recovered/persistent/new-failure/gap counts and unmatched checks; semantic/context changes. State not_run if no complete original-scope retest. Finding labels such as F01 are display labels, not cross-run identities."
+    validations:
+      required: false

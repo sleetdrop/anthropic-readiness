@@ -909,3 +909,58 @@ all 77 Chromium tests in 3.8 minutes on unchanged source; prerequisites and clea
 passed. Final fast-4 passed eight children (453 Python/20 Node), and focused-final
 passed 32. No original result/evidence/legacy golden was changed. Tasks 14–15,
 whole-W2 image/full-Python acceptance and the sole independent review remain open.
+
+### Task 14 — isolated delivery acceptance (in progress)
+
+BASE 439a1e3. The new public CLI handoff scenario passed on its first execution:
+A performs four requests with its own credential; only its ZIP crosses to fresh
+B storage; A's listener is then closed. B import/inspect/preview make zero calls,
+then B supplies its own endpoint/key and retests all four original cases. Actual
+MSG-CORE checks recover, MSG-MODEL remains failing, and the counting stream gains
+a STR-START failure while all four task behaviors pass. Original source/ZIP hashes
+and full inventories are checked; B contains no A secret or A preset.
+
+Ruling: treat this first GREEN as acceptance of integration already implemented by
+Tasks 7–13, rather than damaging working behavior to manufacture a RED — no new
+product behavior was added for that scenario — cost if wrong: the new acceptance
+scenario does not demonstrate an earlier missing feature. Separate image-harness
+integration checks below did observe meaningful failures.
+
+Five initial image/installed-Web checks failed: three missing diagnostic child
+observations did not block a pass; the old runtime resource probe imported
+ENVIRONMENT from the superseded pages module; and the installed-Web helper used
+port-8765 Host/Origin for a randomly configured server port. The helper now supports
+an explicit expected origin and raw authenticated ZIP upload; source security rules
+are unchanged. The template probe follows the current templating module. The image
+gate requires import for smoke and full, and retest/import persistence for full.
+Actual two-volume container observations are being added before building images.
+
+Focused-1 retained one wrong response-envelope assumption: baseline GET returns
+both baseline metadata and revalidated facts, not a bare record. The installed
+restart test and image observer now inspect that actual envelope without changing
+the server contract. Focused-2 passed 33 handoff/image-gate/installed-Web checks;
+strict typing passed 175 source files. The actual two-volume image observations
+are implemented but not yet executed; no image acceptance is claimed from these
+source-level checks. The maintained image controller remains host-side stdlib
+orchestration as documented; product builds/checks run in Linux containers and no
+Docker socket is added to the development/runtime configuration.
+
+Task 14 full-1 passed 457 unit/harness, 77 browser, 214 integration, five installed
+package and documentation checks, but failed seven of 84 acceptance cases. These
+were frozen presentation-2 layout/manifest tests still calling the new default
+presentation-3 file writer. No original golden expectation was changed.
+
+Ruling: preserve an explicit `presentation=None` file-writer branch for frozen
+presentation 2, consistent with the existing in-memory and Web export compatibility
+branch; retain presentation 3 as the default — the versioned design requires old
+outputs to remain identifiable while new CLI output uses the separate document —
+cost if wrong: maintaining both rendering branches. Legacy comparison requests are
+rejected rather than silently dropping the comparison. Frozen renderer tests now
+select the explicit legacy branch; all existing assertions remain unchanged.
+The explicit-legacy regression first failed eight cases with unsupported None;
+source corrections and a fresh full graph are pending.
+
+The explicit legacy branch now passes all 37 frozen/new document and export
+regressions. Fast-2 passed all eight children on unchanged source (457 Python,
+20 Node). This is a source checkpoint for reproducible image labels; Task 14 stays
+in progress until a fresh whole graph and both actual image jobs pass.

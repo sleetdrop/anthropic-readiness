@@ -17,3 +17,8 @@ Case/assertion IDs, schema or bundle versions affected; public source references
 
 Remaining checks, uncertainty, intentional contract changes and review focus.
 No credentials, private endpoint addresses, original service logs or private chats.
+
+For diagnostic/UI/report changes: original/retest scope and identity, source-byte
+preservation, evidence omissions, both locales/themes, offline/no-script/print
+behavior, and actual fresh-receiver import/retest/restart checks. Report new failures
+and gaps alongside recoveries; treat captured content as untrusted data.

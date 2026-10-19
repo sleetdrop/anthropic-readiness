@@ -8,8 +8,10 @@ import json
 import platform
 import time
 import urllib.error
+import urllib.parse
 import urllib.request
 import zipfile
+from collections.abc import Callable
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
@@ -21,20 +23,28 @@ TERMINAL = {"completed", "cancelled", "interrupted", "error"}
 
 
 class WebClient:
-    def __init__(self, base: str) -> None:
+    def __init__(self, base: str, *, origin: str = "http://127.0.0.1:8765") -> None:
         self.base = base
+        self.origin = origin
         self.cookie = ""
         self.csrf = ""
 
-    def request(self, path: str, body: dict[str, Any] | None = None) -> bytes:
-        headers = {"Host": "127.0.0.1:8765", "Origin": "http://127.0.0.1:8765"}
+    def request(
+        self,
+        path: str,
+        body: dict[str, Any] | None = None,
+        *,
+        payload: bytes | None = None,
+        content_type: str = "application/json",
+    ) -> bytes:
+        headers = {"Host": urllib.parse.urlsplit(self.origin).netloc, "Origin": self.origin}
         if self.cookie:
             headers["Cookie"] = self.cookie
-        if body is not None:
-            headers.update({"Content-Type": "application/json", "X-CSRF-Token": self.csrf})
+        if body is not None or payload is not None:
+            headers.update({"Content-Type": content_type, "X-CSRF-Token": self.csrf})
         request = urllib.request.Request(
             self.base + path,
-            data=json.dumps(body).encode() if body is not None else None,
+            data=json.dumps(body).encode() if body is not None else payload,
             headers=headers,
         )
         with urllib.request.urlopen(request, timeout=15) as response:
@@ -42,6 +52,9 @@ class WebClient:
             if cookie:
                 self.cookie = cookie.split(";", 1)[0]
             return bytes(response.read())
+
+    def upload(self, path: str, data: bytes) -> bytes:
+        return self.request(path, payload=data, content_type="application/zip")
 
     def json(self, path: str, body: dict[str, Any] | None = None) -> dict[str, Any]:
         value: dict[str, Any] = json.loads(self.request(path, body))
@@ -58,7 +71,7 @@ class WebClient:
                     raise RuntimeError("web_start_timeout") from None
                 time.sleep(0.1)
 
-    def start(self, url: str) -> str:
+    def target(self, url: str) -> dict[str, Any]:
         # This file is an acceptance harness, never a provider configuration.
         target: dict[str, Any] = {
             "schema_version": "1.0",
@@ -86,6 +99,10 @@ class WebClient:
                 "read_timeout_s": 5,
             },
         }
+        return target
+
+    def start(self, url: str) -> str:
+        target = self.target(url)
         frozen = self.json(
             "/api/v1/plans",
             {"target": target, "profiles": ["anthropic-basic", "anthropic-tools-smoke"]},
@@ -125,6 +142,141 @@ def wait_count(acceptance: Acceptance, expected: int) -> None:
         time.sleep(0.05)
 
 
+def run_diagnostic_handoff(
+    a: Acceptance,
+    start: Callable[[str, str], tuple[str, WebClient]],
+    passed: Callable[[str, dict[str, Any]], None],
+    archive_bytes: bytes,
+    policy: dict[str, Any],
+) -> None:
+    """Use a fresh receiver volume; only the source archive crosses environments."""
+    volume = a.token + "-receiver-data"
+    a.volumes.append(volume)
+    a.docker("web-receiver-volume-create", ["volume", "create", volume])
+    name, client = start("receiver", volume)
+    if client.json("/api/v1/runs")["items"]:
+        raise RuntimeError("web_receiver_storage_not_fresh")
+    before = request_count(a)
+    preview = json.loads(client.upload("/api/v1/diagnostics/imports/preview", archive_bytes))
+    if not preview["eligibility"]["retest"]:
+        raise RuntimeError("web_diagnostic_import_eligibility")
+    imported = client.json(
+        "/api/v1/diagnostics/imports/commit", {"preview_id": preview["preview_id"]}
+    )
+    baseline_id = str(imported["id"])
+    archive_hash = hashlib.sha256(archive_bytes).hexdigest()
+    if imported["archive_sha256"] != archive_hash or request_count(a) != before:
+        raise RuntimeError("web_import_identity_or_requests")
+    passed(
+        "web-diagnostic-import",
+        {
+            "baseline_id": baseline_id,
+            "archive_sha256": archive_hash,
+            "extra_requests": 0,
+            "fresh_receiver_volume": True,
+        },
+    )
+    if a.scope != "full":
+        return
+    target = client.target("http://synthetic-peer:8080/cases")
+    target["name"] = "synthetic-container-receiver"
+    target["auth"] = {"mode": "api_key", "credential_env": "BROWSER_AUTH_TOKEN"}
+    prepared = client.json(
+        "/api/v1/diagnostics/retests/preview", {"baseline_id": baseline_id, "target": target}
+    )
+    frozen = prepared["plan"]
+    if frozen["plan"]["planned_requests"] != 4 or request_count(a) != before:
+        raise RuntimeError("web_retest_preview_scope_or_requests")
+    credential = "synthetic-receiver-only-key"
+    admitted = client.json(
+        "/api/v1/runs",
+        {
+            "plan_id": frozen["id"],
+            "live_consent": True,
+            "idempotency_key": frozen["id"],
+            "credential": credential,
+        },
+    )
+    run_id = str(admitted["id"])
+    observed = client.wait(run_id)
+    if observed["job"]["state"] != "completed" or observed["execution"]["actual_requests"] != 4:
+        raise RuntimeError("web_retest_completion")
+    if len(observed["report"]["cases"]) != 4 or any(
+        case["status"] != "PASS" for case in observed["report"]["cases"]
+    ):
+        raise RuntimeError("web_retest_scope_or_verdict")
+    calls = [
+        json.loads(line) for line in (a.peer_state / "requests.jsonl").read_text().splitlines()
+    ][before:]
+    if len(calls) != 4 or any(not call["credential_seen"] for call in calls):
+        raise RuntimeError("web_retest_fresh_credential")
+    comparison = client.json(
+        "/api/v1/diagnostics/comparisons",
+        {"before": {"kind": "baseline", "id": baseline_id}, "after": {"kind": "run", "id": run_id}},
+    )
+    if (
+        not comparison["comparable"]
+        or comparison["coverage"]["matched_cases"] != 4
+        or comparison["summary"]["passed_both"] <= 0
+    ):
+        raise RuntimeError("web_retest_comparison")
+    export_policy = {**policy, "baseline": {"kind": "baseline", "id": baseline_id}}
+    export_preview = client.json(f"/api/v1/runs/{run_id}/exports/preview", export_policy)
+    if "comparison.json" not in export_preview["files"]:
+        raise RuntimeError("web_retest_export_preview")
+    exported = client.json(f"/api/v1/runs/{run_id}/exports", export_policy)
+    exported_bytes = client.request(f"/api/v1/runs/{run_id}/exports/{exported['export_id']}")
+    (a.output / "web-diagnostic-export.zip").write_bytes(exported_bytes)
+    with zipfile.ZipFile(io.BytesIO(exported_bytes)) as archive:
+        if json.loads(archive.read("comparison.json")) != comparison:
+            raise RuntimeError("web_retest_export_comparison")
+        for member in archive.namelist():
+            if credential.encode() in archive.read(member):
+                raise RuntimeError("web_retest_credential_persisted")
+    if request_count(a) != before + 4:
+        raise RuntimeError("web_retest_extra_request")
+    passed(
+        "web-diagnostic-retest",
+        {
+            "run_id": run_id,
+            "actual_requests": 4,
+            "matched_cases": 4,
+            "fresh_credential": True,
+            "extra_requests": 0,
+        },
+    )
+    a.docker("web-stop-receiver", ["stop", "--time", "15", name], timeout=30)
+    a.docker("web-remove-receiver", ["rm", name])
+    _, restored = start("receiver-restored", volume)
+    revalidated = restored.json("/api/v1/diagnostics/baselines/" + baseline_id)
+    baseline = revalidated["baseline"]
+    if not revalidated["facts"]["eligibility"]["compare"]:
+        raise RuntimeError("web_import_revalidation_failed")
+    if (
+        baseline["id"] != baseline_id
+        or baseline["archive_sha256"] != archive_hash
+        or not baseline["eligibility"]["compare"]
+    ):
+        raise RuntimeError("web_import_not_persistent")
+    if restored.json("/api/v1/runs/" + run_id)["report"] != observed["report"]:
+        raise RuntimeError("web_retest_result_changed_on_restart")
+    if (
+        restored.request(f"/api/v1/runs/{run_id}/exports/{exported['export_id']}") != exported_bytes
+        or request_count(a) != before + 4
+    ):
+        raise RuntimeError("web_import_restart_changed_export_or_requests")
+    passed(
+        "web-import-persistence",
+        {
+            "baseline_id": baseline_id,
+            "run_id": run_id,
+            "archive_sha256": archive_hash,
+            "export_sha256": hashlib.sha256(exported_bytes).hexdigest(),
+            "extra_requests": 0,
+        },
+    )
+
+
 def run_web_checks(a: Acceptance, host_url: str) -> None:
     def passed(name: str, observations: dict[str, Any]) -> None:
         path = a.output / (name + ".json")
@@ -150,14 +302,14 @@ def run_web_checks(a: Acceptance, host_url: str) -> None:
             "python",
             a.web,
             "-c",
-            "import os,shutil,importlib.util; from importlib.resources import files; from anthropic_readiness.web.pages import ASSETS,ENVIRONMENT; assert os.getuid()==10001; assert not any(shutil.which(x) for x in ('uv','git','node','npm','pytest','chromium')); assert importlib.util.find_spec('pytest') is None; assert not os.path.exists('/build'); [ENVIRONMENT.get_template(n) for n in ('base.html','configure.html','run.html','history.html')]; assert all(files('anthropic_readiness').joinpath('resources/'+n).is_file() for n in ASSETS); print('installed Web resources and nonroot isolation verified')",
+            "import os,shutil,importlib.util; from importlib.resources import files; from anthropic_readiness.web.pages import ASSETS; from anthropic_readiness.web.templating import ENVIRONMENT; assert os.getuid()==10001; assert not any(shutil.which(x) for x in ('uv','git','node','npm','pytest','chromium')); assert importlib.util.find_spec('pytest') is None; assert not os.path.exists('/build'); [ENVIRONMENT.get_template(n) for n in ENVIRONMENT.list_templates()]; assert all(files('anthropic_readiness').joinpath('resources/'+n).is_file() for n in ASSETS); print('installed Web resources and nonroot isolation verified')",
         ],
     )
     volume = a.token + "-web-data"
     a.volumes.append(volume)
     a.docker("web-volume-create", ["volume", "create", volume])
 
-    def start(suffix: str) -> tuple[str, WebClient]:
+    def start(suffix: str, data_volume: str | None = None) -> tuple[str, WebClient]:
         name = a.token + "-web-" + suffix
         a.containers.append(name)
         args = [
@@ -179,7 +331,7 @@ def run_web_checks(a: Acceptance, host_url: str) -> None:
             "-p",
             "127.0.0.1::8765",
             "-v",
-            volume + ":/data",
+            (data_volume or volume) + ":/data",
         ]
         if platform.system() == "Linux":
             args.extend(["--add-host", "host.docker.internal:host-gateway"])
@@ -213,7 +365,12 @@ def run_web_checks(a: Acceptance, host_url: str) -> None:
         "web-assessment",
         {"run_id": run_id, "actual_requests": 4, "cases": 4, "data_kind": "synthetic"},
     )
-    policy = {"formats": ["html", "markdown", "json"], "include_evidence": True}
+    policy = {
+        "schema_version": "2.0",
+        "formats": ["html", "markdown", "json"],
+        "include_evidence": True,
+        "presentation": {"schema_version": "1.0", "locale": "en", "theme": "dark"},
+    }
     client.json(f"/api/v1/runs/{run_id}/exports/preview", policy)
     created = client.json(f"/api/v1/runs/{run_id}/exports", policy)
     raw = client.request(f"/api/v1/runs/{run_id}/exports/{created['export_id']}")
@@ -229,6 +386,12 @@ def run_web_checks(a: Acceptance, host_url: str) -> None:
             if hashlib.sha256(data).hexdigest() != entry["sha256"] or len(data) != entry["bytes"]:
                 raise RuntimeError("web_export_hash")
         original = archive.read("result.json")
+        document = json.loads(archive.read("document-view.json"))
+        if (
+            manifest["presentation_version"] != "3.0"
+            or document["presentation"] != policy["presentation"]
+        ):
+            raise RuntimeError("web_export_presentation_ignored")
     result_hash = hashlib.sha256(original).hexdigest()
     if result_hash != manifest["source_result_sha256"] or request_count(a) != before + 4:
         raise RuntimeError("web_export_source_or_requests")
@@ -236,9 +399,16 @@ def run_web_checks(a: Acceptance, host_url: str) -> None:
         "web-exports",
         {"source_sha256": result_hash, "files": len(manifest["files"]), "extra_requests": 0},
     )
+    legacy = client.json(
+        f"/api/v1/runs/{run_id}/exports", {"formats": ["json"], "include_evidence": False}
+    )
+    if legacy["manifest"]["presentation_version"] != "2.0":
+        raise RuntimeError("web_legacy_export_version")
+    run_diagnostic_handoff(a, start, passed, raw, policy)
     if a.scope != "full":
         return
     before = request_count(a)
+
     cancelled = client.start("http://synthetic-peer:8080/pings")
     wait_count(a, before + 1)
     client.json(f"/api/v1/runs/{cancelled}/cancel", {})

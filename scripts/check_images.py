@@ -48,10 +48,19 @@ def assess_image_checks(
                 "web-pages",
                 "web-assessment",
                 "web-exports",
+                "web-diagnostic-import",
             }
         )
         if scope == "full":
-            required.update({"web-volume-restart", "web-cancellation", "web-host-path"})
+            required.update(
+                {
+                    "web-volume-restart",
+                    "web-cancellation",
+                    "web-host-path",
+                    "web-diagnostic-retest",
+                    "web-import-persistence",
+                }
+            )
     if scope == "full":
         required.add("dev-offline-full")
     observed = {str(record["id"]) for record in records if record["status"] == "passed"}

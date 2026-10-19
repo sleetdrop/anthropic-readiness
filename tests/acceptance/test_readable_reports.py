@@ -86,7 +86,7 @@ def test_grouped_findings_explain_missing_fields_and_alias_without_rescoring(
     source = assessment(tmp_path / "source")
     original = source.read_bytes()
     destination = tmp_path / "readable"
-    render_from_file(source, destination)
+    render_from_file(source, destination, presentation=None)
     assert source.read_bytes() == original == (destination / "result.json").read_bytes()
     html = (destination / "report.html").read_text()
     md = (destination / "report.md").read_text()
@@ -118,7 +118,7 @@ def test_invalid_evidence_never_becomes_a_field_diagnosis(tmp_path: Path) -> Non
     result = result_from_document(object_value(strict_json(source.read_text())))
     first_body = next(ref for ref in result.evidence if ref.path.endswith("body.bin"))
     (source.parent / first_body.path).write_text('{"model":"forged-diagnostic-value"}')
-    write_reports(result, source.parent)
+    write_reports(result, source.parent, presentation=None)
     text = (source.parent / "report.md").read_text()
     assert "证据未完整核验，未提取字段级说明" in text
     assert "forged-diagnostic-value" not in text
@@ -148,7 +148,7 @@ def test_verified_diagnostic_strings_cannot_inject_report_markup(tmp_path: Path)
         transport,
         out,
     )
-    write_reports(result, out)
+    write_reports(result, out, presentation=None)
     html = (out / "report.html").read_text()
     md = (out / "report.md").read_text()
     assert "<script>" not in html + md
@@ -160,7 +160,7 @@ def test_verified_diagnostic_strings_cannot_inject_report_markup(tmp_path: Path)
 def test_reference_informed_report_connects_summary_findings_and_source(tmp_path: Path) -> None:
     source = assessment(tmp_path / "source")
     out = tmp_path / "report"
-    render_from_file(source, out)
+    render_from_file(source, out, presentation=None)
     html = (out / "report.html").read_text()
     markdown = (out / "report.md").read_text()
     for text in (html, markdown):
@@ -190,7 +190,7 @@ def test_reference_informed_report_connects_summary_findings_and_source(tmp_path
 def test_grouped_excerpts_retain_distinct_observed_stop_values(tmp_path: Path) -> None:
     source = assessment(tmp_path / "source")
     out = tmp_path / "report"
-    render_from_file(source, out)
+    render_from_file(source, out, presentation=None)
     html = (out / "report.html").read_text()
     markdown = (out / "report.md").read_text().split("## 技术附录", 1)[0]
     assert "&quot;stop_reason&quot;: &quot;tool_use&quot;" in html
@@ -201,7 +201,7 @@ def test_grouped_excerpts_retain_distinct_observed_stop_values(tmp_path: Path) -
 def test_evidence_warning_precedes_case_results(tmp_path: Path) -> None:
     source = ROOT / "tests/fixtures/results/mixed.json"
     out = tmp_path / "report"
-    render_from_file(source, out)
+    render_from_file(source, out, presentation=None)
     for name in ("report.html", "report.md"):
         text = (out / name).read_text()
         assert text.index("证据未完整核验") < text.index("用例结果")
@@ -230,7 +230,7 @@ def test_other_core_failure_is_not_presented_as_missing_stop_fields(tmp_path: Pa
         UsageDefectTransport(),
         out,
     )
-    write_reports(result, out)
+    write_reports(result, out, presentation=None)
     text = (out / "report.html").read_text()
     assert "消息结构不符合要求" in text
     assert "停止字段不完整" not in text

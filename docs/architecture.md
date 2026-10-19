@@ -51,7 +51,7 @@ file hashes as independent proof of who produced a capture.
 
 ## Local console and shared engine
 
-W1 adds a local optional Web adapter over the same application/runner used by CLI.
+The optional Web adapter and CLI use the same application/runner.
 `application` builds canonical plans and binds ephemeral credentials. Pure operational
 values/ports and reduction code do not import Web/SQLite/filesystem adapters.
 The parent-side job service owns SQLite admission, immutable plan identity and the
@@ -71,19 +71,54 @@ strict JSON and safe exception responses. SSE carries observations, snapshots an
 recoverable cursors, not execution commands. Closing a browser or reconnecting cannot
 start/cancel a job. API/page reads and exports all use the verified source loader.
 
-`report_sources` performs bounded path/hash/schema/identity verification; pure
-`report_view` projects immutable facts into cases, findings and four stable figures.
-Shared packaged HTML/CSS/plain JS renders server pages and standalone exports with
-native SVG, equal data tables, keyboard navigation and print essentials. Report
-projection/presentation versions do not change original result/capture judgments.
-ZIP publication copies and hashes the actual selected bytes, then exclusively
-publishes a sealed record last. Unpublished/changed files cannot become a clean
-export. An exported hash inventory proves bytes, not independent authenticity.
+`report_sources` performs bounded path/hash/schema/identity verification. Frozen
+report-view 1.0/presentation 2.0 facts remain a compatibility boundary. Python
+file writers select this frozen branch only with explicit `presentation=None`;
+their default and the public CLI produce presentation 3.0. The legacy branch
+rejects a paired comparison instead of silently discarding it.
+`workbench` composes operational views; `documents` composes presentation-3 reading
+without an embedded report in the application. Both preserve original case/check
+judgments. Document-only routing omission never rewrites verdict/model strings.
+The pure projection has no per-call resource I/O; checked schema compilation is
+cached at the existing report-value boundary. Renderers own escaping/localization.
+
+Independent HTML has packaged local styles/scripts, two catalogs and one factual
+dataset, meaningful captions/coverage denominators and equivalent tables. Native
+impact bars count distinct affected cases; overlapping families are not summed.
+Only recorded timing that explains a finding merits a timing figure. No-script
+reading and selected-language light printing remain usable. Legacy rendering/assets
+remain explicit compatibility paths. Presentation changes do not change original
+result/capture judgments or core execution identity.
+
+Diagnostic services are shared by CLI and Web. Before requests, an immutable
+assessment-context header binds the frozen plan, recipe and installed code/rule/
+relevant-dependency identity; final verification is a separate sidecar. Recipes
+regenerate the entire original scope from installed cases and never execute archive
+code or templates. Comparison joins canonical case/request/check identities and
+versions, never display labels. Semantic changes are incomparable; context changes
+are disclosed. Recovery is scoped to matching checks and does not suppress new
+failures, gaps, unmatched members or required-coverage deficits.
+
+ZIP intake is a bounded classic archive with streamed actual expansion/count/time
+limits, safe relative names and no links/ZIP64/execution. Session-bound previews
+activate an immutable baseline only after complete verification and an atomic
+commit marker. SQLite is a rebuildable index, not proof. Reopen revalidates source,
+recipe/evidence relationships and implementation eligibility. Unknown lineage,
+partial or evidence-omitted sources remain read-only and cannot mint proof.
+
+Exports preserve original bytes with explicit omissions; a sealed publication
+record is last. Presentation-3 uses document-view 1.0, document-manifest 2.0 and
+export-manifest 2.0. HTTP diagnostic-export variants honor explicit locale/theme
+and optional owned baseline; old request/response variants retain presentation 2.
+CLI-only document rendering imports no optional Web dependency. Original raw source
+in full packages can retain endpoint/auth-reference/model/business context; alias
+presentation is not archive anonymization. Hashes detect byte changes and are not
+signatures, source authentication or independent certification.
 
 The `web` dependency extra and Docker target are independent from minimal CLI
 installation and `runtime`. Node/Chromium belong only to development/CI. A personal
 Compose deployment binds the host port to loopback and stores data in one owned
 nonroot volume with a read-only root filesystem. This is not a shared-host service.
-See the [W1 specification](superpowers/specs/2026-10-16-local-web-console-design.md)
-and [W1 ledger](harness/web-console-ledger.md); they do not expand the four-case
+See the [W2 specification](superpowers/specs/2026-10-18-diagnostic-workbench-design.md)
+and [W2 ledger](harness/diagnostic-workbench-ledger.md); they do not expand the four-case
 protocol scope into tool loops, API version matrices or client certification.

@@ -306,3 +306,68 @@ def test_unexpected_controller_failure_still_has_a_failed_observation(
     assert record["status"] == "failed"
     assert record["missing_checks"]
     assert "synthetic_controller_failure" in record["error"]
+
+
+@pytest.mark.parametrize(
+    "missing", ["web-diagnostic-import", "web-diagnostic-retest", "web-import-persistence"]
+)
+def test_w2_image_acceptance_requires_actual_diagnostic_children(missing: str) -> None:
+    required = {
+        *WEB_CHECKS,
+        "engine-architecture",
+        "dev-offline-full",
+        "web-diagnostic-import",
+        "web-diagnostic-retest",
+        "web-import-persistence",
+    }
+    records: list[dict[str, object]] = [
+        {"id": name, "status": "passed"} for name in required if name != missing
+    ]
+    status, absent = assess_image_checks(records, ("web",), "full")
+    assert status == "blocked"
+    assert missing in absent
+
+
+def test_installed_web_resource_probe_imports_current_module_boundaries(tmp_path: Path) -> None:
+    import ast
+    import subprocess
+
+    from scripts.web_image_checks import run_web_checks
+
+    captured: list[str] = []
+
+    class ProbeCaptured(Exception):
+        pass
+
+    class Probe(Acceptance):
+        def docker(
+            self, label: str, args: list[str], expected: int = 0, timeout: float = 120
+        ) -> str:
+            if label == "web-image-inspect":
+                return json.dumps(
+                    {
+                        "Config": {
+                            "Labels": {"io.anthropic-readiness.image-context": self.image_context}
+                        }
+                    }
+                )
+            if label == "web-default-nonroot":
+                captured.append(args[-1])
+                raise ProbeCaptured
+            raise AssertionError(label)
+
+    with pytest.raises(ProbeCaptured):
+        run_web_checks(Probe(tmp_path, "linux/arm64", "full"), "http://synthetic.invalid/cases")
+    tree = ast.parse(captured[0])
+    imports = ast.Module(
+        body=[node for node in tree.body if isinstance(node, (ast.Import, ast.ImportFrom))],
+        type_ignores=[],
+    )
+    result = subprocess.run(
+        [sys.executable, "-c", ast.unparse(imports)],
+        capture_output=True,
+        text=True,
+        check=False,
+        timeout=10,
+    )
+    assert result.returncode == 0, result.stderr

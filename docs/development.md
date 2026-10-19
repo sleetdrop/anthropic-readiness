@@ -95,3 +95,32 @@ records both environments; an emulated developer browser that loses fractional
 numbers is explicitly unaccepted. The prerequisite rejects invalid arithmetic before
 UI judgment, and full acceptance also calibrates black/white contrast without
 disabling any Axe rule. Native amd64 CI is a separate observation from local arm64.
+
+## Diagnostic workbench and document changes
+
+The W2 flows use the same locked developer environment and required CI graph.
+Useful focused checks (the full graph remains required):
+
+```sh
+UV_OFFLINE=1 uv run --frozen python -m pytest -q \
+  tests/acceptance/test_diagnostic_handoff.py \
+  tests/acceptance/test_diagnostic_documents.py \
+  tests/acceptance/test_web_package.py
+```
+
+The first test transfers only an archive between fresh A/B data roots, shuts down
+A's peer, supplies B's own target/credential and retests all four original cases.
+It checks real validator recovery/persistent/new-failure transitions, unchanged
+source bytes, archive inventory and zero import/preview/read requests. Installed
+Web checks re-open an imported baseline after a real service restart. Image full
+checks repeat import, explicit retest, comparison/export and restart in a separate
+receiver volume. Smoke requires actual import but does not substitute for full
+retest/persistence/host-route/development checks.
+
+Report presentation is separate from source judgment. New file/CLI/Web-control
+outputs use document-view 1.0/presentation 3.0, a checked document-manifest 2.0 and
+export-manifest 2.0. Existing report-view/presentation-2 resources and old HTTP
+export variants remain compatibility paths. Check both locales and paired themes,
+no-script/core print reading, local file controls without storage/network, source
+hashes, scope denominators and privacy-field omission. Credential reference names
+can equal verdict/model strings; never redact them by global word replacement.

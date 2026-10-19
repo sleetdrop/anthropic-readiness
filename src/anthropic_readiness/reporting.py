@@ -82,9 +82,30 @@ def write_projection(
     source: ReportSource,
     output_dir: Path,
     *,
-    presentation: PresentationOptions = DEFAULT_PRESENTATION,
+    presentation: PresentationOptions | None = DEFAULT_PRESENTATION,
     comparison: Comparison | None = None,
 ) -> None:
+    if presentation is None:
+        if comparison is not None:
+            raise ValueError("legacy_presentation_comparison_unsupported")
+        legacy = build_report_view(source)
+        atomic_write(output_dir / "report.html", render_report_html(legacy).encode())
+        atomic_write(output_dir / "report.md", render_report_markdown(legacy).encode())
+        atomic_write(output_dir / "report-view.json", json_bytes(legacy.document))
+        atomic_write(
+            output_dir / "report-manifest.json",
+            json_bytes(
+                {
+                    "schema_version": "1.0",
+                    "presentation_version": "2.0",
+                    "run_id": legacy.document["run_id"],
+                    "assessment_id": source.result.assessment_id if source.result else None,
+                    "source_result_sha256": source.result_sha256,
+                    "evidence_verification": source.evidence_verification,
+                }
+            ),
+        )
+        return
     view = build_document_view(source, presentation=presentation, comparison=comparison)
     atomic_write(output_dir / "report.html", render_document_html(view).encode())
     atomic_write(output_dir / "report.md", render_document_markdown(view).encode())
@@ -109,7 +130,7 @@ def write_reports(
     result: RunResult,
     output_dir: Path,
     *,
-    presentation: PresentationOptions = DEFAULT_PRESENTATION,
+    presentation: PresentationOptions | None = DEFAULT_PRESENTATION,
     comparison: Comparison | None = None,
 ) -> None:
     source = load_report_source(output_dir)
@@ -122,7 +143,7 @@ def render_from_file(
     source: Path,
     destination: Path,
     *,
-    presentation: PresentationOptions = DEFAULT_PRESENTATION,
+    presentation: PresentationOptions | None = DEFAULT_PRESENTATION,
     comparison: Comparison | None = None,
 ) -> None:
     original = source_bytes(source.parent, source.name)

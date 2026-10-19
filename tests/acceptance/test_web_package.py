@@ -128,3 +128,53 @@ def test_missing_web_asset_fails_wheel_inventory(tmp_path: Path) -> None:
     assert verify_wheel_resources(wheel, tmp_path / "source") == [
         "missing_resource:anthropic_readiness/resources/web/app.js"
     ]
+
+
+def test_installed_web_diagnostic_import_survives_restart(tmp_path: Path) -> None:
+    from scripts.web_image_checks import WebClient
+    from tests.diagnostic_fixtures import portable_archive
+
+    python, outside, _ = install(tmp_path, web=True)
+    archive, _ = portable_archive(tmp_path / "producer")
+    with socket.socket() as listener:
+        listener.bind(("127.0.0.1", 0))
+        port = listener.getsockname()[1]
+    url = f"http://127.0.0.1:{port}"
+    baseline = ""
+    for index in range(2):
+        with (outside / f"server-{index}.log").open("wb") as log:
+            process = subprocess.Popen(
+                [
+                    str(python.parent / "anthropic-readiness"),
+                    "serve",
+                    "--data-dir",
+                    str(outside / "data"),
+                    "--port",
+                    str(port),
+                ],
+                cwd=outside,
+                stdout=log,
+                stderr=log,
+            )
+            try:
+                client = WebClient(url, origin=url)
+                client.bootstrap()
+                if index == 0:
+                    preview = json.loads(
+                        client.upload("/api/v1/diagnostics/imports/preview", archive.read_bytes())
+                    )
+                    assert preview["eligibility"]["retest"] is True
+                    record = client.json(
+                        "/api/v1/diagnostics/imports/commit", {"preview_id": preview["preview_id"]}
+                    )
+                    baseline = record["id"]
+                else:
+                    response = client.json("/api/v1/diagnostics/baselines/" + baseline)
+                    record = response["baseline"]
+                    assert response["facts"]["eligibility"]["compare"] is True
+                    assert record["id"] == baseline
+                    assert record["eligibility"]["compare"] is True
+            finally:
+                process.terminate()
+                process.wait(timeout=12)
+        assert process.returncode in (0, -15)

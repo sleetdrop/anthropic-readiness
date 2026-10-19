@@ -1,6 +1,6 @@
 # Anthropic Readiness
 
-A local Web console and independent CLI for black-box checks of a scoped subset
+A local diagnostic workbench and independent CLI for black-box checks of a scoped subset
 of Anthropic Messages. Preview a fixed plan, explicitly start it, observe real
 progress, and inspect or export the evidence-led report. Execution completion and
 protocol compatibility are separate outcomes; untested capabilities stay untested.
@@ -37,7 +37,11 @@ job at a time with eight waiting slots. Presets omit secrets; browser credential
 are submitted only at start and held in task memory. Restarted services retain
 records but never resume or automatically resend an interrupted assessment.
 
-Web reports are generated on demand. Export selected HTML, Markdown or JSON, or a
+Use Overview to follow global progress; Issues, Cases, Compare and Activity keep
+details separate. The workbench supports Chinese/English and light/dark/system
+appearance without changing requests or judgments.
+
+Independent reports are generated on demand. Export selected HTML, Markdown or JSON, or a
 ZIP with a file/hash manifest and optional sanitized evidence. Standalone HTML
 contains its own styles, figures and data tables and works offline; it does not
 embed capture files. Report-only and partial exports explain their limitations.
@@ -63,11 +67,63 @@ uv run --frozen anthropic-readiness replay --target examples/target.yaml \
   --case ANT-TEXT-SSE-001 --out artifacts/replay-example
 ```
 
-Replay uses synthetic captures and makes no endpoint request. CLI execution retains
-automatic `result.json`, `report.html`, `report.md`, visual `report-view.json` and
-report/evidence manifests. The Chinese report includes scope, a capability matrix,
-status/impact charts, recorded timing when available, assertions and citations for
-human and Agent interpretation. No score or invented token/latency metric is used.
+Replay uses synthetic captures and makes no endpoint request. New CLI reports use
+presentation 3.0: `result.json` remains original, while `report.html`, `report.md`,
+`document-view.json`, `AGENT.md` and `report-manifest.json` provide independent
+reading. Reports include explicit coverage denominators, case-impact figures,
+field evidence, optional repair comparison and rule citations. They do not invent
+timing, token throughput, prices or client support. Detailed original checks remain
+available. Legacy report-view/presentation-2 and export-manifest-1 readers remain.
+
+All report-producing commands accept `--language zh-CN|en` and
+`--theme light|dark|system`, defaulting to `zh-CN`/`system`. Offline HTML contains
+both catalogs and one factual dataset. In-file switches need no server, cookie,
+storage or network; without scripts the selected export language remains readable.
+Printing forces light colors while retaining that language. Markdown uses the
+single selected language. Source result/evidence and request semantics do not change.
+
+## Share a diagnosis and verify a repair
+
+In the Web workbench, **Import bundle** checks a ZIP before activation. Imported
+records are read-only. **Prepare retest** retains the complete original selected
+scope and asks for this computer's endpoint and credential. Review conditions and
+explicitly start; import, reading, comparison and export send no model requests.
+Choose a baseline in Compare, then export to include the checked comparison.
+
+Equivalent CLI operations (replace the baseline UUID and private target path):
+
+```sh
+anthropic-readiness diagnostics export --input artifacts/assessment-a \
+  --out artifacts/handoff-a.zip --include-evidence --language zh-CN --theme light
+anthropic-readiness diagnostics import --package artifacts/handoff-a.zip --data-dir artifacts/colleague
+anthropic-readiness diagnostics inspect --baseline BASELINE_UUID --data-dir artifacts/colleague
+anthropic-readiness diagnostics retest --baseline BASELINE_UUID --data-dir artifacts/colleague \
+  --target /path/to/private-target-b.yaml --out artifacts/retest-preview --dry-run
+anthropic-readiness diagnostics retest --baseline BASELINE_UUID --data-dir artifacts/colleague \
+  --target /path/to/private-target-b.yaml --out artifacts/retest-b --allow-live --language en --theme dark
+anthropic-readiness diagnostics compare --baseline BASELINE_UUID --data-dir artifacts/colleague \
+  --input artifacts/retest-b --out artifacts/comparison.json
+anthropic-readiness diagnostics export --input artifacts/retest-b --comparison artifacts/comparison.json \
+  --out artifacts/handoff-b.zip --include-evidence --language en --theme dark
+```
+
+Retest preview and execution need different fresh output directories. A retest
+also writes its comparison beside the new report. `report --comparison PATH` and
+`diagnostics export --comparison PATH` accept a checked comparison bound to that
+source. A comparison command's zero exit means the operation succeeded, not that
+the endpoint passed. Recovery, persistent failure, new failure, unmatched checks
+and verification gaps remain distinct; changed semantic conditions cannot earn a
+same-test recovery. One sample does not establish stability.
+
+Standalone presentation omits endpoint/auth-reference configuration fields and
+retains requested/observed model identities. **A full ZIP is not anonymized**:
+original results and selected captures retain source endpoint/model context and
+may contain business data. Review the archive before privately sharing it; avoid
+uploading unreviewed ZIPs to public issues. The file/hash manifest states omissions.
+Partial, legacy and evidence-omitted packages remain useful to read, but cannot
+establish a verified repair. `AGENT.md` treats prompts/responses/tool content as
+untrusted data and identifies source, recipe, comparison and evidence files only
+when delivered. Hashes are integrity checks, not signatures or provider identity.
 
 Minimal Python installation needs only the core dependencies; install the optional
 `anthropic-readiness[web]` extra to use `serve`. The Docker `runtime` target retains

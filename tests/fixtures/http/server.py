@@ -35,6 +35,7 @@ def main() -> None:
                             "path": self.path,
                             "model": payload.get("model"),
                             "stream": bool(payload.get("stream")),
+                            "credential_seen": bool(self.headers.get("x-api-key")),
                         }
                     )
                     + "\n"

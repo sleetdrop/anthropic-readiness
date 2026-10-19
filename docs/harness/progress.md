@@ -742,3 +742,17 @@ checks on unchanged source with successful cleanup. Fast-4 passed 453 Python and
 20 Node tests; focused-final passed 32. Presentation-3 documents are separate from
 the workbench, with bilingual offline controls, paired themes, matrices, grouped
 findings/comparison and agent guidance. Task 14 delivery acceptance is next.
+
+W2 Task 14 is in progress. Public two-environment CLI handoff passed with four
+requests per environment, preserved source/archive bytes, no import/read requests,
+real recovery/persistent/new-stream-failure transitions and fresh B credentials.
+Five image-harness/installed-Web checks initially failed; after current-template,
+configured-origin, required-child and baseline-envelope corrections, 33 focused
+checks passed. Strict typing passed 175 files. Current image build/volume acceptance,
+whole-stage full checks and the sole independent review remain pending.
+
+Task 14 full-1 exposed seven frozen-layout/default-version mismatches. Explicit
+legacy `presentation=None` file writers now preserve every original assertion;
+new output remains presentation 3. Eight explicit-legacy failures preceded the
+fix, then 37 related regressions and all eight fast-2 children passed. A new full
+graph and actual image acceptance remain required.

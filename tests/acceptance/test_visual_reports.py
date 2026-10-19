@@ -118,7 +118,7 @@ def test_rerender_keeps_source_and_evidence_bytes(tmp_path: Path) -> None:
         if path.is_file()
     }
     output = tmp_path / "report"
-    render_from_file(source_path, output)
+    render_from_file(source_path, output, presentation=None)
     assert source_path.read_bytes() == (output / "result.json").read_bytes() == before
     assert all((output / relative).read_bytes() == data for relative, data in files.items())
     manifest = object_value(json.loads((output / "report-manifest.json").read_text()))
@@ -126,7 +126,7 @@ def test_rerender_keeps_source_and_evidence_bytes(tmp_path: Path) -> None:
     view = object_value(json.loads((output / "report-view.json").read_text()))
     assert view["source_result_sha256"] == hashlib.sha256(before).hexdigest()
     with pytest.raises(FileExistsError):
-        render_from_file(source_path, output)
+        render_from_file(source_path, output, presentation=None)
 
 
 def test_csp_hash_covers_the_actual_formatted_inline_script() -> None:
