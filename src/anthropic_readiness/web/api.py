@@ -31,9 +31,39 @@ from anthropic_readiness.report_view import build_report_view
 from anthropic_readiness.schema import result_from_document
 from anthropic_readiness.web.contracts import request_contract, response_contract
 from anthropic_readiness.web.events import event_stream
-from anthropic_readiness.web.security import LocalSession, api_response, error_response
+from anthropic_readiness.web.security import (
+    LocalSession,
+    api_response,
+    error_response,
+    preferences_for,
+)
 
 ERRORS = {
+    "archive_upload_limit": 413,
+    "archive_expansion_limit": 413,
+    "archive_member_limit": 413,
+    "archive_json_limit": 413,
+    "archive_member_count_limit": 413,
+    "archive_directory_limit": 413,
+    "archive_integrity": 422,
+    "archive_unsupported": 422,
+    "archive_path": 422,
+    "archive_member_type": 422,
+    "archive_inventory_mismatch": 409,
+    "archive_timeout": 408,
+    "diagnostic_import_busy": 429,
+    "diagnostic_preview_limit": 429,
+    "diagnostic_preview_owner": 403,
+    "diagnostic_preview_expired": 410,
+    "diagnostic_preview_not_found": 404,
+    "diagnostic_preview_not_ready": 409,
+    "diagnostic_preview_integrity": 409,
+    "diagnostic_invalid_identifier": 422,
+    "diagnostic_baseline_not_found": 404,
+    "diagnostic_baseline_integrity": 409,
+    "diagnostic_context_mismatch": 409,
+    "diagnostic_source_mismatch": 409,
+    "diagnostic_retest_unavailable": 409,
     "plan_expired": 410,
     "plan_not_found": 404,
     "job_not_found": 404,
@@ -71,12 +101,12 @@ class LocalRoute(APIRoute):
                 # Only known codes are reflected; schema errors can contain secrets.
                 code = str(exc).split(":", 1)[0]
                 return (
-                    error_response(code, ERRORS[code])
+                    error_response(code, ERRORS[code], options=preferences_for(request))
                     if code in ERRORS
-                    else error_response("invalid_request", 422)
+                    else error_response("invalid_request", 422, options=preferences_for(request))
                 )
             except OSError:
-                return error_response("service_unavailable", 503)
+                return error_response("service_unavailable", 503, options=preferences_for(request))
 
         return handle
 

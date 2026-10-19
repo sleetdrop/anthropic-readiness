@@ -686,3 +686,16 @@ CLI-only installation denies Web imports. Fast-1 passed all eight children
 (433 unit/harness tests) on unchanged source. Supplemental full regression passed
 687 tests with no failures/errors/skips on the same source.
 Tasks 10–15 remain; no real endpoint or external publication was authorized.
+
+Task 9 delivery is `a1ba449`, with final full-regression documentation in `d1dbfb2`.
+Task 10 adds authenticated streamed ZIP import, owned activation/baseline facts,
+normal frozen-plan retest previews, typed owned-source comparisons and checked
+preference cookies with request-local errors. Upload and archive validation now
+share one deadline, with a final pre-publication check; both late failures were
+observed RED. Source substitution, disconnect, concurrency and expiry checks pass.
+Final focused-2 passed 71 Web/security/API/events/import checks; fast-3 passed all
+eight children (433 unit/harness tests) on unchanged source. Task 9's 687-test run
+is the last completed full Python baseline; no whole-W2 acceptance is inferred.
+The version-2 export contract is reserved for the actual Task 13 renderer path;
+the old request remains closed. Tasks 11–15 remain, including new UI, documents,
+browser/image acceptance and one independent end review.

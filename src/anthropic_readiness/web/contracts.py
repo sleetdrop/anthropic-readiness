@@ -37,6 +37,15 @@ def request_contract(kind: str) -> dict[str, object]:
     }
 
 
+def binary_request_contract() -> dict[str, object]:
+    return {
+        "requestBody": {
+            "required": True,
+            "content": {"application/zip": {"schema": {"type": "string", "format": "binary"}}},
+        }
+    }
+
+
 def relocate(value: JsonValue) -> JsonValue:
     if isinstance(value, dict):
         return {

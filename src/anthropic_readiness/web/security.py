@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import hashlib
 import json
 import secrets
@@ -11,36 +12,21 @@ from dataclasses import dataclass
 from urllib.parse import urlsplit
 
 from starlette.datastructures import Headers, MutableHeaders
-from starlette.requests import Request
+from starlette.requests import ClientDisconnect, Request
 from starlette.responses import JSONResponse
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
+from anthropic_readiness.localization import load_catalog, translate
 from anthropic_readiness.models import JsonObject, strict_json
 from anthropic_readiness.operations.contracts import validate_operational
+from anthropic_readiness.presentation import PresentationOptions, parse_preferences
 from anthropic_readiness.web.settings import WebSettings
 
 COOKIE_NAME = "readiness_session"
+PREFERENCES_COOKIE = "readiness_preferences"
+IMPORT_PATH = "/api/v1/diagnostics/imports/preview"
 SESSION_TTL_S = 28800
 CSP = "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'"
-MESSAGES = {
-    "invalid_host": "请通过本机地址访问此服务。",
-    "origin_forbidden": "请求来源不匹配，请从本机页面操作。",
-    "session_required": "会话已失效，请刷新页面恢复连接；现有任务仍会保留。",
-    "csrf_invalid": "页面校验已失效，请刷新页面后重试。",
-    "body_too_large": "请求内容超过本机服务允许的大小。",
-    "invalid_json": "请求必须是有效、无重复字段且深度有限的 JSON 对象。",
-    "unsupported_content_type": "请使用 JSON 请求。",
-    "internal_error": "本机服务未能完成操作，请查看任务状态后再处理。",
-    "not_found": "未找到请求的资源。",
-    "invalid_request": "请求参数不符合接口约定。",
-    "export_not_terminal": "任务结束后才能冻结并导出报告；现有任务仍在执行。",
-    "export_not_found": "未找到已发布的导出，请重新生成。",
-    "export_integrity": "导出文件已变化或无法核验，请重新生成；原始失败记录会保留。",
-    "export_source_invalid": "来源记录无法绑定到本次任务，不能生成完整报告。",
-    "export_evidence_invalid": "证据存在缺失或损坏，可选择不附证据导出带诊断说明的报告。",
-    "export_format_unavailable": "本次导出未选择该文件格式。",
-    "export_size_limit": "导出超过 256 MiB 的本机处理上限，可缩小所选内容后重试。",
-}
 
 
 def api_response(kind: str, document: JsonObject, *, status: int = 200) -> JSONResponse:
@@ -48,12 +34,28 @@ def api_response(kind: str, document: JsonObject, *, status: int = 200) -> JSONR
     return JSONResponse(document, status_code=status)
 
 
-def error_response(code: str, status: int) -> JSONResponse:
+def error_response(
+    code: str, status: int, *, options: PresentationOptions | None = None
+) -> JSONResponse:
+    catalog = load_catalog((options or PresentationOptions()).locale)
+    key = "error." + code
+    message = translate(catalog, key if key in catalog else "error.invalid_request")
     return api_response(
         "error",
-        {"error": {"code": code, "message": MESSAGES.get(code, MESSAGES["invalid_request"])}},
+        {"error": {"code": code, "message": message}},
         status=status,
     )
+
+
+def preferences_for(request: Request) -> PresentationOptions:
+    return parse_preferences(request.cookies.get(PREFERENCES_COOKIE))
+
+
+class ImportBoundaryError(Exception):
+    def __init__(self, code: str, status: int) -> None:
+        self.code = code
+        self.status = status
+        super().__init__(code)
 
 
 @dataclass(frozen=True)
@@ -137,15 +139,16 @@ class LocalBoundary:
             await send(message)
 
         async def reject(code: str, status: int) -> None:
-            await error_response(code, status)(scope, receive, protected_send)
+            await error_response(code, status, options=options)(scope, receive, protected_send)
 
         headers = Headers(scope=scope)
+        request = Request(scope)
+        options = preferences_for(request)
         if len(headers.getlist("host")) != 1 or not self.security.valid_host(
             headers.get("host", "")
         ):
             await reject("invalid_host", 403)
             return
-        request = Request(scope)
         session = self.security.session(request.cookies.get(COOKIE_NAME))
         state = scope.setdefault("state", {})
         state["session"] = session
@@ -161,6 +164,8 @@ class LocalBoundary:
             await reject("session_required", 401)
             return
         body: bytes | None = None
+        binary = False
+        declared: int | None = None
         if mutation:
             if (
                 session is None
@@ -171,40 +176,84 @@ class LocalBoundary:
             ):
                 await reject("csrf_invalid", 403)
                 return
-            if (
+            if method == "POST" and path == IMPORT_PATH:
+                if (
+                    len(headers.getlist("content-type")) != 1
+                    or headers.get("content-type", "").split(";", 1)[0].strip().lower()
+                    != "application/zip"
+                ):
+                    await reject("unsupported_content_type", 415)
+                    return
+                lengths = headers.getlist("content-length")
+                if lengths:
+                    if (
+                        len(lengths) != 1
+                        or not lengths[0].isascii()
+                        or not lengths[0].isdigit()
+                        or len(lengths[0]) > 12
+                    ):
+                        await reject("invalid_request", 422)
+                        return
+                    declared = int(lengths[0])
+                    if declared > self.security.settings.max_import_bytes:
+                        await reject("archive_upload_limit", 413)
+                        return
+                binary = True
+            elif (
                 headers.get("content-type", "").split(";", 1)[0].strip().lower()
                 != "application/json"
             ):
                 await reject("unsupported_content_type", 415)
                 return
-            parts: list[bytes] = []
-            length = 0
-            while True:
-                message = await receive()
-                if message["type"] == "http.disconnect":
+            if not binary:
+                parts: list[bytes] = []
+                length = 0
+                while True:
+                    message = await receive()
+                    if message["type"] == "http.disconnect":
+                        return
+                    part = message.get("body", b"")
+                    length += len(part)
+                    if length > self.security.settings.max_body_bytes:
+                        await reject("body_too_large", 413)
+                        return
+                    parts.append(part)
+                    if not message.get("more_body", False):
+                        break
+                body = b"".join(parts)
+                try:
+                    document = strict_json(body.decode())
+                    if not isinstance(document, dict):
+                        raise ValueError("expected_object")
+                    json.dumps(document, allow_nan=False)
+                    state["document"] = document
+                except (ValueError, UnicodeError):
+                    await reject("invalid_json", 422)
                     return
-                part = message.get("body", b"")
-                length += len(part)
-                if length > self.security.settings.max_body_bytes:
-                    await reject("body_too_large", 413)
-                    return
-                parts.append(part)
-                if not message.get("more_body", False):
-                    break
-            body = b"".join(parts)
-            try:
-                document = strict_json(body.decode())
-                if not isinstance(document, dict):
-                    raise ValueError("expected_object")
-                json.dumps(document, allow_nan=False)
-                state["document"] = document
-            except (ValueError, UnicodeError):
-                await reject("invalid_json", 422)
-                return
         consumed = False
+        uploaded = 0
+        upload_deadline = time.monotonic() + self.security.settings.import_timeout_s
+        if binary:
+            state["import_deadline"] = upload_deadline
 
         async def replay_receive() -> Message:
-            nonlocal consumed
+            nonlocal consumed, uploaded
+            if binary:
+                try:
+                    async with asyncio.timeout(max(0, upload_deadline - time.monotonic())):
+                        message = await receive()
+                except TimeoutError as exc:
+                    raise ImportBoundaryError("archive_timeout", 408) from exc
+                if message["type"] == "http.request":
+                    uploaded += len(message.get("body", b""))
+                    if uploaded > self.security.settings.max_import_bytes:
+                        raise ImportBoundaryError("archive_upload_limit", 413)
+                    if declared is not None and (
+                        uploaded > declared
+                        or (not message.get("more_body", False) and uploaded != declared)
+                    ):
+                        raise ImportBoundaryError("invalid_request", 422)
+                return message
             if body is not None and not consumed:
                 consumed = True
                 return {"type": "http.request", "body": body, "more_body": False}
@@ -212,6 +261,11 @@ class LocalBoundary:
 
         try:
             await self.app(scope, replay_receive, protected_send)
+        except ImportBoundaryError as exc:
+            if not started:
+                await reject(exc.code, exc.status)
+        except ClientDisconnect:
+            return
         except Exception:
             # Route exceptions can include private payloads. Prevent both reflection
             # and the outer server middleware's traceback logging.

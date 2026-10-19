@@ -10,7 +10,7 @@
 
 **Spec:** [W2 specification revision 2](../specs/2026-10-18-diagnostic-workbench-design.md), approved with this plan on 2026-10-18.
 
-**Status:** owner-approved for sequential implementation in the current session on 2026-10-18 ("确认，请实施"). Revision-2 written scope and companion compositions are included. Tasks 0–9 are complete; Task 10 is next, Tasks 10–15 remain pending. Existing task numbers are retained for traceability.
+**Status:** owner-approved for sequential implementation in the current session on 2026-10-18 ("确认，请实施"). Revision-2 written scope and companion compositions are included. Tasks 0–10 are complete; Task 11 is next, Tasks 11–15 remain pending. Existing task numbers are retained for traceability.
 
 ## Owner review summary
 
@@ -412,11 +412,11 @@ independent reviewer or implementer agent is dispatched.
 
 **Interfaces:** The routes in the HTTP decision section call `DiagnosticService`; upload preview streams an archive to `DiagnosticStore` staging. JSON routes retain existing `LocalRoute`, error envelopes and published contracts. Retest preview produces a normal frozen plan plus its diagnostic context, not a new execution endpoint.
 
-- [ ] Write tests for valid chunked ZIP, oversized/deceptive Content-Length, disconnect cleanup, wrong media type, missing Origin/session/CSRF and applying ZIP to every other route. Assert JSON stays at 65536 bytes, expired/mismatched preview owners cannot commit, and all requests before normal start produce zero upstream calls. Add checked preference-cookie update/default/malformed/expiry tests and localized human error messages with identical machine error codes; preference mutation still requires session/Origin/CSRF.
-- [ ] Run `UV_OFFLINE=1 uv run --frozen pytest -q tests/integration/test_web_diagnostics.py`; retain RED.
-- [ ] Implement the one-route streaming branch after the same security checks as JSON, plus the ordinary preferences route/cookie parser and request-local error-message localization. Keep upload processing off the event loop using the existing threadpool pattern; cap concurrent previews and return a useful busy response. Preserve sanitized errors/CSP and never use uploaded HTML as a page. Add versioned diagnostic export request options rather than weakening old export-request schemas.
-- [ ] Rerun focused tests plus `test_web_security.py test_web_api.py test_web_events.py`; validate OpenAPI declares binary upload correctly and JSON response schema names match runtime validation.
-- [ ] Commit: `feat: add bounded local diagnostic import and retest endpoints`.
+- [x] Write tests for valid chunked ZIP, oversized/deceptive Content-Length, disconnect cleanup, wrong media type, missing Origin/session/CSRF and applying ZIP to every other route. Assert JSON stays at 65536 bytes, expired/mismatched preview owners cannot commit, and all requests before normal start produce zero upstream calls. Add checked preference-cookie update/default/malformed/expiry tests and localized human error messages with identical machine error codes; preference mutation still requires session/Origin/CSRF.
+- [x] Run `UV_OFFLINE=1 uv run --frozen pytest -q tests/integration/test_web_diagnostics.py`; retain RED.
+- [x] Implement the one-route streaming branch after the same security checks as JSON, plus the ordinary preferences route/cookie parser and request-local error-message localization. Keep upload processing off the event loop using the existing threadpool pattern; cap concurrent previews and return a useful busy response. Preserve sanitized errors/CSP and never use uploaded HTML as a page. Add versioned diagnostic export request options rather than weakening old export-request schemas.
+- [x] Rerun focused tests plus `test_web_security.py test_web_api.py test_web_events.py`; validate OpenAPI declares binary upload correctly and JSON response schema names match runtime validation.
+- [x] Commit: `feat: add bounded local diagnostic import and retest endpoints`.
 
 ### Task 11: Operational facts, liveness and workbench views
 

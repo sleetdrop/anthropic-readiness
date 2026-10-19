@@ -99,6 +99,10 @@ class ExportService:
     def _job_root(self, run_id: str) -> Path:
         return safe_path(self.root, "runs/" + checked_id(run_id))
 
+    def verified_source(self, run_id: str) -> ReportSource:
+        """Bind terminal owned-run artifacts to their admitted plan before reuse."""
+        return self._source(run_id)
+
     def _source(self, run_id: str) -> ReportSource:
         job = self.store.get_job(run_id)
         if job.state not in TERMINAL:

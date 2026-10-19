@@ -55,8 +55,10 @@ class DiagnosticService:
         self.root = root
         self.store = DiagnosticStore(root / "diagnostics")
 
-    def preview(self, archive: Path, owner: str, *, now: datetime) -> JsonObject:
-        return self.store.preview(archive, owner, now=now)
+    def preview(
+        self, archive: Path, owner: str, *, now: datetime, deadline: float | None = None
+    ) -> JsonObject:
+        return self.store.preview(archive, owner, now=now, deadline=deadline)
 
     def commit(self, preview_id: str, owner: str, *, now: datetime) -> BaselineRecord:
         return self.store.commit(preview_id, owner, now=now)

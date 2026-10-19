@@ -2906,6 +2906,1421 @@
         "data"
       ],
       "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "preferences_request"
+        },
+        "data": {
+          "type": "object",
+          "required": [
+            "locale",
+            "theme"
+          ],
+          "properties": {
+            "locale": {
+              "enum": [
+                "zh-CN",
+                "en"
+              ]
+            },
+            "theme": {
+              "enum": [
+                "light",
+                "dark",
+                "system"
+              ]
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "kind",
+        "data"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "preferences_response"
+        },
+        "data": {
+          "type": "object",
+          "required": [
+            "schema_version",
+            "locale",
+            "theme"
+          ],
+          "properties": {
+            "schema_version": {
+              "const": "1.0"
+            },
+            "locale": {
+              "enum": [
+                "zh-CN",
+                "en"
+              ]
+            },
+            "theme": {
+              "enum": [
+                "light",
+                "dark",
+                "system"
+              ]
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "kind",
+        "data"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "diagnostic_import_preview"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "schema_version": {
+              "const": "1.0"
+            },
+            "preview_id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "expires_at": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d\\d-\\d\\dT\\d\\d:\\d\\d:\\d\\d(?:\\.\\d+)?(?:Z|[+-]\\d\\d:\\d\\d)$"
+            },
+            "source": {
+              "$ref": "#/$defs/di_source"
+            },
+            "eligibility": {
+              "$ref": "#/$defs/di_eligibility"
+            },
+            "evidence_verification": {
+              "$ref": "#/$defs/di_evidence_quality"
+            },
+            "disclosures": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "enum": [
+                  "source_contains_target_context"
+                ]
+              }
+            },
+            "relationship": {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "enum": [
+                    "new",
+                    "identical",
+                    "variant",
+                    "conflict"
+                  ]
+                },
+                "baseline_ids": {
+                  "type": "array",
+                  "uniqueItems": true,
+                  "items": {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+                  }
+                }
+              },
+              "required": [
+                "kind",
+                "baseline_ids"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "schema_version",
+            "preview_id",
+            "expires_at",
+            "source",
+            "eligibility",
+            "evidence_verification",
+            "disclosures",
+            "relationship"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "kind",
+        "data"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "diagnostic_import_commit_request"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "preview_id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            }
+          },
+          "required": [
+            "preview_id"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "kind",
+        "data"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "diagnostic_import_commit_response"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "schema_version": {
+              "const": "1.0"
+            },
+            "id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "archive_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "source": {
+              "$ref": "#/$defs/db_source"
+            },
+            "imported_at": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d\\d-\\d\\dT\\d\\d:\\d\\d:\\d\\d(?:\\.\\d+)?(?:Z|[+-]\\d\\d:\\d\\d)$"
+            },
+            "artifact_root": {
+              "$ref": "#/$defs/db_path"
+            },
+            "eligibility": {
+              "$ref": "#/$defs/db_eligibility"
+            },
+            "evidence_verification": {
+              "$ref": "#/$defs/db_evidence_quality"
+            }
+          },
+          "required": [
+            "schema_version",
+            "id",
+            "archive_sha256",
+            "source",
+            "imported_at",
+            "artifact_root",
+            "eligibility",
+            "evidence_verification"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "kind",
+        "data"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "diagnostic_baseline_response"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "baseline": {
+              "type": "object",
+              "properties": {
+                "schema_version": {
+                  "const": "1.0"
+                },
+                "id": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+                },
+                "archive_sha256": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{64}$"
+                },
+                "source": {
+                  "$ref": "#/$defs/db_source"
+                },
+                "imported_at": {
+                  "type": "string",
+                  "pattern": "^\\d{4}-\\d\\d-\\d\\dT\\d\\d:\\d\\d:\\d\\d(?:\\.\\d+)?(?:Z|[+-]\\d\\d:\\d\\d)$"
+                },
+                "artifact_root": {
+                  "$ref": "#/$defs/db_path"
+                },
+                "eligibility": {
+                  "$ref": "#/$defs/db_eligibility"
+                },
+                "evidence_verification": {
+                  "$ref": "#/$defs/db_evidence_quality"
+                }
+              },
+              "required": [
+                "schema_version",
+                "id",
+                "archive_sha256",
+                "source",
+                "imported_at",
+                "artifact_root",
+                "eligibility",
+                "evidence_verification"
+              ],
+              "additionalProperties": false
+            },
+            "facts": {
+              "type": "object",
+              "properties": {
+                "schema_version": {
+                  "const": "1.0"
+                },
+                "source": {
+                  "$ref": "#/$defs/df_source"
+                },
+                "plan": {
+                  "type": "object"
+                },
+                "recipe": {
+                  "type": [
+                    "object",
+                    "null"
+                  ]
+                },
+                "context": {
+                  "type": [
+                    "object",
+                    "null"
+                  ]
+                },
+                "target": {
+                  "type": "object"
+                },
+                "cases": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "version": {
+                        "type": "integer",
+                        "minimum": 1
+                      },
+                      "required": {
+                        "type": "boolean"
+                      },
+                      "status": {
+                        "enum": [
+                          "PASS",
+                          "FAIL",
+                          "SKIP",
+                          "BLOCKED",
+                          "INDETERMINATE",
+                          "missing"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "version",
+                      "required",
+                      "status"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "uniqueItems": true
+                },
+                "checks": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "case_id": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "case_version": {
+                        "type": "integer",
+                        "minimum": 1
+                      },
+                      "assertion_id": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "assertion_version": {
+                        "type": "integer",
+                        "minimum": 1
+                      },
+                      "category": {
+                        "enum": [
+                          "protocol",
+                          "behavior",
+                          "client",
+                          "environment"
+                        ]
+                      },
+                      "required": {
+                        "type": "boolean"
+                      },
+                      "status": {
+                        "enum": [
+                          "PASS",
+                          "FAIL",
+                          "SKIP",
+                          "BLOCKED",
+                          "INDETERMINATE",
+                          "missing"
+                        ]
+                      },
+                      "reason": {
+                        "type": "string"
+                      },
+                      "expected": {
+                        "type": "string"
+                      },
+                      "actual": {
+                        "type": "string"
+                      },
+                      "evidence_refs": {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/$defs/df_evidence_ref"
+                        },
+                        "uniqueItems": true
+                      }
+                    },
+                    "required": [
+                      "case_id",
+                      "case_version",
+                      "assertion_id",
+                      "assertion_version",
+                      "category",
+                      "required",
+                      "status",
+                      "reason",
+                      "expected",
+                      "actual",
+                      "evidence_refs"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "uniqueItems": true
+                },
+                "eligibility": {
+                  "$ref": "#/$defs/df_eligibility"
+                },
+                "evidence_verification": {
+                  "$ref": "#/$defs/df_evidence_quality"
+                }
+              },
+              "required": [
+                "schema_version",
+                "source",
+                "plan",
+                "recipe",
+                "context",
+                "target",
+                "cases",
+                "checks",
+                "eligibility",
+                "evidence_verification"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "baseline",
+            "facts"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "kind",
+        "data"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "diagnostic_retest_request"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "baseline_id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "target": {
+              "type": "object",
+              "properties": {
+                "schema_version": {
+                  "const": "1.0"
+                },
+                "name": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "delivery_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "protocol": {
+                  "const": "anthropic.messages"
+                },
+                "messages_url": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "model": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "api_version": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "beta_headers": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "protocol_contract": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "revision": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "revision"
+                  ],
+                  "additionalProperties": false
+                },
+                "auth": {
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "mode": {
+                          "const": "none"
+                        }
+                      },
+                      "required": [
+                        "mode"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "mode": {
+                          "const": "api_key"
+                        },
+                        "credential_env": {
+                          "type": "string",
+                          "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+                        }
+                      },
+                      "required": [
+                        "mode",
+                        "credential_env"
+                      ],
+                      "additionalProperties": false
+                    }
+                  ]
+                },
+                "capabilities": {
+                  "type": "object",
+                  "properties": {
+                    "streaming": {
+                      "type": "boolean"
+                    },
+                    "tools": {
+                      "type": "boolean"
+                    },
+                    "thinking": {
+                      "type": "boolean"
+                    },
+                    "parallel_tools": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "streaming",
+                    "tools",
+                    "thinking",
+                    "parallel_tools"
+                  ],
+                  "additionalProperties": false
+                },
+                "response_model_policy": {
+                  "enum": [
+                    "structure_only",
+                    "request_or_alias"
+                  ]
+                },
+                "response_model_aliases": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "limits": {
+                  "type": "object",
+                  "properties": {
+                    "connect_timeout_s": {
+                      "type": "number",
+                      "exclusiveMinimum": 0
+                    },
+                    "read_timeout_s": {
+                      "type": "number",
+                      "exclusiveMinimum": 0
+                    },
+                    "attempt_timeout_s": {
+                      "type": "number",
+                      "exclusiveMinimum": 0
+                    },
+                    "run_timeout_s": {
+                      "type": "number",
+                      "exclusiveMinimum": 0
+                    },
+                    "max_response_bytes": {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "max_event_bytes": {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "max_events": {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "max_requests": {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "max_tokens": {
+                      "type": "integer",
+                      "minimum": 1
+                    }
+                  },
+                  "required": [],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "schema_version",
+                "name",
+                "delivery_id",
+                "protocol",
+                "messages_url",
+                "model",
+                "api_version",
+                "beta_headers",
+                "protocol_contract",
+                "auth",
+                "capabilities",
+                "response_model_policy",
+                "response_model_aliases",
+                "limits"
+              ],
+              "additionalProperties": false,
+              "$schema": "https://json-schema.org/draft/2020-12/schema"
+            }
+          },
+          "required": [
+            "baseline_id",
+            "target"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "kind",
+        "data"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "diagnostic_retest_response"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "plan": {
+              "type": "object",
+              "properties": {
+                "schema_version": {
+                  "const": "1.0"
+                },
+                "id": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+                },
+                "session_id": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{64}$"
+                },
+                "created_at": {
+                  "type": "string",
+                  "pattern": "^\\d{4}-\\d\\d-\\d\\dT\\d\\d:\\d\\d:\\d\\d(?:\\.\\d+)?(?:Z|[+-]\\d\\d:\\d\\d)$"
+                },
+                "expires_at": {
+                  "type": "string",
+                  "pattern": "^\\d{4}-\\d\\d-\\d\\dT\\d\\d:\\d\\d:\\d\\d(?:\\.\\d+)?(?:Z|[+-]\\d\\d:\\d\\d)$"
+                },
+                "config_sha256": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{64}$"
+                },
+                "target": {
+                  "type": "object",
+                  "properties": {
+                    "schema_version": {
+                      "const": "1.0"
+                    },
+                    "name": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "delivery_id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "protocol": {
+                      "const": "anthropic.messages"
+                    },
+                    "messages_url": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "model": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "api_version": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "beta_headers": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "protocol_contract": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "revision": {
+                          "type": "string",
+                          "minLength": 1
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "revision"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "auth": {
+                      "oneOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "mode": {
+                              "const": "none"
+                            }
+                          },
+                          "required": [
+                            "mode"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "mode": {
+                              "const": "api_key"
+                            },
+                            "credential_env": {
+                              "type": "string",
+                              "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+                            }
+                          },
+                          "required": [
+                            "mode",
+                            "credential_env"
+                          ],
+                          "additionalProperties": false
+                        }
+                      ]
+                    },
+                    "capabilities": {
+                      "type": "object",
+                      "properties": {
+                        "streaming": {
+                          "type": "boolean"
+                        },
+                        "tools": {
+                          "type": "boolean"
+                        },
+                        "thinking": {
+                          "type": "boolean"
+                        },
+                        "parallel_tools": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "streaming",
+                        "tools",
+                        "thinking",
+                        "parallel_tools"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "response_model_policy": {
+                      "enum": [
+                        "structure_only",
+                        "request_or_alias"
+                      ]
+                    },
+                    "response_model_aliases": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "limits": {
+                      "type": "object",
+                      "properties": {
+                        "connect_timeout_s": {
+                          "type": "number",
+                          "exclusiveMinimum": 0
+                        },
+                        "read_timeout_s": {
+                          "type": "number",
+                          "exclusiveMinimum": 0
+                        },
+                        "attempt_timeout_s": {
+                          "type": "number",
+                          "exclusiveMinimum": 0
+                        },
+                        "run_timeout_s": {
+                          "type": "number",
+                          "exclusiveMinimum": 0
+                        },
+                        "max_response_bytes": {
+                          "type": "integer",
+                          "minimum": 1
+                        },
+                        "max_event_bytes": {
+                          "type": "integer",
+                          "minimum": 1
+                        },
+                        "max_events": {
+                          "type": "integer",
+                          "minimum": 1
+                        },
+                        "max_requests": {
+                          "type": "integer",
+                          "minimum": 1
+                        },
+                        "max_tokens": {
+                          "type": "integer",
+                          "minimum": 1
+                        }
+                      },
+                      "required": [],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "schema_version",
+                    "name",
+                    "delivery_id",
+                    "protocol",
+                    "messages_url",
+                    "model",
+                    "api_version",
+                    "beta_headers",
+                    "protocol_contract",
+                    "auth",
+                    "capabilities",
+                    "response_model_policy",
+                    "response_model_aliases",
+                    "limits"
+                  ],
+                  "additionalProperties": false,
+                  "$schema": "https://json-schema.org/draft/2020-12/schema"
+                },
+                "profiles": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "minItems": 1,
+                  "uniqueItems": true
+                },
+                "plan": {
+                  "type": "object",
+                  "properties": {
+                    "cases": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "version": {
+                            "type": "integer",
+                            "minimum": 1
+                          },
+                          "required": {
+                            "type": "boolean"
+                          },
+                          "assertions": {
+                            "type": "array",
+                            "minItems": 1,
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string",
+                                  "minLength": 1
+                                },
+                                "version": {
+                                  "type": "integer",
+                                  "minimum": 1
+                                },
+                                "required": {
+                                  "type": "boolean"
+                                }
+                              },
+                              "required": [
+                                "id",
+                                "version",
+                                "required"
+                              ],
+                              "additionalProperties": false
+                            }
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "version",
+                          "required",
+                          "assertions"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "profiles": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "version": {
+                            "type": "integer",
+                            "minimum": 1
+                          },
+                          "cases": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "uniqueItems": true
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "version",
+                          "cases"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "actual_requests": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "planned_requests": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "limits": {
+                      "type": "object"
+                    },
+                    "repeat": {
+                      "const": 1
+                    },
+                    "retry": {
+                      "const": 0
+                    },
+                    "config_fingerprint": {
+                      "type": "string"
+                    },
+                    "test_fingerprint": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "cases",
+                    "profiles",
+                    "actual_requests",
+                    "planned_requests",
+                    "limits",
+                    "repeat",
+                    "retry",
+                    "config_fingerprint",
+                    "test_fingerprint"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "schema_version",
+                "id",
+                "session_id",
+                "created_at",
+                "expires_at",
+                "config_sha256",
+                "target",
+                "profiles",
+                "plan"
+              ],
+              "additionalProperties": false
+            },
+            "conditions": {
+              "type": "object",
+              "properties": {
+                "schema_version": {
+                  "const": "1.0"
+                },
+                "comparable": {
+                  "type": "boolean"
+                },
+                "changes": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/$defs/dr_change"
+                  },
+                  "uniqueItems": true
+                },
+                "reasons": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "uniqueItems": true
+                }
+              },
+              "required": [
+                "schema_version",
+                "comparable",
+                "changes",
+                "reasons"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "plan",
+            "conditions"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "kind",
+        "data"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "diagnostic_comparison_request"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "before": {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "enum": [
+                    "run",
+                    "baseline"
+                  ]
+                },
+                "id": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+                }
+              },
+              "required": [
+                "kind",
+                "id"
+              ],
+              "additionalProperties": false
+            },
+            "after": {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "enum": [
+                    "run",
+                    "baseline"
+                  ]
+                },
+                "id": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+                }
+              },
+              "required": [
+                "kind",
+                "id"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "before",
+            "after"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "kind",
+        "data"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "diagnostic_comparison_response"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "schema_version": {
+              "const": "1.0"
+            },
+            "before": {
+              "$ref": "#/$defs/dc_source"
+            },
+            "after": {
+              "$ref": "#/$defs/dc_source"
+            },
+            "comparable": {
+              "type": "boolean"
+            },
+            "reasons": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "minItems": 0,
+              "uniqueItems": true
+            },
+            "condition_changes": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/dc_change"
+              },
+              "minItems": 0,
+              "uniqueItems": true
+            },
+            "pairs": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/dc_pair"
+              },
+              "minItems": 0,
+              "uniqueItems": true
+            },
+            "unmatched_before": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/dc_unmatched"
+              },
+              "minItems": 0,
+              "uniqueItems": true
+            },
+            "unmatched_after": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/dc_unmatched"
+              },
+              "minItems": 0,
+              "uniqueItems": true
+            },
+            "coverage": {
+              "type": "object",
+              "properties": {
+                "before_checks": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "after_checks": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "matched_checks": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "missing_required_checks": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "before_cases": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "after_cases": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "matched_cases": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "missing_required_cases": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "before_checks",
+                "after_checks",
+                "matched_checks",
+                "missing_required_checks",
+                "before_cases",
+                "after_cases",
+                "matched_cases",
+                "missing_required_cases"
+              ],
+              "additionalProperties": false
+            },
+            "summary": {
+              "type": "object",
+              "properties": {
+                "unit": {
+                  "const": "checks"
+                },
+                "recovered": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "persistent": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "new_failure": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "passed_both": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "gap": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "newly_evaluated": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "incomparable": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "unit",
+                "recovered",
+                "persistent",
+                "new_failure",
+                "passed_both",
+                "gap",
+                "newly_evaluated",
+                "incomparable"
+              ],
+              "additionalProperties": false
+            },
+            "all_previous_failures_passed": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "schema_version",
+            "before",
+            "after",
+            "comparable",
+            "reasons",
+            "condition_changes",
+            "pairs",
+            "unmatched_before",
+            "unmatched_after",
+            "coverage",
+            "summary",
+            "all_previous_failures_passed"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "kind",
+        "data"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "diagnostic_export_request"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "schema_version": {
+              "const": "2.0"
+            },
+            "formats": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "html",
+                  "markdown",
+                  "json",
+                  "zip"
+                ]
+              },
+              "minItems": 1,
+              "uniqueItems": true
+            },
+            "include_evidence": {
+              "type": "boolean"
+            },
+            "presentation": {
+              "type": "object",
+              "required": [
+                "schema_version",
+                "locale",
+                "theme"
+              ],
+              "properties": {
+                "schema_version": {
+                  "const": "1.0"
+                },
+                "locale": {
+                  "enum": [
+                    "zh-CN",
+                    "en"
+                  ]
+                },
+                "theme": {
+                  "enum": [
+                    "light",
+                    "dark",
+                    "system"
+                  ]
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "schema_version",
+            "formats",
+            "include_evidence",
+            "presentation"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "kind",
+        "data"
+      ],
+      "additionalProperties": false
     }
   ],
   "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -5642,6 +7057,1478 @@
         "files",
         "omissions",
         "evidence_verification"
+      ],
+      "additionalProperties": false
+    },
+    "di_eligibility": {
+      "type": "object",
+      "properties": {
+        "read": {
+          "type": "boolean"
+        },
+        "retest": {
+          "type": "boolean"
+        },
+        "compare": {
+          "type": "boolean"
+        },
+        "reasons": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "read",
+        "retest",
+        "compare",
+        "reasons"
+      ],
+      "additionalProperties": false
+    },
+    "di_evidence_quality": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "enum": [
+            "verified",
+            "missing_or_invalid",
+            "no_evidence"
+          ]
+        },
+        "errors": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "delivery": {
+          "enum": [
+            "external_files",
+            "omitted"
+          ]
+        }
+      },
+      "required": [
+        "status",
+        "errors",
+        "delivery"
+      ],
+      "additionalProperties": false
+    },
+    "di_path": {
+      "type": "string",
+      "maxLength": 240,
+      "pattern": "^(?!.*(?:^|/)\\.{1,2}(?:/|$))[A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)*$"
+    },
+    "di_source": {
+      "type": "object",
+      "properties": {
+        "run_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "assessment_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "result_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "checkpoint_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "recipe_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "context_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "run_id",
+        "assessment_id",
+        "result_sha256",
+        "checkpoint_sha256",
+        "recipe_sha256",
+        "context_sha256"
+      ],
+      "additionalProperties": false,
+      "anyOf": [
+        {
+          "properties": {
+            "result_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        },
+        {
+          "properties": {
+            "checkpoint_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        }
+      ]
+    },
+    "db_eligibility": {
+      "type": "object",
+      "properties": {
+        "read": {
+          "type": "boolean"
+        },
+        "retest": {
+          "type": "boolean"
+        },
+        "compare": {
+          "type": "boolean"
+        },
+        "reasons": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "read",
+        "retest",
+        "compare",
+        "reasons"
+      ],
+      "additionalProperties": false
+    },
+    "db_evidence_quality": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "enum": [
+            "verified",
+            "missing_or_invalid",
+            "no_evidence"
+          ]
+        },
+        "errors": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "delivery": {
+          "enum": [
+            "external_files",
+            "omitted"
+          ]
+        }
+      },
+      "required": [
+        "status",
+        "errors",
+        "delivery"
+      ],
+      "additionalProperties": false
+    },
+    "db_path": {
+      "type": "string",
+      "maxLength": 240,
+      "pattern": "^(?!.*(?:^|/)\\.{1,2}(?:/|$))[A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)*$"
+    },
+    "db_source": {
+      "type": "object",
+      "properties": {
+        "run_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "assessment_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "result_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "checkpoint_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "recipe_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "context_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "run_id",
+        "assessment_id",
+        "result_sha256",
+        "checkpoint_sha256",
+        "recipe_sha256",
+        "context_sha256"
+      ],
+      "additionalProperties": false,
+      "anyOf": [
+        {
+          "properties": {
+            "result_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        },
+        {
+          "properties": {
+            "checkpoint_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        }
+      ]
+    },
+    "df_source": {
+      "type": "object",
+      "properties": {
+        "run_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "assessment_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "result_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "checkpoint_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "recipe_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "context_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "run_id",
+        "assessment_id",
+        "result_sha256",
+        "checkpoint_sha256",
+        "recipe_sha256",
+        "context_sha256"
+      ],
+      "additionalProperties": false,
+      "anyOf": [
+        {
+          "properties": {
+            "result_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        },
+        {
+          "properties": {
+            "checkpoint_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        }
+      ]
+    },
+    "df_evidence_ref": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/df_path"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "event": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "pointer": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "path",
+        "sha256",
+        "event",
+        "pointer"
+      ],
+      "additionalProperties": false
+    },
+    "df_path": {
+      "type": "string",
+      "maxLength": 240,
+      "pattern": "^(?!.*(?:^|/)\\.{1,2}(?:/|$))[A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)*$"
+    },
+    "df_eligibility": {
+      "type": "object",
+      "properties": {
+        "read": {
+          "type": "boolean"
+        },
+        "retest": {
+          "type": "boolean"
+        },
+        "compare": {
+          "type": "boolean"
+        },
+        "reasons": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "read",
+        "retest",
+        "compare",
+        "reasons"
+      ],
+      "additionalProperties": false
+    },
+    "df_evidence_quality": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "enum": [
+            "verified",
+            "missing_or_invalid",
+            "no_evidence"
+          ]
+        },
+        "errors": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "delivery": {
+          "enum": [
+            "external_files",
+            "omitted"
+          ]
+        }
+      },
+      "required": [
+        "status",
+        "errors"
+      ],
+      "additionalProperties": false
+    },
+    "dr_case": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "assertions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/dr_check"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "id",
+        "version",
+        "required",
+        "assertions"
+      ],
+      "additionalProperties": false
+    },
+    "dr_change": {
+      "type": "object",
+      "properties": {
+        "field": {
+          "type": "string",
+          "minLength": 1
+        },
+        "before": {},
+        "after": {},
+        "kind": {
+          "enum": [
+            "context",
+            "semantic"
+          ]
+        }
+      },
+      "required": [
+        "field",
+        "before",
+        "after",
+        "kind"
+      ],
+      "additionalProperties": false
+    },
+    "dr_check": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "category": {
+          "enum": [
+            "protocol",
+            "behavior",
+            "client",
+            "environment"
+          ]
+        },
+        "required": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "version",
+        "category",
+        "required"
+      ],
+      "additionalProperties": false
+    },
+    "dr_implementation": {
+      "type": "object",
+      "properties": {
+        "schema_version": {
+          "const": "1.0"
+        },
+        "semantic_revision": {
+          "type": "string",
+          "minLength": 1
+        },
+        "python": {
+          "type": "object",
+          "properties": {
+            "implementation": {
+              "type": "string",
+              "minLength": 1
+            },
+            "version": {
+              "type": "string",
+              "pattern": "^3\\.[0-9]+$"
+            }
+          },
+          "required": [
+            "implementation",
+            "version"
+          ],
+          "additionalProperties": false
+        },
+        "file_hashes": {
+          "type": "object",
+          "minProperties": 1,
+          "propertyNames": {
+            "type": "string",
+            "maxLength": 240,
+            "pattern": "^(?!.*(?:^|/)\\.{1,2}(?:/|$))[A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)*$"
+          },
+          "additionalProperties": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        },
+        "dependencies": {
+          "type": "object",
+          "propertyNames": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9._-]*$"
+          },
+          "additionalProperties": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "content_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "required": [
+        "schema_version",
+        "semantic_revision",
+        "python",
+        "file_hashes",
+        "dependencies",
+        "content_sha256"
+      ],
+      "additionalProperties": false
+    },
+    "dr_limits": {
+      "type": "object",
+      "properties": {
+        "connect_timeout_s": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "read_timeout_s": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "attempt_timeout_s": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "run_timeout_s": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "max_response_bytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_event_bytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_events": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_requests": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_tokens": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "connect_timeout_s",
+        "read_timeout_s",
+        "attempt_timeout_s",
+        "run_timeout_s",
+        "max_response_bytes",
+        "max_event_bytes",
+        "max_events",
+        "max_requests",
+        "max_tokens"
+      ],
+      "additionalProperties": false
+    },
+    "dr_profile": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "cases": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "id",
+        "version",
+        "cases"
+      ],
+      "additionalProperties": false
+    },
+    "dr_recipe": {
+      "type": "object",
+      "properties": {
+        "schema_version": {
+          "const": "1.0"
+        },
+        "content_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "implementation": {
+          "$ref": "#/$defs/dr_implementation"
+        },
+        "contract": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "revision": {
+              "type": "string",
+              "minLength": 1
+            },
+            "content_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          },
+          "required": [
+            "id",
+            "revision",
+            "content_sha256"
+          ],
+          "additionalProperties": false
+        },
+        "protocol": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "const": "anthropic.messages"
+            },
+            "api_version": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            },
+            "beta_headers": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "minItems": 0,
+              "uniqueItems": true
+            }
+          },
+          "required": [
+            "name",
+            "api_version",
+            "beta_headers"
+          ],
+          "additionalProperties": false
+        },
+        "model": {
+          "type": "object",
+          "properties": {
+            "requested": {
+              "type": "string",
+              "minLength": 1
+            },
+            "policy": {
+              "enum": [
+                "request_or_alias",
+                "structure_only"
+              ]
+            },
+            "aliases": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "minItems": 0,
+              "uniqueItems": true
+            }
+          },
+          "required": [
+            "requested",
+            "policy",
+            "aliases"
+          ],
+          "additionalProperties": false
+        },
+        "capabilities": {
+          "type": "object",
+          "propertyNames": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]*$"
+          },
+          "additionalProperties": {
+            "type": "boolean"
+          }
+        },
+        "limits": {
+          "$ref": "#/$defs/dr_limits"
+        },
+        "profiles": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/dr_profile"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "cases": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/dr_case"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "requests": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/dr_request"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "repeat": {
+          "const": 1
+        },
+        "retry": {
+          "const": 0
+        }
+      },
+      "required": [
+        "schema_version",
+        "content_sha256",
+        "implementation",
+        "contract",
+        "protocol",
+        "model",
+        "capabilities",
+        "limits",
+        "profiles",
+        "cases",
+        "requests",
+        "repeat",
+        "retry"
+      ],
+      "additionalProperties": false
+    },
+    "dr_request": {
+      "type": "object",
+      "properties": {
+        "case_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "method": {
+          "const": "POST"
+        },
+        "headers": {
+          "type": "object",
+          "properties": {
+            "content-type": {
+              "type": "string",
+              "minLength": 1
+            },
+            "accept": {
+              "type": "string",
+              "minLength": 1
+            },
+            "anthropic-version": {
+              "type": "string",
+              "minLength": 1
+            },
+            "anthropic-beta": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "additionalProperties": false
+        },
+        "body": {
+          "type": "object"
+        },
+        "streaming": {
+          "type": "boolean"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "required": [
+        "case_id",
+        "method",
+        "headers",
+        "body",
+        "streaming",
+        "sha256"
+      ],
+      "additionalProperties": false
+    },
+    "dr_source": {
+      "type": "object",
+      "properties": {
+        "run_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "assessment_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "result_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "checkpoint_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "recipe_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "context_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "run_id",
+        "assessment_id",
+        "result_sha256",
+        "checkpoint_sha256",
+        "recipe_sha256",
+        "context_sha256"
+      ],
+      "additionalProperties": false,
+      "anyOf": [
+        {
+          "properties": {
+            "result_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        },
+        {
+          "properties": {
+            "checkpoint_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        }
+      ]
+    },
+    "dr_assertion": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "category": {
+          "enum": [
+            "protocol",
+            "behavior",
+            "client",
+            "environment"
+          ]
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "status": {
+          "enum": [
+            "PASS",
+            "FAIL",
+            "SKIP",
+            "BLOCKED",
+            "INDETERMINATE"
+          ]
+        },
+        "reason_code": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expected": {
+          "type": "string"
+        },
+        "actual": {
+          "type": "string"
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "event": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "minimum": 0
+              },
+              "pointer": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "path",
+              "sha256",
+              "event",
+              "pointer"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "id",
+        "version",
+        "category",
+        "required",
+        "status",
+        "reason_code",
+        "expected",
+        "actual",
+        "evidence_refs"
+      ],
+      "additionalProperties": false
+    },
+    "dr_evidence": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "event": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "pointer": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "path",
+        "sha256",
+        "event",
+        "pointer"
+      ],
+      "additionalProperties": false
+    },
+    "dc_change": {
+      "type": "object",
+      "properties": {
+        "field": {
+          "type": "string",
+          "minLength": 1
+        },
+        "before": {},
+        "after": {},
+        "kind": {
+          "enum": [
+            "context",
+            "semantic"
+          ]
+        }
+      },
+      "required": [
+        "field",
+        "before",
+        "after",
+        "kind"
+      ],
+      "additionalProperties": false
+    },
+    "dc_evidence_ref": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/dc_path"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "event": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "pointer": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "path",
+        "sha256",
+        "event",
+        "pointer"
+      ],
+      "additionalProperties": false
+    },
+    "dc_pair": {
+      "type": "object",
+      "properties": {
+        "case_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "assertion_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "assertion_version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "category": {
+          "enum": [
+            "protocol",
+            "behavior",
+            "client",
+            "environment"
+          ]
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "before": {
+          "enum": [
+            "PASS",
+            "FAIL",
+            "SKIP",
+            "BLOCKED",
+            "INDETERMINATE",
+            "missing"
+          ]
+        },
+        "after": {
+          "enum": [
+            "PASS",
+            "FAIL",
+            "SKIP",
+            "BLOCKED",
+            "INDETERMINATE",
+            "missing"
+          ]
+        },
+        "transition": {
+          "enum": [
+            "recovered",
+            "persistent",
+            "new_failure",
+            "passed_both",
+            "gap",
+            "newly_evaluated",
+            "incomparable"
+          ]
+        },
+        "before_reason": {
+          "type": "string"
+        },
+        "after_reason": {
+          "type": "string"
+        },
+        "before_expected": {
+          "type": "string"
+        },
+        "before_actual": {
+          "type": "string"
+        },
+        "after_expected": {
+          "type": "string"
+        },
+        "after_actual": {
+          "type": "string"
+        },
+        "before_evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/dc_evidence_ref"
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "after_evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/dc_evidence_ref"
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "case_id",
+        "assertion_id",
+        "assertion_version",
+        "category",
+        "required",
+        "before",
+        "after",
+        "transition",
+        "before_reason",
+        "after_reason",
+        "before_expected",
+        "before_actual",
+        "after_expected",
+        "after_actual",
+        "before_evidence",
+        "after_evidence"
+      ],
+      "additionalProperties": false
+    },
+    "dc_path": {
+      "type": "string",
+      "maxLength": 240,
+      "pattern": "^(?!.*(?:^|/)\\.{1,2}(?:/|$))[A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)*$"
+    },
+    "dc_source": {
+      "type": "object",
+      "properties": {
+        "run_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "assessment_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "result_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "checkpoint_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "recipe_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "context_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "run_id",
+        "assessment_id",
+        "result_sha256",
+        "checkpoint_sha256",
+        "recipe_sha256",
+        "context_sha256"
+      ],
+      "additionalProperties": false,
+      "anyOf": [
+        {
+          "properties": {
+            "result_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        },
+        {
+          "properties": {
+            "checkpoint_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        }
+      ]
+    },
+    "dc_unmatched": {
+      "type": "object",
+      "properties": {
+        "case_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "assertion_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "assertion_version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "case_id",
+        "assertion_id",
+        "assertion_version",
+        "reason"
       ],
       "additionalProperties": false
     }

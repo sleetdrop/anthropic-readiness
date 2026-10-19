@@ -201,9 +201,14 @@ class DiagnosticStore:
             "baseline_ids": variants or conflicts,
         }
 
-    def preview(self, archive: Path, owner: str, *, now: datetime) -> JsonObject:
+    def preview(
+        self, archive: Path, owner: str, *, now: datetime, deadline: float | None = None
+    ) -> JsonObject:
         _owner(owner)
         now = _now(now)
+        maximum_deadline = time.monotonic() + self.limits.timeout_s
+        deadline = min(maximum_deadline, deadline) if deadline is not None else maximum_deadline
+        self._remaining(deadline)
         preview_id = str(uuid4())
         expires = now + timedelta(minutes=15)
         directory = self._directory("previews", preview_id)
@@ -221,7 +226,6 @@ class DiagnosticStore:
                 (preview_id, owner, expires.isoformat()),
             )
         try:
-            deadline = time.monotonic() + self.limits.timeout_s
             copied = directory / "archive.zip"
             self._copy_archive(archive, copied, deadline)
             inventory = inspect_archive(copied, self._remaining(deadline))
@@ -250,6 +254,7 @@ class DiagnosticStore:
             validate_storage(private, "diagnostic-import-preview")
             atomic_write(directory / "preview.json", data)
             with self._transaction() as connection:
+                self._remaining(deadline)
                 connection.execute(
                     "UPDATE previews SET state='ready', document_sha256=? WHERE id=? AND state='building'",
                     (hashlib.sha256(data).hexdigest(), preview_id),

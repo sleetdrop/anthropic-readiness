@@ -1,5 +1,6 @@
 """Explicit local Web settings."""
 
+import math
 import re
 from dataclasses import dataclass
 
@@ -16,6 +17,8 @@ class WebSettings:
     )
     credential_env_allowlist: tuple[str, ...] = ()
     max_body_bytes: int = 65536
+    max_import_bytes: int = 256 * 1024 * 1024
+    import_timeout_s: float = 60
 
     def __post_init__(self) -> None:
         if self.host not in {"127.0.0.1", "::1", "localhost", "0.0.0.0"}:
@@ -24,6 +27,17 @@ class WebSettings:
             raise ValueError("invalid_web_port")
         if type(self.max_body_bytes) is not int or not 1 <= self.max_body_bytes <= 65536:
             raise ValueError("invalid_body_limit")
+        if (
+            type(self.max_import_bytes) is not int
+            or not 1 <= self.max_import_bytes <= 256 * 1024 * 1024
+        ):
+            raise ValueError("invalid_import_limit")
+        if (
+            isinstance(self.import_timeout_s, bool)
+            or not math.isfinite(self.import_timeout_s)
+            or not 0 < self.import_timeout_s <= 60
+        ):
+            raise ValueError("invalid_import_timeout")
         if not self.allowed_hosts or set(self.allowed_hosts) - {"localhost", "127.0.0.1", "[::1]"}:
             raise ValueError("invalid_local_hosts")
         defaults = ("http://localhost:8765", "http://127.0.0.1:8765", "http://[::1]:8765")

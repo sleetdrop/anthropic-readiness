@@ -568,3 +568,63 @@ fingerprint. At delivery commit `a1ba449`, supplemental full Python regression w
 still running. It subsequently passed 687 tests, zero failures/errors/skips,
 before any subsequent source changes. No new image,
 remote CI, or real endpoint acceptance is claimed.
+
+## W2 Task 10 — authenticated Web diagnosis and preferences
+
+Task 9 delivery is `a1ba449`, with final full-regression documentation in
+`d1dbfb2`. The Web now offers one exact POST ZIP-upload route, session-owned
+import activation, regenerated baseline facts, original-scope retest previews
+through the normal frozen-plan/start path, typed run/baseline comparison and
+checked language/theme preference cookies. Import/preview/view/compare do not
+send model requests. A disposable loopback retest used the existing start API and
+sent exactly four requests; imported HTML was never rendered.
+
+The binary branch retains Host/Origin/session/CSRF checks before reading bytes.
+All other mutations remain strict JSON with the existing 65536-byte cap. Uploads
+use private owned staging, streamed size/Content-Length checks, one shared
+monotonic receipt/validation deadline, two in-flight slots and cleanup on timeout,
+disconnect and failure. Slow inspection and file operations run in the threadpool;
+the health route stays responsive while two imports await processing.
+
+Ruling: extend shared preview methods with an optional earlier deadline — a Web
+upload must not receive a fresh full budget when archive validation begins —
+cost if wrong: one optional adapter parameter must remain consistent across CLI,
+Web and storage. Existing callers retain their bounded default. A real RED showed
+HTTP 200 after expiry; carrying the same deadline yields 408 and no ready preview.
+A second RED advanced time during private-preview encoding; the final check now
+runs inside the publication transaction before setting state to ready.
+
+Ruling: expose ExportService.verified_source for typed local-run comparisons —
+valid artifacts alone do not bind a source to its admitted job/plan — cost if
+wrong: duplicate local source reads before comparison. A disposable substitution
+of another valid assessment is rejected, rather than compared under the local
+run ID. No Web body accepts a filesystem path.
+
+Ruling: add the closed version-2 diagnostic export request contract now and expose
+its HTTP rendering path in Task 13 — presentation choices cannot be accepted and
+silently ignored before those renderers exist — cost if wrong: new export-option
+interaction remains pending until Task 13. Existing export request variants and
+all earlier Web schema definitions were structurally compared against the Task 9
+commit and remain unchanged. Task 13 must implement the versioned request/response
+path; the legacy endpoint currently rejects these extra fields.
+
+Errors use request-local checked catalogs, keeping machine codes unchanged.
+Preference cookies are HttpOnly/SameSite=Strict/path=/ with a one-year max-age;
+malformed values fall back, and invalid explicit updates reject. No global locale
+or browser storage is used. OpenAPI declares binary ZIP input, and TypeScript
+contracts name the new data boundaries. Source/recipe judgment identity does not
+depend on these UI preferences or Web schemas.
+
+Initial checks retained five feature failures and ten guard passes; the separate
+disconnect RED required actual stream consumption. The first green run exposed a
+test request missing its JSON media type; correcting that test input retained the
+65536-byte expectation. Green-2 passed 18, green-3 passed 19 before the final
+publication check. Focused-2 passed 71 Web/security/API/events/import regressions.
+Fast-2 found a test-only explicit module-export typing issue; it was corrected
+without changing runtime behavior. Logs remain under `artifacts/w2/task10/`.
+
+Final fast-3 passed all eight children (433 unit/harness tests), unchanged source
+fingerprint. The 71 focused regressions include both shared-deadline fixes and
+the pre-publication expiry guard. The prior full Python baseline remains Task 9's
+687 tests; no new full-stage, browser, image, remote CI or real endpoint result is
+claimed by this API task.
