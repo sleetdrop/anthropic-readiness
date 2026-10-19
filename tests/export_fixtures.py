@@ -5,7 +5,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 from anthropic_readiness.application import build_plan
-from anthropic_readiness.config import load_target
+from anthropic_readiness.config import TargetConfig, load_target
 from anthropic_readiness.jobs.manager import JobManager
 from anthropic_readiness.jobs.store import JobStore
 from anthropic_readiness.models import object_value
@@ -19,11 +19,16 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def prepared_run(
-    root: Path, *, partial: bool = False, keep_unpublished: bool = False, reconcile: bool = True
+    root: Path,
+    *,
+    partial: bool = False,
+    keep_unpublished: bool = False,
+    reconcile: bool = True,
+    target: TargetConfig | None = None,
 ) -> str:
     store = JobStore(root)
     plan = store.create_plan(
-        load_target(ROOT / "examples/target.yaml").to_json(),
+        (target or load_target(ROOT / "examples/target.yaml")).to_json(),
         ("anthropic-basic",),
         "a" * 64,
         now=datetime.now(UTC),

@@ -403,3 +403,21 @@ class DiagnosticStore:
     def load_source(self, baseline_id: str) -> ReportSource:
         _, source = self._validated(baseline_id, time.monotonic() + self.limits.timeout_s)
         return source
+
+    def stored_baselines(self) -> tuple[BaselineRecord, ...]:
+        """List marked import metadata only; get() revalidates current eligibility."""
+        with self._connection() as connection:
+            identifiers = [str(row["id"]) for row in connection.execute("SELECT id FROM baselines")]
+        records: list[JsonObject] = []
+        for identifier in identifiers:
+            try:
+                record, _ = self._record(identifier)
+                records.append(record)
+            except (OSError, ValueError):
+                continue
+        return tuple(
+            BaselineRecord(record)
+            for record in sorted(
+                records, key=lambda record: str(record["imported_at"]), reverse=True
+            )[:50]
+        )

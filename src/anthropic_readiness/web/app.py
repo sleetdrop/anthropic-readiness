@@ -28,6 +28,7 @@ from anthropic_readiness.web.security import (
     preferences_for,
 )
 from anthropic_readiness.web.settings import WebSettings
+from anthropic_readiness.web.workbench import router as workbench_router
 
 
 def create_app(*, data_root: Path, settings: WebSettings) -> FastAPI:
@@ -94,4 +95,5 @@ def create_app(*, data_root: Path, settings: WebSettings) -> FastAPI:
     app.include_router(router)
     app.include_router(diagnostics_router)
     app.include_router(pages_router)
+    app.include_router(workbench_router)
     return app

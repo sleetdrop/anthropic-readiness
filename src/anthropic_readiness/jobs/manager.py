@@ -573,6 +573,18 @@ class JobManager:
                 execution = journal.snapshot()
             return {"job": job.to_json(), "execution": execution}
 
+    def worker_observation(self, run_id: str) -> JsonObject:
+        """Observe the owned child; timestamps do not imply upstream activity."""
+        with self._condition:
+            self.store.get_job(run_id)
+            state = "not_running"
+            if self._active is not None and self._active.run_id == run_id:
+                try:
+                    state = "running" if self._active.process.is_alive() else "not_running"
+                except (OSError, ValueError):
+                    state = "unknown"
+            return {"state": state, "observed_at": datetime.now(UTC).isoformat()}
+
     def read_events(
         self, run_id: str, after: int
     ) -> tuple[JsonObject, tuple[ProgressEvent, ...], bool]:

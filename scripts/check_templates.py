@@ -2,12 +2,26 @@
 
 from importlib.resources import files
 
-from anthropic_readiness.web.pages import ASSETS, ENVIRONMENT
+from anthropic_readiness.web.pages import ASSETS
+from anthropic_readiness.web.templating import ENVIRONMENT
 
 
 def main() -> int:
     templates = ENVIRONMENT.list_templates(extensions=("html",))
-    if set(templates) != {"base.html", "configure.html", "run.html", "history.html"}:
+    if set(templates) != {
+        "base.html",
+        "configure.html",
+        "run.html",
+        "history.html",
+        "workbench.html",
+        "workbench-overview.html",
+        "workbench-issues.html",
+        "workbench-cases.html",
+        "workbench-compare.html",
+        "workbench-activity.html",
+        "import.html",
+        "baseline.html",
+    }:
         raise ValueError("unexpected_template_inventory")
     for name in templates:
         ENVIRONMENT.get_template(name)

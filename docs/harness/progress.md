@@ -699,3 +699,12 @@ is the last completed full Python baseline; no whole-W2 acceptance is inferred.
 The version-2 export contract is reserved for the actual Task 13 renderer path;
 the old request remains closed. Tasks 11–15 remain, including new UI, documents,
 browser/image acceptance and one independent end review.
+
+W2 Task 11 delivers independent operational views and read-only baseline pages,
+with neutral lifecycle, actual worker observation, verified field excerpts,
+original retest profiles and escaped bilingual metadata. Focused-2 passed 54
+workbench/page/source/API regressions; two legacy-link Node checks passed.
+Final fast-3 passed all eight children and 442 unit/harness tests on unchanged
+source. Tasks 12–15 remain: live interaction, actual browser visual acceptance,
+independent documents, end-to-end packaging and the single final review.
+No browser/image or real endpoint acceptance is inferred from these checks.

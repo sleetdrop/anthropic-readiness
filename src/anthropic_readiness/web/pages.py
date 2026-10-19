@@ -6,39 +6,20 @@ from importlib.resources import files
 from urllib.parse import urlencode
 
 from fastapi import APIRouter, Request
-from jinja2 import Environment, PackageLoader, select_autoescape
-from markupsafe import Markup
 from starlette.responses import HTMLResponse, Response
 
 from anthropic_readiness.config import Limits
+from anthropic_readiness.diagnostics.service import DiagnosticService
 from anthropic_readiness.models import JsonObject, JsonValue, object_value
 from anthropic_readiness.operations.reduction import objects
 from anthropic_readiness.report_models import ReportView
-from anthropic_readiness.report_reading import case_name
 from anthropic_readiness.report_rendering import render_report_body
 from anthropic_readiness.web.api import LocalRoute, catalog_document, manager_for, run_document
+from anthropic_readiness.web.templating import page
 
 router = APIRouter(route_class=LocalRoute)
-ENVIRONMENT = Environment(
-    loader=PackageLoader("anthropic_readiness", "resources/web"),
-    autoescape=select_autoescape(("html",)),
-)
-STATE_NAMES = {
-    "queued": "排队中",
-    "running": "执行中",
-    "cancelling": "正在取消",
-    "completed": "执行完成",
-    "cancelled": "已取消",
-    "interrupted": "已中断",
-    "error": "执行错误",
-    "pending": "待评估",
-    "PASS": "通过",
-    "FAIL": "未通过",
-    "INDETERMINATE": "证据不足",
-    "BLOCKED": "环境阻塞",
-    "SKIP": "跳过",
-}
 ASSETS = {
+    "web/workbench-links.js",
     "web/app.css",
     "web/app.js",
     "web/forms.js",
@@ -46,6 +27,12 @@ ASSETS = {
     "web/report.js",
     "report-v2.css",
     "report-v2.js",
+    "themes.css",
+    "web/icons/document-text.svg",
+    "web/icons/plus.svg",
+    "web/icons/arrow-up-tray.svg",
+    "web/icons/stop.svg",
+    "web/icons/chevron-right.svg",
 }
 FILTERS = {
     "state",
@@ -58,10 +45,6 @@ FILTERS = {
     "contract_revision",
     "api_version",
 }
-
-
-def page(name: str, context: dict[str, object]) -> HTMLResponse:
-    return HTMLResponse(ENVIRONMENT.get_template(name).render(**context, state_names=STATE_NAMES))
 
 
 def initial_target(catalog: JsonObject) -> JsonObject:
@@ -91,7 +74,9 @@ def initial_target(catalog: JsonObject) -> JsonObject:
 
 @router.get("/", response_class=HTMLResponse, include_in_schema=False)
 @router.get("/new", response_class=HTMLResponse, include_in_schema=False)
-def configure(request: Request, copy: str | None = None) -> HTMLResponse:
+def configure(
+    request: Request, copy: str | None = None, baseline: str | None = None
+) -> HTMLResponse:
     manager = manager_for(request)
     catalog = catalog_document(manager)
     target = initial_target(catalog)
@@ -99,6 +84,30 @@ def configure(request: Request, copy: str | None = None) -> HTMLResponse:
     if copy:
         frozen = manager.store.get_admitted_plan(copy)
         target, profiles = frozen.target, list(frozen.profiles)
+    reference: JsonObject | None = None
+    retest_id: str | None = None
+    if baseline:
+        if copy:
+            raise ValueError("invalid_request")
+        service = DiagnosticService(manager.store.root)
+        record = service.get(baseline).document
+        source = service.load_source(baseline)
+        original_target = (
+            source.result.target
+            if source.result is not None
+            else object_value(source.execution["target"])
+            if source.execution is not None
+            else {}
+        )
+        reference = {
+            "baseline_id": baseline,
+            "target": original_target,
+            "eligibility": record["eligibility"],
+        }
+        target = {**original_target, "messages_url": "", "auth": {"mode": "none"}}
+        profiles = [str(profile["id"]) for profile in objects(source.plan["profiles"])]
+        if object_value(record["eligibility"])["retest"] is True:
+            retest_id = baseline
     profile_values: list[JsonValue] = list(profiles)
     bootstrap: JsonObject = {
         "page": "configure",
@@ -107,11 +116,14 @@ def configure(request: Request, copy: str | None = None) -> HTMLResponse:
         "profiles": profile_values,
         "copied": bool(copy),
         "presets": list(manager.store.presets()),
+        "baseline_id": retest_id,
+        "reference": reference,
     }
     return page(
         "configure.html",
         {
             "title": "新建评估",
+            "title_key": "form.title",
             "active": "new",
             "bootstrap": bootstrap,
             "target": target,
@@ -119,50 +131,24 @@ def configure(request: Request, copy: str | None = None) -> HTMLResponse:
             "profiles": profiles,
             "copied": bool(copy),
             "limits": target["limits"],
+            "reference": reference,
+            "baseline_id": retest_id,
         },
+        request=request,
     )
 
 
 @router.get("/runs/{run_id}", response_class=HTMLResponse, include_in_schema=False)
 def assessment(run_id: str, request: Request) -> HTMLResponse:
-    document = run_document(manager_for(request), run_id)
-    report = document["report"]
-    rendered = render_report_body(ReportView(report)) if isinstance(report, dict) else ""
     if request.query_params.get("fragment") == "report":
-        return HTMLResponse(rendered)
-    frozen = object_value(document["plan"])
-    planned = objects(object_value(frozen["plan"])["cases"])
-    case_states = (
-        {
-            str(case["case_id"]): str(case["state"])
-            for case in objects(object_value(document["execution"])["case_states"])
-        }
-        if isinstance(document["execution"], dict)
-        else {}
-    )
-    cases: list[JsonObject] = [
-        {
-            "id": case["id"],
-            "name": case_name(case["id"]),
-            "state": case_states.get(str(case["id"]), "pending"),
-        }
-        for case in planned
-    ]
-    return page(
-        "run.html",
-        {
-            "title": "评估记录",
-            "active": "run",
-            "bootstrap": {"page": "run", "run": document},
-            "run": document,
-            "cases": cases,
-            "report_html": Markup(rendered),
-            "target": frozen["target"],
-            "plan": frozen["plan"],
-            "job": document["job"],
-            "execution": document["execution"],
-        },
-    )
+        document = run_document(manager_for(request), run_id)
+        report = document["report"]
+        return HTMLResponse(
+            render_report_body(ReportView(report)) if isinstance(report, dict) else ""
+        )
+    from anthropic_readiness.web.workbench import workbench_page
+
+    return workbench_page(request, run_id)
 
 
 @router.get("/history", response_class=HTMLResponse, include_in_schema=False)
@@ -189,12 +175,14 @@ def history(request: Request, cursor: str | None = None) -> HTMLResponse:
         "history.html",
         {
             "title": "评估历史",
+            "title_key": "history.title",
             "active": "history",
             "bootstrap": {"page": "history"},
             "items": items,
             "filters": filters,
             "next_url": next_url,
         },
+        request=request,
     )
 
 
@@ -203,4 +191,11 @@ def asset(asset: str) -> Response:
     if asset not in ASSETS:
         return Response(status_code=404)
     content = files("anthropic_readiness").joinpath("resources/" + asset).read_bytes()
-    return Response(content, media_type="text/css" if asset.endswith(".css") else "text/javascript")
+    media = (
+        "image/svg+xml"
+        if asset.endswith(".svg")
+        else "text/css"
+        if asset.endswith(".css")
+        else "text/javascript"
+    )
+    return Response(content, media_type=media)

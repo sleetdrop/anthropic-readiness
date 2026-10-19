@@ -10,7 +10,7 @@
 
 **Spec:** [W2 specification revision 2](../specs/2026-10-18-diagnostic-workbench-design.md), approved with this plan on 2026-10-18.
 
-**Status:** owner-approved for sequential implementation in the current session on 2026-10-18 ("确认，请实施"). Revision-2 written scope and companion compositions are included. Tasks 0–10 are complete; Task 11 is next, Tasks 11–15 remain pending. Existing task numbers are retained for traceability.
+**Status:** owner-approved for sequential implementation in the current session on 2026-10-18 ("确认，请实施"). Revision-2 written scope and companion compositions are included. Tasks 0–11 are complete; Task 12 is next, Tasks 12–15 remain pending. Existing task numbers are retained for traceability.
 
 ## Owner review summary
 
@@ -424,12 +424,12 @@ independent reviewer or implementer agent is dispatched.
 
 **Interfaces:** `build_workbench_view(run: JsonObject, *, worker_observation: JsonObject) -> WorkbenchView` is pure; `JobManager.worker_observation(run_id: str) -> JsonObject` observes the owned process with timestamp under its existing synchronization; no inferred heartbeat from elapsed time. `web/workbench.py` composes local run/baseline views without calling `render_report_body`.
 
-- [ ] Write tests for active, complete, interrupted, empty and mixed states; distinguish upstream timestamps, service connectivity and observed worker liveness. A terminal result/publication race must yield one coherent projection generation. Assert original dimensions and unassessed client state survive.
-- [ ] Run `UV_OFFLINE=1 uv run --frozen pytest -q tests/unit/test_workbench_view.py tests/integration/test_workbench_pages.py`; retain RED.
-- [ ] Implement selected-layout shell and distinct views with query parameters `view`, `issue`, `case`, `filter`, `baseline`, plus the import/baseline/retest-configuration HTML routes. SSR applies the checked preference and includes both catalogs; autonym language and light/dark/system controls are available globally. Render neutral completion; green denotes PASS only. Derive counts from facts; explicitly label matrix passing-count denominators. Evidence details reference checked IDs, never arbitrary paths. Configuration labels the actual installed suite/count, keeps all original profiles for retest, and groups finite execution controls into details rather than a pricing workflow.
-- [ ] Rerun focused tests and existing Web page/source recovery tests. Preserve old run URLs and map old `#capabilities`, `#finding-*`, `#case-*` links to the appropriate view/selection without changing source identities. No-JS links work.
-- [ ] Verify localized parameters containing hostile markup remain literal text through the actual escaped template boundary, without double-escaping original field values.
-- [ ] Commit: `feat: separate operational workbench views from report documents`.
+- [x] Write tests for active, complete, interrupted, empty and mixed states; distinguish upstream timestamps, service connectivity and observed worker liveness. A terminal result/publication race must yield one coherent projection generation. Assert original dimensions and unassessed client state survive.
+- [x] Run `UV_OFFLINE=1 uv run --frozen pytest -q tests/unit/test_workbench_view.py tests/integration/test_workbench_pages.py`; retain RED.
+- [x] Implement selected-layout shell and distinct views with query parameters `view`, `issue`, `case`, `filter`, `baseline`, plus the import/baseline/retest-configuration HTML routes. SSR applies the checked preference and includes both catalogs; autonym language and light/dark/system controls are available globally. Render neutral completion; green denotes PASS only. Derive counts from facts; explicitly label matrix passing-count denominators. Evidence details reference checked IDs, never arbitrary paths. Configuration labels the actual installed suite/count, keeps all original profiles for retest, and groups finite execution controls into details rather than a pricing workflow.
+- [x] Rerun focused tests and existing Web page/source recovery tests. Preserve old run URLs and map old `#capabilities`, `#finding-*`, `#case-*` links to the appropriate view/selection without changing source identities. No-JS links work.
+- [x] Verify localized parameters containing hostile markup remain literal text through the actual escaped template boundary, without double-escaping original field values.
+- [x] Commit: `feat: separate operational workbench views from report documents`.
 
 ### Task 12: Focus-preserving browser interaction and layout acceptance
 

@@ -628,3 +628,52 @@ fingerprint. The 71 focused regressions include both shared-deadline fixes and
 the pre-publication expiry guard. The prior full Python baseline remains Task 9's
 687 tests; no new full-stage, browser, image, remote CI or real endpoint result is
 claimed by this API task.
+
+## W2 Task 11 — independent operational workbench
+
+The workbench now composes operational facts independently of report documents,
+with overview, issue, case, comparison and recorded-activity views. It preserves
+original dimensions, pending records and unassessed client coverage. Completion
+and worker lifecycle remain neutral. Imported baselines are read-only; new retest
+configuration retains original profiles while requiring a new local endpoint and
+credentials. Actual expected/observed field excerpts come only from verified
+observations. Hostile model metadata is escaped once at the real template boundary.
+
+Worker observation checks the owned OS process under the manager lock and records
+its own observation time. Recorded upstream activity keeps its original clock.
+A terminal publication race is tested against one coherent result generation.
+Legacy fragments map to checked case/finding IDs and canonical query links;
+ordinary query navigation also works without JavaScript.
+
+Ruling: compose queued workbench facts from the frozen plan with pending states
+and absent execution timestamps — no execution record exists yet — cost if wrong:
+a second projection path must retain the same group and dimension accounting.
+Projection functions perform no resource or filesystem I/O during calls; the
+existing report-view schema is cached at module import.
+
+Ruling: list stored baseline metadata without granting proof, then revalidate
+source data for inspection, comparison and retest — browsing labels must not
+activate stale evidence — cost if wrong: extra reads and unavailable labels for
+a damaged local source. Stored metadata alone never grants an eligibility badge.
+
+Ruling: implement the approved existing project rather than scaffold a separate
+Product Design prototype — the accepted specification binds the production
+repository and shared themes — cost if wrong: visual fixes must fit the existing
+server-rendered architecture. Official Heroicons 2.2.0 outline assets and their
+MIT license are packaged locally; this data UI needs no raster illustration.
+Actual browser fidelity and interaction acceptance belong to Task 12.
+
+Initial feature checks observed missing projection/routes and legacy-link code.
+The first page fixture incorrectly tried to acquire a second service owner lock;
+fixture ordering was corrected without weakening that lock. Genuine failures
+then exposed a reserved catalog count-form suffix, missing template endfor and
+English copy mismatch; each was corrected. Focused-1 passed 54 tests, and fast-1
+passed all eight children before the final legacy-link addition. Final focused
+and fast results are recorded below before delivery. No browser/image or live
+endpoint acceptance is claimed by these server-rendered checks.
+
+Final focused-2 passed 54 tests; both legacy-link Node tests passed. Fast-2 exposed
+missing strict JSDoc annotations in that new module. After adding checked JSON
+access and explicit parameter/tuple types, final fast-3 passed all eight children
+with 442 unit/harness tests on unchanged source. No assertions or fixture outcomes
+were weakened. Logs remain under `artifacts/w2/task11/`.
