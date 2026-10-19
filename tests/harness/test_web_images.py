@@ -360,7 +360,15 @@ def test_installed_web_resource_probe_imports_current_module_boundaries(tmp_path
         run_web_checks(Probe(tmp_path, "linux/arm64", "full"), "http://synthetic.invalid/cases")
     tree = ast.parse(captured[0])
     imports = ast.Module(
-        body=[node for node in tree.body if isinstance(node, (ast.Import, ast.ImportFrom))],
+        body=[
+            node
+            for node in tree.body
+            if isinstance(node, (ast.Import, ast.ImportFrom))
+            or any(
+                isinstance(child, ast.Name) and child.id == "ENVIRONMENT"
+                for child in ast.walk(node)
+            )
+        ],
         type_ignores=[],
     )
     result = subprocess.run(

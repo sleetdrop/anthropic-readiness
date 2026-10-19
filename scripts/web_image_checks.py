@@ -302,7 +302,7 @@ def run_web_checks(a: Acceptance, host_url: str) -> None:
             "python",
             a.web,
             "-c",
-            "import os,shutil,importlib.util; from importlib.resources import files; from anthropic_readiness.web.pages import ASSETS; from anthropic_readiness.web.templating import ENVIRONMENT; assert os.getuid()==10001; assert not any(shutil.which(x) for x in ('uv','git','node','npm','pytest','chromium')); assert importlib.util.find_spec('pytest') is None; assert not os.path.exists('/build'); [ENVIRONMENT.get_template(n) for n in ENVIRONMENT.list_templates()]; assert all(files('anthropic_readiness').joinpath('resources/'+n).is_file() for n in ASSETS); print('installed Web resources and nonroot isolation verified')",
+            "import os,shutil,importlib.util; from importlib.resources import files; from anthropic_readiness.web.pages import ASSETS; from anthropic_readiness.web.templating import ENVIRONMENT; assert os.getuid()==10001; assert not any(shutil.which(x) for x in ('uv','git','node','npm','pytest','chromium')); assert importlib.util.find_spec('pytest') is None; assert not os.path.exists('/build'); templates=ENVIRONMENT.list_templates(extensions=('html',)); assert templates; [ENVIRONMENT.get_template(n) for n in templates]; assert all(files('anthropic_readiness').joinpath('resources/'+n).is_file() for n in ASSETS); print('installed Web resources and nonroot isolation verified')",
         ],
     )
     volume = a.token + "-web-data"

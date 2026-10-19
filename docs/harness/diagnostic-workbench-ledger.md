@@ -964,3 +964,37 @@ The explicit legacy branch now passes all 37 frozen/new document and export
 regressions. Fast-2 passed all eight children on unchanged source (457 Python,
 20 Node). This is a source checkpoint for reproducible image labels; Task 14 stays
 in progress until a fresh whole graph and both actual image jobs pass.
+
+Full-2 passed all thirteen required children at clean commit c5907ec98683d2b5720a2dfd02b33fd0a3684b5c
+with unchanged source: 457 unit/harness, 214 integration, 84 acceptance, five
+installed-package, 20 Node and 77 Chromium cases; zero skips/failures/errors.
+The original full-1 failure record remains retained. Native ARM64 image acceptance
+has started through the maintained stdlib-only host Docker controller; actual
+product preparation/builds/tests run in Linux containers. AMD64 images and Task 15
+remain pending. No remote CI, real endpoint or registry operation was run.
+
+The owned idle synthetic preview was restarted at current source without changing
+its data root. Browser reload retained the selected issue/case; actual GUI export
+5c1fd55a-4dbd-40ae-854e-23e8bce620ec produced presentation 3.0 en/dark files, with
+no browser warnings/errors. Its manifest/source hash and all file hashes are in
+artifacts/w2/task14/manual-observation.json; screenshots are retained there.
+The data root still contains one completed and one interrupted run and no active
+job. The previous immutable exports were retained. These are synthetic preview
+observations, not real endpoint outcomes or full image acceptance.
+
+ARM64 images-arm64-1 built all targets, passed the separately prepared/disconnected
+native developer full graph and CLI replay/isolation/signals/host route, then failed
+the Web resource probe: PackageLoader.list_templates includes JavaScript/CSS assets,
+and the observer attempted to compile app.js as Jinja. This was a harness defect;
+the actual installed application uses named HTML templates. The regression now
+executes the captured probe's actual template statements, not only its imports:
+1 RED TemplateSyntaxError, then 28 image-harness tests GREEN with an explicit
+nonempty HTML-only template inventory, matching check_templates.py. No resource or
+nonroot assertion was removed. The failed image record remains retained.
+
+A disposable actual-Web-only observation of the already-built matching runtime
+context then passed all 31 observations, including receiver import/full four-case
+retest/comparison export/restart, original cancellation/restart and host route.
+The record explicitly sets stage_acceptance=false; it does not replace the full
+maintained orchestrator. Fast-3 passed all eight children after the probe fix.
+A fresh native full image run and then emulated AMD64 full remain required.

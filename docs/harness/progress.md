@@ -756,3 +756,14 @@ legacy `presentation=None` file writers now preserve every original assertion;
 new output remains presentation 3. Eight explicit-legacy failures preceded the
 fix, then 37 related regressions and all eight fast-2 children passed. A new full
 graph and actual image acceptance remain required.
+
+Task 14 clean source checkpoint c5907ec passed full-2: thirteen required children,
+760 Python, 20 Node and 77 Chromium tests, unchanged source and no skipped/failed
+cases. Native ARM64 actual image acceptance is running; emulated AMD64 and the
+single independent W2 review remain pending. This is not yet whole-W2 acceptance.
+
+The first native image run passed its fresh disconnected full graph and all CLI
+checks, then found a Web observer compiling JS as Jinja. Captured actual-template
+regression observed RED, then 28 harness checks passed after HTML-only filtering;
+all 31 disposable actual-Web observations and fast-3 passed. The debug record is
+explicitly not stage acceptance. Full native/AMD64 image reruns remain pending.
