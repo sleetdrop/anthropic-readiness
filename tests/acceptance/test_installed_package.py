@@ -110,3 +110,33 @@ def test_installed_wheel_outside_repository(tmp_path: Path) -> None:
         outside,
     )
     assert (rerendered / "report.html").exists()
+    guarded = r"""
+import importlib.abc
+import importlib.util
+import sys
+for name in ("fastapi", "jinja2", "uvicorn"):
+    assert importlib.util.find_spec(name) is None, name
+class NoWeb(importlib.abc.MetaPathFinder):
+    def find_spec(self, fullname, path, target=None):
+        if fullname.split(".")[0] in {"fastapi", "jinja2", "uvicorn"}:
+            raise AssertionError("CLI imported a Web dependency")
+sys.meta_path.insert(0, NoWeb())
+from anthropic_readiness.cli import main
+raise SystemExit(main(sys.argv[1:]))
+"""
+    exported = outside / "diagnosis.zip"
+    run(
+        [
+            str(environment / "bin/python"),
+            "-c",
+            guarded,
+            "diagnostics",
+            "export",
+            "--input",
+            str(output / "result.json"),
+            "--out",
+            str(exported),
+        ],
+        outside,
+    )
+    assert exported.is_file()

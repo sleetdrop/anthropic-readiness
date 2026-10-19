@@ -10,7 +10,7 @@
 
 **Spec:** [W2 specification revision 2](../specs/2026-10-18-diagnostic-workbench-design.md), approved with this plan on 2026-10-18.
 
-**Status:** owner-approved for sequential implementation in the current session on 2026-10-18 ("确认，请实施"). Revision-2 written scope and companion compositions are included. Tasks 0–8 are complete; Task 9 is next, Tasks 9–15 remain pending. Existing task numbers are retained for traceability.
+**Status:** owner-approved for sequential implementation in the current session on 2026-10-18 ("确认，请实施"). Revision-2 written scope and companion compositions are included. Tasks 0–9 are complete; Task 10 is next, Tasks 10–15 remain pending. Existing task numbers are retained for traceability.
 
 ## Owner review summary
 
@@ -400,11 +400,11 @@ independent reviewer or implementer agent is dispatched.
 
 **Interfaces:** `add_diagnostic_commands(parser: argparse.ArgumentParser) -> None` and `dispatch_diagnostics(args: argparse.Namespace) -> int` own the exact commands/flags defined above. The root CLI first creates `commands.add_parser("diagnostics")` and passes that parser to the helper; the helper creates only its child subcommands. No private argparse generic, Any or suppression is needed.
 
-- [ ] Write subprocess tests for each command, missing live opt-in, dry-run zero requests, immutable baseline bytes, legacy manual-current-test guidance and explicit incomparable JSON. Deny importing `fastapi`, `jinja2` and `uvicorn` in a clean CLI-only installation. Task 13 adds and tests the presentation flags when localized document rendering is available; this task does not accept and silently ignore unsupported presentation choices.
-- [ ] Run `UV_OFFLINE=1 uv run --frozen pytest -q tests/acceptance/test_diagnostic_cli.py`; retain RED.
-- [ ] Implement parser/dispatch through the shared service. Keep existing stdout machine-readable, operation explanations on stderr, secret values absent from errors and existing run exit meanings unchanged. Dry-run output cannot create a report that looks executed. The additional language/theme helper and report-option forwarding are integrated in Task 13, preserving this task's command/exit contracts.
-- [ ] Rerun focused tests and `tests/acceptance/test_cli.py tests/acceptance/test_replay.py tests/acceptance/test_serve_command.py`. Exercise live opt-in only against the disposable local synthetic peer with a four-request plan.
-- [ ] Commit: `feat: expose portable diagnosis and repair verification in the CLI`.
+- [x] Write subprocess tests for each command, missing live opt-in, dry-run zero requests, immutable baseline bytes, legacy manual-current-test guidance and explicit incomparable JSON. Deny importing `fastapi`, `jinja2` and `uvicorn` in a clean CLI-only installation. Task 13 adds and tests the presentation flags when localized document rendering is available; this task does not accept and silently ignore unsupported presentation choices.
+- [x] Run `UV_OFFLINE=1 uv run --frozen pytest -q tests/acceptance/test_diagnostic_cli.py`; retain RED.
+- [x] Implement parser/dispatch through the shared service. Keep existing stdout machine-readable, operation explanations on stderr, secret values absent from errors and existing run exit meanings unchanged. Dry-run output cannot create a report that looks executed. The additional language/theme helper and report-option forwarding are integrated in Task 13, preserving this task's command/exit contracts.
+- [x] Rerun focused tests and `tests/acceptance/test_cli.py tests/acceptance/test_replay.py tests/acceptance/test_serve_command.py`. Exercise live opt-in only against the disposable local synthetic peer with a four-request plan.
+- [x] Commit: `feat: expose portable diagnosis and repair verification in the CLI`.
 
 ### Task 10: Authenticated binary import and shared Web diagnostic routes
 

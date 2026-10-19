@@ -8,10 +8,11 @@ import sys
 from collections.abc import Sequence
 from pathlib import Path
 
-from anthropic_readiness.application import build_plan, run_assessment
+from anthropic_readiness.application import prepare_assessment, run_assessment
 from anthropic_readiness.config import load_target
 from anthropic_readiness.contracts import SUPPORTED, resolve_contract, validate_target_contract
 from anthropic_readiness.credentials import EnvironmentCredentials
+from anthropic_readiness.diagnostics.cli import add_diagnostic_commands, dispatch_diagnostics
 from anthropic_readiness.operations.observer import DiskExecutionObserver
 from anthropic_readiness.reporting import render_from_file, write_reports
 from anthropic_readiness.runner import replay_run, result_exit_code
@@ -43,6 +44,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     report = commands.add_parser("report", help="Render an existing result offline")
     report.add_argument("--input", type=Path, required=True)
     report.add_argument("--out", type=Path, required=True)
+    add_diagnostic_commands(
+        commands.add_parser("diagnostics", help="Portable diagnosis and repair verification")
+    )
     serve_parser = commands.add_parser("serve", help="Run the optional local Web console")
     serve_parser.add_argument("--data-dir", type=Path, required=True)
     serve_parser.add_argument("--host", default="127.0.0.1")
@@ -50,6 +54,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     serve_parser.add_argument("--credential-env", action="append", default=[])
     args = parser.parse_args(argv)
     try:
+        if args.command == "diagnostics":
+            return dispatch_diagnostics(args)
         if args.command == "serve":
             try:
                 from anthropic_readiness.web.serve import serve
@@ -100,12 +106,19 @@ def main(argv: Sequence[str] | None = None) -> int:
             )
             return 0
         if args.command == "run":
-            plan = build_plan(target.to_json(), args.profile or ["anthropic-basic"])
+            plan, context = prepare_assessment(
+                target.to_json(), args.profile or ["anthropic-basic"]
+            )
             if args.dry_run:
                 print(json.dumps(plan.to_json(), ensure_ascii=False, indent=2))
                 return 0
             print(f"Planned requests: {len(plan.cases)}; no retries.", file=sys.stderr)
-            result = run_assessment(plan, args.out, credentials=EnvironmentCredentials(target))
+            result = run_assessment(
+                plan,
+                args.out,
+                credentials=EnvironmentCredentials(target),
+                assessment_context=context.document,
+            )
         else:
             result = replay_run(
                 target,

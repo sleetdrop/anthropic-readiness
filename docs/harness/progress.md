@@ -678,3 +678,11 @@ adapter boundaries. Final focused-2 passed 66 tests; fast-2 passed all eight
 children (433 unit/harness tests); full Python passed 681 with no failures,
 errors or skips. Rulings and RED evidence remain in the W2 ledger. Tasks 9–15
 remain; new CLI/Web surfaces, visual acceptance and image acceptance are pending.
+
+Task 9 exposes standalone import, inspect, export, explicit retest and comparison.
+Normal CLI live runs also retain pre-request/final provenance. All 18 focused
+new/legacy CLI, replay, serve and actual wheel-install checks passed; the clean
+CLI-only installation denies Web imports. Fast-1 passed all eight children
+(433 unit/harness tests) on unchanged source. Supplemental full regression is
+still running; Task 8's 681-test run remains the last completed full baseline.
+Tasks 10–15 remain; no real endpoint or external publication was authorized.

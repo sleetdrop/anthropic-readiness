@@ -8,6 +8,7 @@ from pathlib import Path
 
 from anthropic_readiness.config import fingerprint
 from anthropic_readiness.diagnostics.comparison import compare_assessments
+from anthropic_readiness.diagnostics.context import context_for_plan, validate_plan_context
 from anthropic_readiness.diagnostics.contracts import validate_diagnostic, validate_projection
 from anthropic_readiness.diagnostics.identity import check_identity, installed_identity
 from anthropic_readiness.diagnostics.importing import (
@@ -17,6 +18,7 @@ from anthropic_readiness.diagnostics.importing import (
     validate_import,
 )
 from anthropic_readiness.diagnostics.models import (
+    AssessmentContext,
     BaselineRecord,
     Comparison,
     ImplementationIdentity,
@@ -30,8 +32,12 @@ from anthropic_readiness.diagnostics.packages import (
     write_package,
 )
 from anthropic_readiness.diagnostics.recipes import (
+    build_recipe,
     validate_recipe_binding,
     validate_recipe_evidence,
+)
+from anthropic_readiness.diagnostics.recipes import (
+    prepare_retest as regenerate_retest,
 )
 from anthropic_readiness.diagnostics.reduction import baseline_eligibility, comparison_inventory
 from anthropic_readiness.diagnostics.store import DiagnosticStore
@@ -41,6 +47,7 @@ from anthropic_readiness.report_models import ReportSource
 from anthropic_readiness.report_rendering import render_report_html, render_report_markdown
 from anthropic_readiness.report_sources import load_report_source
 from anthropic_readiness.report_view import build_report_view
+from anthropic_readiness.runner import RunPlan
 
 
 class DiagnosticService:
@@ -261,3 +268,36 @@ class DiagnosticService:
         return self.compare_sources(
             safe_path(self.store.root, str(baseline["artifact_root"])), source_dir
         )
+
+    def prepare_retest(
+        self, baseline_id: str, target: JsonObject
+    ) -> tuple[RunPlan, AssessmentContext, JsonObject]:
+        baseline = self.get(baseline_id)
+        if object_value(baseline.document["eligibility"])["retest"] is not True:
+            raise ValueError("diagnostic_retest_unavailable")
+        before = self.source_facts(
+            safe_path(self.store.root, str(baseline.document["artifact_root"]))
+        )
+        identity = installed_identity()
+        recipe = RetestRecipe(object_value(before["recipe"]))
+        plan, differences = regenerate_retest(recipe, target, identity)
+        changes = differences["changes"]
+        if not isinstance(changes, list):
+            raise ValueError("diagnostic_retest_conditions")
+        changes = [change for change in changes if object_value(change)["kind"] == "semantic"]
+        original_target, local_target = object_value(before["target"]), plan.target.to_json()
+        for field in ("name", "delivery_id", "messages_url", "auth"):
+            if original_target.get(field) != local_target.get(field):
+                changes.append(
+                    {
+                        "field": field,
+                        "before": original_target.get(field),
+                        "after": local_target.get(field),
+                        "kind": "context",
+                    }
+                )
+        differences["changes"] = changes
+        context = context_for_plan(plan, build_recipe(plan, identity), baseline=baseline)
+        context.document["declared_changes"] = changes
+        validate_plan_context(context.document, plan.to_json())
+        return plan, context, differences

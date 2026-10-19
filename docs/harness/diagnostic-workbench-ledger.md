@@ -529,3 +529,41 @@ first fast run. Logs remain under `artifacts/w2/task8/`.
 Final focused-2 passed 66 tests. Fast-2 passed all eight children (433 unit/harness
 tests) on an unchanged source fingerprint; full Python passed 681 tests, zero
 failures/errors/skips. No real endpoint, remote CI or new image acceptance ran.
+
+## W2 Task 9 — standalone CLI operations
+
+Task 8 delivery commit is `bad1b8e`. New `diagnostics import`, `inspect`, `export`,
+`retest` and `compare` commands delegate to the shared service. They emit JSON on
+stdout, explanatory text on stderr, and preserve operation/run exit meanings.
+Successful representation of an incomparable comparison returns zero with an
+explicit `comparable: false`; zero is never a compatibility assertion.
+
+Retest requires either `--dry-run` or `--allow-live` before output/source work.
+Dry-run creates only `retest-preview.json` in a fresh output directory, with its
+own packaged internal schema. The shared `prepare_retest` service regenerates the
+entire original selected scope, creates new pre-request context and baseline
+lineage, and fills transport-context differences from the checked original target
+and explicit local target. Credentials are selected locally. It never executes
+an uploaded request. Legacy/unverified sources explain how to configure a separate
+current test. CLI export uses disposable private service state and the shared
+bounded writer; it does not add an undocumented persistent data directory.
+
+Normal live CLI planning now calls the Task 3/4 preparation path and supplies its
+context to the existing application execution hook. No duplicate application
+execution path was needed. Replay remains a captured offline observation, not a
+new live provenance claim. Presentation flags remain deferred to Task 13.
+
+All seven new/extended acceptance checks were observed RED (unknown commands and
+missing normal-run context), then GREEN. The existing actual wheel/no-dev install
+test now also denies imports of FastAPI/Jinja/Uvicorn while exporting a diagnostic
+ZIP away from the repository; no Web extras are installed in that environment.
+An explicitly opted-in disposable loopback peer received exactly four retest
+requests. Its unsupported tool response remains a real FAIL/exit 1; it was not
+altered to make the live synthetic result green. Baseline/source bytes remain
+unchanged. Focused-1 passed 18 new/legacy CLI, replay, serve and installation checks.
+Logs remain under `artifacts/w2/task9/`.
+
+Final fast-1 passed all eight children (433 unit/harness tests), unchanged source
+fingerprint. Supplemental full Python regression is still running at this commit;
+its result must be recorded before subsequent source changes. No new image,
+remote CI, or real endpoint acceptance is claimed.
