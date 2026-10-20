@@ -38,6 +38,9 @@ W2. Protocol update tooling and larger catalogs remain later separately scoped
 work; no compatibility or client-stability claim follows from these synthetic tests.
 Keep the chosen current checkout/prepared Linux Dev Container and local commits.
 No push, merge, registry publication or account setup is authorized by W2 completion.
+The W2 plan workspace is archived byte-identically (37 files) under ignored
+artifacts/w2/plan-workspace-20261020; only its verified working copy was removed.
+Use the tracked ledger/handoff for current state, without reopening completed reviews.
 
 ## Current milestone: W1 completed locally
 

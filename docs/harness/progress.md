@@ -810,3 +810,9 @@ Chinese Markdown appendix heading issue is deferred; no second review ran.
 Final metadata/evidence closure validates actual hashes and unchanged source/image
 fingerprints. Remote CI, Python 3.11, native AMD64 development and real endpoint/
 Claude Code outcomes remain not_run. All work remains local on the chosen branch.
+
+Task 15's final metadata/evidence gate passed: actual artifact hashes, unchanged
+source/image identities, documentation and six acceptance regressions. Its local
+handoff commit is c518d95. The owned plan workspace was archived byte-identically
+(37 files) and only the verified working copy was removed; sibling workspaces and
+all retained failures/evidence were preserved. Subsequent notes are handoff-only.

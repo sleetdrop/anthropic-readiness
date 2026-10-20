@@ -1122,3 +1122,14 @@ artifact hash, source/image identity, documentation and six acceptance regressio
 instead of repeating the already-green whole suite for metadata-only edits — cost
 if wrong: behavior outside the fingerprint inventory would not receive a fourth
 whole-graph execution. No required source/image observation is waived or rebound.
+
+Task 15: complete (commits 1c07358..c518d95, tests: docker exec -e UV_OFFLINE=1 -w /workspaces/anthropic-readiness 37e2df3d035d uv run --frozen python -m artifacts.w2.task15.verify_handoff → W2 final delivery verified: 13 observed local checks, unchanged source/image identities, exact artifact hashes, 6 acceptance regressions; 4 external checks remain not_run.)
+
+Task 15 metadata/evidence closure passed after local handoff commit c518d95:
+documentation checks, six acceptance regressions, all thirteen local artifact
+hashes and unchanged source/image identities; four external checks remain not_run.
+The completed plan workspace was copied byte-identically (37 files), verified by
+per-file SHA-256 under artifacts/w2/plan-workspace-20261020-manifest.json, then only
+its working copy was removed. Sibling workspaces and all test/review/image evidence
+remain retained. The chronological 39-ruling inventory is also retained under
+artifacts/w2/task15/rulings-complete.md. All sixteen tasks are complete locally.
