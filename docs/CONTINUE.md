@@ -14,8 +14,10 @@ and evidence-based report figures. Earlier overview/dark proposals are historica
 use the exact approved pair in the visual handoff. See the
 [design ledger](harness/diagnostic-workbench-ledger.md) for chronological decisions.
 
-Tasks 0–14 are complete. Task 15 (acceptance contracts, one independent whole-W2
-review, any author correction pass and final handoff) is next. Source checkpoint
+Tasks 0–14 are complete. Task 15 is in progress: acceptance contracts are
+implemented and the one independent whole-W2 review completed at bfeb4f0. The
+author is correcting two Important findings; one Minor localization issue is
+deferred. Final corrected-source/full-image evidence and handoff are pending. Source checkpoint
 344195fee04936358e1da7d0cdfab323a88e92c2 passed fresh native ARM64 and emulated
 AMD64 CLI/Web full image jobs, each with 68 actual checks on unchanged source.
 Both independently prepared/disconnected native Linux ARM64 development containers
@@ -29,8 +31,8 @@ explicit-legacy report regression remain recorded in the W2 ledger; both were
 reproduced and corrected without changing original golden assertions.
 The local synthetic preview at port 8766 is refreshed, defaults restored to Chinese/
 system, and its current GUI-generated presentation-3 export is recorded under
-artifacts/w2/task14. The author visual record is design-qa.md. The one independent
-whole-W2 review has not run. Keep historical Stage A/W1 outcomes separate.
+artifacts/w2/task14. The author visual record is design-qa.md. The completed independent review and author closure are recorded in
+[the W2 review](reviews/2026-10-18-diagnostic-workbench-review.md). Keep historical Stage A/W1 outcomes separate.
 Task 0 also passed 25 browser
 tests, including a RED/GREEN system/print cascade fix. These are foundation and
 regression checks, not whole-W2 visual or container-image acceptance.

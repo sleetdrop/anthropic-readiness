@@ -783,3 +783,15 @@ unexecuted passed children and incomplete completion claims. Fast-2 passed 463
 Python/20 Node tests and strict typing (176 files); tracked records remain incomplete
 with final-candidate outcomes not_run. Whole-W2 review and final new-context
 full/image acceptance remain pending.
+
+## W2 final review correction pass
+
+The one read-only whole-W2 review of 91544f8..bfeb4f0 is complete: no Critical,
+two Important and one Minor. Candidate full acceptance passed 766 Python, 20 Node
+and 77 Chromium tests; these pre-correction observations do not certify new source.
+The author retained the Important grades and deferred the English appendix labels
+in Chinese Markdown. Cancellation and internal errors with final result files
+failed the new regression; one shared completeness predicate now passes 51 focused
+comparison/import tests, preserving readable source/evidence bytes. The browser
+recovery regression and corrected-source full/image acceptance remain pending.
+No real endpoint, remote CI or publication operation ran.

@@ -169,6 +169,8 @@ export function mountWorkbench(bootstrap, ports) {
     });
   }
   pinSelection();
+  // Accepted facts and the last successfully patched document can differ after a failed read.
+  let renderedGeneration = state.snapshot?.generation;
   let readOrder = 0;
   let closed = false;
   let busy = false;
@@ -249,6 +251,7 @@ export function mountWorkbench(bootstrap, ports) {
     pinSelection();
     window.scrollTo({ left: scrolling[0], top: scrolling[1], behavior: "instant" });
     renderObservation();
+    renderedGeneration = state.snapshot?.generation;
   }
   async function refresh() {
     if (busy || closed || readOnly) return;
@@ -257,7 +260,6 @@ export function mountWorkbench(bootstrap, ports) {
     const order = ++readOrder;
     try {
       const baseline = new URL(location.href).searchParams.get("baseline");
-      const before = state.snapshot?.generation;
       const value = await ports.api(
         `/api/v1/runs/${runId}/workbench` +
           (baseline ? "?baseline=" + encodeURIComponent(baseline) : ""),
@@ -267,7 +269,7 @@ export function mountWorkbench(bootstrap, ports) {
         type: "connection",
         value: terminal() ? "ended" : "connected",
       });
-      if (before !== state.snapshot?.generation) await renderPage(location.href);
+      if (renderedGeneration !== state.snapshot?.generation) await renderPage(location.href);
       renderObservation();
       if (terminal()) stream?.close();
     } catch {
@@ -275,7 +277,13 @@ export function mountWorkbench(bootstrap, ports) {
       renderObservation();
     } finally {
       busy = false;
-      if (!closed && !readOnly && (!terminal() || state.connection === "reconnecting"))
+      if (
+        !closed &&
+        !readOnly &&
+        (!terminal() ||
+          state.connection === "reconnecting" ||
+          renderedGeneration !== state.snapshot?.generation)
+      )
         timer = window.setTimeout(() => {
           void refresh();
         }, 5000);

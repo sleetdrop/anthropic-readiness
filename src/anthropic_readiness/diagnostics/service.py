@@ -39,7 +39,11 @@ from anthropic_readiness.diagnostics.recipes import (
 from anthropic_readiness.diagnostics.recipes import (
     prepare_retest as regenerate_retest,
 )
-from anthropic_readiness.diagnostics.reduction import baseline_eligibility, comparison_inventory
+from anthropic_readiness.diagnostics.reduction import (
+    baseline_eligibility,
+    comparison_inventory,
+    controlled_result_complete,
+)
 from anthropic_readiness.diagnostics.store import DiagnosticStore
 from anthropic_readiness.document_rendering import (
     render_agent_index,
@@ -240,7 +244,7 @@ class DiagnosticService:
         identity = source_identity(source)
         metadata: JsonObject = {
             "source_valid": True,
-            "complete": source.result is not None,
+            "complete": controlled_result_complete(source.result),
             "recipe_valid": False,
             "recipe_bound": False,
             "context_verified": False,

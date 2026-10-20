@@ -16,7 +16,10 @@ from anthropic_readiness.diagnostics.recipes import (
     validate_recipe_binding,
     validate_recipe_evidence,
 )
-from anthropic_readiness.diagnostics.reduction import baseline_eligibility
+from anthropic_readiness.diagnostics.reduction import (
+    baseline_eligibility,
+    controlled_result_complete,
+)
 from anthropic_readiness.evidence import safe_path
 from anthropic_readiness.models import JsonObject, JsonValue, object_value, strict_json
 from anthropic_readiness.operations.contracts import validate_operational
@@ -207,16 +210,9 @@ def validate_import(
         or manifest["partial"] != (source.result is None)
     ):
         raise ValueError("diagnostic_source_mismatch")
-    complete = source.result is not None and source.result.mode == "live"
-    if source.result is not None:
-        complete = (
-            complete
-            and source.result.execution_environment.get("interruption") is None
-            and source.result.execution_environment.get("internal_error") is None
-        )
     metadata: JsonObject = {
         "source_valid": True,
-        "complete": complete,
+        "complete": controlled_result_complete(source.result),
         "recipe_valid": False,
         "recipe_bound": False,
         "context_verified": False,

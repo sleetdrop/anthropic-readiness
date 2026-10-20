@@ -1034,3 +1034,52 @@ checks passed separately. The first fast preparation stopped on two style rules;
 only assertion splitting/set-comprehension/formatting changed before the clean run.
 The candidate is ready for its one independent review; its new full graph and
 new-context images remain unobserved. No prior image result is marked final.
+
+The one independent whole-W2 review of 91544f8..bfeb4f0 completed with no Critical,
+two Important and one Minor finding. The author's effect-based grades retain those
+levels: interrupted results can falsely enable controlled comparisons; transient
+HTML failures can leave the completed dashboard stale; the Chinese Markdown
+appendix's English column labels are a local presentation inconsistency.
+The pre-correction candidate full graph passed all thirteen children: 766 Python,
+20 Node and 77 Chromium tests. This does not certify the forthcoming fixes.
+
+Final: Ruling: real endpoints, Claude Code and broader catalogs were not judged —
+keep these unknown and outside this four-case W2 scope, with no new live opt-in —
+cost if wrong: actual provider/client-specific failures remain unmeasured.
+
+Final: Ruling: remote CI, publication and native AMD64 development were not judged —
+keep them not_run; local synthetic/emulated evidence cannot establish these —
+cost if wrong: CI, native platform or publication failures remain unknown.
+
+Final: Ruling: native browser-chrome 200 percent zoom was not judged — retain the
+explicit 640x400 CSS/density equivalent-layout observation without calling it a
+native browser-control test; no demonstrated zoom defect was found — cost if
+wrong: browser-control-specific zoom behavior remains unobserved.
+
+Final: Ruling: prior Stage A/W1 acceptance was not judged anew — inspect W2
+integration/backward compatibility without reopening completed stages — cost if
+wrong: older platform acceptance outcomes are not recertified by W2.
+
+Final: Ruling: corrected-source full and image outcomes were pending at review —
+require new observed full graphs and both actual image jobs before completion;
+this is not waived — cost if wrong: stale artifacts could certify untested code.
+
+Final: minor (deferred): Chinese Markdown appendix uses English Case/Check/State/
+Source data column labels; source facts and results are unchanged.
+
+The first post-fix fast graph retained two failures: the new test needed explicit
+JSON-list narrowing, and importing ReportSource into the pure reduction module
+introduced its transitive schema/resource I/O. The shared predicate now consumes
+only the existing pure RunResult value. No architecture contract was relaxed.
+Fast-fixes-2 passed all eight gates (463 Python, 20 Node; strict typing 176 files).
+The four comparison-service regressions also pass after this boundary correction.
+The actual browser RED run passed the previous 77 cases and failed the new case:
+API completion plus one injected HTML 503 left #job-state running for 20 seconds.
+The original failed browser trace/screenshot and all failed gate logs are retained.
+
+All 78 actual browser cases passed after the rendering fix, including recovery
+from the injected terminal HTML 503 and exactly four synthetic upstream requests.
+The browser-green parent correctly reports failed/source_unchanged=false because
+the concurrent pure-value dependency/type correction changed source during that
+run. This is regression GREEN evidence, not immutable candidate acceptance. Freeze
+the corrected source and require a new unchanged-source full graph and both images.

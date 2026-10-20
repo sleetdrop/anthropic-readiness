@@ -627,3 +627,47 @@ test("expired evidence reads recover once without resending model work", async (
   expect(reads).toBe(2);
   expect((await count(request)).count).toBe(0);
 });
+
+test("terminal snapshot retries an unrendered generation after one HTML read failure", async ({
+  page,
+  request,
+}) => {
+  await preview(page, "synthetic-hold");
+  await start(page);
+  await expect.poll(async () => (await count(request)).count).toBe(1);
+  await expect(page.locator("#job-state")).toHaveAttribute("data-lifecycle", "running");
+  const runPath = new URL(page.url()).pathname;
+  let terminalSeen = false;
+  let failedReads = 0;
+  let recoveredReads = 0;
+  await page.route(`**/api/v1${runPath}/workbench*`, async (route) => {
+    const response = await route.fetch();
+    const snapshot = await response.json();
+    if (snapshot.job.state === "completed") terminalSeen = true;
+    await route.fulfill({ response });
+  });
+  await page.route(
+    (url) => url.pathname === runPath,
+    async (route) => {
+      if (route.request().resourceType() === "fetch" && terminalSeen) {
+        if (failedReads === 0) {
+          failedReads++;
+          await route.fulfill({ status: 503, body: "synthetic transient HTML failure" });
+          return;
+        }
+        recoveredReads++;
+      }
+      await route.continue();
+    },
+  );
+  await control(request, "release");
+  await expect.poll(() => failedReads).toBe(1);
+  await expect(page.locator("#job-state")).toHaveAttribute("data-lifecycle", "completed", {
+    timeout: 20000,
+  });
+  expect(recoveredReads).toBeGreaterThanOrEqual(1);
+  expect((await count(request)).count).toBe(4);
+  await page.locator('.view-tabs a[href*="view=cases"]').click();
+  await expect(page.locator(".case-item")).toHaveCount(4);
+  expect((await count(request)).count).toBe(4);
+});

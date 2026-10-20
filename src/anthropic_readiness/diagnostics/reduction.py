@@ -1,7 +1,17 @@
 """Conservative operation eligibility from explicitly verified metadata facts."""
 
 from anthropic_readiness.diagnostics.inventory import categorized_cases
-from anthropic_readiness.models import JsonObject, JsonValue, object_value
+from anthropic_readiness.models import JsonObject, JsonValue, RunResult, object_value
+
+
+def controlled_result_complete(result: RunResult | None) -> bool:
+    """A persisted result alone does not establish completed live execution."""
+    return (
+        result is not None
+        and result.mode == "live"
+        and result.execution_environment.get("interruption") is None
+        and result.execution_environment.get("internal_error") is None
+    )
 
 
 def _objects(value: JsonValue) -> list[JsonObject]:
