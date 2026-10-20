@@ -7,7 +7,7 @@ import re
 from pathlib import Path
 
 from anthropic_readiness.config import target_from_document
-from anthropic_readiness.evidence import safe_path, verify_evidence
+from anthropic_readiness.evidence import capture_file_refs, safe_path, verify_evidence
 from anthropic_readiness.models import EvidenceRef, JsonObject, RunResult, object_value, strict_json
 from anthropic_readiness.operations.checkpoints import (
     checkpoint_refs,
@@ -47,6 +47,43 @@ def assertions_for(case: JsonObject) -> list[JsonObject]:
     ]
 
 
+def attempt_evidence_errors(
+    root: Path, case_id: str, attempt: JsonObject, inventory: set[tuple[str, str]]
+) -> list[str]:
+    prefix = f"evidence/{case_id}/{attempt['id']}/"
+    assertions = objects(attempt.get("assertions"))
+    # An interrupted/internal attempt may never have produced a capture at all.
+    if (
+        assertions
+        and all(
+            item["id"] == "EXECUTION-COMPLETE"
+            and item["status"] == "INDETERMINATE"
+            and not item["evidence_refs"]
+            for item in assertions
+        )
+        and not any(path.startswith(prefix) for path, _ in inventory)
+    ):
+        return []
+    errors: list[str] = []
+    response = prefix + "response.json"
+    try:
+        if not safe_reference_path(response) or not any(path == response for path, _ in inventory):
+            raise ValueError("capture_inventory_missing")
+        metadata = object_value(strict_json(source_bytes(root, response).decode()))
+        for ref in capture_file_refs(metadata):
+            if (prefix + ref.path, ref.sha256) not in inventory:
+                raise ValueError("capture_inventory_mismatch")
+    except (OSError, ValueError, KeyError) as exc:
+        errors.append("invalid_capture_evidence:" + response + ":" + str(exc))
+    for assertion in assertions:
+        references = checkpoint_refs({"evidence_refs": assertion.get("evidence_refs", [])})
+        if assertion["status"] == "PASS" and not references:
+            errors.append("missing_assertion_evidence:" + str(assertion["id"]))
+        if any(not ref.path.startswith(prefix) for ref in references):
+            errors.append("assertion_evidence_wrong_attempt:" + str(assertion["id"]))
+    return errors
+
+
 def evidence_quality(
     root: Path, cases: tuple[JsonObject, ...], refs: tuple[EvidenceRef, ...]
 ) -> JsonObject:
@@ -56,6 +93,8 @@ def evidence_quality(
         if not safe_reference_path(ref.path):
             errors.append("invalid_report_evidence_path")
     for case in cases:
+        for attempt in objects(case.get("attempts")):
+            errors.extend(attempt_evidence_errors(root, str(case["id"]), attempt, inventory))
         for assertion in assertions_for(case):
             references = checkpoint_refs({"evidence_refs": assertion.get("evidence_refs", [])})
             if assertion["status"] == "FAIL" and not references:

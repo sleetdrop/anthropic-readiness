@@ -16,8 +16,8 @@ findings; each still requires author verification before its own correction.
 
 | Finding | Priority | Current state | Next action |
 | --- | --- | --- | --- |
-| F01: malformed intermediate message delta is overwritten | P1 | Fixed and locally verified | Stop after local commit |
-| F02: missing response evidence can still support recovery claims | P1 | Pending; no correction in this turn | Verify the original stripped-package probe first |
+| F01: malformed intermediate message delta is overwritten | P1 | Fixed and locally verified in 6ea328d | Complete |
+| F02: missing response evidence can still support recovery claims | P1 | Fixed and locally verified | Stop after local commit |
 | F03: replay trusts contradictory cached tail metadata | P2 | Pending; no correction in this turn | Verify byte-derived framing against metadata |
 | F04: imported dimensions and request counts contradict facts | P2 | Pending; no correction in this turn | Verify result semantic validation and projections |
 
@@ -76,5 +76,70 @@ The development container was stopped before this turn and was restored to that
 same stopped state after all checks completed. The final Docker state is recorded
 in `container-final-state.json` (`exited`, `running=false`, exit code 0). No check
 or build process remains running in it. No replacement container, network or volume
-was created. The next correction should start with F02 when the owner resumes;
-do not automatically start it as part of F01's closeout.
+was created. This F01 turn stopped without starting another finding. The owner
+subsequently authorized the separate F02 turn recorded below.
+
+## F02: require complete, attempt-bound response proof
+
+Base: `6ea328d` after F01. The owner authorized proceeding with F02 only if it
+could finish within the remaining allowance, retaining the one-fix stopping rule.
+No F03/F04 correction or new independent review is included.
+
+Root cause: report-source quality verified only the declared top-level references.
+It did not check the capture's own file inventory, and required nonempty assertion
+references only for FAIL. A self-consistent enclosing package could therefore omit
+response files, retain PASS claims, and regain comparison/retest eligibility.
+
+Correction: share the existing capture-schema/exact-four-file inventory check
+between the replay loader and report-source reader. For each captured attempt,
+require its response metadata and all four inventoried files in the verified
+top-level inventory, with the same hashes. Observed PASS assertions require a
+reference; attempt assertions cannot borrow proof from another attempt. An
+interrupted/internal attempt that never produced a capture remains readable with
+its existing indeterminate execution assertion. No source bytes are rewritten,
+no schema/golden/catalog changes are made, and replay framing behavior is not
+changed as part of this extraction. Existing implementation identity accounts for
+the changed evidence module; historical acceptance is not rebound to this patch.
+
+All adapters consume the shared quality result. A malformed source stays readable
+as `missing_or_invalid`, loses retest/compare eligibility, produces incomparable
+pairs instead of recovery claims, and cannot be exported with evidence included.
+An independently assembled incoming ZIP is also retained only for limited reading;
+activation, revalidation and source-fact recomputation cannot restore eligibility.
+Complete valid before/after proof still yields the legitimate recovery conclusion.
+
+### Observed checks
+
+All product execution used the existing Linux ARM64/Python 3.12.15 Dev Container,
+offline with locked dependencies. Evidence root:
+`artifacts/review-fixes-20261020/f02/`.
+
+| Check | Observed result | Evidence |
+| --- | --- | --- |
+| Initial regression construction | 4 failed, 3 passed; nested mutation helper needed correction because production JSON conversion copies objects | `red.xml` |
+| Corrected independent mutations, before implementation | All 6 negative variants failed because quality was incorrectly verified; healthy recovery control passed | `red-2.xml` |
+| Core closure/source/comparison tests | 26 passed; zero failures/errors/skips | `green.xml` |
+| Related import/export/recovered-report/review/CLI/handoff tests | 60 passed; zero failures/errors/skips | `related.xml` |
+| Fast verification | All 8 gates passed, unchanged source; 475 Python unit/harness tests passed | `fast/check-result.json`, `fast/unit.xml`, `fast/frontend-static/` |
+
+The six independent mutations remove body, event or response files, contradict a
+capture's declared file hash, remove a PASS assertion's reference, or substitute
+another case's proof. Tests bind all enclosing result/context hashes after the
+intentional mutation, so rejection cannot rely on an accidentally stale envelope.
+They exercise real execution, source reading, comparison, guarded export,
+independently assembled ZIP import/activation, repeated baseline reads and comparison
+against the imported source. Original delivery bytes remain unchanged throughout.
+The first test-construction attempt remains retained and is not counted as the
+complete six-variant RED result. Expectations were not weakened.
+
+Fast observed the uncommitted patch on base `6ea328d`, with source fingerprint
+`db07c022a13e94c4b03607ddce07bc1046d9239f9b1e6b952580892896ad2e9e`.
+This is local correction verification, not clean-source whole-stage acceptance.
+No full browser graph, installation/multi-architecture image rebuild, remote CI
+or live model/client workflow was run. Existing runtime images and preview data
+were not updated. F03 and F04 remain pending for separately resumed turns.
+
+After all checks completed, the existing development container was restored to its
+original stopped state. `container-final-state.json` records `exited`,
+`running=false`, exit code 0. No test/build task remains running; no replacement
+container, network or volume was created. Pause after the local F02 commit.

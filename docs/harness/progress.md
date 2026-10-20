@@ -831,3 +831,19 @@ not_ready for the malformed stream, while its legal control stays exit 0 / passe
 See the independent-review-fixes ledger for exact evidence and scope limits.
 F02/F03/F04 remain pending; no new whole-stage/browser/image/remote/live outcome
 is claimed, and completed W2 records remain tied to their original source.
+
+## Independent review follow-up: F02 — 2026-10-20
+
+In a separately authorized one-fix turn, six corrected synthetic variants first
+reproduced false verified quality for missing, contradictory or misbound response
+proof. The shared source reader now checks each capture's complete file inventory
+and hashes, requires observed PASS proof, and binds assertion proof to its attempt.
+The existing replay inventory validation was extracted without changing framing
+behavior. Invalid delivery remains readable but cannot regain retest/compare
+eligibility, claim recovery or pass evidence-inclusive export. Real independently
+assembled ZIP import and repeated baseline reads exercise that same boundary.
+All 26 core tests, 60 related tests and eight fast gates passed (475 Python
+unit/harness tests). Original source bytes, schemas, goldens and historical review
+artifacts remain preserved. The ledger records the retained initial test-helper
+correction and exact evidence. F03/F04 remain pending; no new full/browser/image/
+remote/live acceptance is claimed. Stop after this local correction commit.

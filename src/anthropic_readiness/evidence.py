@@ -340,12 +340,9 @@ def _number(value: JsonValue) -> float:
     return float(value)
 
 
-def load_capture(path: Path) -> SanitizedCapture:
-    if path.is_symlink() or path.name != "response.json":
-        raise ValueError("invalid_capture_path")
-    metadata = object_value(strict_json(path.read_text()))
+def capture_file_refs(metadata: JsonObject) -> tuple[EvidenceRef, ...]:
+    """Validate the complete file inventory shared by capture readers."""
     validate_document(metadata, load_schema("capture"))
-    directory = path.parent
     listed = metadata["files"]
     assert isinstance(listed, list)
     refs: list[EvidenceRef] = []
@@ -356,6 +353,15 @@ def load_capture(path: Path) -> SanitizedCapture:
         refs
     ) != 4:
         raise ValueError("capture_integrity:inventory")
+    return tuple(refs)
+
+
+def load_capture(path: Path) -> SanitizedCapture:
+    if path.is_symlink() or path.name != "response.json":
+        raise ValueError("invalid_capture_path")
+    metadata = object_value(strict_json(path.read_text()))
+    refs = capture_file_refs(metadata)
+    directory = path.parent
     if errors := verify_evidence(directory, refs):
         raise ValueError("capture_integrity:" + ";".join(errors))
     request_data = object_value(strict_json((directory / "request.json").read_text()))
