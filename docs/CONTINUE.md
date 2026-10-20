@@ -14,16 +14,23 @@ and evidence-based report figures. Earlier overview/dark proposals are historica
 use the exact approved pair in the visual handoff. See the
 [design ledger](harness/diagnostic-workbench-ledger.md) for chronological decisions.
 
-Tasks 0–13 are complete, including the independent operational workbench and
-presentation-3 standalone documents. Task 14 is next; Tasks 14–15 remain pending.
-Task 13 source commit is 5780956. Its final fast graph passed all eight children
-(453 Python and 20 Node tests); focused-final passed 32; post-commit task-done
-passed 77 Chromium tests on unchanged source with successful cleanup. The paired
-document/operational author visual record is design-qa.md. A six-request synthetic
-CLI check confirms equal request bodies/API headers and verdicts across language/
-theme choices. No new real endpoint was called. Whole-W2 wheel/container acceptance
-and the single independent review remain pending. The last whole-Python baseline
-is Task 9's 687 tests, before later source changes.
+Tasks 0–14 are complete. Task 15 (acceptance contracts, one independent whole-W2
+review, any author correction pass and final handoff) is next. Source checkpoint
+344195fee04936358e1da7d0cdfab323a88e92c2 passed fresh native ARM64 and emulated
+AMD64 CLI/Web full image jobs, each with 68 actual checks on unchanged source.
+Both independently prepared/disconnected native Linux ARM64 development containers
+passed all thirteen full-graph children (760 Python, 20 Node and 77 Chromium tests).
+Actual receivers imported the source ZIP into fresh volumes, retested all four
+cases with fresh local credentials, exported comparisons and retained identical
+results/download bytes after restart. Owned temporary resources were checked absent.
+Source and image outcomes are synthetic; no new real endpoint, remote CI or registry
+operation ran. The first native attempt's JS-as-Jinja observer failure and the
+explicit-legacy report regression remain recorded in the W2 ledger; both were
+reproduced and corrected without changing original golden assertions.
+The local synthetic preview at port 8766 is refreshed, defaults restored to Chinese/
+system, and its current GUI-generated presentation-3 export is recorded under
+artifacts/w2/task14. The author visual record is design-qa.md. The one independent
+whole-W2 review has not run. Keep historical Stage A/W1 outcomes separate.
 Task 0 also passed 25 browser
 tests, including a RED/GREEN system/print cascade fix. These are foundation and
 regression checks, not whole-W2 visual or container-image acceptance.

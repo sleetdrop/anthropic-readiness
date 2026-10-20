@@ -767,3 +767,12 @@ checks, then found a Web observer compiling JS as Jinja. Captured actual-templat
 regression observed RED, then 28 harness checks passed after HTML-only filtering;
 all 31 disposable actual-Web observations and fast-3 passed. The debug record is
 explicitly not stage acceptance. Full native/AMD64 image reruns remain pending.
+
+W2 Task 14 completed locally at 344195f. Native ARM64 and emulated AMD64 full
+CLI/Web image jobs each passed 68 checks and their fresh/disconnected native ARM64
+developer full graphs (760 Python/20 Node/77 Chromium). Actual receiver-volume
+import/retest/comparison export/restart succeeded. Source context was unchanged;
+owned temporary resources were absent afterwards. The 17 protected contract/fixture/
+result/report-view files match the W2 base byte-for-byte. Task 15 acceptance metadata
+and the single independent W2 review remain pending; remote/live/publication remain
+unobserved.

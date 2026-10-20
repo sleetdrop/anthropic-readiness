@@ -998,3 +998,19 @@ retest/comparison export/restart, original cancellation/restart and host route.
 The record explicitly sets stage_acceptance=false; it does not replace the full
 maintained orchestrator. Fast-3 passed all eight children after the probe fix.
 A fresh native full image run and then emulated AMD64 full remain required.
+
+Task 14 completed at source 344195fee04936358e1da7d0cdfab323a88e92c2. Native
+images-arm64-2 and emulated images-amd64-1 each passed 68 actual observations with
+unchanged runtime context, no missing/blocked/failed child and no skipped build.
+Both independently prepared/disconnected native Linux ARM64 developer graphs passed
+all thirteen children: 760 Python, 20 Node and 77 Chromium tests; no skips/errors.
+The ARM64 machine records conform to packaged image-result/check-result schemas.
+Both jobs' owned containers/networks/temporary volumes were checked absent; the
+preview, public tool cache and evidence were retained. A 17-file protected contract/
+fixture/result/report-view inventory is byte-identical to the W2 base. The AMD64
+runtime execution is emulated; its developer/browser baseline is native ARM64.
+Task-done records the final maintained AMD64 full command. No remote CI, native
+AMD64 developer run, new real endpoint, registry action or final W2 review ran.
+Task 15 remains open. The subsequent documentation command was not executed when
+automatic approval review hit the account usage limit; the owner resumed after
+reset and the same authorized local operation was retried normally.
