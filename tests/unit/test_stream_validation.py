@@ -10,6 +10,7 @@ from anthropic_readiness.models import (
     CaptureEnd,
     CaseContract,
     JsonObject,
+    JsonValue,
     ProtocolEnd,
     Status,
     ValidationResult,
@@ -85,6 +86,38 @@ def test_multiple_message_delta_and_empty_block_pass() -> None:
     block = object_value(items[1]["content_block"])
     block["text"] = "Hello."
     items[1]["content_block"] = block
+    assert evaluate(items).status == Status.PASS
+
+
+@pytest.mark.parametrize("field", ["stop_reason", "stop_sequence"])
+@pytest.mark.parametrize("value", [123, True, {"invalid": True}, []])
+def test_invalid_intermediate_stop_field_cannot_be_repaired(field: str, value: JsonValue) -> None:
+    items = events()
+    items.insert(
+        4,
+        {"type": "message_delta", "delta": {field: value}, "usage": {"output_tokens": 1}},
+    )
+    result = evaluate(items)
+    assert result.status == Status.FAIL
+    failure = next(a for a in result.assertions if a.id == "STR-JSON")
+    assert failure.status == Status.FAIL
+    assert failure.event == 4
+    assert status(result, "MSG-STOP") == Status.PASS
+    assert status(result, "MSG-STOP-SEQUENCE") == Status.PASS
+
+
+@pytest.mark.parametrize(
+    "delta",
+    [
+        {},
+        {"stop_reason": None, "stop_sequence": None},
+        {"stop_reason": "end_turn", "stop_sequence": None},
+        {"future_extension": {"value": 123}},
+    ],
+)
+def test_valid_intermediate_stop_fields_and_extensions_pass(delta: JsonObject) -> None:
+    items = events()
+    items.insert(4, {"type": "message_delta", "delta": delta, "usage": {"output_tokens": 1}})
     assert evaluate(items).status == Status.PASS
 
 

@@ -816,3 +816,18 @@ source/image identities, documentation and six acceptance regressions. Its local
 handoff commit is c518d95. The owned plan workspace was archived byte-identically
 (37 files) and only the verified working copy was removed; sibling workspaces and
 all retained failures/evidence were preserved. Subsequent notes are handoff-only.
+
+## Independent review follow-up: F01 — 2026-10-20
+
+The owner requested one completed fix followed by a pause. Author verification
+reproduced F01: eight malformed intermediate stop-field variants incorrectly
+passed, and the original reviewer's synthetic runner probe returned exit 0.
+The validator now records event-level stop-field type failures before merging,
+so subsequent valid values cannot erase them. The regression suite passed 59
+stream/message tests; 26 runner/review/comparison tests also passed. All eight
+fast gates passed with unchanged source, including 475 Python unit/harness tests
+and frontend static checks. The unchanged reviewer probe now returns exit 1 /
+not_ready for the malformed stream, while its legal control stays exit 0 / passed.
+See the independent-review-fixes ledger for exact evidence and scope limits.
+F02/F03/F04 remain pending; no new whole-stage/browser/image/remote/live outcome
+is claimed, and completed W2 records remain tied to their original source.

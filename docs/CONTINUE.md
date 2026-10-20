@@ -1,6 +1,23 @@
 # Local delivery status
 
-## Current milestone: W2 completed locally
+## Current follow-up: independent review fixes, paused after F01
+
+The owner requested one complete fix per turn to preserve a safe stopping point
+within the available usage allowance. F01 is fixed locally: malformed intermediate
+SSE stop fields now retain an event-level failure even if later deltas repair the
+final message. Eight negative variants were observed RED before the fix; the
+59-test message/stream suite, 26 runner/review/comparison tests and all eight fast
+gates passed afterwards (475 Python unit/harness tests and frontend static checks).
+The original reviewer's synthetic runner probe now returns exit 1 / not_ready for
+the malformed stream while the valid control retains exit 0 / passed.
+
+Read [the follow-up ledger](harness/independent-review-fixes-ledger.md) for evidence
+and the remaining F02 (P1), F03 (P2) and F04 (P2). Those three findings have not
+been fixed. Do not repeat the whole independent review or reopen the completed W2
+plan. This patch has not received new full/browser/image/remote/live acceptance;
+the W2 records below remain historical evidence for their specified source.
+
+## W2 delivery baseline: completed locally
 
 The owner-approved diagnostic workbench/document redesign is implemented on
 `codex/local-web-console`; all sixteen sequential tasks (0–15) are complete.

@@ -141,6 +141,8 @@ class StreamValidator:
                     self._record("STR-JSON", "invalid_delta_usage", seq)
                 for key in ("stop_reason", "stop_sequence"):
                     if key in delta:
+                        if delta[key] is not None and not isinstance(delta[key], str):
+                            self._record("STR-JSON", "invalid_delta_stop_fields", seq)
                         self._message[key] = delta[key]
                 old_usage = self._message.get("usage")
                 self._message["usage"] = {
