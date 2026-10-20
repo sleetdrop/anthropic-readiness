@@ -131,4 +131,27 @@ generation, all 78 browser cases passed; the new case recovered and still counte
 exactly four upstream requests. Its parent correctly rejected source mutation
 during the concurrent Python boundary correction, so that run is regression
 evidence only. The corrected fast graph passed all eight gates. Final immutable
-source/full-image acceptance remains pending. M3 stays Minor and deferred.
+source/full-image acceptance is recorded below. M3 stays Minor and deferred.
+
+## Final author acceptance (not a second independent review)
+
+Corrected source `35b59f5ef8ff4d78740283a81a5090d18b9b0aa5` passed all thirteen
+required developer gates on unchanged, clean source: 463 unit/harness, 216
+integration, 84 acceptance and five installed-package Python tests (768 total),
+20 Node and 78 Chromium tests; zero failures/errors/skips. Both Important findings
+are closed by the failing-first regressions and that whole-source execution.
+
+Fresh native ARM64 and emulated AMD64 full CLI/Web image jobs each passed 68
+actual checks on the same context, with builds executed and no missing child.
+Each job independently prepared/disconnected a native Linux ARM64 development
+container and passed the same complete test counts. Actual receiving volumes
+imported, retested four cases with fresh credentials, exported paired comparisons
+and preserved exact bytes across restart. Both jobs' owned containers, networks
+and temporary run volumes were observed absent afterward. The synthetic preview
+was refreshed and GUI export/hash preservation was observed without model calls.
+
+The [handoff](../harness/diagnostic-workbench-handoff.json) records exact artifact
+hashes and identities. Remote CI, supplemental Python 3.11, native AMD64 developer
+execution and real endpoint/Claude Code outcomes remain not_run. Prior Stage A/W1
+outcomes are not recertified. M3 is the sole deferred W2 Minor. No re-review ran;
+the independent verdict above describes its original candidate.

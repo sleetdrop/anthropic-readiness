@@ -1,51 +1,43 @@
 # Local delivery status
 
-## Current milestone: W2 sequential implementation
+## Current milestone: W2 completed locally
 
-The owner approved W2 specification revision 1 and the paired light/dark overview
-on 2026-10-18, then requested the next step. The
-[revision-2 specification](superpowers/specs/2026-10-18-diagnostic-workbench-design.md),
-[visual handoff](reviews/2026-10-18-diagnostic-workbench-visual-design.md) and
-[16-task implementation plan](superpowers/plans/2026-10-18-diagnostic-workbench-implementation.md)
-were approved together on 2026-10-18 ("确认，请实施"), including the written
-localization/theme amendment and companion compositions. The plan includes a five-checkpoint
-reading summary, paired token/typography starting values, theme geometry checks
-and evidence-based report figures. Earlier overview/dark proposals are historical;
-use the exact approved pair in the visual handoff. See the
-[design ledger](harness/diagnostic-workbench-ledger.md) for chronological decisions.
+The owner-approved diagnostic workbench/document redesign is implemented on
+`codex/local-web-console`; all sixteen sequential tasks (0–15) are complete.
+Use the [revision-2 specification](superpowers/specs/2026-10-18-diagnostic-workbench-design.md),
+[plan](superpowers/plans/2026-10-18-diagnostic-workbench-implementation.md),
+[ledger](harness/diagnostic-workbench-ledger.md),
+[acceptance map](harness/diagnostic-workbench-acceptance.json),
+[handoff](harness/diagnostic-workbench-handoff.json) and
+[review/author closure](reviews/2026-10-18-diagnostic-workbench-review.md).
+The operational five-view workbench and offline presentation-3 document now have
+separate compositions, shared verified facts, bilingual themes, portable diagnostic
+import, original-scope retest and paired repair/regression comparison. New attempts
+and localized exports preserve source identities and original evidence bytes.
 
-Tasks 0–14 are complete. Task 15 is in progress: acceptance contracts are
-implemented and the one independent whole-W2 review completed at bfeb4f0. The
-author is correcting two Important findings; one Minor localization issue is
-deferred. Final corrected-source/full-image evidence and handoff are pending. Source checkpoint
-344195fee04936358e1da7d0cdfab323a88e92c2 passed fresh native ARM64 and emulated
-AMD64 CLI/Web full image jobs, each with 68 actual checks on unchanged source.
-Both independently prepared/disconnected native Linux ARM64 development containers
-passed all thirteen full-graph children (760 Python, 20 Node and 77 Chromium tests).
-Actual receivers imported the source ZIP into fresh volumes, retested all four
-cases with fresh local credentials, exported comparisons and retained identical
-results/download bytes after restart. Owned temporary resources were checked absent.
-Source and image outcomes are synthetic; no new real endpoint, remote CI or registry
-operation ran. The first native attempt's JS-as-Jinja observer failure and the
-explicit-legacy report regression remain recorded in the W2 ledger; both were
-reproduced and corrected without changing original golden assertions.
-The local synthetic preview at port 8766 is refreshed, defaults restored to Chinese/
-system, and its current GUI-generated presentation-3 export is recorded under
-artifacts/w2/task14. The author visual record is design-qa.md. The completed independent review and author closure are recorded in
-[the W2 review](reviews/2026-10-18-diagnostic-workbench-review.md). Keep historical Stage A/W1 outcomes separate.
-Task 0 also passed 25 browser
-tests, including a RED/GREEN system/print cascade fix. These are foundation and
-regression checks, not whole-W2 visual or container-image acceptance.
-Task 2 also verified actual wheel/editable identity equality and a fresh no-Git
-process. Core metadata now uses a separate adapter; later recipe/context modules
-must follow that boundary. Already-locked packaging 26.3 is now a runtime dependency
-for correct dependency markers/extras parsing; no package version changed.
-Preserve the chosen current-checkout/prepared
-Dev Container and sequential current-agent execution with one independent end
-review. Do not reopen completed W1 work.
-Formal coverage remains four installed cases, with broader API/client scope
-separate. Local synthetic development remains authorized; no new live endpoint
-call or external publication is authorized by this design/plan review.
+Verification source is `35b59f5ef8ff4d78740283a81a5090d18b9b0aa5`; subsequent
+handoff-only edits preserve source and image fingerprints. The thirteen-gate full
+graph passed 768 Python, 20 Node and 78 Chromium tests on unchanged, clean source;
+zero failures/errors/skips. Fresh native ARM64 and emulated AMD64 full CLI/Web image
+jobs each passed 68 actual checks, including import/retest/comparison/restart.
+Each independently prepared/disconnected native Linux ARM64 developer container
+also passed the full graph with identical counts. Owned job resources were checked
+absent; previews, tool cache and all evidence remain retained.
+One independent whole-W2 review completed; one author RED-to-GREEN pass closed
+both Important findings. No re-review ran. The sole deferred Minor is English
+column labels in the Chinese Markdown technical appendix. Native browser-chrome
+200% zoom remains unobserved; the explicit equivalent reflow/density checks passed.
+
+The current synthetic preview is at `http://localhost:8766`; Chinese/system
+preferences and the selected issue/case are retained. Its latest observed GUI
+export is 7fd04d7b-84e7-4cac-98de-b6a803c8c5d1 (presentation 3), recorded under
+artifacts/w2/task15. The older W1 service remains separate at port 8765.
+Formal coverage remains four installed cases. Real endpoints/Claude Code workflows,
+remote CI, supplemental Python 3.11 and native AMD64 development were not run for
+W2. Protocol update tooling and larger catalogs remain later separately scoped
+work; no compatibility or client-stability claim follows from these synthetic tests.
+Keep the chosen current checkout/prepared Linux Dev Container and local commits.
+No push, merge, registry publication or account setup is authorized by W2 completion.
 
 ## Current milestone: W1 completed locally
 

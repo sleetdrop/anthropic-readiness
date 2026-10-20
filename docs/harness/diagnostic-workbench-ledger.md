@@ -1083,3 +1083,42 @@ The browser-green parent correctly reports failed/source_unchanged=false because
 the concurrent pure-value dependency/type correction changed source during that
 run. This is regression GREEN evidence, not immutable candidate acceptance. Freeze
 the corrected source and require a new unchanged-source full graph and both images.
+
+Final: fixed I1 interrupted-source proof escalation —
+`test_terminal_partial_result_never_regains_controlled_eligibility` cancellation
+and internal-error variants RED→GREEN, then 51 focused checks and the final whole
+suite 866/866 tests (768 Python, 20 Node, 78 Chromium across thirteen gates).
+Local/imported facts remain readable; original result/evidence bytes are unchanged.
+
+Final: fixed I2 lost terminal rendering after a transient HTML read — actual
+Chromium `terminal snapshot retries an unrendered generation after one HTML read
+failure` RED→GREEN, then the final whole suite 866/866. The displayed generation
+advances only after a successful patch; stale terminal documents keep retrying.
+The injected failure recovered with exactly four upstream requests, no mutation replay.
+
+Source 35b59f5ef8ff4d78740283a81a5090d18b9b0aa5 passed the fresh full graph at
+artifacts/w2/final-full-35b59f5 on unchanged, clean source. Native ARM64 and emulated
+AMD64 full CLI/Web image jobs under artifacts/w2/task15 each passed all 68 actual
+checks, with unchanged context 140fc99249e4f5d9f6592137af2c27ca8b3df16bde4bb16d911f5ee1f66bb883,
+no missing/blocked/failed child and no skipped build. Their independently prepared,
+disconnected native Linux ARM64 developer graphs are artifacts/checks/1792457792525103752
+and 1792458535608899888; each passed 768 Python, 20 Node and 78 Chromium cases,
+zero failures/errors/skips. Both records and actual source/image identities were
+validated against packaged schemas. AMD64 runtime results are emulated; native
+AMD64 development, supplemental Python 3.11, remote CI and real endpoints remain
+not_run. No new review, push, merge or publication ran.
+
+Owned-prefix inspections confirmed both final jobs' containers/networks/run volumes
+absent; previews/public cache/evidence were retained. The seventeen protected
+contract/fixture/result/report-view files remain byte-identical to W2 base.
+The current 8766 synthetic GUI produced export 7fd04d7b-84e7-4cac-98de-b6a803c8c5d1,
+presentation 3 zh-CN/system, with zero browser warnings/errors and unchanged original
+result hash. Screenshots and actual per-file hashes are retained under Task 15.
+
+Final: Ruling: task-done uses the metadata/evidence closure gate after the fresh
+full source graph and both complete image graphs — no source, lock, test or image
+context changed after 35b59f5; validate the real final handoff, every referenced
+artifact hash, source/image identity, documentation and six acceptance regressions
+instead of repeating the already-green whole suite for metadata-only edits — cost
+if wrong: behavior outside the fingerprint inventory would not receive a fourth
+whole-graph execution. No required source/image observation is waived or rebound.

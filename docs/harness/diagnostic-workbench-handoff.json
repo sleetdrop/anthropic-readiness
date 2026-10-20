@@ -1,247 +1,1288 @@
 {
   "schema_version": "1.0",
   "stage": "W2",
-  "status": "incomplete",
+  "status": "complete",
   "source": {
-    "commit": "344195fee04936358e1da7d0cdfab323a88e92c2",
-    "fingerprint": "d2209918f110a94a91f7664c0ea1cb23b04028259aa14ddff849b30820be6cae",
-    "image_context": "3163dabb761ee5ebd22fed928ef6cf9d413bf243ff7a74ef16df0db231070037",
-    "reviewed_head": null
+    "commit": "35b59f5ef8ff4d78740283a81a5090d18b9b0aa5",
+    "fingerprint": "5e482f17a2006a928b3e2d1b4b59d2edb3cb4318c0231c19c114f5ee9a5123e2",
+    "image_context": "140fc99249e4f5d9f6592137af2c27ca8b3df16bde4bb16d911f5ee1f66bb883",
+    "reviewed_head": "bfeb4f0d1ec1ae2cf3c6b5b36dac24ad878afbfe"
   },
   "checks": [
     {
       "id": "full-source",
-      "status": "not_run",
-      "identity_kind": "none",
-      "source_identity": null,
-      "artifact": null,
-      "sha256": null,
-      "executed": false,
+      "status": "passed",
+      "identity_kind": "source",
+      "source_identity": "5e482f17a2006a928b3e2d1b4b59d2edb3cb4318c0231c19c114f5ee9a5123e2",
+      "artifact": "artifacts/w2/final-full-35b59f5/check-result.json",
+      "sha256": "06da2cad59ceae20cde87335b70073ae12e01132cf87f92cf9380aa4ae92c653",
+      "executed": true,
       "unit": "checks",
-      "count": 0,
+      "count": 13,
       "required_children": [
-
+        "lock",
+        "format",
+        "lint",
+        "type",
+        "architecture",
+        "schemas",
+        "unit",
+        "frontend-static",
+        "frontend-browser",
+        "integration",
+        "acceptance",
+        "packaging",
+        "documentation"
       ],
       "children": [
-
+        {
+          "id": "lock",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "format",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "lint",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "type",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "architecture",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "schemas",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "unit",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "frontend-static",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "frontend-browser",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "integration",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "acceptance",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "packaging",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "documentation",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        }
       ],
-      "reason": "Final-candidate observation pending. Task 14 checkpoint evidence is retained separately in the ledger and is not rebound to new acceptance contracts."
+      "reason": "All required full-graph children observed on unchanged source; actual Git metadata is retained in the referenced record."
     },
     {
       "id": "unit",
-      "status": "not_run",
-      "identity_kind": "none",
-      "source_identity": null,
-      "artifact": null,
-      "sha256": null,
-      "executed": false,
+      "status": "passed",
+      "identity_kind": "source",
+      "source_identity": "5e482f17a2006a928b3e2d1b4b59d2edb3cb4318c0231c19c114f5ee9a5123e2",
+      "artifact": "artifacts/w2/final-full-35b59f5/unit.xml",
+      "sha256": "ac48f663be2a97b02150ceb3e1e01ad448c28aa7bc85049834ae160646d1d361",
+      "executed": true,
       "unit": "tests",
-      "count": 0,
-      "required_children": [
-
-      ],
-      "children": [
-
-      ],
-      "reason": "Final-candidate observation pending. Task 14 checkpoint evidence is retained separately in the ledger and is not rebound to new acceptance contracts."
+      "count": 463,
+      "required_children": [],
+      "children": [],
+      "reason": "Actual executed JUnit testcase nodes; no skips, failures or errors."
     },
     {
       "id": "integration",
-      "status": "not_run",
-      "identity_kind": "none",
-      "source_identity": null,
-      "artifact": null,
-      "sha256": null,
-      "executed": false,
+      "status": "passed",
+      "identity_kind": "source",
+      "source_identity": "5e482f17a2006a928b3e2d1b4b59d2edb3cb4318c0231c19c114f5ee9a5123e2",
+      "artifact": "artifacts/w2/final-full-35b59f5/integration.xml",
+      "sha256": "d79215ff52e885fe45b408f3db90be0855d9ca9b9f97316d2cb8ac9d37156327",
+      "executed": true,
       "unit": "tests",
-      "count": 0,
-      "required_children": [
-
-      ],
-      "children": [
-
-      ],
-      "reason": "Final-candidate observation pending. Task 14 checkpoint evidence is retained separately in the ledger and is not rebound to new acceptance contracts."
+      "count": 216,
+      "required_children": [],
+      "children": [],
+      "reason": "Actual executed JUnit testcase nodes; no skips, failures or errors."
     },
     {
       "id": "acceptance",
-      "status": "not_run",
-      "identity_kind": "none",
-      "source_identity": null,
-      "artifact": null,
-      "sha256": null,
-      "executed": false,
+      "status": "passed",
+      "identity_kind": "source",
+      "source_identity": "5e482f17a2006a928b3e2d1b4b59d2edb3cb4318c0231c19c114f5ee9a5123e2",
+      "artifact": "artifacts/w2/final-full-35b59f5/acceptance.xml",
+      "sha256": "83dfd9d5472f5d873024a576ab4155c7d6f6a9d37feb31383a09cc545842156c",
+      "executed": true,
       "unit": "tests",
-      "count": 0,
-      "required_children": [
-
-      ],
-      "children": [
-
-      ],
-      "reason": "Final-candidate observation pending. Task 14 checkpoint evidence is retained separately in the ledger and is not rebound to new acceptance contracts."
+      "count": 84,
+      "required_children": [],
+      "children": [],
+      "reason": "Actual executed JUnit testcase nodes; no skips, failures or errors."
     },
     {
       "id": "installed-packages",
-      "status": "not_run",
-      "identity_kind": "none",
-      "source_identity": null,
-      "artifact": null,
-      "sha256": null,
-      "executed": false,
+      "status": "passed",
+      "identity_kind": "source",
+      "source_identity": "5e482f17a2006a928b3e2d1b4b59d2edb3cb4318c0231c19c114f5ee9a5123e2",
+      "artifact": "artifacts/w2/final-full-35b59f5/packaging.xml",
+      "sha256": "921cd1e022fe48fe8eed12c8f8d57d97754d107aca124447318fdc47d560a330",
+      "executed": true,
       "unit": "tests",
-      "count": 0,
-      "required_children": [
-
-      ],
-      "children": [
-
-      ],
-      "reason": "Final-candidate observation pending. Task 14 checkpoint evidence is retained separately in the ledger and is not rebound to new acceptance contracts."
+      "count": 5,
+      "required_children": [],
+      "children": [],
+      "reason": "Actual executed JUnit testcase nodes; no skips, failures or errors."
     },
     {
       "id": "frontend-static",
-      "status": "not_run",
-      "identity_kind": "none",
-      "source_identity": null,
-      "artifact": null,
-      "sha256": null,
-      "executed": false,
+      "status": "passed",
+      "identity_kind": "source",
+      "source_identity": "5e482f17a2006a928b3e2d1b4b59d2edb3cb4318c0231c19c114f5ee9a5123e2",
+      "artifact": "artifacts/w2/final-full-35b59f5/frontend-static/check-result.json",
+      "sha256": "78db7e3d684be5a55cdf39fd4ea2a57e7c93db87da3bd75421d620ce0da0dabc",
+      "executed": true,
       "unit": "checks",
-      "count": 0,
+      "count": 6,
       "required_children": [
-
+        "prerequisites",
+        "types",
+        "lint",
+        "format",
+        "templates",
+        "unit"
       ],
       "children": [
-
+        {
+          "id": "prerequisites",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "types",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "lint",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "format",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "templates",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "unit",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        }
       ],
-      "reason": "Final-candidate observation pending. Task 14 checkpoint evidence is retained separately in the ledger and is not rebound to new acceptance contracts."
+      "reason": "Pinned frontend static graph; detailed Node results remain in its artifacts."
     },
     {
       "id": "browser",
-      "status": "not_run",
-      "identity_kind": "none",
-      "source_identity": null,
-      "artifact": null,
-      "sha256": null,
-      "executed": false,
+      "status": "passed",
+      "identity_kind": "source",
+      "source_identity": "5e482f17a2006a928b3e2d1b4b59d2edb3cb4318c0231c19c114f5ee9a5123e2",
+      "artifact": "artifacts/w2/final-full-35b59f5/frontend-browser/browser.xml",
+      "sha256": "182c5f762f25ce30e6d2c40ba8f7ae818618664d23a3e1b0097ae30e00fa9c52",
+      "executed": true,
       "unit": "tests",
-      "count": 0,
-      "required_children": [
-
-      ],
-      "children": [
-
-      ],
-      "reason": "Final-candidate observation pending. Task 14 checkpoint evidence is retained separately in the ledger and is not rebound to new acceptance contracts."
+      "count": 78,
+      "required_children": [],
+      "children": [],
+      "reason": "Actual locked Chromium cases; no skips, failures or errors."
     },
     {
       "id": "arm64-images",
-      "status": "not_run",
-      "identity_kind": "none",
-      "source_identity": null,
-      "artifact": null,
-      "sha256": null,
-      "executed": false,
+      "status": "passed",
+      "identity_kind": "image_context",
+      "source_identity": "140fc99249e4f5d9f6592137af2c27ca8b3df16bde4bb16d911f5ee1f66bb883",
+      "artifact": "artifacts/w2/task15/images-arm64-35b59f5/image-result.json",
+      "sha256": "165229a359d7322263b04145b7d7ebb8c5680686a99c1358e19e0649006b7444",
+      "executed": true,
       "unit": "checks",
-      "count": 0,
+      "count": 68,
       "required_children": [
-
+        "git-commit",
+        "engine-architecture",
+        "build-runtime",
+        "build-web",
+        "build-dev",
+        "image-inspect",
+        "default-nonroot",
+        "runtime-os-packages",
+        "runtime-python-packages",
+        "runtime-help",
+        "replay-valid",
+        "persisted-valid",
+        "replay-duplicate-start",
+        "persisted-duplicate-start",
+        "dev-browser-cache-create",
+        "dev-browser-cache-inspect",
+        "dev-browser-cache-owner",
+        "dev-image-inspect",
+        "dev-os-packages",
+        "dev-start",
+        "dev-sync",
+        "dev-frontend-prepare",
+        "dev-isolate",
+        "dev-network-inspect",
+        "dev-offline-full",
+        "network-create",
+        "web-network-create",
+        "peer-start",
+        "peer-internal-connect",
+        "peer-published-port",
+        "isolated-peer",
+        "persisted-isolated-peer",
+        "signal-start-INT",
+        "signal-send-INT",
+        "signal-wait-INT",
+        "persisted-signal-INT",
+        "signal-start-TERM",
+        "signal-send-TERM",
+        "signal-wait-TERM",
+        "persisted-signal-TERM",
+        "host-path",
+        "persisted-host-path",
+        "web-image-inspect",
+        "web-default-nonroot",
+        "web-volume-create",
+        "web-start-first",
+        "web-port-first",
+        "web-pages",
+        "web-assessment",
+        "web-exports",
+        "web-receiver-volume-create",
+        "web-start-receiver",
+        "web-port-receiver",
+        "web-diagnostic-import",
+        "web-diagnostic-retest",
+        "web-stop-receiver",
+        "web-remove-receiver",
+        "web-start-receiver-restored",
+        "web-port-receiver-restored",
+        "web-import-persistence",
+        "web-cancellation",
+        "web-stop-active",
+        "web-remove-first",
+        "web-start-replacement",
+        "web-port-replacement",
+        "web-volume-restart",
+        "web-enable-host-route",
+        "web-host-path"
       ],
       "children": [
-
+        {
+          "id": "git-commit",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "engine-architecture",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "build-runtime",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "build-web",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "build-dev",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "image-inspect",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "default-nonroot",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "runtime-os-packages",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "runtime-python-packages",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "runtime-help",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "replay-valid",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "persisted-valid",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "replay-duplicate-start",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "persisted-duplicate-start",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "dev-browser-cache-create",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "dev-browser-cache-inspect",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "dev-browser-cache-owner",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "dev-image-inspect",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "dev-os-packages",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "dev-start",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "dev-sync",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "dev-frontend-prepare",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "dev-isolate",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "dev-network-inspect",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "dev-offline-full",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "network-create",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "web-network-create",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "peer-start",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "peer-internal-connect",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "peer-published-port",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "isolated-peer",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "persisted-isolated-peer",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "signal-start-INT",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "signal-send-INT",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "signal-wait-INT",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "persisted-signal-INT",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "signal-start-TERM",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "signal-send-TERM",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "signal-wait-TERM",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "persisted-signal-TERM",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "host-path",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "persisted-host-path",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "web-image-inspect",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "web-default-nonroot",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "web-volume-create",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "web-start-first",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "web-port-first",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "web-pages",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "web-assessment",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "web-exports",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "web-receiver-volume-create",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "web-start-receiver",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "web-port-receiver",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "web-diagnostic-import",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "web-diagnostic-retest",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "web-stop-receiver",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "web-remove-receiver",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "web-start-receiver-restored",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "web-port-receiver-restored",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "web-import-persistence",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "web-cancellation",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "web-stop-active",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "web-remove-first",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "web-start-replacement",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "web-port-replacement",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "web-volume-restart",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "web-enable-host-route",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "web-host-path",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        }
       ],
-      "reason": "Final-candidate observation pending. Task 14 checkpoint evidence is retained separately in the ledger and is not rebound to new acceptance contracts."
+      "reason": "Runtime linux/arm64 execution is native; developer baseline linux/arm64 is native."
     },
     {
       "id": "amd64-images",
-      "status": "not_run",
-      "identity_kind": "none",
-      "source_identity": null,
-      "artifact": null,
-      "sha256": null,
-      "executed": false,
+      "status": "passed",
+      "identity_kind": "image_context",
+      "source_identity": "140fc99249e4f5d9f6592137af2c27ca8b3df16bde4bb16d911f5ee1f66bb883",
+      "artifact": "artifacts/w2/task15/images-amd64-35b59f5/image-result.json",
+      "sha256": "61425ad1da74caf4e3cb9f91648870b2c434e3604b5da61d2f226dde8caa3e1e",
+      "executed": true,
       "unit": "checks",
-      "count": 0,
+      "count": 68,
       "required_children": [
-
+        "git-commit",
+        "engine-architecture",
+        "build-runtime",
+        "build-web",
+        "build-dev",
+        "image-inspect",
+        "default-nonroot",
+        "runtime-os-packages",
+        "runtime-python-packages",
+        "runtime-help",
+        "replay-valid",
+        "persisted-valid",
+        "replay-duplicate-start",
+        "persisted-duplicate-start",
+        "dev-browser-cache-create",
+        "dev-browser-cache-inspect",
+        "dev-browser-cache-owner",
+        "dev-image-inspect",
+        "dev-os-packages",
+        "dev-start",
+        "dev-sync",
+        "dev-frontend-prepare",
+        "dev-isolate",
+        "dev-network-inspect",
+        "dev-offline-full",
+        "network-create",
+        "web-network-create",
+        "peer-start",
+        "peer-internal-connect",
+        "peer-published-port",
+        "isolated-peer",
+        "persisted-isolated-peer",
+        "signal-start-INT",
+        "signal-send-INT",
+        "signal-wait-INT",
+        "persisted-signal-INT",
+        "signal-start-TERM",
+        "signal-send-TERM",
+        "signal-wait-TERM",
+        "persisted-signal-TERM",
+        "host-path",
+        "persisted-host-path",
+        "web-image-inspect",
+        "web-default-nonroot",
+        "web-volume-create",
+        "web-start-first",
+        "web-port-first",
+        "web-pages",
+        "web-assessment",
+        "web-exports",
+        "web-receiver-volume-create",
+        "web-start-receiver",
+        "web-port-receiver",
+        "web-diagnostic-import",
+        "web-diagnostic-retest",
+        "web-stop-receiver",
+        "web-remove-receiver",
+        "web-start-receiver-restored",
+        "web-port-receiver-restored",
+        "web-import-persistence",
+        "web-cancellation",
+        "web-stop-active",
+        "web-remove-first",
+        "web-start-replacement",
+        "web-port-replacement",
+        "web-volume-restart",
+        "web-enable-host-route",
+        "web-host-path"
       ],
       "children": [
-
+        {
+          "id": "git-commit",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "engine-architecture",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "build-runtime",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "build-web",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "build-dev",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "image-inspect",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "default-nonroot",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "runtime-os-packages",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "runtime-python-packages",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "runtime-help",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "replay-valid",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "persisted-valid",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "replay-duplicate-start",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "persisted-duplicate-start",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "dev-browser-cache-create",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "dev-browser-cache-inspect",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "dev-browser-cache-owner",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "dev-image-inspect",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "dev-os-packages",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "dev-start",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "dev-sync",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "dev-frontend-prepare",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "dev-isolate",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "dev-network-inspect",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "dev-offline-full",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "network-create",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "web-network-create",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "peer-start",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "peer-internal-connect",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "peer-published-port",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "isolated-peer",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "persisted-isolated-peer",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "signal-start-INT",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "signal-send-INT",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "signal-wait-INT",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "persisted-signal-INT",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "signal-start-TERM",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "signal-send-TERM",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "signal-wait-TERM",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "persisted-signal-TERM",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "host-path",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "persisted-host-path",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "web-image-inspect",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "web-default-nonroot",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "web-volume-create",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "web-start-first",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "web-port-first",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "web-pages",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "web-assessment",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "web-exports",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "web-receiver-volume-create",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "web-start-receiver",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "web-port-receiver",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "web-diagnostic-import",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "web-diagnostic-retest",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "web-stop-receiver",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "web-remove-receiver",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "web-start-receiver-restored",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "web-port-receiver-restored",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "web-import-persistence",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "web-cancellation",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "web-stop-active",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "web-remove-first",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "web-start-replacement",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "web-port-replacement",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "web-volume-restart",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "web-enable-host-route",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        },
+        {
+          "id": "web-host-path",
+          "status": "passed",
+          "executed": true,
+          "count": 1
+        }
       ],
-      "reason": "Final-candidate observation pending. Task 14 checkpoint evidence is retained separately in the ledger and is not rebound to new acceptance contracts."
+      "reason": "Runtime linux/amd64 execution is emulated; developer baseline linux/arm64 is native."
     },
     {
       "id": "protected-contracts",
-      "status": "not_run",
-      "identity_kind": "none",
-      "source_identity": null,
-      "artifact": null,
-      "sha256": null,
-      "executed": false,
-      "unit": "checks",
-      "count": 0,
-      "required_children": [
-
-      ],
-      "children": [
-
-      ],
-      "reason": "Final-candidate observation pending. Task 14 checkpoint evidence is retained separately in the ledger and is not rebound to new acceptance contracts."
+      "status": "passed",
+      "identity_kind": "source",
+      "source_identity": "5e482f17a2006a928b3e2d1b4b59d2edb3cb4318c0231c19c114f5ee9a5123e2",
+      "artifact": "artifacts/w2/task15/frozen-contracts-35b59f5.json",
+      "sha256": "26adf2aa111c16bb45c13d9d7f661a2e51dd237b49b0fe8a194bd97896bfd15e",
+      "executed": true,
+      "unit": "observations",
+      "count": 17,
+      "required_children": [],
+      "children": [],
+      "reason": "Exact protected contract/fixture/result/report-view bytes match W2 base."
     },
     {
       "id": "owned-cleanup",
-      "status": "not_run",
-      "identity_kind": "none",
-      "source_identity": null,
-      "artifact": null,
-      "sha256": null,
-      "executed": false,
-      "unit": "checks",
-      "count": 0,
-      "required_children": [
-
-      ],
-      "children": [
-
-      ],
-      "reason": "Final-candidate observation pending. Task 14 checkpoint evidence is retained separately in the ledger and is not rebound to new acceptance contracts."
+      "status": "passed",
+      "identity_kind": "source",
+      "source_identity": "5e482f17a2006a928b3e2d1b4b59d2edb3cb4318c0231c19c114f5ee9a5123e2",
+      "artifact": "artifacts/w2/task15/owned-cleanup-35b59f5.json",
+      "sha256": "5392d5225e6f9fb1a94843f1d05bb846b04eda614b6e486a0e7d714deeeddf0e",
+      "executed": true,
+      "unit": "observations",
+      "count": 6,
+      "required_children": [],
+      "children": [],
+      "reason": "Both final jobs owned containers/networks/run volumes absent; previews/cache/evidence retained."
     },
     {
       "id": "preview",
-      "status": "not_run",
-      "identity_kind": "none",
-      "source_identity": null,
-      "artifact": null,
-      "sha256": null,
-      "executed": false,
-      "unit": "checks",
-      "count": 0,
-      "required_children": [
-
-      ],
-      "children": [
-
-      ],
-      "reason": "Final-candidate observation pending. Task 14 checkpoint evidence is retained separately in the ledger and is not rebound to new acceptance contracts."
+      "status": "passed",
+      "identity_kind": "source",
+      "source_identity": "5e482f17a2006a928b3e2d1b4b59d2edb3cb4318c0231c19c114f5ee9a5123e2",
+      "artifact": "artifacts/w2/task15/manual-observation-35b59f5.json",
+      "sha256": "160412d8807fec1906b9fc8d2255e55705af2a4887629ea01085398c1c72aa96",
+      "executed": true,
+      "unit": "observations",
+      "count": 1,
+      "required_children": [],
+      "children": [],
+      "reason": "Current synthetic GUI/export observed; not a real endpoint or client workflow assessment."
     },
     {
       "id": "independent-review",
-      "status": "not_run",
-      "identity_kind": "none",
-      "source_identity": null,
-      "artifact": null,
-      "sha256": null,
-      "executed": false,
+      "status": "passed",
+      "identity_kind": "review",
+      "source_identity": "bfeb4f0d1ec1ae2cf3c6b5b36dac24ad878afbfe",
+      "artifact": "docs/reviews/2026-10-18-diagnostic-workbench-review.md",
+      "sha256": "d418c269ada0b0582dd7612c30b46dbae2d8c59eff8c13e52ee4c9f3a0a7af15",
+      "executed": true,
       "unit": "reviews",
-      "count": 0,
-      "required_children": [
-
-      ],
-      "children": [
-
-      ],
-      "reason": "Final-candidate observation pending. Task 14 checkpoint evidence is retained separately in the ledger and is not rebound to new acceptance contracts."
+      "count": 1,
+      "required_children": [],
+      "children": [],
+      "reason": "One fresh read-only whole-W2 review; final author disposition and correction evidence are in this document."
     },
     {
       "id": "remote-ci",
@@ -253,12 +1294,8 @@
       "executed": false,
       "unit": "checks",
       "count": 0,
-      "required_children": [
-
-      ],
-      "children": [
-
-      ],
+      "required_children": [],
+      "children": [],
       "reason": "Remote GitHub CI has not run for W2."
     },
     {
@@ -271,12 +1308,8 @@
       "executed": false,
       "unit": "checks",
       "count": 0,
-      "required_children": [
-
-      ],
-      "children": [
-
-      ],
+      "required_children": [],
+      "children": [],
       "reason": "Supplemental Python 3.11 W2 execution has not been observed."
     },
     {
@@ -289,12 +1322,8 @@
       "executed": false,
       "unit": "checks",
       "count": 0,
-      "required_children": [
-
-      ],
-      "children": [
-
-      ],
+      "required_children": [],
+      "children": [],
       "reason": "Only native ARM64 development and emulated AMD64 runtime execution have been observed."
     },
     {
@@ -307,12 +1336,8 @@
       "executed": false,
       "unit": "checks",
       "count": 0,
-      "required_children": [
-
-      ],
-      "children": [
-
-      ],
+      "required_children": [],
+      "children": [],
       "reason": "No new real endpoint or Claude Code workflow is authorized or observed in W2."
     }
   ]

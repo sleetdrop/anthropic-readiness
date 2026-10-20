@@ -795,3 +795,18 @@ failed the new regression; one shared completeness predicate now passes 51 focus
 comparison/import tests, preserving readable source/evidence bytes. The browser
 recovery regression and corrected-source full/image acceptance remain pending.
 No real endpoint, remote CI or publication operation ran.
+
+## W2 local delivery acceptance — 2026-10-20
+
+Both Important findings are closed by RED→GREEN and clean source 35b59f5's full
+graph: 768 Python, 20 Node and 78 Chromium tests across thirteen required children,
+zero failures/errors/skips. Fresh native ARM64 and emulated AMD64 full CLI/Web
+image jobs each passed 68 actual checks on unchanged context; each separately
+prepared/disconnected native Linux ARM64 developer graph passed the same counts.
+Both actual resource inventories are clear for their owned containers/networks/
+run volumes. Protected files remain exact and the current synthetic GUI export
+preserved the original result hash with no browser warnings/errors. One Minor
+Chinese Markdown appendix heading issue is deferred; no second review ran.
+Final metadata/evidence closure validates actual hashes and unchanged source/image
+fingerprints. Remote CI, Python 3.11, native AMD64 development and real endpoint/
+Claude Code outcomes remain not_run. All work remains local on the chosen branch.

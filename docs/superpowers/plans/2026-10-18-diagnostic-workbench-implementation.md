@@ -475,11 +475,11 @@ independent reviewer or implementer agent is dispatched.
 
 **Interfaces:** Acceptance maps W2-01 through W2-17 to exact source identities, executed checks and retained artifacts. Handoff separates source, offline/browser/package, container, remote CI, independent review and real endpoint outcomes. New acceptance schemas are validated by the existing resource/document harness.
 
-- [ ] Write an acceptance-schema regression rejecting a missing requirement, unknown source identity, zero tests or an unrun child marked passed. Run it RED, then add only the validation/recording boundary required to represent observed W2 outcomes.
-- [ ] Freeze a clean candidate commit and arrange exactly one independent whole-W2 review under repository policy. Provide the approved spec, selected design, this plan, immutable diff range, new/old contract fixtures, check records and the complete handoff scenario. Reviewer is read-only; no per-task implementers or repeated review loop.
-- [ ] Evaluate findings against evidence; record accepted/rejected/deferred rulings. For accepted behavior defects, demonstrate RED and GREEN without weakening original assertions. Run appropriate focused regressions, then full/container verification again if affected source changed. Do not bind old image evidence to the new source.
-- [ ] Use `UV_OFFLINE=1 uv run --frozen python scripts/check.py --suite full --out artifacts/w2/final-full-<source>` for final local developer acceptance. Read every required result and actual test counts; separately record image evidence, review disposition and all unobserved external outcomes. Use unique output paths for retries and retain failures.
-- [ ] Commit the verified source locally, then scope a handoff-only commit with final artifacts/ledger. Do not push, merge, publish, run a real endpoint or remove retained scratch/evidence as a side effect. Mark completion only when the whole W2 scope is met; otherwise list remaining requirements honestly.
+- [x] Write an acceptance-schema regression rejecting a missing requirement, unknown source identity, zero tests or an unrun child marked passed. Run it RED, then add only the validation/recording boundary required to represent observed W2 outcomes.
+- [x] Freeze a clean candidate commit and arrange exactly one independent whole-W2 review under repository policy. Provide the approved spec, selected design, this plan, immutable diff range, new/old contract fixtures, check records and the complete handoff scenario. Reviewer is read-only; no per-task implementers or repeated review loop.
+- [x] Evaluate findings against evidence; record accepted/rejected/deferred rulings. For accepted behavior defects, demonstrate RED and GREEN without weakening original assertions. Run appropriate focused regressions, then full/container verification again if affected source changed. Do not bind old image evidence to the new source.
+- [x] Use `UV_OFFLINE=1 uv run --frozen python scripts/check.py --suite full --out artifacts/w2/final-full-<source>` for final local developer acceptance. Read every required result and actual test counts; separately record image evidence, review disposition and all unobserved external outcomes. Use unique output paths for retries and retain failures.
+- [x] Commit the verified source locally, then scope a handoff-only commit with final artifacts/ledger. Do not push, merge, publish, run a real endpoint or remove retained scratch/evidence as a side effect. Mark completion only when the whole W2 scope is met; otherwise list remaining requirements honestly.
 
 ## Acceptance coverage map
 
@@ -517,8 +517,8 @@ English CLI help/machine grammar while localizing product UI and report prose.
 Author self-review completed on 2026-10-18: all W2 acceptance requirements map to
 tasks; the recipe/context dependency, public CLI parser interface, legacy export
 version branch, source-summary distinction and passing-count labels were corrected.
-No implementation checkbox is checked and no runtime outcome is inferred from
-the generated images or this document review.
+At plan approval, no implementation checkbox was checked and no runtime outcome
+was inferred from the generated images or this document review.
 
 The final paired-design self-review checked all seventeen acceptance IDs against
 the task map, cross-task signatures, the five Review Focus owners and dependencies.
