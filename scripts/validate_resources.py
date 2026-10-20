@@ -98,6 +98,8 @@ def validate_resources(root: Path) -> list[str]:
         "web-api",
         "web-console-acceptance",
         "web-console-handoff",
+        "diagnostic-workbench-acceptance",
+        "diagnostic-workbench-handoff",
         "presentation-options",
         "preferences",
         "localization-catalog",

@@ -776,3 +776,10 @@ owned temporary resources were absent afterwards. The 17 protected contract/fixt
 result/report-view files match the W2 base byte-for-byte. Task 15 acceptance metadata
 and the single independent W2 review remain pending; remote/live/publication remain
 unobserved.
+
+Task 15 now has packaged W2 acceptance/handoff contracts and a documentation gate.
+Six regressions reject missing coverage, foreign source hashes, zero tests,
+unexecuted passed children and incomplete completion claims. Fast-2 passed 463
+Python/20 Node tests and strict typing (176 files); tracked records remain incomplete
+with final-candidate outcomes not_run. Whole-W2 review and final new-context
+full/image acceptance remain pending.

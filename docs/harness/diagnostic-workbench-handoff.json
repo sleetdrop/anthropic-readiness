@@ -1,0 +1,319 @@
+{
+  "schema_version": "1.0",
+  "stage": "W2",
+  "status": "incomplete",
+  "source": {
+    "commit": "344195fee04936358e1da7d0cdfab323a88e92c2",
+    "fingerprint": "d2209918f110a94a91f7664c0ea1cb23b04028259aa14ddff849b30820be6cae",
+    "image_context": "3163dabb761ee5ebd22fed928ef6cf9d413bf243ff7a74ef16df0db231070037",
+    "reviewed_head": null
+  },
+  "checks": [
+    {
+      "id": "full-source",
+      "status": "not_run",
+      "identity_kind": "none",
+      "source_identity": null,
+      "artifact": null,
+      "sha256": null,
+      "executed": false,
+      "unit": "checks",
+      "count": 0,
+      "required_children": [
+
+      ],
+      "children": [
+
+      ],
+      "reason": "Final-candidate observation pending. Task 14 checkpoint evidence is retained separately in the ledger and is not rebound to new acceptance contracts."
+    },
+    {
+      "id": "unit",
+      "status": "not_run",
+      "identity_kind": "none",
+      "source_identity": null,
+      "artifact": null,
+      "sha256": null,
+      "executed": false,
+      "unit": "tests",
+      "count": 0,
+      "required_children": [
+
+      ],
+      "children": [
+
+      ],
+      "reason": "Final-candidate observation pending. Task 14 checkpoint evidence is retained separately in the ledger and is not rebound to new acceptance contracts."
+    },
+    {
+      "id": "integration",
+      "status": "not_run",
+      "identity_kind": "none",
+      "source_identity": null,
+      "artifact": null,
+      "sha256": null,
+      "executed": false,
+      "unit": "tests",
+      "count": 0,
+      "required_children": [
+
+      ],
+      "children": [
+
+      ],
+      "reason": "Final-candidate observation pending. Task 14 checkpoint evidence is retained separately in the ledger and is not rebound to new acceptance contracts."
+    },
+    {
+      "id": "acceptance",
+      "status": "not_run",
+      "identity_kind": "none",
+      "source_identity": null,
+      "artifact": null,
+      "sha256": null,
+      "executed": false,
+      "unit": "tests",
+      "count": 0,
+      "required_children": [
+
+      ],
+      "children": [
+
+      ],
+      "reason": "Final-candidate observation pending. Task 14 checkpoint evidence is retained separately in the ledger and is not rebound to new acceptance contracts."
+    },
+    {
+      "id": "installed-packages",
+      "status": "not_run",
+      "identity_kind": "none",
+      "source_identity": null,
+      "artifact": null,
+      "sha256": null,
+      "executed": false,
+      "unit": "tests",
+      "count": 0,
+      "required_children": [
+
+      ],
+      "children": [
+
+      ],
+      "reason": "Final-candidate observation pending. Task 14 checkpoint evidence is retained separately in the ledger and is not rebound to new acceptance contracts."
+    },
+    {
+      "id": "frontend-static",
+      "status": "not_run",
+      "identity_kind": "none",
+      "source_identity": null,
+      "artifact": null,
+      "sha256": null,
+      "executed": false,
+      "unit": "checks",
+      "count": 0,
+      "required_children": [
+
+      ],
+      "children": [
+
+      ],
+      "reason": "Final-candidate observation pending. Task 14 checkpoint evidence is retained separately in the ledger and is not rebound to new acceptance contracts."
+    },
+    {
+      "id": "browser",
+      "status": "not_run",
+      "identity_kind": "none",
+      "source_identity": null,
+      "artifact": null,
+      "sha256": null,
+      "executed": false,
+      "unit": "tests",
+      "count": 0,
+      "required_children": [
+
+      ],
+      "children": [
+
+      ],
+      "reason": "Final-candidate observation pending. Task 14 checkpoint evidence is retained separately in the ledger and is not rebound to new acceptance contracts."
+    },
+    {
+      "id": "arm64-images",
+      "status": "not_run",
+      "identity_kind": "none",
+      "source_identity": null,
+      "artifact": null,
+      "sha256": null,
+      "executed": false,
+      "unit": "checks",
+      "count": 0,
+      "required_children": [
+
+      ],
+      "children": [
+
+      ],
+      "reason": "Final-candidate observation pending. Task 14 checkpoint evidence is retained separately in the ledger and is not rebound to new acceptance contracts."
+    },
+    {
+      "id": "amd64-images",
+      "status": "not_run",
+      "identity_kind": "none",
+      "source_identity": null,
+      "artifact": null,
+      "sha256": null,
+      "executed": false,
+      "unit": "checks",
+      "count": 0,
+      "required_children": [
+
+      ],
+      "children": [
+
+      ],
+      "reason": "Final-candidate observation pending. Task 14 checkpoint evidence is retained separately in the ledger and is not rebound to new acceptance contracts."
+    },
+    {
+      "id": "protected-contracts",
+      "status": "not_run",
+      "identity_kind": "none",
+      "source_identity": null,
+      "artifact": null,
+      "sha256": null,
+      "executed": false,
+      "unit": "checks",
+      "count": 0,
+      "required_children": [
+
+      ],
+      "children": [
+
+      ],
+      "reason": "Final-candidate observation pending. Task 14 checkpoint evidence is retained separately in the ledger and is not rebound to new acceptance contracts."
+    },
+    {
+      "id": "owned-cleanup",
+      "status": "not_run",
+      "identity_kind": "none",
+      "source_identity": null,
+      "artifact": null,
+      "sha256": null,
+      "executed": false,
+      "unit": "checks",
+      "count": 0,
+      "required_children": [
+
+      ],
+      "children": [
+
+      ],
+      "reason": "Final-candidate observation pending. Task 14 checkpoint evidence is retained separately in the ledger and is not rebound to new acceptance contracts."
+    },
+    {
+      "id": "preview",
+      "status": "not_run",
+      "identity_kind": "none",
+      "source_identity": null,
+      "artifact": null,
+      "sha256": null,
+      "executed": false,
+      "unit": "checks",
+      "count": 0,
+      "required_children": [
+
+      ],
+      "children": [
+
+      ],
+      "reason": "Final-candidate observation pending. Task 14 checkpoint evidence is retained separately in the ledger and is not rebound to new acceptance contracts."
+    },
+    {
+      "id": "independent-review",
+      "status": "not_run",
+      "identity_kind": "none",
+      "source_identity": null,
+      "artifact": null,
+      "sha256": null,
+      "executed": false,
+      "unit": "reviews",
+      "count": 0,
+      "required_children": [
+
+      ],
+      "children": [
+
+      ],
+      "reason": "Final-candidate observation pending. Task 14 checkpoint evidence is retained separately in the ledger and is not rebound to new acceptance contracts."
+    },
+    {
+      "id": "remote-ci",
+      "status": "not_run",
+      "identity_kind": "none",
+      "source_identity": null,
+      "artifact": null,
+      "sha256": null,
+      "executed": false,
+      "unit": "checks",
+      "count": 0,
+      "required_children": [
+
+      ],
+      "children": [
+
+      ],
+      "reason": "Remote GitHub CI has not run for W2."
+    },
+    {
+      "id": "python-3.11",
+      "status": "not_run",
+      "identity_kind": "none",
+      "source_identity": null,
+      "artifact": null,
+      "sha256": null,
+      "executed": false,
+      "unit": "checks",
+      "count": 0,
+      "required_children": [
+
+      ],
+      "children": [
+
+      ],
+      "reason": "Supplemental Python 3.11 W2 execution has not been observed."
+    },
+    {
+      "id": "native-amd64-development",
+      "status": "not_run",
+      "identity_kind": "none",
+      "source_identity": null,
+      "artifact": null,
+      "sha256": null,
+      "executed": false,
+      "unit": "checks",
+      "count": 0,
+      "required_children": [
+
+      ],
+      "children": [
+
+      ],
+      "reason": "Only native ARM64 development and emulated AMD64 runtime execution have been observed."
+    },
+    {
+      "id": "real-endpoint",
+      "status": "not_run",
+      "identity_kind": "none",
+      "source_identity": null,
+      "artifact": null,
+      "sha256": null,
+      "executed": false,
+      "unit": "checks",
+      "count": 0,
+      "required_children": [
+
+      ],
+      "children": [
+
+      ],
+      "reason": "No new real endpoint or Claude Code workflow is authorized or observed in W2."
+    }
+  ]
+}

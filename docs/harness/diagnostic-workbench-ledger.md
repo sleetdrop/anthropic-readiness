@@ -1014,3 +1014,23 @@ AMD64 developer run, new real endpoint, registry action or final W2 review ran.
 Task 15 remains open. The subsequent documentation command was not executed when
 automatic approval review hit the account usage limit; the owner resumed after
 reset and the same authorized local operation was retried normally.
+
+### Task 15 — whole-stage acceptance and independent review (in progress)
+
+BASE 1c0735812c74d671bf9c2353b189fb4f8919da9a. The new delivery-contract regression
+first failed five cases because the packaged W2 schemas did not exist. The added
+schemas and documentation boundary now pass six checks: valid source-bound partial
+records, all seventeen required IDs, unknown-but-well-formed source hashes, zero
+executed tests, an unexecuted passed child and incomplete completion claims.
+The test fixture is explicitly synthetic and is not project acceptance evidence.
+The actual W2 map covers all seventeen requirements; the initial handoff is marked
+incomplete with final-candidate observations not_run, retaining earlier Task 14
+observations only in their original records. The new packaged schemas change the
+image context, so old image results will not certify the final candidate.
+
+Task 15 fast-2 passed all eight children: 463 Python and 20 Node tests; strict
+typing passed 176 files. The actual tracked W2 records and collaboration/link
+checks passed separately. The first fast preparation stopped on two style rules;
+only assertion splitting/set-comprehension/formatting changed before the clean run.
+The candidate is ready for its one independent review; its new full graph and
+new-context images remain unobserved. No prior image result is marked final.

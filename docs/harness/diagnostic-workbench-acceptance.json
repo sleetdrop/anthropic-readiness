@@ -1,0 +1,157 @@
+{
+  "schema_version": "1.0",
+  "stage": "W2",
+  "requirements": [
+    {
+      "id": "W2-01",
+      "checks": [
+        "acceptance",
+        "installed-packages",
+        "browser",
+        "protected-contracts"
+      ]
+    },
+    {
+      "id": "W2-02",
+      "checks": [
+        "browser",
+        "preview"
+      ]
+    },
+    {
+      "id": "W2-03",
+      "checks": [
+        "integration",
+        "browser",
+        "arm64-images",
+        "amd64-images"
+      ]
+    },
+    {
+      "id": "W2-04",
+      "checks": [
+        "browser"
+      ]
+    },
+    {
+      "id": "W2-05",
+      "checks": [
+        "unit",
+        "integration",
+        "acceptance",
+        "browser"
+      ]
+    },
+    {
+      "id": "W2-06",
+      "checks": [
+        "acceptance",
+        "browser",
+        "installed-packages",
+        "preview"
+      ]
+    },
+    {
+      "id": "W2-07",
+      "checks": [
+        "acceptance",
+        "installed-packages",
+        "arm64-images",
+        "amd64-images"
+      ]
+    },
+    {
+      "id": "W2-08",
+      "checks": [
+        "unit",
+        "integration",
+        "acceptance",
+        "installed-packages"
+      ]
+    },
+    {
+      "id": "W2-09",
+      "checks": [
+        "unit",
+        "acceptance",
+        "browser",
+        "arm64-images",
+        "amd64-images"
+      ]
+    },
+    {
+      "id": "W2-10",
+      "checks": [
+        "unit",
+        "integration",
+        "acceptance",
+        "installed-packages",
+        "arm64-images",
+        "amd64-images"
+      ]
+    },
+    {
+      "id": "W2-11",
+      "checks": [
+        "unit",
+        "integration",
+        "acceptance",
+        "protected-contracts"
+      ]
+    },
+    {
+      "id": "W2-12",
+      "checks": [
+        "installed-packages",
+        "arm64-images",
+        "amd64-images"
+      ]
+    },
+    {
+      "id": "W2-13",
+      "checks": [
+        "full-source",
+        "unit",
+        "integration",
+        "acceptance",
+        "installed-packages",
+        "frontend-static",
+        "browser",
+        "arm64-images",
+        "amd64-images",
+        "owned-cleanup"
+      ]
+    },
+    {
+      "id": "W2-14",
+      "checks": [
+        "independent-review"
+      ]
+    },
+    {
+      "id": "W2-15",
+      "checks": [
+        "frontend-static",
+        "browser",
+        "acceptance"
+      ]
+    },
+    {
+      "id": "W2-16",
+      "checks": [
+        "frontend-static",
+        "browser",
+        "installed-packages"
+      ]
+    },
+    {
+      "id": "W2-17",
+      "checks": [
+        "unit",
+        "integration",
+        "acceptance",
+        "browser"
+      ]
+    }
+  ]
+}
