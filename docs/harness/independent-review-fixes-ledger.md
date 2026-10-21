@@ -921,3 +921,69 @@ workflow, registry publication or new independent review ran. Existing previews
 were not redeployed. Stop after the local documentation commit. If separately
 authorized, the next bounded task is matching emulated AMD64 full CLI/Web acceptance
 with an explicitly native ARM64 developer baseline, not another whole-source review.
+
+## Emulated AMD64 full CLI/Web image acceptance passed
+
+Following native ARM64 acceptance, the owner agreed to one matching AMD64 task.
+On 2026-10-21, one fresh full CLI/Web image job ran from clean
+`eb5e1db9c84b12eea275a9a5b2193101aee6bbe1`, 15:02:00 to 15:46:36 UTC (about
+44.6 minutes). The controller exited 0 with all 68 rows passed, no error and no
+missing required check. Runtime execution was emulated AMD64 on the Linux/aarch64
+engine. The independently prepared developer baseline was native Linux ARM64,
+Python 3.12.15; no native AMD64 development/browser acceptance is claimed.
+
+| Observation | Actual result |
+| --- | --- |
+| Runtime/Web image builds | Observed fresh builds with current revision/context; skip_build=false |
+| Native ARM64 dev image | Built using completed-layer cache; locked preparation completed |
+| Fresh disconnected developer full graph | All 13 required gates passed |
+| Developer tests | 822 Python (475 unit/harness, 258 integration, 84 acceptance, 5 installed-package), 20 Node, 78 Chromium; zero failures/errors/skips |
+| Emulated AMD64 CLI workflows | Nonroot/read-only, help, valid/invalid replay, synthetic peer, host route and SIGINT/SIGTERM passed |
+| Emulated AMD64 Web workflows | Installed pages, assessment, exports, diagnostic import/retest, import persistence, cancellation, replacement/restart and owned host route passed |
+| Owned job resources after cleanup | No container, network or data volume under readiness-9804cac7ca6e |
+
+The developer full graph ran 15:32:26–15:45:19 UTC (about 12.9 minutes).
+Integration completed in 364.06 seconds under the unchanged 600-second limit.
+Actual positive JUnit testcase nodes, zero failures/errors/skips, all required
+gates and clean recorded source identity were checked separately. Locked versions,
+sources, timeouts, assertions, goldens and test scope remain unchanged. No product,
+test, harness, lock or Dockerfile changed. This graph is a fresh required container
+observation; counts overlap earlier jobs and are not summed as unique coverage.
+
+Evidence and identities:
+
+- Root: `artifacts/review-fixes-20261021/images-amd64-eb5e1db/` and adjacent `.log`.
+- Image result SHA-256: `eb20e5f6c46d3a67c106cb20343696a57fbae4182b32461563d62227c839caea`.
+- Fresh developer record: `artifacts/checks/1792596746304061548/check-result.json`;
+  SHA-256 `7c45f436a2a1132a7572d5893d88a5860a123c69882cea4feb29018a6af061ff`.
+- CLI image ID: `sha256:aa6ecbe8411b5f44e6d47c94b197f574978fa2008887588315ca1c7fc9a1d0e4`.
+- Web image ID: `sha256:258b60d8badb53100649501efa8b78f30d68bf99fc60a0f5dfc9e8fed55db895`.
+- Native dev image ID: `sha256:799106f0fb4f64d7fd7d10f7eeb80ac0d7a4544b03b0caca4429541337cb4f77`.
+- Image context: `67af98398b0d7c995c8e704de44d441ce47f990339749ba28054d497804737e9`.
+- Source fingerprint: `535f0728e8456a0962aefbf1b5073474ed31db47454797236b6efab2cc020ba2`.
+
+`verify_observation.py` validates the packaged result schema, both runtime images'
+AMD64 architecture/revision/context, the dev image's native ARM64 architecture,
+actual dev-build command and clean mounted-checkout full record. Its first run
+incorrectly assumed the dev stage declares runtime revision labels. The Dockerfile
+places those labels only in runtime_base; dev mounts the checkout. That temporary
+helper error is retained in `closeout.log` and `verify_observation-initial.py`.
+The corrected helper uses actual dev-build arguments and the child's clean source
+identity, then passed (`closeout-dev-metadata.log`, `observed-summary.json`). No
+product assertion, test expectation or authoritative acceptance record was changed.
+
+All initially stopped containers, including unrelated local services and historical
+project previews, were preserved. The prepared container was started only for Linux
+schema/evidence/documentation closeout and restored to stopped, exit 0; its final
+state and preserved inventory are retained. Public browser cache/build layers
+remain. No acceptance/build process or owned run-data resource remains running.
+Final documentation and unchanged-source/evidence checks passed.
+
+Together with the native ARM64 job, this completes local image verification for the
+recorded correction source. Original blocked/source/W2 observations retain their
+own identities and external statuses. Existing previews were not redeployed.
+Remote CI, native AMD64 development/browser execution, current-source real endpoint/
+client checks, registry publication and new independent review remain unrun.
+Formal coverage is still four installed cases, not a broader client certification.
+Stop after the local documentation commit. Further work needs a concrete bounded
+product/workflow or later-milestone scope, not an automatic new review/test cycle.

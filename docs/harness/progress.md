@@ -1100,3 +1100,33 @@ observation checks passed; the prepared container is stopped again, exit 0.
 Stop after the local documentation commit. The matching emulated AMD64 full image
 job is a possible next separately authorized task, with native ARM64 development
 labelled explicitly; do not start it automatically.
+
+## Emulated AMD64 full image acceptance passed — 2026-10-21
+
+The owner agreed to one matching AMD64 full CLI/Web job after native ARM64 passed.
+On clean eb5e1db, the controller exited 0 after about 44.6 minutes: all 68 checks
+passed, no missing required checks or error. CLI/Web images executed as emulated
+AMD64 on the ARM64 engine. Their independent developer baseline was native Linux
+ARM64/Python 3.12.15, prepared and disconnected before all thirteen full gates
+passed: 822 Python (475 unit/harness, 258 integration, 84 acceptance, 5 installed-
+package), 20 Node and 78 Chromium, zero failures/errors/skips. Native AMD64
+development/browser execution remains unobserved.
+
+Installed CLI replay/signals/host routing and Web import/retest/exports/cancellation/
+restart/persistence passed with synthetic peers. Actual JUnit counts, packaged
+schema, source/image identities and exact owned resource cleanup were independently
+checked. A temporary helper incorrectly expected runtime revision labels on the
+dev stage; its original script/log remain retained, and the corrected verifier
+uses the observed dev-build command and clean mounted-checkout full record.
+No authoritative result or product assertion was changed.
+
+Evidence and exact hashes are in the correction ledger and ignored
+`artifacts/review-fixes-20261021/images-amd64-eb5e1db/` plus adjacent `.log`;
+fresh full record: `artifacts/checks/1792596746304061548/check-result.json`.
+Source, tests, harness, locks and image recipes remain unchanged. Initial stopped
+containers and public caches were preserved; all owned run resources are absent.
+Documentation and evidence checks passed; the prepared container is stopped again,
+exit 0. No current-source live endpoint/client check, remote CI, publication,
+preview upgrade or new review ran. Both local image jobs now cover the correction
+source; original records and external statuses remain unchanged. Stop after the
+local documentation commit, with no automatic new review or verification cycle.

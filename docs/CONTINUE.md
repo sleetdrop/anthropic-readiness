@@ -1,6 +1,38 @@
 # Local delivery status
 
-## Current follow-up: native ARM64 image acceptance passed
+## Current follow-up: correction verification and both image jobs passed
+
+The owner authorized the matching AMD64 job after native ARM64 acceptance. On
+clean `eb5e1db9c84b12eea275a9a5b2193101aee6bbe1`, the full AMD64 CLI/Web job
+passed all 68 controller checks with no missing required check or error. Runtime
+execution was emulated on the ARM64 engine. Its separately prepared, disconnected
+developer container ran natively on Linux ARM64/Python 3.12: thirteen full gates,
+822 Python, 20 Node and 78 Chromium tests passed, zero failures/errors/skips.
+This does not certify native AMD64 development or browser execution.
+
+Both image jobs cover the same current source and image-context fingerprints;
+the intervening commits changed only excluded handoff records. F01-F06 and the
+integration-budget correction now have complete source verification, native ARM64
+image acceptance and emulated AMD64 CLI/Web image acceptance. Do not repeat these
+checks or open another review loop without a new change, failure or concrete concern.
+
+AMD64 evidence: ignored `artifacts/review-fixes-20261021/images-amd64-eb5e1db/`
+and adjacent `.log`; fresh developer full record:
+`artifacts/checks/1792596746304061548/check-result.json`. The packaged schema,
+actual JUnit counts, source/image identities and absence of owned containers,
+networks and data volumes were checked separately. All initially stopped containers
+were preserved; the prepared container is stopped again, exit 0. Public caches and
+original blocked/passing observations remain retained. No product/test/harness/
+lock/Dockerfile changed, and existing preview services were not upgraded.
+
+Stop after the local documentation commit. Further work needs its own bounded
+scope: product/workflow validation or a later milestone, rather than another
+automatic verification cycle. Formal coverage remains four installed cases.
+Remote CI, native AMD64 development and current-source real endpoint/client checks
+remain unrun; publication and account setup remain separately authorized actions.
+Keep original records' external statuses and historical W2 identities unchanged.
+
+## Native ARM64 image acceptance baseline
 
 After the owner changed network and authorized a retry, one fresh native ARM64
 full CLI/Web job passed on clean `e4e9de4ab0323f28e0897a70dfd623551ead2efa`.
@@ -26,11 +58,10 @@ No product/test/harness/lock/Dockerfile changed. All initially stopped container
 were preserved, and the prepared container is stopped again, exit 0. Public
 tool caches and completed build layers remain available.
 
-Stop after the local documentation commit. If separately authorized, the next
-bounded verification task is the matching emulated AMD64 full CLI/Web job on this
-ARM64 engine; its developer baseline remains native ARM64 and must be labelled
-accordingly. Native AMD64 development, remote CI, publication and real endpoint/
-client checks remain unrun. Do not start those or another review automatically.
+The subsequently authorized emulated AMD64 full CLI/Web job also passed, as
+recorded above, with a native ARM64 developer baseline. Native AMD64 development,
+remote CI, publication and current-source real endpoint/client checks remain
+unrun. No additional review or verification task starts automatically.
 
 ## Previous native ARM64 image attempt: preparation timeout
 
