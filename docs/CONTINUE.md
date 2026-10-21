@@ -2,6 +2,18 @@
 
 ## GitHub published; unchanged CI retry confirms a persistent timing problem
 
+The owner-authorized follow-up diagnosis is complete; see the
+[measured timing analysis](reviews/2026-10-22-ci-timing-diagnosis.md). Repeated
+installed-identity/AST computation and schema meta-validation dominate sampled
+comparison and integration CPU work. A process-local controlled experiment reduced
+comparison/export median time from 0.905 to 0.385 seconds with identical outputs;
+no production optimization or timeout change was made. One existing integration
+case passed under profiling. This is diagnostic evidence, not a remote green run.
+Next bounded task is a semantics-preserving correction with mutation/corruption
+regressions, then measured verification; avoid permanent cached identity/evidence
+verdicts. The full rationale, limits, hashes and safe stopping state are in the
+analysis and publication ledger. Stop after the local documentation commit.
+
 The owner approved the public repository
 https://github.com/sleetdrop/anthropic-readiness, MIT licensing and first push as
 `main`, followed by observing GitHub CI. First push `7b69b53` succeeded; GitHub
@@ -27,8 +39,9 @@ one-off infrastructure failure. It does not yet identify a product defect versus
 an overlarge test/insufficient budget. No observed protocol/report-value assertion
 failure was found in the completed reports. Do not retry again without diagnosis.
 
-Next bounded task is to diagnose the remote browser failure and CI gate timing
-from retained traces/records, reproduce meaningfully, and decide a justified fix.
+The subsequent diagnosis above measured repeated CPU work using those retained
+traces/records and exact synthetic input files. Its recommended correction remains
+separate work.
 Do not assume a slow runner explains the export failure, increase limits blindly,
 skip assertions or repeatedly rerun until green. No product/test/workflow/budget
 change was made during publication or the separately authorized retry. See the

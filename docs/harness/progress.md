@@ -1187,3 +1187,24 @@ in the publication ledger and ignored artifacts/publication-20261021. Linux
 schema/evidence/documentation checks passed; the prepared container is stopped,
 exit 0. Stop after pushing this docs-only [skip ci] record. Next diagnose actual
 slow stages before deciding optimization, test restructuring or justified limits.
+
+## CI CPU hotspots measured — 2026-10-22
+
+The owner requested diagnosis. Read-only profiling of exact retained synthetic
+CI inputs identified repeated installed identity/AST computation and repeated
+JSON Schema checking/construction as dominant sampled costs. One existing
+integration case passed under profile, with 18 identity computations accounting
+for 6.45 of 10.30 profiled test seconds. Separate unprofiled controlled comparison/
+export medians were 0.9053 seconds baseline, 0.7308 schema-only reuse, 0.5605 one
+fresh identity per operation, 0.3848 both. Three samples per mode produced identical
+comparison/evidence values and export file bytes. All 699 fixture files still
+match the original remote ZIP. These are local diagnostic measurements, not a
+production optimization, cache safety proof or remote CI pass.
+
+No source/test/harness/workflow/dependency/deadline change occurred. Exact method,
+limits, hashes and next bounded correction are recorded in the timing diagnosis
+and publication ledger; raw profiles/experiments/JUnit are retained under ignored
+artifacts/ci-timing-20261022. Preserve every evidence check and source/resource/
+dependency change detector in a later optimization. No new CI or remote write ran.
+Linux documentation/evidence checks passed; prepared container stopped, exit 0.
+Stop after the local documentation commit, with no diagnostic process running.

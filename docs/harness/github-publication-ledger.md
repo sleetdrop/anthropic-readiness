@@ -152,3 +152,34 @@ uses `[skip ci]` for this prose-only record, retaining attempt 2 as failed; it i
 not a CI fix or another retry. Documentation/schema/evidence checks passed.
 The prepared container was restored to stopped, exit 0. No local test/build task
 or remote retry remains running. Stop after the documentation-record push.
+
+## Measured CI timing diagnosis completed — 2026-10-22
+
+The owner requested diagnosis after the unchanged retry. No product/test/harness/
+workflow/lock/deadline change or remote operation was made. Local Linux ARM64/
+Python 3.12 profiling used retained synthetic CI before/after assessments.
+Repeated installed identity/AST analysis accounted for about 1.42/2.39 profiled
+comparison seconds; checked-validator construction accounted for about 0.57 seconds.
+An existing integration case passed under profile: 18 identity calculations used
+6.45/10.30 profiled test seconds and 69 validator constructions used 1.63 seconds.
+Profile timings attribute work and are not normal request latency.
+
+A separate unprofiled process-local experiment compared real comparison/export
+outputs across four modes, three samples each. Median seconds: baseline 0.9053;
+schema compilation reuse 0.7308; one freshly computed identity per operation 0.5605;
+both 0.3848. All comparison/evidence values and export file bytes matched. The
+experiment modified only transient diagnostic bindings; it is not a production
+cache, safety proof or remote CI pass. All 699 retained fixture files match the
+original artifact ZIP; source fingerprint remains unchanged. Full details, exact
+hashes, scope limits and the correction recommendation are in
+`docs/reviews/2026-10-22-ci-timing-diagnosis.md` and ignored
+`artifacts/ci-timing-20261022/`.
+
+This identifies avoidable implementation work amplified by CI runtime differences,
+not merely an incidental network failure. Recommend preserving full document/
+evidence checks while reusing immutable schema compilation and reducing identity/
+AST duplication with source/resource/dependency mutation coverage. Do not cache
+identity or evidence verdicts forever or raise deadlines before measuring the fix.
+No new CI retry or code correction occurred. Linux documentation/evidence checks
+passed; the prepared container is stopped again, exit 0. Stop after a local
+record-only commit; no remote write is included in this diagnostic task.
