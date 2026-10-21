@@ -412,9 +412,13 @@ def load_capture(path: Path) -> SanitizedCapture:
     pending = raw_tail.get("pending_data")
     if not isinstance(pending, bool):
         raise ValueError("invalid_capture_tail")
+    # Complete unchanged bytes establish framing; uncertain captures retain either
+    # pending signal. Cached metadata must never hide decoded unfinished data.
     tail = replace(
         tail,
-        pending_data=pending,
+        pending_data=tail.pending_data
+        if not transformed and metadata["capture_end"] == "eof"
+        else tail.pending_data or pending,
         # Recompute UTF-8 proof from retained bytes, not an older finalizer verdict.
         encoding_errors=tail.encoding_errors,
         limit_kind=string(raw_tail["limit_kind"])

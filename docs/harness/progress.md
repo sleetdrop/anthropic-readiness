@@ -847,3 +847,17 @@ unit/harness tests). Original source bytes, schemas, goldens and historical revi
 artifacts remain preserved. The ledger records the retained initial test-helper
 correction and exact evidence. F03/F04 remain pending; no new full/browser/image/
 remote/live acceptance is claimed. Stop after this local correction commit.
+
+## Independent review follow-up: F03 — 2026-10-21
+
+The owner resumed for F03 only. Author regressions reproduced bidirectional false
+replay verdicts when cached pending-tail flags contradicted unchanged EOF bytes,
+in both capture formats 1.0 and 1.1. Replay now keeps byte-derived pending state for
+complete untransformed captures and combines pending signals conservatively for
+transformed/incomplete captures. Original capture files remain unchanged, and
+cancelled replay retains its existing exit code 130. After the recorded correction
+to that new test's initial cancellation expectation, six bug cases failed before
+implementation; all 31 evidence/CLI/review tests, 11 F02/comparison regressions and
+eight fast gates passed afterwards (475 Python unit/harness tests). The ledger
+retains both RED attempts and exact evidence. No new full/browser/image/remote/live
+acceptance is claimed. F04 remains pending; stop after the F03 local commit.

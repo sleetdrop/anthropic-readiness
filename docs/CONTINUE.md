@@ -1,6 +1,6 @@
 # Local delivery status
 
-## Current follow-up: independent review fixes, paused after F02
+## Current follow-up: independent review fixes, paused after F03
 
 The owner requested one complete fix per turn to preserve a safe stopping point
 within the available usage allowance. F01 is fixed locally: malformed intermediate
@@ -19,8 +19,16 @@ recovery claims; evidence-inclusive export is rejected. Six negative variants we
 observed RED before implementation, then 26 core and 60 related tests passed.
 All eight fast gates passed again (475 Python unit/harness tests).
 
+F03 is fixed in a separately authorized turn on 2026-10-21. Replay now derives the
+pending SSE tail from complete, unchanged response bytes. For transformed or
+incomplete captures it conservatively retains either pending signal. Both capture
+formats (1.0/1.1), opposite cached flags, redaction and cancellation are covered;
+existing cancellation exit code 130 is preserved. The 31 evidence/CLI/review tests,
+11 F02/comparison regressions and all eight fast gates passed (475 Python
+unit/harness tests). Original capture bytes and metadata remain unchanged on read.
+
 Read [the follow-up ledger](harness/independent-review-fixes-ledger.md) for evidence
-and the remaining F03 (P2) and F04 (P2), which have not been fixed. Do not repeat
+and the remaining F04 (P2), which has not been fixed. Do not repeat
 the whole independent review or reopen the completed W2 plan. These patches have
 not received new full/browser/image/remote/live acceptance;
 the W2 records below remain historical evidence for their specified source.

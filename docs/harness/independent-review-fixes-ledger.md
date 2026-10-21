@@ -17,8 +17,8 @@ findings; each still requires author verification before its own correction.
 | Finding | Priority | Current state | Next action |
 | --- | --- | --- | --- |
 | F01: malformed intermediate message delta is overwritten | P1 | Fixed and locally verified in 6ea328d | Complete |
-| F02: missing response evidence can still support recovery claims | P1 | Fixed and locally verified | Stop after local commit |
-| F03: replay trusts contradictory cached tail metadata | P2 | Pending; no correction in this turn | Verify byte-derived framing against metadata |
+| F02: missing response evidence can still support recovery claims | P1 | Fixed and locally verified in fe5b4ad | Complete |
+| F03: replay trusts contradictory cached tail metadata | P2 | Fixed and locally verified | Stop after local commit |
 | F04: imported dimensions and request counts contradict facts | P2 | Pending; no correction in this turn | Verify result semantic validation and projections |
 
 ## F01: retain malformed stop-field failures
@@ -143,3 +143,56 @@ After all checks completed, the existing development container was restored to i
 original stopped state. `container-final-state.json` records `exited`,
 `running=false`, exit code 0. No test/build task remains running; no replacement
 container, network or volume was created. Pause after the local F02 commit.
+
+## F03: derive replay tail facts from retained bytes
+
+Base: `fe5b4ad`. The owner resumed on 2026-10-21 and authorized F03 only. The
+one-fix stopping rule remains in effect; F04 is not included.
+
+Root cause: `load_capture` reconstructed SSE framing from retained bytes, then
+overwrote the computed `pending_data` with a cached metadata flag. Identical raw
+EOF bytes could consequently change between PASS and FAIL without any body change.
+
+Correction: for complete, untransformed captures, retain the decoder's pending
+state. For transformed or incomplete captures, conservatively combine decoded and
+cached pending signals; a false cache cannot hide decoded unfinished data, and
+rechunking/redaction cannot erase an existing uncertainty signal. Existing UTF-8
+recomputation, resource-limit metadata, capture-end semantics and cancellation
+exit code 130 remain intact. No source capture is rewritten, and no schema,
+golden, assertion identity or catalog change is introduced. The existing execution
+implementation identity includes the changed evidence module.
+
+### Observed checks
+
+All product execution used the existing Linux ARM64/Python 3.12.15 Dev Container,
+offline with locked dependencies. Evidence root:
+`artifacts/review-fixes-20261021/f03/`.
+
+| Check | Observed result | Evidence |
+| --- | --- | --- |
+| Initial regression run | 7 failed, 1 passed; one failure was an incorrect test expectation of exit 3 for a cancelled replay, whose existing contract is 130 | `red.xml` |
+| Corrected regression before implementation | 6 failed, 2 conservative controls passed | `red-2.xml` |
+| Evidence, CLI and historical review regressions after implementation | 31 passed; zero failures/errors/skips | `green.xml` |
+| F02 closure and comparison service regressions | 11 passed; zero failures/errors/skips | `related.xml` |
+| Fast verification | All 8 gates passed, unchanged source; 475 Python unit/harness tests passed | `fast/check-result.json`, `fast/unit.xml`, `fast/frontend-static/` |
+
+The complete-capture tests cover both schema 1.0 and 1.1, valid and undispatched
+SSE tails, and the opposite cached flag in each case. Actual replay controls and
+mutated captures must retain literal exit codes 0 or 1 and matching framing
+assertions; body bytes and the deliberately mutated metadata stay unchanged on
+read. Four conservative cases cover redacted or cancelled captures with opposing
+byte/cache signals. Their case result stays INDETERMINATE; transformed EOF replay
+returns 3 and cancelled replay returns 130. The initial test expectation correction
+is retained separately and does not change product behavior or old expectations.
+
+Fast observed the uncommitted patch on base `fe5b4ad`, with source fingerprint
+`f37b863df69ae8ee7e3bb68d8abb01ca8b71940c7610d9ed75fb7966337b4cd3`.
+This is local correction verification, not clean-source whole-stage acceptance.
+No full browser graph, installation/multi-architecture image rebuild, remote CI
+or real endpoint/client workflow ran. Existing images, preview data and historical
+acceptance records remain tied to their original source. F04 remains pending.
+
+After all checks completed, the existing development container was restored to its
+original stopped state. `container-final-state.json` records `exited`,
+`running=false`, exit code 0. No test/build process remains running; no replacement
+container, network or volume was created. Pause after the local F03 commit.
