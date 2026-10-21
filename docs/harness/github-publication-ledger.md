@@ -264,3 +264,66 @@ failed attempts are not erased or merged into a passing record. The prepared
 container is stopped again after local closeout, exit 0. Current-source remote CI
 is pending the agreed correction push; original failed remote attempts remain
 unchanged. No new full image job, endpoint/client test or independent review ran.
+
+## Corrected-source remote CI passed on its first run — 2026-10-22
+
+Correction `7cc574c4b42a700bf310012e3d07ebf202903c5b` was pushed as the agreed
+new-code CI observation after local full verification. New run 39645368029,
+attempt 1, completed with success. No unchanged retry or extra image matrix was
+requested. Run: https://github.com/sleetdrop/anthropic-readiness/actions/runs/39645368029
+
+| Job | Actual outcome |
+| --- | --- |
+| quality (3.11) | 13 gates passed; 831 Python, 20 Node, 78 Chromium; zero failures/errors/skips |
+| quality (3.12) | 13 gates passed; 831 Python, 20 Node, 78 Chromium; zero failures/errors/skips |
+| devcontainer | Actual checked-in configuration prepared; all 13 gates passed per log. Exact per-case counts not retained by that job |
+| runtime-amd64 | Native AMD64 CLI/Web smoke passed all 31 checks; not full image acceptance |
+| ci-required | Passed, requiring all child jobs to succeed |
+
+Both quality records identify clean 7cc574c, unchanged source and fingerprint
+`2d7a3e1b454b72f2e38e7b2e36b64432dfd95b832386b8096ab8ad23de7b4fd4`, matching
+the local final full and controlled benchmark. Each Python count is 484 unit/harness,
+258 integration, 84 acceptance, 5 installed-package. Counts overlap across jobs,
+so they are not summed as unique coverage. The original failed attempt-1/2 records
+remain unchanged; the new green run is a different commit and run identity.
+
+| Measured quality gate/case | Python 3.11 | Python 3.12 |
+| --- | --- | --- |
+| Mixed-comparison browser case | 27.179 s | 32.976 s |
+| Browser gate | 240.80 s | 268.59 s |
+| Integration gate | 279.36 s | 351.57 s |
+
+The per-case 40-second, browser-child 300-second, outer-browser 420-second and
+integration 600-second limits all remain unchanged. Nested browser records confirm
+actual child completion within 300 seconds, including cleanup. Machine records,
+actual positive JUnit nodes, zero skips/errors, image revision/context labels and
+source identities were independently verified in Linux. This demonstrates the
+correction works on this CI observation; it does not promise arbitrary runner
+performance. No additional performance threshold or assertion suppression exists.
+
+Evidence root: ignored `artifacts/ci-optimization-20261022/`, including
+`ci-result.json`, `ci-watch.log`, `ci-devcontainer.log`, downloaded `ci-py311/`,
+`ci-py312/`, `ci-runtime/`, `verify_remote_optimization.py` and
+`ci-observed-summary.json`. Source record external fields remain their original
+not_run statuses; the separate remote job observation is not retroactively inserted.
+
+| Record | SHA-256 |
+| --- | --- |
+| ci-result.json | 88e495400499cd0c1b525fc1eb2fb4d23ca689bf5e352633b536cbd968fdb27c |
+| ci-py311/1792604304117970245/check-result.json | 7158f877816c581ad22c3e9587ae49ca9fb359ca6d06287c81dd7758e5c8160e |
+| ci-py312/1792604254528509903/check-result.json | e8906d004b9a2427fccde52dacfa937dfef137929f86f4206e7e8948fe02b487 |
+| ci-runtime/1792604230536484935-amd64/image-result.json | 098ed1733d08865aa328d0d4b15b15b306d5fa83bac9d31cd2606d16a2490e80 |
+
+Inspected runtime/Web images both identify revision 7cc574c and context
+`e784f413b3ca4322fd911414d550311850a37fa496e81fdb55312e99b5e66bfd`:
+CLI ID `sha256:9d368f1d5ea725401b1d82f0d2de6a93170dc02b8f5c8c8f11965347e4a51047`;
+Web ID `sha256:9b12d8f258f010352b6e90a358871f914de76a0ce9cbb6b8cdf8dec703cf178a`.
+The image result is explicitly smoke. Current-source two-platform full image
+acceptance, real endpoint/client workflows and package/registry publication remain
+outside this correction's observed scope. Existing previews were not upgraded.
+
+Final evidence/documentation checks passed in the prepared Linux container, then
+it was restored to stopped, exit 0. No local task or remote CI remains running.
+The final record-only commit uses [skip ci] so unchanged code is not needlessly
+retested; it does not replace the successful 7cc574c observation. Stop after that
+local record commit/push, without a new review, retry or follow-on stage.

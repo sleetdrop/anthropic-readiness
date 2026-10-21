@@ -1,5 +1,11 @@
 # CI timing diagnosis
 
+Follow-up: the content-derived analysis correction was delivered as `7cc574c`.
+Its [first new CI run](https://github.com/sleetdrop/anthropic-readiness/actions/runs/39645368029)
+passed without increasing limits. See the [publication ledger](../harness/github-publication-ledger.md)
+for final implementation, mutation regressions and actual local/remote observations.
+The original diagnostic experiments and their limits below remain historical evidence.
+
 ## Scope and conclusion
 
 The owner requested investigation after one unchanged CI retry also failed.

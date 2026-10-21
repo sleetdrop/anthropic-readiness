@@ -1,6 +1,26 @@
 # Local delivery status
 
-## Content-derived analysis reuse: local full verification passed
+## Content-derived analysis reuse: local full and new remote CI passed
+
+Correction commit `7cc574c4b42a700bf310012e3d07ebf202903c5b` is pushed to `main`.
+Its first [new CI run](https://github.com/sleetdrop/anthropic-readiness/actions/runs/39645368029)
+passed all five jobs: quality (3.11), quality (3.12), actual Dev Container,
+native AMD64 smoke and ci-required. Each quality job passed thirteen gates and
+831 Python, 20 Node and 78 Chromium tests with zero failures/errors/skips on clean
+`7cc574c`, matching the locally verified source fingerprint. The former failing
+comparison test took 27.179/32.976 seconds, both under the unchanged 40 seconds;
+browser gates took 240.80/268.59 seconds, integration 279.36/351.57 seconds.
+Native AMD64 CLI/Web smoke passed 31 checks on inspected current-source images.
+Dev Container's log confirms thirteen passed gates; exact case counts were not
+retained for that job and are not separately claimed.
+
+The bounded correction is complete. Stop after the docs-only CI observation
+commit/push; no further retry, review or full image matrix starts automatically.
+The prepared container is stopped again, exit 0. Original failed CI attempts and
+all intermediate local attempts remain retained. Source implementation and tests
+are unchanged by the final documentation record. Current-source full image
+acceptance, real endpoint/client outcomes and registry/package publication are
+not established by this CI result. Further work needs its own concrete scope.
 
 The owner approved the measured performance correction. Only compiled Schema
 snapshots and content-keyed AST analysis are reused, with bounded caches. Incoming
@@ -16,7 +36,7 @@ The former failing comparison browser case completed in 22.8 seconds under its
 unchanged 40-second limit; browser gate took 196.58 seconds and integration gate
 223.44 seconds under the original 300/600-second child limits. A controlled
 four-case comparison/export measurement retained exact output bytes and reduced
-median time from 0.9383 to 0.4841 seconds. This is local evidence, not yet remote CI.
+median time from 0.9383 to 0.4841 seconds. The separate new remote CI is recorded above.
 
 Evidence: ignored `artifacts/ci-optimization-20261022/`, especially `full-final/`,
 `observed-summary.json` and `measurement-final/`. Original failed/intermediate
@@ -25,9 +45,8 @@ ordering found during self-review. Full recorded Git is the uncommitted patch on
 `ea614a4`; its exact source fingerprint is
 `2d7a3e1b454b72f2e38e7b2e36b64432dfd95b832386b8096ab8ad23de7b4fd4`.
 
-Next is the agreed new CI observation after committing/pushing this justified
-correction, not another unchanged retry of the old commit. Record the actual new
-run in the publication ledger. Prior image/CI observations keep their original
+The agreed new CI observation passed on this justified correction; exact hashes
+and limits are in the publication ledger. Prior image/CI observations keep their original
 source identities; full image acceptance for this cache correction is not claimed.
 No real endpoint, package/registry publication or new review is included.
 

@@ -1234,3 +1234,25 @@ Separate evidence and documentation checks passed. The prepared container is
 stopped again, exit 0. Next is the agreed corrected-commit CI observation; no old
 unchanged job was retried or new image matrix, endpoint/client call or review
 started. Old remote/image outcomes retain their own identities.
+
+## Corrected-source CI green on first observation — 2026-10-22
+
+The agreed correction 7cc574c was pushed after local full verification. New run
+39645368029, attempt 1, passed every job: quality Python 3.11/3.12, actual Dev
+Container, native AMD64 smoke and ci-required. Each quality job passed all thirteen
+gates and 831 Python, 20 Node, 78 Chromium tests with zero errors/failures/skips,
+on clean 7cc574c and matching final source fingerprint. The former failing browser
+case took 27.179/32.976 seconds under the unchanged 40-second limit. Browser gates
+240.80/268.59 seconds; integration 279.36/351.57 seconds. Dev Container logs retain
+thirteen passed gates without exact per-case counts. Native AMD64 smoke passed
+31 actual checks with inspected revision/context; it is not full image acceptance.
+
+Raw records/JUnit/artifacts, actual hashes, source/image identities, exact scope
+and independent verification are in the publication ledger and ignored
+artifacts/ci-optimization-20261022. Original failures and intermediate local attempts
+remain unchanged. No limit, assertion, golden or workflow was relaxed. Current
+full image matrices, real endpoints/clients, registry publishing and preview
+upgrades remain unrun for this correction. Evidence/documentation checks passed;
+the prepared container is stopped again, exit 0. All observed remote jobs are
+terminal. Stop after the final docs-only [skip ci] observation commit/push, without
+another review, retry or feature stage.
