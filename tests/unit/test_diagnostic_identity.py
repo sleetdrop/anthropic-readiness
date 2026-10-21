@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import ast
+import hashlib
 import json
 import os
 import shutil
@@ -283,3 +285,66 @@ def test_identity_in_fresh_process_needs_no_git(installed_copy: Path) -> None:
     assert result.returncode == 0, result.stderr
     assert json.loads(result.stdout) == expected
     assert not (installed_copy.parent / ".git").exists()
+
+
+def test_repeated_identity_reuses_analysis_but_detects_same_stat_source_changes(
+    installed_copy: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    path = installed_copy / "validation/messages.py"
+    first = path.read_text() + '\nCACHE_PROBE_MARKER = "alpha"\n'
+    path.write_text(first)
+    analyzed: list[ast.Module] = []
+    real = identity._runtime_nodes
+
+    def observed(tree: ast.Module) -> list[ast.AST]:
+        if any(
+            isinstance(node, ast.Assign)
+            and any(
+                isinstance(target, ast.Name) and target.id == "CACHE_PROBE_MARKER"
+                for target in node.targets
+            )
+            for node in tree.body
+        ):
+            analyzed.append(tree)
+        return real(tree)
+
+    monkeypatch.setattr(identity, "_runtime_nodes", observed)
+    before = installed_identity()
+    assert installed_identity().document == before.document
+    assert len(analyzed) == 1
+
+    original_stat = path.stat()
+    path.write_text(first.replace('"alpha"', '"bravo"'))
+    os.utime(path, ns=(original_stat.st_atime_ns, original_stat.st_mtime_ns))
+    assert path.stat().st_size == original_stat.st_size
+    assert path.stat().st_mtime_ns == original_stat.st_mtime_ns
+    after = installed_identity()
+    assert "implementation_files_changed" in check_identity(before, after)
+    assert object_value(after.document["file_hashes"])["validation/messages.py"] == (
+        hashlib.sha256(path.read_bytes()).hexdigest()
+    )
+    assert len(analyzed) == 2
+
+
+def test_warmed_analysis_still_rechecks_manifest_permissions(installed_copy: Path) -> None:
+    source = installed_copy / "validation/messages.py"
+    source.write_text(source.read_text() + '\n__import__("math")\n')
+    path = installed_copy / "resources/diagnostic-identity.json"
+    manifest = object_value(strict_json(path.read_text()))
+    manifest["dynamic_imports"] = [
+        {"module": "validation/messages.py", "function": "__import__", "target": "math"}
+    ]
+    path.write_text(json.dumps(manifest))
+    installed_identity()
+    manifest["dynamic_imports"] = []
+    path.write_text(json.dumps(manifest))
+    with pytest.raises(ValueError, match="identity_dynamic_import"):
+        installed_identity()
+
+
+def test_warmed_analysis_still_rejects_changed_invalid_source(installed_copy: Path) -> None:
+    installed_identity()
+    source = installed_copy / "validation/messages.py"
+    source.write_text(source.read_text() + "\ndef invalid(\n")
+    with pytest.raises(ValueError, match=r"identity_module_invalid:validation/messages\.py"):
+        installed_identity()

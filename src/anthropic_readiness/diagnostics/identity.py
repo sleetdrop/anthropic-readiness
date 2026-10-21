@@ -7,7 +7,9 @@ import hashlib
 import platform
 import sys
 from collections import deque
+from collections.abc import Sequence
 from dataclasses import dataclass
+from functools import lru_cache
 from importlib.metadata import PackageNotFoundError, distribution
 from importlib.resources import files
 from pathlib import Path
@@ -104,7 +106,7 @@ def _resource_template(node: ast.AST) -> str | None:
     return None
 
 
-def _check_calls(nodes: list[ast.AST], relative: str, manifest: JsonObject) -> None:
+def _check_calls(nodes: Sequence[ast.AST], relative: str, manifest: JsonObject) -> None:
     resources = set(strings(manifest["resources"]))
     patterns = object_value(manifest["resource_patterns"])
     permitted_patterns = set(strings(patterns.get(relative, [])))
@@ -178,6 +180,12 @@ def _check_calls(nodes: list[ast.AST], relative: str, manifest: JsonObject) -> N
                 raise ValueError("identity_unlisted_resource:" + template)
 
 
+@lru_cache(maxsize=128)
+def _source_nodes(source: str) -> tuple[ast.AST, ...]:
+    # Reuse only content-derived analysis, never a file/manifest/identity verdict.
+    return tuple(_runtime_nodes(ast.parse(source)))
+
+
 def _closure(root: Path, manifest: JsonObject) -> tuple[set[str], set[str]]:
     paths = _module_paths(root)
     modules = set(strings(manifest["modules"]))
@@ -201,10 +209,9 @@ def _closure(root: Path, manifest: JsonObject) -> tuple[set[str], set[str]]:
         if not source.resolve().is_relative_to(root.resolve()):
             raise ValueError("identity_module_path")
         try:
-            tree = ast.parse(source.read_text())
+            nodes = _source_nodes(source.read_text())
         except (OSError, SyntaxError) as exc:
             raise ValueError("identity_module_invalid:" + relative) from exc
-        nodes = _runtime_nodes(tree)
         _check_calls(nodes, relative, manifest)
         module = reverse[relative]
         package = module if relative.endswith("__init__.py") else module.rsplit(".", 1)[0]

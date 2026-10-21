@@ -183,3 +183,84 @@ identity or evidence verdicts forever or raise deadlines before measuring the fi
 No new CI retry or code correction occurred. Linux documentation/evidence checks
 passed; the prepared container is stopped again, exit 0. Stop after a local
 record-only commit; no remote write is included in this diagnostic task.
+
+## Content-derived work reuse correction: local verification — 2026-10-22
+
+The owner approved correcting the two measured hotspots, retaining all validation
+semantics and time limits, then observing CI on a justified new revision. Work
+stayed sequential in the existing checkout/Linux ARM64/Python 3.12.15 container.
+Only `json_validation.py`, `diagnostics/identity.py` and their two unit-test files
+change product/test behavior. No plan scope, dependency, schema, golden, required
+case, deadline, image recipe or workflow was changed.
+
+Implementation:
+
+- Generic document validation reuses up to 64 private compiled schema snapshots,
+  keyed by complete ordered JSON content. Serialized snapshots own their data;
+  caller mutation cannot poison a cached validator. Every document still runs
+  iter_errors. External references remain rejected. Declaration order stays in
+  the key because it controls same-path diagnostic ordering; this is intentionally
+  not a cache that merges differently ordered schemas.
+- Installed identity reuses up to 128 source-content-derived AST analyses. Every
+  call still reads source text, rebuilds module inventory/closure permissions,
+  hashes code/resources and resolves dependencies. Manifest checks run against
+  the current manifest even on a content hit. No final identity, file-stat verdict,
+  comparison eligibility or evidence verdict is cached.
+
+Regression evidence:
+
+- Initial RED: 2 expected failures / 36 controls passed. Repeated document checks
+  compiled three times instead of once, and unchanged source was analyzed twice.
+- Initial focused GREEN: 38 passed. Initial fast had one new-test regex lint error;
+  the original failed record remains. The regex was corrected, not a product
+  assertion or golden. An intermediate full graph passed all thirteen gates.
+- Self-review then reproduced altered error ordering from sorted serialization.
+  A new order regression was observed RED before removing key sorting. The repeat
+  probe now uses a distinct same-order dictionary, because differently ordered
+  schemas deliberately retain their distinct diagnostic ordering. Its expected
+  single compilation and real invalid-document rejection remain unchanged.
+- Final focused suite: 39 passed, no errors/skips. Nine added cases cover real
+  document rejection after warming, schema mutation and snapshot isolation,
+  external ref/dynamicRef mutation, unchanged-source work reuse, content changes
+  with identical size/mtime, manifest permission changes, invalid changed source,
+  and declared diagnostic ordering. Existing dependency/resource/module mutation
+  coverage also remains in the complete suite.
+
+Final full graph: all 13 gates passed, unchanged source, zero failures/errors/
+skips. Python: 831 = 484 unit/harness + 258 integration + 84 acceptance + 5 installed-
+package. Node: 20. Chromium: 78. Browser gate took 196.58 seconds, integration
+223.44 seconds. The mixed-comparison test took 22.8 seconds. Existing per-test
+40-second, browser-child 300-second, outer-browser 420-second and integration
+600-second limits remain unchanged. These numbers are not a cross-machine promise.
+
+The final full record observed the uncommitted patch on clean base
+`ea614a4e9ad8d0ddabecfd778d9d769194ce8524`, with dirty=true, not a claimed
+clean-commit run. Source fingerprint is
+`2d7a3e1b454b72f2e38e7b2e36b64432dfd95b832386b8096ab8ad23de7b4fd4`;
+new image-context fingerprint is
+`e784f413b3ca4322fd911414d550311850a37fa496e81fdb55312e99b5e66bfd`.
+Image-context calculation is not an image build or acceptance observation.
+
+A fresh four-case synthetic before/after lineage was generated on the final
+implementation. Three alternating samples per mode compared actual optimization
+with bypassing only the two new analysis/compilation caches. All identity/evidence
+checks remained real, comparisons comparable and complete generated file bytes
+identical. Median uncached time 0.9383 seconds; optimized 0.4841 seconds. No absolute
+performance threshold was added to tests. This bounded local comparison is not a
+remote performance prediction. Earlier diagnostic/provisional samples remain
+separate, including their pre-final source fingerprints.
+
+Authoritative ignored root: `artifacts/ci-optimization-20261022/`.
+
+| Record | SHA-256 |
+| --- | --- |
+| full-final/check-result.json | 692395fdc36f74d706d3418b9ad9d9ce5c7ab0df93b32347bc43b50bec0b6fbd |
+| measurement-final/measurement-summary.json | dc02a268bacb4d7dac9403979fc09a9090d24b1c2a81d91456977d722afa32c6 |
+
+The separate evidence verifier checked packaged schema, positive actual JUnit
+nodes, RED/GREEN counts, required gates and matching final benchmark/full/current
+source fingerprints. Documentation checks passed after handoff edits. Earlier
+failed attempts are not erased or merged into a passing record. The prepared
+container is stopped again after local closeout, exit 0. Current-source remote CI
+is pending the agreed correction push; original failed remote attempts remain
+unchanged. No new full image job, endpoint/client test or independent review ran.

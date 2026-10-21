@@ -1208,3 +1208,29 @@ artifacts/ci-timing-20261022. Preserve every evidence check and source/resource/
 dependency change detector in a later optimization. No new CI or remote write ran.
 Linux documentation/evidence checks passed; prepared container stopped, exit 0.
 Stop after the local documentation commit, with no diagnostic process running.
+
+## Content-derived validation work reused; local full passed — 2026-10-22
+
+The owner approved optimizing the measured Schema/identity hotspots before new
+CI. Bounded content-keyed caches now reuse owned schema snapshots and immutable-
+use AST analysis; every document, current manifest, file/resource hash, dependency
+and evidence check still runs. No whole identity/evidence verdict is cached and
+no limit, golden, schema, dependency or CI graph changed. Two meaningful initial
+RED failures were corrected. A later self-review caught schema error reordering;
+an added RED regression preceded preserving declaration order. Final focused
+suite: 39 passed. Initial lint/intermediate graph/order-failure records are retained.
+
+Final unchanged-patch full graph passed 13 gates: 831 Python (484 unit/harness,
+258 integration, 84 acceptance, 5 installed-package), 20 Node and 78 Chromium,
+zero failures/errors/skips. Browser gate 196.58 seconds, integration 223.44 seconds;
+former failing comparison case 22.8 seconds under unchanged 40-second limit.
+Controlled final four-case comparison/export medians were 0.9383 versus 0.4841
+seconds, with equal comparison/evidence values and exact generated file bytes.
+Full and benchmark fingerprints match the final patch; recorded Git is dirty
+patch on ea614a4, not a clean-commit claim. Exact hashes, caveats and all observed
+checks are in the publication ledger and ignored artifacts/ci-optimization-20261022.
+
+Separate evidence and documentation checks passed. The prepared container is
+stopped again, exit 0. Next is the agreed corrected-commit CI observation; no old
+unchanged job was retried or new image matrix, endpoint/client call or review
+started. Old remote/image outcomes retain their own identities.

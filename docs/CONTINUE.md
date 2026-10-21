@@ -1,5 +1,36 @@
 # Local delivery status
 
+## Content-derived analysis reuse: local full verification passed
+
+The owner approved the measured performance correction. Only compiled Schema
+snapshots and content-keyed AST analysis are reused, with bounded caches. Incoming
+documents, file hashes, source/module inventory, manifest permissions, dependencies
+and evidence are still checked afresh. Schema declaration order is retained so
+diagnostic ordering does not change. No assertion, golden, timeout or CI graph
+was weakened.
+
+Final Linux ARM64/Python 3.12 full verification passed all thirteen gates on the
+unchanged patch: 831 Python tests (484 unit/harness, 258 integration, 84 acceptance,
+5 installed-package), 20 Node and 78 Chromium, zero failures/errors/skips.
+The former failing comparison browser case completed in 22.8 seconds under its
+unchanged 40-second limit; browser gate took 196.58 seconds and integration gate
+223.44 seconds under the original 300/600-second child limits. A controlled
+four-case comparison/export measurement retained exact output bytes and reduced
+median time from 0.9383 to 0.4841 seconds. This is local evidence, not yet remote CI.
+
+Evidence: ignored `artifacts/ci-optimization-20261022/`, especially `full-final/`,
+`observed-summary.json` and `measurement-final/`. Original failed/intermediate
+attempts remain retained, including an additional RED/GREEN check for diagnostic
+ordering found during self-review. Full recorded Git is the uncommitted patch on
+`ea614a4`; its exact source fingerprint is
+`2d7a3e1b454b72f2e38e7b2e36b64432dfd95b832386b8096ab8ad23de7b4fd4`.
+
+Next is the agreed new CI observation after committing/pushing this justified
+correction, not another unchanged retry of the old commit. Record the actual new
+run in the publication ledger. Prior image/CI observations keep their original
+source identities; full image acceptance for this cache correction is not claimed.
+No real endpoint, package/registry publication or new review is included.
+
 ## GitHub published; unchanged CI retry confirms a persistent timing problem
 
 The owner-authorized follow-up diagnosis is complete; see the
