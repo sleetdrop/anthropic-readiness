@@ -894,3 +894,25 @@ The correction ledger records exact hashes and limits. Source/browser/package
 verification is now current, while Docker image acceptance, remote CI and live
 endpoint/client verification remain unrun for these corrections. No old handoff
 was rebound and no registry/remote write ran. Stop after documentation closeout.
+
+## Corrected implementation: bounded independent review — 2026-10-21
+
+The owner approved one fresh-context, read-only review of the F01-F04 source/test
+diff (`0ac72c6` to `9a30567`), without a new repository-wide pass. The first dispatch
+failed on model capacity before review; one retry of the same reviewer completed.
+No second reviewer or product mutation was introduced. Verdict: **With fixes**.
+The author accepted two Important F02-related gaps: internally contradictory
+capture metadata can retain verified eligibility (F05), and observed PASS proof
+can cite only its own attempt's request file (F06). One bounded offline probe
+reproduced admission and recovery-claim paths while preserving input bytes. Valid
+synthetic bodies were retained; no false protocol verdict was demonstrated.
+
+Original report, exact diff, script, synthetic sources and observed summary are
+under `artifacts/review-fixes-20261021/bounded-review-9a30567/`; the correction
+ledger records hashes, author rulings and declined-to-judge boundaries. No new
+actionable F01/F03/F04 issue was established. The existing full-source record and
+fingerprint were rechecked without rerunning its tests. No image, broad suite,
+remote CI or live endpoint/client ran. The development container is stopped again
+(exit 0), with no test/build task left running. Stop after the local documentation
+commit; fix F05 then F06 in separate turns before Docker acceptance. Original
+full-source/W2 observations remain unchanged.

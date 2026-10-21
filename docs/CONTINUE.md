@@ -1,6 +1,26 @@
 # Local delivery status
 
-## Current follow-up: F01-F04 complete source verification passed
+## Current follow-up: bounded review found two evidence-validation gaps
+
+On 2026-10-21 the owner authorized one independent read-only review of the
+F01-F04 correction diff, without another repository-wide review or Docker build.
+The reviewed product source remains `9a3056707560c991449c1ae4988781f335b0add7`.
+Two synthetic variants reproduced remaining F02-related gaps: contradictory
+capture metadata can retain verified evidence eligibility (F05), and observed
+PASS assertions can cite only their own request file as proof (F06). Both variants
+still permit comparison and an observed-recovery conclusion. The retained response
+bodies are valid controls; this does not demonstrate an invalid protocol stream
+being classified PASS. No product code was changed during review.
+
+Fix F05 first in a separate bounded turn, then F06, before updated Docker image
+acceptance. Preserve the probes and add meaningful failing regressions before
+implementation. The independent report and one synthetic probe run are retained
+under ignored `artifacts/review-fixes-20261021/bounded-review-9a30567/`.
+Read [the correction ledger](harness/independent-review-fixes-ledger.md) for author
+rulings, scope limits and the safe stopping state. Do not repeat the entire review
+or reinterpret the passing source checks below as proof that these gaps are closed.
+
+## F01-F04 complete source verification baseline
 
 On 2026-10-21 the owner authorized one full-source verification turn. Clean commit
 `9a3056707560c991449c1ae4988781f335b0add7` passed all thirteen gates on unchanged
@@ -50,12 +70,12 @@ inputs are preserved. A hand-written positive unit sample was completed with its
 actual BLOCKED dimensions; its assertions and versioned goldens were not changed.
 
 Read [the follow-up ledger](harness/independent-review-fixes-ledger.md) for evidence
-and the four author correction records. No F01-F04 finding remains pending in
-this series. This turn stops after recording the full-source result. A bounded
-correction-diff review and updated Docker image acceptance remain separate
-follow-ups. Do not repeat the whole independent review or reopen the completed W2
-plan. These patches now have full-source/browser/install verification but no new
-image, remote-CI or real endpoint/client acceptance;
+and the four original author correction records. Their original regression cases
+pass; the later bounded review above identified two additional F02-related gaps
+that remain open. Updated Docker image acceptance follows their corrections.
+Do not repeat the whole independent review or reopen the completed W2 plan.
+These patches have full-source/browser/install verification but no new image,
+remote-CI or real endpoint/client acceptance;
 the W2 records below remain historical evidence for their specified source.
 
 ## W2 delivery baseline: completed locally

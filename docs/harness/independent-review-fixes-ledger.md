@@ -12,14 +12,17 @@ acceptance records remain unchanged.
 Review source: `0ac72c6be5ac3d16ea76abf487026e3efb55c2be`.
 Original review and synthetic probes are retained, without modification, under
 ignored `artifacts/independent-review-20261020/`. The report records four reproduced
-findings; each still requires author verification before its own correction.
+findings; their original regression cases have been corrected. The later bounded
+review below adds two related evidence-validation findings requiring correction.
 
 | Finding | Priority | Current state | Next action |
 | --- | --- | --- | --- |
 | F01: malformed intermediate message delta is overwritten | P1 | Fixed and locally verified in 6ea328d | Complete |
-| F02: missing response evidence can still support recovery claims | P1 | Fixed and locally verified in fe5b4ad | Complete |
+| F02: missing response evidence can still support recovery claims | P1 | Original regression fixed in fe5b4ad; follow-up gaps F05/F06 remain | See F05/F06 |
 | F03: replay trusts contradictory cached tail metadata | P2 | Fixed and locally verified in 575f279 | Complete |
-| F04: imported dimensions and request counts contradict facts | P2 | Fixed and locally verified | Stop after local commit |
+| F04: imported dimensions and request counts contradict facts | P2 | Fixed and locally verified in 9a30567 | Complete |
+| F05: report reader accepts internally contradictory capture metadata | Important | Reproduced; accepted for correction | Next bounded fix |
+| F06: observed PASS assertions accept request-only proof | Important | Reproduced; accepted for correction | After F05 |
 
 ## F01: retain malformed stop-field failures
 
@@ -343,3 +346,88 @@ was restored to its original stopped state. `container-final-state.json` records
 `exited`, `running=false`, exit code 0. No test/build task remains running; no
 replacement container, network or volume was created. This turn ends with a local
 documentation-only commit and a clean working tree, without any remote write.
+
+## Bounded independent correction review — 2026-10-21
+
+The owner approved one read-only review before updated image acceptance. One
+fresh-context reviewer inspected only the F01-F04 product/test diff and direct
+supporting paths. Its first dispatch failed before review because the selected
+model was at capacity. A single retry of the same reviewer completed; the failed
+dispatch is not a review or passing check. No second reviewer was dispatched.
+
+Immutable diff identity:
+
+- Base: `0ac72c6be5ac3d16ea76abf487026e3efb55c2be`.
+- Head: `9a3056707560c991449c1ae4988781f335b0add7`.
+- Checkout at dispatch: documentation-only `a8c1f4da43647ed680fa20e0110bd94182ad9c17`.
+- Scope: six product files and five test files under `src/` and `tests/`.
+- `review.diff` SHA-256:
+  `fc2a20e3b96c4040dfac0dfb72b27c9ece28d0dfa707068f75a158aa0f6d8f61`.
+
+Evidence root:
+`artifacts/review-fixes-20261021/bounded-review-9a30567/`.
+The original `REPORT.md` is retained without editing, SHA-256
+`87ef09989dc2d41ce51c6bbab278b7f5e99829102aaa5ef73179684e764a122c`.
+Verdict: **With fixes** for readiness to proceed to the next container verification,
+with two Important findings and no reported Critical/Minor findings. This is not
+whole-product certification.
+
+### Author rulings and next corrections
+
+| Reviewer item | Tracking ID | Author ruling | Observed boundary |
+| --- | --- | --- | --- |
+| R01, `report_sources.py:73` | F05 | Accepted, Important | Increasing `retained_bytes` by one preserves verified eligibility, although `load_capture` rejects the same capture. |
+| R02, `report_sources.py:80` | F06 | Accepted, Important | An observed response/protocol PASS can cite only its own attempt's `request.json` and retain verified comparison eligibility. |
+
+The author inspected the actual probe, its summary, the report-source helper,
+`load_capture`'s length check and `runner._bind`'s response-proof rules. Both are
+concrete integrity/binding gaps within F02's intended boundary. F05 requires
+applicable cross-file capture consistency checks; F06 requires proof kind/location
+in addition to attempt ownership. Fix them in separate bounded turns, F05 first,
+before building updated runtime images. Preserve F03's intentional byte-derived
+handling of cached EOF-tail flags and all submitted evidence bytes. Add meaningful
+failing regressions without silently relaxing old expectations.
+
+One offline synthetic probe ran two mutation variants in the prepared Linux/Python
+3.12 container. Both returned `evidence_verification.status=verified`,
+`retest=true`, `compare=true`, `comparable=true` and
+`all_previous_failures_passed=true`; reading preserved input bytes. The length
+variant failed `load_capture` with `capture_integrity:retained_bytes`; the
+request-only variant retained a valid capture. The actual summary is
+`probe-output/summary.json`, SHA-256
+`4fdb383f17ef9a7c69f5c35936990c514af78f5870d6311abf78bbcf1b10db4a`.
+An initial Docker socket denial did not execute the probe; the same authorized
+command then succeeded under escalation, exit 0. No API/network transport ran.
+
+Both bodies are valid synthetic controls. This demonstrates improper admission
+of inconsistent/misbound proof, not an invalid protocol response being classified
+PASS or a proven false underlying repair. Unmodified before/after sources remain
+retained, but no separate healthy-comparison control was executed in this review;
+existing positive tests were inspected only. No broad suite or image ran.
+
+Accepted declined-to-judge boundaries:
+
+- Other capture contradictions and general assertion authenticity: unexercised.
+  Cover directly related consistency variants during F05/F06; hashes do not
+  authenticate an author, and no general trust-system redesign is authorized.
+- ZIP/export propagation: direct source-reading/comparison was dynamically probed.
+  Exercise relevant downstream boundaries during fixes; no new dynamic import or
+  export result is claimed here.
+- Partial-checkpoint dimensions/counts: outside F04's final-result scope; do not
+  promote to another finding without a concrete separate trigger.
+- UI, images, remote CI, platform matrices and real clients: excluded for scope
+  and quota. Image verification is later; the other checks remain unrun.
+
+No new actionable F01/F03/F04 issue was established in this bounded pass; this is
+not proof of absence. The parent reran only retained `verify_observation.py`,
+confirming the existing 805 Python / 20 Node / 78 Chromium record and unchanged
+source fingerprint. Those tests were not executed again. The original full-run
+record's `independent_review=not_run` remains its historical state at creation;
+this section separately records the later review.
+
+No source, test, dependency or schema changed. The parent restored the development
+container to stopped after the reviewer finished; `container-final-state.json`
+records `exited`, `running=false`, exit code 0. No test/build task remains running;
+no replacement container, network or volume was created. Stop with a local
+documentation-only commit. No Docker build, endpoint call, remote write, fix
+implementation or automatic follow-on review is part of this turn.
