@@ -45,6 +45,13 @@ def assertion_dimensions(assertions: Sequence[JsonObject]) -> JsonObject:
     return result
 
 
+def assertion_evidence_file(identifier: str, event: int | None) -> str:
+    """Select the capture file supporting an observed assertion."""
+    if identifier.startswith(("HTTP-", "CAPTURE-")):
+        return "response.json"
+    return "events.jsonl" if event is not None else "body.bin"
+
+
 def readiness(status: Status) -> str:
     return (
         "passed"

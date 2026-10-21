@@ -18,11 +18,11 @@ review below adds two related evidence-validation findings requiring correction.
 | Finding | Priority | Current state | Next action |
 | --- | --- | --- | --- |
 | F01: malformed intermediate message delta is overwritten | P1 | Fixed and locally verified in 6ea328d | Complete |
-| F02: missing response evidence can still support recovery claims | P1 | Original regression fixed in fe5b4ad; F05 corrected; F06 remains | See F06 |
+| F02: missing response evidence can still support recovery claims | P1 | Original regression fixed in fe5b4ad; F05/F06 corrected locally | Complete within recorded scope |
 | F03: replay trusts contradictory cached tail metadata | P2 | Fixed and locally verified in 575f279 | Complete |
 | F04: imported dimensions and request counts contradict facts | P2 | Fixed and locally verified in 9a30567 | Complete |
-| F05: report reader accepts internally contradictory capture metadata | Important | Fixed and locally verified in this delivery | Complete |
-| F06: observed PASS assertions accept request-only proof | Important | Reproduced; accepted for correction | Next bounded fix |
+| F05: report reader accepts internally contradictory capture metadata | Important | Fixed and locally verified in 12f9217 | Complete |
+| F06: observed PASS assertions accept request-only proof | Important | Fixed and locally verified in this delivery | Complete |
 
 ## F01: retain malformed stop-field failures
 
@@ -498,3 +498,79 @@ state. `container-final-state.json` records `exited`, `running=false`, exit code
 Stop after the local F05 commit with no test/build task running.
 No replacement container/network/volume, remote write,
 F06 implementation or automatic follow-on review/build is part of this delivery.
+
+## F06: enforce assertion evidence kind and location — 2026-10-21
+
+The owner authorized F06 only from clean `12f9217`. Work remains in the prepared
+Linux ARM64/Python 3.12.15 Dev Container; offline locked sync succeeded. No new
+reviewer, full graph, image rebuild or real endpoint call is part of this turn.
+
+Root cause: nonempty observed PASS references were checked for attempt ownership
+and hashes, but any file in that capture could qualify. An outgoing request could
+therefore masquerade as proof of a response observation. Even intact response
+files elsewhere in the inventory did not make that assertion's reference correct.
+
+Correction: writer and reader share pure `assertion_evidence_file` in `models.py`.
+HTTP/capture assertions select `response.json`; other assertions select indexed
+`events.jsonl` or `body.bin`. Report validation checks every supplied observation
+reference against that expected file under its own attempt. Existing verification
+still checks hashes and resolves event/pointer locations. A mismatch follows the
+readable `missing_or_invalid` path, removing controlled eligibility and recovery
+claims; it is not silently rebound to another reference. Existing missing-PASS
+proof rules and uncaptured internal-failure exceptions remain unchanged.
+
+Initial extraction retained the old writer's event-first precedence. Eight
+wrong-file regressions passed after this first correction, but boundary analysis
+identified that an untrusted HTTP/capture reference could add an event index to
+select stream data. Two focused regressions reproduced this bypass before the
+final change. Transport/capture metadata now takes precedence regardless of that
+index. The shipped validator never emits HTTP/capture assertions with an event
+index, so actual valid writer output remains unchanged. No schema/versioned golden
+or existing assertion expectation was changed. All intermediate runs are retained.
+
+Ten negative variants cover request-only proof for all PASS checks, HTTP/body and
+capture/body substitutions, message/response-metadata substitution, stream/request
+proof, an unindexed event file, mixed valid/request references, nonstream/request
+proof, and both transport event-index bypasses. Enclosing result/context hashes
+remain coherent. All now lose verified quality and comparison/retest eligibility,
+cannot claim recovery or pass evidence-inclusive export, and remain limited after
+independently assembled ZIP import and repeated baseline reads. Input bytes remain
+unchanged. Literal positive checks exercise the actual writer's metadata/body
+selection and indexed failure-event references, without deriving expectations
+from the shared helper. Healthy recovery, F05 metadata checks and both old capture
+formats' cached-tail controls remain passing.
+
+| Executed check | Observed result | Evidence under `artifacts/review-fixes-20261021/f06/` |
+| --- | --- | --- |
+| Initial core RED | 8 failures, 14 passed; no errors/skips | `red.log`, `red.xml` |
+| Initial core after extraction | 35 passed | `green.log`, `green.xml` |
+| Initial fast graph | All 8 gates passed on the intermediate source | `fast/check-result.json` |
+| Added event-index bypass RED | 2 failures, 22 deselected; no errors/skips | `red-event.log`, `red-event.xml` |
+| Final core including evidence/replay controls | 37 passed; no failures/errors/skips | `green-2.log`, `green-2.xml` |
+| Final report/import/export/comparison/accounting/runner/review regressions | 102 passed; no failures/errors/skips | `related.log`, `related.xml` |
+| Final fast graph | All 8 gates passed, unchanged source; 475 Python unit/harness and 20 Node tests | `fast-2/check-result.json`, JUnit files |
+| Documentation contracts and links | Exit 0 | `documentation.log` |
+
+Final fast observed the uncommitted patch on base
+`12f9217ae44ff028db5ac0c80fc17209b2201658`, fingerprint
+`8f501bbe8282195e311ea47128023c02c610ae7f20e22613dec22896a0bbfac5`.
+Main record SHA-256:
+`a8ce60a45483d44ea7d800b2a4051b839540d9f0994128f522e1dff1b3a22c9a`.
+The exact source/test `correction.diff` has SHA-256
+`faab5c111423783b6e40d89252240a6c1a786b9570471092712559665f21442e`.
+`verify_observation.py` independently checks actual final JUnit cases, both RED
+runs, executed gates and current source fingerprint, retaining a separate
+`observed-summary.json`. Focused counts are not whole-stage acceptance counts.
+
+This validates proof-file binding and existing location/hash checks; it does not
+authenticate an archive's author or independently rerun validators to prove every
+submitted assertion's truth. No broader trust-system claim is introduced. The
+historical full-source record, bounded review and W2 handoff remain unchanged and
+bound to their original sources. Current source still needs complete source and
+updated image verification; remote CI and endpoint/client checks remain unrun.
+
+After documentation checks, the container was restored to its original stopped
+state. `container-final-state.json` records `exited`, `running=false`, exit code 0.
+Stop after the local F06 commit with no test/build task running.
+No replacement container/network/volume, remote write
+or automatic follow-on verification/review/build is part of this turn.

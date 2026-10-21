@@ -47,7 +47,7 @@ def delivery_copy(original: Path, destination: Path, damage: str) -> Path:
     shutil.copytree(original, destination)
     shutil.rmtree(destination / "operations")
     document = read_json(destination / "result.json")
-    case = objects(document["cases"])[1]
+    case = objects(document["cases"])[0 if damage == "proof_nonstream_request" else 1]
     attempt = objects(case["attempts"])[0]
     prefix = f"evidence/{case['id']}/{attempt['id']}/"
     inventory = objects(document["evidence"])
@@ -98,6 +98,37 @@ def delivery_copy(original: Path, destination: Path, damage: str) -> Path:
         ]:
             if ref["path"] == relative:
                 ref["sha256"] = digest
+    elif damage.startswith("proof_"):
+        assertion_id, name = {
+            "proof_all_request": ("", "request.json"),
+            "proof_http_body": ("HTTP-STATUS", "body.bin"),
+            "proof_capture_body": ("CAPTURE-COMPLETE", "body.bin"),
+            "proof_message_response": ("MSG-CORE", "response.json"),
+            "proof_stream_request": ("STR-START", "request.json"),
+            "proof_events_without_index": ("MSG-CORE", "events.jsonl"),
+            "proof_mixed_request": ("MSG-CORE", "request.json"),
+            "proof_nonstream_request": ("MSG-CORE", "request.json"),
+            "proof_http_event": ("HTTP-STATUS", "events.jsonl"),
+            "proof_capture_event": ("CAPTURE-COMPLETE", "events.jsonl"),
+        }[damage]
+        reference = next(ref for ref in inventory if ref["path"] == prefix + name).copy()
+        if damage in {"proof_http_event", "proof_capture_event"}:
+            reference["event"] = 0
+        changed = 0
+        for assertion in objects(attempt["assertions"]):
+            if assertion["status"] == "PASS" and (
+                not assertion_id or assertion["id"] == assertion_id
+            ):
+                assertion["evidence_refs"] = [
+                    *(
+                        objects(assertion["evidence_refs"])
+                        if damage == "proof_mixed_request"
+                        else []
+                    ),
+                    reference.copy(),
+                ]
+                changed += 1
+        assert changed > 0
     else:
         assertion = next(
             item for item in objects(attempt["assertions"]) if item["id"] == "MSG-CORE"
@@ -131,6 +162,16 @@ def delivery_copy(original: Path, destination: Path, damage: str) -> Path:
         "capture_structure",
         "pass_reference",
         "foreign_reference",
+        "proof_all_request",
+        "proof_http_body",
+        "proof_capture_body",
+        "proof_message_response",
+        "proof_stream_request",
+        "proof_events_without_index",
+        "proof_mixed_request",
+        "proof_nonstream_request",
+        "proof_http_event",
+        "proof_capture_event",
     ],
 )
 def test_incomplete_or_misbound_proof_cannot_claim_recovery(tmp_path: Path, damage: str) -> None:
@@ -193,6 +234,33 @@ def test_complete_response_proof_can_establish_recovery(tmp_path: Path) -> None:
     before = execute(tmp_path / "before", failed=True)
     after = execute(tmp_path / "after", failed=False)
     service = DiagnosticService(tmp_path / "data")
+    for source in (before, after):
+        facts = service.source_facts(source)
+        assert object_value(facts["evidence_verification"])["status"] == "verified"
+    cases = objects(read_json(after / "result.json")["cases"])
+    for case in cases:
+        checks = objects(objects(case["attempts"])[0]["assertions"])
+        for identifier, name in (
+            ("HTTP-STATUS", "response.json"),
+            ("CAPTURE-COMPLETE", "response.json"),
+            ("MSG-CORE", "body.bin"),
+        ):
+            check = next(item for item in checks if item["id"] == identifier)
+            refs = objects(check["evidence_refs"])
+            assert len(refs) == 1
+            assert Path(str(refs[0]["path"])).name == name
+            assert refs[0]["event"] is None
+    failed_checks = objects(
+        objects(objects(read_json(before / "result.json")["cases"])[1]["attempts"])[0]["assertions"]
+    )
+    event_refs = [
+        ref
+        for check in failed_checks
+        for ref in objects(check["evidence_refs"])
+        if ref["event"] is not None
+    ]
+    assert event_refs
+    assert all(Path(str(ref["path"])).name == "events.jsonl" for ref in event_refs)
     comparison = service.compare_sources(before, after).document
     assert comparison["comparable"] is True
     assert comparison["all_previous_failures_passed"] is True

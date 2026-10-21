@@ -939,3 +939,31 @@ live acceptance is claimed. The container is stopped again (exit 0), with no
 test/build task left running; stop after the local F05 commit.
 F06 remains the next separately bounded correction; historical
 full-source and review records are preserved.
+
+## Independent review follow-up: F06 — 2026-10-21
+
+The owner authorized F06 only. A pure shared writer/reader rule now binds observed
+assertion proof to the appropriate capture file and its own attempt. HTTP/capture
+checks require response metadata; other checks use indexed events or body proof.
+Wrong-kind references remain readable but cannot support controlled retest,
+comparison, recovery claims or evidence export, including after independently
+assembled ZIP import and repeated baseline reads. Source bytes are preserved.
+
+Eight wrong-file variants first reproduced false verified quality. Initial
+extraction passed 35 core tests and fast, then two additional event-index variants
+exposed transport proof incorrectly selecting stream data. Those failed before
+the final metadata-precedence correction. Final core passed 37 tests, related
+regressions passed 102, and all eight fast gates passed on unchanged source (475
+Python unit/harness and 20 Node tests). Positive controls check actual writer
+outputs against literal metadata/body/event expectations, healthy recovery, F05
+and old capture-tail behavior. No existing assertion expectation or golden changed.
+
+Evidence, intermediate outcomes, exact fingerprints/hashes and scope limits are
+in the correction ledger and `artifacts/review-fixes-20261021/f06/`. This is proof
+binding verification, not author authentication or independent proof of every
+submitted PASS. Documentation checks passed; no broad browser/image/remote/live
+acceptance ran. The container is stopped again (exit 0), with no test/build task
+left running; stop after the local commit. All six scoped findings are locally
+corrected; complete source and
+updated Docker acceptance are separate next tasks, without another automatic
+review or endpoint run. Original full-source/review/W2 records remain unchanged.

@@ -47,6 +47,7 @@ from anthropic_readiness.models import (
     ValidationResult,
     aggregate_required,
     assertion_dimensions,
+    assertion_evidence_file,
     object_value,
     readiness,
     strict_json,
@@ -254,13 +255,7 @@ def _validate(capture: Capture, case: CaseDefinition, plan: RunPlan) -> Validati
 def _bind(assertions: Sequence[AssertionResult], refs: CaptureRefs) -> tuple[AssertionResult, ...]:
     bound: list[AssertionResult] = []
     for item in assertions:
-        suffix = (
-            "events.jsonl"
-            if item.event is not None
-            else "response.json"
-            if item.id.startswith(("HTTP-", "CAPTURE-"))
-            else "body.bin"
-        )
+        suffix = assertion_evidence_file(item.id, item.event)
         reference = next(r for r in refs.refs if r.path.endswith("/" + suffix))
         bound.append(
             replace(

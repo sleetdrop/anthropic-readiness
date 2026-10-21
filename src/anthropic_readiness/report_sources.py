@@ -8,7 +8,14 @@ from pathlib import Path
 
 from anthropic_readiness.config import target_from_document
 from anthropic_readiness.evidence import capture_file_refs, load_capture, safe_path, verify_evidence
-from anthropic_readiness.models import EvidenceRef, JsonObject, RunResult, object_value, strict_json
+from anthropic_readiness.models import (
+    EvidenceRef,
+    JsonObject,
+    RunResult,
+    assertion_evidence_file,
+    object_value,
+    strict_json,
+)
 from anthropic_readiness.operations.checkpoints import (
     checkpoint_refs,
     validate_checkpoint,
@@ -82,6 +89,11 @@ def attempt_evidence_errors(
             errors.append("missing_assertion_evidence:" + str(assertion["id"]))
         if any(not ref.path.startswith(prefix) for ref in references):
             errors.append("assertion_evidence_wrong_attempt:" + str(assertion["id"]))
+        if any(
+            ref.path != prefix + assertion_evidence_file(str(assertion["id"]), ref.event)
+            for ref in references
+        ):
+            errors.append("assertion_evidence_wrong_kind:" + str(assertion["id"]))
     return errors
 
 
