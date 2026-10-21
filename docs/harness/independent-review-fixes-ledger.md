@@ -713,3 +713,62 @@ to stopped; `container-final-state.json` records `exited`, `running=false`, exit
 code 0. Stop with a local budget-change commit and no test/build task left running.
 No replacement container/network/volume or
 remote write is part of this turn.
+
+## Full source verification after budget correction — 2026-10-21
+
+The owner approved one complete full-graph rerun from clean
+`21653ca84eb4cb76c9f0ef7717d43fbf979b93e1`. No source, tests, harness, dependencies,
+assertions, goldens or image changed. The existing Linux ARM64/Python 3.12.15 Dev
+Container started from stopped and `uv sync --locked --offline` succeeded.
+
+```sh
+UV_OFFLINE=1 uv run --frozen python scripts/check.py --suite full \
+  --out artifacts/review-fixes-20261021/full-21653ca
+```
+
+All thirteen required gates passed with exit 0 on unchanged source: lock, format,
+lint, strict type, architecture, packaged schemas, unit/harness, frontend static,
+Chromium browser, integration, acceptance, installed-package and documentation.
+The complete run lasted about 12.4 minutes. Integration completed in 351.67
+seconds under its 600-second allowance, producing its actual complete JUnit
+report. The earlier 300-second blocked run remains preserved.
+
+| Executed suite | Actual JUnit cases | Observation |
+| --- | ---: | --- |
+| Python unit/harness | 475 | Passed, no failures/errors/skips |
+| Python integration | 258 | Passed, no failures/errors/skips |
+| Python acceptance | 84 | Passed, no failures/errors/skips |
+| Installed-package | 5 | Passed, no failures/errors/skips |
+| Node | 20 | Passed, no failures/errors/skips |
+| Chromium | 78 | Passed, no failures/errors/skips |
+
+Python total is 822, derived from the actual four completed Python reports in
+this run, rather than summed focused attempts. `verify_observation.py` requires
+all thirteen executed passes, a clean recorded Git identity, unchanged source,
+actual positive testcase counts and no failure/error/skip nodes. It separately
+creates/checks `observed-summary.json` without changing the original gate record.
+
+Evidence root: `artifacts/review-fixes-20261021/full-21653ca/`.
+The command log is `artifacts/review-fixes-20261021/full-21653ca.log`.
+`check-result.json` SHA-256:
+`c0ccdde60c074e72cff7ab982d3b12b164b243390f84985420e875f7e028704d`.
+Source fingerprint:
+`535f0728e8456a0962aefbf1b5073474ed31db47454797236b6efab2cc020ba2`.
+Per-gate logs, actual JUnit reports and browser artifacts remain retained.
+This documentation-only closeout preserves that source identity. Earlier failed,
+blocked, diagnostic and full records remain unmodified and bound to their sources.
+
+This establishes complete source/browser/installed-package verification for the
+current corrections. The original record deliberately retains stage readiness
+incomplete and external `container_acceptance`, `remote_ci` and
+`independent_review` as not_run. No new independent review, image build, registry
+write, remote CI, real model endpoint/client, supplemental Python 3.11 or native
+AMD64 verification ran in this turn. Historical W2 image/handoff records still
+refer to their original source. Updated Docker acceptance is a separate next
+task; no source-check or review loop starts automatically.
+
+Documentation closeout and observation checks passed. The development container
+was restored to its original stopped state; `container-final-state.json` records
+`exited`, `running=false`, exit code 0. Stop with a local documentation-only
+commit and no test/build task left running. No replacement container/network/
+volume or remote write is part of this turn.

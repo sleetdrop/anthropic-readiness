@@ -1019,3 +1019,27 @@ Docker acceptance. No image, remote CI, live endpoint/client or new review ran.
 Documentation and observation checks passed. The container is stopped again
 (exit 0), with no test/build task left running. Stop after the local commit.
 Do not automatically continue into another verification task.
+
+## Corrected implementation: complete source verification passed — 2026-10-21
+
+The owner approved one full-graph rerun on clean `21653ca`. Offline locked sync
+succeeded in the existing Linux ARM64/Python 3.12.15 Dev Container. All thirteen
+gates passed on unchanged source in about 12.4 minutes: 822 Python cases (475
+unit/harness, 258 integration, 84 acceptance, 5 installed-package), 20 Node and
+78 Chromium, zero failures/errors/skips. Integration produced its complete report
+after 351.67 seconds under the corrected 600-second budget. The old timeout and
+custom diagnostic records remain unchanged.
+
+Actual JUnit counts, executed gates, clean recorded Git identity and source
+fingerprint were checked separately; exact hashes and limits are in the correction
+ledger. Evidence is `artifacts/review-fixes-20261021/full-21653ca/` and the adjacent
+`.log`. No source/test/dependency/assertion/golden/image changed. Complete source
+verification is now current; updated Docker acceptance remains the next separate
+task. Remote CI, real endpoints/clients and new independent review remain unrun
+for this candidate. Original full records retain stage readiness incomplete and
+external not_run statuses. No historical W2 handoff/image record was rebound.
+
+Documentation closeout and observation checks passed. The container is stopped
+again (exit 0), with no test/build task left running. Stop after the local
+documentation commit.
+No image build, registry/remote write or automatic follow-on review was started.

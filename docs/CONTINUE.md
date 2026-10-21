@@ -1,6 +1,33 @@
 # Local delivery status
 
-## Current follow-up: integration runtime diagnosed; budget adjusted
+## Current follow-up: complete source verification passed
+
+On 2026-10-21 the owner authorized one full-source verification turn on clean
+`21653ca84eb4cb76c9f0ef7717d43fbf979b93e1`. All thirteen gates passed on unchanged
+source: 822 Python tests (475 unit/harness, 258 integration, 84 acceptance and 5
+installed-package), 20 Node and 78 Chromium tests, with no failures/errors/skips.
+The actual run took about 12.4 minutes; integration completed in 351.67 seconds
+under its bounded 600-second limit. This is a new complete source verification
+baseline for F01-F06 and the harness budget correction.
+
+Evidence is retained under ignored
+`artifacts/review-fixes-20261021/full-21653ca/`, with the command log at
+`artifacts/review-fixes-20261021/full-21653ca.log`. The actual JUnit reports,
+thirteen executed gates, clean recorded Git identity and current source fingerprint
+were checked separately by `verify_observation.py` and `observed-summary.json`.
+No source, test, dependency, assertion, golden or image changed in this turn.
+Original blocked and custom-diagnostic records remain unchanged.
+
+Next is a separately bounded updated Docker acceptance task. Do not repeat full
+source tests without a new change/failure, start another automatic repository
+review, or call a real endpoint. Current-source image acceptance, remote CI and
+real client/endpoint outcomes remain unrun; historical W2 image records below
+belong to their original source. The full result deliberately retains
+`stage_readiness=incomplete` and external `not_run` statuses.
+The prepared container is stopped again, exit 0. Stop after the local
+documentation commit.
+
+## Integration budget correction baseline
 
 On 2026-10-21 the owner authorized one integration-runtime diagnosis and a
 justified budget decision. On unchanged source, all 258 integration cases passed
@@ -18,10 +45,8 @@ unit/harness and 20 Node tests), including actual timeout/failure/cleanup guards
 No product source, test, assertion or golden changed. The runtime budget is
 documented in `docs/development.md`.
 
-Next: run the complete source graph on the new clean commit, then consider
-updated Docker acceptance. The custom diagnostic and fast run do not certify a
-full graph on the revised harness; the original blocked result below is retained.
-Do not start another automatic review, Docker build or real endpoint run.
+The subsequent complete source graph passed above. The custom diagnostic and
+fast records remain separate, and the original blocked result below is retained.
 Evidence and exact source identities are in the correction ledger and ignored
 `artifacts/review-fixes-20261021/integration-runtime-cd42a0f/`. Stop after the
 local budget-change commit. The container is stopped again, exit 0.
@@ -41,9 +66,9 @@ schemas and documentation. The incomplete integration run is not included in a
 whole-suite test total. No assertion failure appears in its partial log, which
 does not establish why it exceeded the budget or prove that it would finish.
 
-The subsequent runtime diagnosis and budget change are recorded above. This
-historical run remains blocked. A complete source verification result is still
-required before updated Docker acceptance.
+The subsequent runtime diagnosis, budget change and successful complete source
+verification are recorded above. This historical run remains blocked; it is not
+rewritten or combined with later runs to claim a pass.
 
 Evidence: ignored `artifacts/review-fixes-20261021/full-cd955f7/`; authoritative
 gate records/JUnit reports are under `run-1/`, with a separately verified
