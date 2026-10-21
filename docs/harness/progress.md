@@ -1069,3 +1069,34 @@ remote CI, real endpoints/clients and publishing remain unrun. Documentation and
 blocked-observation checks passed. The prepared container is stopped again (exit
 0), with no test/build task left running. Stop after the local documentation
 commit. No automatic retry, second platform or new review is part of this turn.
+
+## Native ARM64 Docker retry passed after network change — 2026-10-21
+
+The owner changed network and authorized one fresh native ARM64 full CLI/Web job
+on clean e4e9de4. The controller exited 0 after about 54 minutes: all 68 observed
+checks passed, no missing required checks or error. Existing completed layers were
+reused and the locked dev environment finished preparing without source/version/
+timeout changes. The original blocked attempt remains unchanged.
+
+The fresh independent Linux ARM64/Python 3.12 developer container was disconnected
+from external networking before all thirteen full gates passed: 822 Python tests
+(475 unit/harness, 258 integration, 84 acceptance, 5 installed-package), 20 Node
+and 78 Chromium, zero failures/errors/skips. Installed CLI replay/signals/host route
+and Web import/retest/export/cancellation/restart/persistence passed with synthetic
+peers. Actual JUnit counts, packaged schema, clean source/image identities and
+owned resource cleanup were verified separately. A standalone helper initially
+needed an explicit repository import path; the failed startup log was retained
+and the corrected invocation passed. No product test failure was suppressed.
+
+Evidence and hashes are in the correction ledger and ignored
+`artifacts/review-fixes-20261021/images-arm64-e4e9de4/` plus adjacent `.log`;
+the fresh full record is `artifacts/checks/1792593801435672504/check-result.json`.
+Original source/W2/blocked records and external statuses remain unchanged.
+No source/test/harness/lock/Dockerfile changed, existing previews were not upgraded,
+and no AMD64, remote CI, publication, live endpoint/client or new review ran.
+All initially stopped containers were preserved, public tool/build caches retained,
+and owned job containers/networks/data volumes are absent. Documentation and
+observation checks passed; the prepared container is stopped again, exit 0.
+Stop after the local documentation commit. The matching emulated AMD64 full image
+job is a possible next separately authorized task, with native ARM64 development
+labelled explicitly; do not start it automatically.

@@ -1,6 +1,38 @@
 # Local delivery status
 
-## Current follow-up: native ARM64 image acceptance blocked during preparation
+## Current follow-up: native ARM64 image acceptance passed
+
+After the owner changed network and authorized a retry, one fresh native ARM64
+full CLI/Web job passed on clean `e4e9de4ab0323f28e0897a70dfd623551ead2efa`.
+All 68 controller checks passed, with no missing required checks or controller
+error. Locked versions, sources, timeouts and assertions were unchanged. The
+previous completed build layers were reused; the original blocked job is retained.
+
+The independently prepared Linux ARM64/Python 3.12 developer container was
+disconnected from external networking before its full graph. All thirteen gates
+passed: 822 Python tests (475 unit/harness, 258 integration, 84 acceptance and 5
+installed-package), 20 Node and 78 Chromium tests, zero failures/errors/skips.
+CLI replay/signals/host routing and Web import/retest/exports/cancellation/restart
+and persistence also passed against the installed images using synthetic peers.
+This is current-source native ARM64 image acceptance, not real endpoint or client
+certification. Existing preview services and their data were not upgraded.
+
+Evidence: ignored `artifacts/review-fixes-20261021/images-arm64-e4e9de4/` and adjacent
+`.log`; its `observed-summary.json` checks actual JUnit counts, source/image
+identities, packaged record schema and absence of owned job resources. The fresh
+developer record is `artifacts/checks/1792593801435672504/check-result.json`.
+Original full records retain their original external statuses and stage readiness.
+No product/test/harness/lock/Dockerfile changed. All initially stopped containers
+were preserved, and the prepared container is stopped again, exit 0. Public
+tool caches and completed build layers remain available.
+
+Stop after the local documentation commit. If separately authorized, the next
+bounded verification task is the matching emulated AMD64 full CLI/Web job on this
+ARM64 engine; its developer baseline remains native ARM64 and must be labelled
+accordingly. Native AMD64 development, remote CI, publication and real endpoint/
+client checks remain unrun. Do not start those or another review automatically.
+
+## Previous native ARM64 image attempt: preparation timeout
 
 On 2026-10-21 the owner authorized one native ARM64 full CLI/Web image job from
 clean `91275265018f08d45e54aeea720c48057b560960`, whose verified source bytes match
@@ -8,7 +40,8 @@ clean `91275265018f08d45e54aeea720c48057b560960`, whose verified source bytes ma
 7200-second build limit while downloading/preparing Chromium system libraries.
 The controller exited 2 with `status=blocked`; BuildKit recorded the build canceled.
 It did not reach functional image checks or the fresh developer full graph.
-All 21 missing required checks remain unrun. Docker acceptance has not passed.
+That attempt left all 21 required functional/developer checks unrun and did not
+establish Docker acceptance; the separate successful retry is recorded above.
 
 No source/test/harness/lock/Dockerfile changed. The two built images were inspected
 for architecture, revision and context identity; these extra metadata observations
@@ -16,8 +49,8 @@ do not backfill the controller's unrun checks. No test containers, networks or d
 volumes were created. The two preexisting stopped containers remain unchanged.
 Built images and completed public build layers remain available locally.
 
-Next bounded task: finish the locked dev image environment using the existing
-completed-layer cache, then rerun native ARM64 full acceptance with fresh output.
+The subsequent retry above completed the locked dev image environment using
+completed-layer cache and passed native ARM64 full acceptance with fresh output.
 Preserve the blocked attempt, required checks and dependency sources/versions.
 Do not silently skip the dev graph, switch to smoke, or start AMD64, a new review,
 publishing or real endpoint calls. The complete source verification below remains
@@ -46,12 +79,12 @@ were checked separately by `verify_observation.py` and `observed-summary.json`.
 No source, test, dependency, assertion, golden or image changed in this turn.
 Original blocked and custom-diagnostic records remain unchanged.
 
-The subsequent native ARM64 Docker attempt is blocked above. Do not repeat full
-source tests without a new change/failure, start another automatic repository
-review, or call a real endpoint. Current-source image acceptance remains incomplete;
+The first subsequent native ARM64 Docker attempt was blocked; the fresh retry
+above passed. Do not repeat full source tests without a new change/failure,
+start another automatic repository
+review, or call a real endpoint. Current-source native ARM64 image acceptance passed;
 remote CI and real client/endpoint outcomes remain unrun. Historical W2 image
-records below
-belong to their original source. The full result deliberately retains
+records below belong to their original source. The full result deliberately retains
 `stage_readiness=incomplete` and external `not_run` statuses.
 The prepared container is stopped again, exit 0. Stop after the local
 documentation commit.

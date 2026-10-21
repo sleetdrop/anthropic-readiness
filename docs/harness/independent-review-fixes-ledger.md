@@ -854,3 +854,70 @@ blocked-observation checks passed. The prepared container was restored to stoppe
 `container-final-state.json` records `exited`, `running=false`, exit code 0.
 Stop with a local documentation-only commit and no test/build task left running;
 no automatic retry is part of this turn.
+
+## Native ARM64 full image acceptance: network-change retry passed
+
+On 2026-10-21 the owner changed network and authorized retrying the previously
+blocked native ARM64 task. One fresh full CLI/Web job ran on clean
+`e4e9de4ab0323f28e0897a70dfd623551ead2efa`, from 14:02:44 to 14:56:59 UTC
+(about 54 minutes). The host Python 3.12 stdlib controller exited 0. Docker engine
+and developer execution were native Linux ARM64; no emulated/native AMD64 job ran.
+No source, test, harness, lock, image recipe, assertion or golden was changed.
+
+Completed public build layers were reused. The previously blocked Chromium system
+packages installed successfully, then locked Python/npm dependencies and the
+locked browser installer completed in a fresh disposable developer container.
+No mirror, dependency version, timeout, required check or test scope was changed.
+The original failed attempt and its cancellation record remain unchanged.
+
+| Observation | Actual result |
+| --- | --- |
+| Full controller | 68 rows passed, zero missing required checks, no error |
+| CLI, Web and dev builds | Passed; actual image builds observed, skip_build=false |
+| CLI execution | Nonroot/read-only, valid and invalid replay, synthetic peer, host route, SIGINT/SIGTERM passed |
+| Fresh developer full graph | 13 gates passed after external network disconnection |
+| Developer tests | 822 Python (475 unit/harness + 258 integration + 84 acceptance + 5 installed-package), 20 Node, 78 Chromium; zero failures/errors/skips |
+| Web workflows | Installed pages, assessment, exports, diagnostic import/retest, import persistence, cancellation, replacement/restart and owned host route passed |
+| Owned cleanup | No container, network or data volume remains under exact token readiness-fe5593ec0d41 |
+
+The fresh developer graph ran from 14:43:21 to 14:56:15 UTC (about 12.9 minutes).
+Integration completed in 370.49 seconds under its existing 600-second budget.
+Actual positive JUnit testcase nodes and all required gate exit codes were checked
+separately. The clean child Git identity matches the actual image build revision.
+The child's stage_readiness=incomplete and external not_run fields remain original;
+this separate image record does not retroactively rewrite those statuses.
+
+Identities and retained evidence:
+
+- Image context: `67af98398b0d7c995c8e704de44d441ce47f990339749ba28054d497804737e9`.
+- Source fingerprint: `535f0728e8456a0962aefbf1b5073474ed31db47454797236b6efab2cc020ba2`.
+- CLI image ID: `sha256:4085b489275504d1b76d0f7643f7654e3fcce94a8a05f05625bf8bb7c5f00ede`.
+- Web image ID: `sha256:2861c2a497bf7d958b6c3ca912432070d5b3b02c01b8a0ce9818b6392d934cbd`.
+- Image result: `artifacts/review-fixes-20261021/images-arm64-e4e9de4/image-result.json`;
+  SHA-256 `6d0254f3ed2f1fd7ff0c22614ce0a5f803a24bdf201f1c8e13b3cd0049cd34d0`.
+- Fresh full record: `artifacts/checks/1792593801435672504/check-result.json`;
+  SHA-256 `8b9564cb77edbb537f43874d139b6d8cc7f85f526d46c77ea801f033c9a9cb46`.
+- Adjacent controller `.log`, individual operation logs, `owned-cleanup.json`,
+  `verify_observation.py` and `observed-summary.json` remain under the ignored
+  image output root. Packaged image-result schema validation passed.
+
+The first standalone evidence-helper invocation lacked the repository import
+path and exited with ModuleNotFoundError before validation; `closeout.log` is
+retained. Re-running with explicit PYTHONPATH=. succeeded, with output in
+`closeout-with-root-import.log`. This was a helper startup issue, not an acceptance
+retry or a suppressed failing product test. All original acceptance records remain
+unchanged. Documentation and final source/evidence checks passed afterwards.
+
+All eight other initially stopped containers were preserved, including the older
+project previews and unrelated local services. The prepared developer container
+was started only for Linux evidence/documentation closeout and restored to stopped,
+exit 0. Its final state is retained in `container-final-state.json`; no acceptance
+or build process remains running. Public browser-tool cache and build layers were
+retained. No user volume, preview history or unrelated Docker resource was removed.
+
+This closes current-source native ARM64 image acceptance only. No current-source
+AMD64 image job, native AMD64 developer graph, remote CI, real endpoint/client
+workflow, registry publication or new independent review ran. Existing previews
+were not redeployed. Stop after the local documentation commit. If separately
+authorized, the next bounded task is matching emulated AMD64 full CLI/Web acceptance
+with an explicitly native ARM64 developer baseline, not another whole-source review.
