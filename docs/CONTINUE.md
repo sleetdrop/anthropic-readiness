@@ -1,6 +1,32 @@
 # Local delivery status
 
-## Current follow-up: full verification blocked by integration timeout
+## Current follow-up: integration runtime diagnosed; budget adjusted
+
+On 2026-10-21 the owner authorized one integration-runtime diagnosis and a
+justified budget decision. On unchanged source, all 258 integration cases passed
+in 349.77 seconds under a bounded 600-second custom diagnostic. The slowest
+case, including fixtures, took 10.136 seconds. The 17 cases added since the prior
+241-case baseline consumed 86.376 seconds in this run; no historical case was
+omitted. This run establishes cumulative suite time beyond the old 300-second
+limit, without an observed stuck case. Historical timing is not a controlled
+performance comparison.
+
+Only the designated integration gate now allows 600 seconds. All thirteen gates'
+commands, required flags, case inventory, report checks, process-group cleanup
+and other limits remain unchanged. Fast passed all eight gates (475 Python
+unit/harness and 20 Node tests), including actual timeout/failure/cleanup guards.
+No product source, test, assertion or golden changed. The runtime budget is
+documented in `docs/development.md`.
+
+Next: run the complete source graph on the new clean commit, then consider
+updated Docker acceptance. The custom diagnostic and fast run do not certify a
+full graph on the revised harness; the original blocked result below is retained.
+Do not start another automatic review, Docker build or real endpoint run.
+Evidence and exact source identities are in the correction ledger and ignored
+`artifacts/review-fixes-20261021/integration-runtime-cd42a0f/`. Stop after the
+local budget-change commit. The container is stopped again, exit 0.
+
+## Previous full verification: integration timeout
 
 On 2026-10-21 the owner authorized one complete source verification turn on clean
 `cd955f78cd8ec0938455da1d7df37c2ef66712df`. The unchanged source completed twelve
@@ -15,11 +41,9 @@ schemas and documentation. The incomplete integration run is not included in a
 whole-suite test total. No assertion failure appears in its partial log, which
 does not establish why it exceeded the budget or prove that it would finish.
 
-Next bounded task: diagnose integration-suite runtime in the prepared container,
-then decide whether a budget or test-organization change is warranted. Preserve
-all assertions, test inventory and failed observations. Obtain a complete source
-verification result before updated Docker acceptance. Do not automatically start
-another repository review, image build or real endpoint run.
+The subsequent runtime diagnosis and budget change are recorded above. This
+historical run remains blocked. A complete source verification result is still
+required before updated Docker acceptance.
 
 Evidence: ignored `artifacts/review-fixes-20261021/full-cd955f7/`; authoritative
 gate records/JUnit reports are under `run-1/`, with a separately verified

@@ -992,3 +992,30 @@ justified budget change, complete rerun or Docker acceptance. Documentation
 closeout checks passed, and the container is stopped again (exit 0), with no
 test/build task left running. Stop after the local documentation commit.
 Do not start another automatic review.
+
+## Integration runtime diagnosed; budget corrected — 2026-10-21
+
+The owner authorized a bounded runtime diagnosis and justified budget decision.
+On clean `cd42a0f` / unchanged product source, a custom 600-second check completed
+all 258 integration cases in 349.77 seconds, no failures/errors/skips. Timings
+show cumulative work: the longest case including fixtures took 10.136 seconds,
+the evidence-closure module 122.596 seconds, and the 17 added cases 86.376 seconds.
+All 241 historical cases remain present. This is one observed runtime, not a
+controlled performance benchmark or whole-stage recertification.
+
+Only the integration gate's default budget changed from 300 to 600 seconds;
+the generated thirteen-gate configuration otherwise matches exactly. Commands,
+required flags, inventory, assertions, JUnit checks and owned-process cleanup
+are unchanged. No product source or test changed. All eight fast gates passed
+on the revised harness (475 Python unit/harness and 20 Node cases), including
+the actual timeout/failure/cleanup guards. No numeric configuration-mirror test
+was added. Documentation records the new bounded integration allowance.
+
+Exact timings, hashes, separate source identities, scripts and original records
+are in the correction ledger and
+`artifacts/review-fixes-20261021/integration-runtime-cd42a0f/`. The previous full
+run remains blocked; a new full graph on the revised clean source is next before
+Docker acceptance. No image, remote CI, live endpoint/client or new review ran.
+Documentation and observation checks passed. The container is stopped again
+(exit 0), with no test/build task left running. Stop after the local commit.
+Do not automatically continue into another verification task.

@@ -312,12 +312,14 @@ def build_checks(root: Path, output: Path, suite: str) -> list[CheckSpec]:
     def command(name: str, argv: list[str], timeout: float = 120) -> CheckSpec:
         return CheckSpec(name, argv, timeout, cwd=root)
 
-    def pytest_check(name: str, paths: list[str], extra: list[str] | None = None) -> CheckSpec:
+    def pytest_check(
+        name: str, paths: list[str], extra: list[str] | None = None, *, timeout: float = 300
+    ) -> CheckSpec:
         junit = output / f"{name}.xml"
         return CheckSpec(
             name,
             [sys.executable, "-m", "pytest", "-q", *paths, *(extra or []), f"--junitxml={junit}"],
-            300,
+            timeout,
             "pytest",
             junit_path=junit,
             cwd=root,
@@ -379,7 +381,7 @@ def build_checks(root: Path, output: Path, suite: str) -> list[CheckSpec]:
                     cwd=root,
                     blocked_exit_codes=(2,),
                 ),
-                pytest_check("integration", ["tests/integration"]),
+                pytest_check("integration", ["tests/integration"], timeout=600),
                 pytest_check(
                     "acceptance",
                     [

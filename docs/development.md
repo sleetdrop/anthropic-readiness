@@ -35,6 +35,11 @@ Gates keep bounded logs, schema-validated frontend records, traces/screenshots a
 actual testcase counts. Owned fixture/listener cleanup and timeout process-group
 termination are checked. Bootstrap, fast and smoke are not whole-stage acceptance.
 
+Python test gates normally have a 300-second limit. The serial integration gate
+allows 600 seconds for complete evidence/import/export workflows. Exceeding a
+limit remains BLOCKED and terminates the gate's owned process group; it never
+substitutes a partial test count for a completed report.
+
 ```sh
 UV_OFFLINE=1 uv run --frozen python -m scripts.check_frontend --suite static --out artifacts/frontend-static-new
 UV_OFFLINE=1 uv run --frozen python -m scripts.check_frontend --suite browser --out artifacts/browser-new
