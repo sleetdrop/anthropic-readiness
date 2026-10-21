@@ -1130,3 +1130,17 @@ exit 0. No current-source live endpoint/client check, remote CI, publication,
 preview upgrade or new review ran. Both local image jobs now cover the correction
 source; original records and external statuses remain unchanged. Stop after the
 local documentation commit, with no automatic new review or verification cycle.
+
+## First GitHub publication authorized and prepared — 2026-10-21
+
+The owner explicitly approved the public sleetdrop/anthropic-readiness repository,
+MIT License and first main push, followed by observing CI. The repository was
+created without generated files and origin configured. MIT/README licensing
+prose was added, with upstream Heroicons licensing retained. A targeted preflight
+of 1,007 historical blobs found no known private target/credential/private-key or
+private-network endpoint patterns; this is not a comprehensive security audit.
+No tracked artifacts/private local config was found. Linux documentation checks
+passed. Implementation/tests/locks/images/workflows remain unchanged. First-push
+and remote job outcomes are pending and will be recorded separately in the
+GitHub publication ledger. No registry push, package release, real API call or
+new review is included. Original source/image observations retain their identities.

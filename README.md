@@ -142,5 +142,8 @@ See [container usage](docs/container-usage.md), [development](docs/development.m
 images, independent review, remote CI and real endpoints are distinct evidence.
 GitHub CI and container builds do not publish images. Docker Hub account setup and
 push credentials can be configured with the owner when publishing is authorized.
-Choose an appropriate license before public distribution; none has been selected
-on the owner's behalf.
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
+Bundled Heroicons retain their [separate license](src/anthropic_readiness/resources/web/icons/LICENSE).

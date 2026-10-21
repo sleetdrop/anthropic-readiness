@@ -1,5 +1,15 @@
 # Local delivery status
 
+## GitHub first publication
+
+The owner approved the public repository
+https://github.com/sleetdrop/anthropic-readiness, MIT licensing and first push as
+`main`, followed by observing GitHub CI. Repository creation and targeted history
+preflight completed; first-push/CI observations belong in the
+[publication ledger](harness/github-publication-ledger.md). Pending or scheduled
+remote jobs are not PASS. Local correction/source/image baselines remain below
+with their original identities. No registry/package publication is included.
+
 ## Current follow-up: correction verification and both image jobs passed
 
 The owner authorized the matching AMD64 job after native ARM64 acceptance. On
