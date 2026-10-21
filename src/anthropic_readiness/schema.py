@@ -12,6 +12,7 @@ from anthropic_readiness.models import (
     RunResult,
     Status,
     aggregate_required,
+    assertion_dimensions,
     object_value,
     readiness,
     strict_json,
@@ -129,6 +130,7 @@ def validate_result_semantics(value: JsonObject) -> list[str]:
         ):
             errors.append(f"case_contract:{case.get('id')}")
         statuses: list[Status] = []
+        dimension_assertions = _objects(case.get("preconditions", []))
         for attempt in _objects(case.get("attempts", [])):
             attempt_id = str(attempt.get("id"))
             if attempt_id in attempt_ids:
@@ -138,6 +140,29 @@ def validate_result_semantics(value: JsonObject) -> list[str]:
             if type(count) is int:
                 actual_requests += count
             assertions = _objects(attempt.get("assertions", []))
+            dimension_assertions.extend(assertions)
+            if value.get("mode") == "live" and (
+                type(count) is not int
+                or count not in (0, 1)
+                or (
+                    count == 0
+                    and not (
+                        assertions
+                        and all(
+                            item.get("id") == "EXECUTION-COMPLETE"
+                            and item.get("status") == "INDETERMINATE"
+                            for item in assertions
+                        )
+                        and not any(
+                            str(ref.get("path", "")).startswith(
+                                f"evidence/{case.get('id')}/{attempt_id}/"
+                            )
+                            for ref in _objects(value.get("evidence", []))
+                        )
+                    )
+                )
+            ):
+                errors.append(f"live_attempt_request_count:{attempt_id}")
             actual_by_id = {str(a["id"]): a for a in assertions}
             for expected in _objects(expected_case.get("assertions", [])):
                 actual = actual_by_id.get(str(expected["id"]))
@@ -166,6 +191,8 @@ def validate_result_semantics(value: JsonObject) -> list[str]:
             ]
         if case.get("status") != aggregate_required(statuses).value:
             errors.append(f"case_status:{case.get('id')}")
+        if case.get("dimensions") != assertion_dimensions(dimension_assertions):
+            errors.append(f"case_dimensions:{case.get('id')}")
     if plan.get("actual_requests", actual_requests) != actual_requests:
         errors.append("request_count")
     if value.get("mode") == "replay" and actual_requests != 0:

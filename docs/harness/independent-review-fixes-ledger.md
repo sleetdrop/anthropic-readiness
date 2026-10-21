@@ -18,8 +18,8 @@ findings; each still requires author verification before its own correction.
 | --- | --- | --- | --- |
 | F01: malformed intermediate message delta is overwritten | P1 | Fixed and locally verified in 6ea328d | Complete |
 | F02: missing response evidence can still support recovery claims | P1 | Fixed and locally verified in fe5b4ad | Complete |
-| F03: replay trusts contradictory cached tail metadata | P2 | Fixed and locally verified | Stop after local commit |
-| F04: imported dimensions and request counts contradict facts | P2 | Pending; no correction in this turn | Verify result semantic validation and projections |
+| F03: replay trusts contradictory cached tail metadata | P2 | Fixed and locally verified in 575f279 | Complete |
+| F04: imported dimensions and request counts contradict facts | P2 | Fixed and locally verified | Stop after local commit |
 
 ## F01: retain malformed stop-field failures
 
@@ -196,3 +196,90 @@ After all checks completed, the existing development container was restored to i
 original stopped state. `container-final-state.json` records `exited`,
 `running=false`, exit code 0. No test/build process remains running; no replacement
 container, network or volume was created. Pause after the local F03 commit.
+
+## F04: validate derived dimensions and execution counts
+
+Base: `575f279`. The owner authorized F04 after F03's clean local checkpoint.
+This turn closes the fourth finding without restarting the whole-stage review.
+
+Root cause: result semantics validated overall assertion/attempt/case status but
+trusted the separately declared dimension map. Request accounting required only
+agreement among totals, so all captured live attempts could be changed to zero
+without creating a detected contradiction.
+
+Correction: move the existing dimension reduction to the pure models module and
+share it between the runner and semantic reader. All four declared dimension
+states must equal aggregation of the required assertions in each category,
+including preconditions and not_evaluated states. Reject missing/empty maps rather
+than silently rewriting them. For the shipped single-request attempt model, live
+counts must be one, or zero for an indeterminate EXECUTION-COMPLETE failure without
+any declared capture evidence for that attempt. Existing replay-zero and
+aggregate-total checks remain intact. Future
+multi-call attempts require deliberately versioned accounting rather than silently
+relaxing this rule. No schema, assertion identity or versioned golden was changed;
+valid writer output remains the same, and execution identity includes these source
+changes. Partial checkpoint validation is unchanged by this final-result fix.
+
+The same final-result entry point protects direct rehydration, report source
+loading, evidence-inclusive export and ZIP import. Rejection preserves the
+original and intentionally mutated input bytes and does not activate a baseline.
+Independent ZIP mutations update enclosing hashes, preventing a stale-envelope
+error from masquerading as detection of the semantic contradiction.
+
+### Observed checks and explicit rulings
+
+All product execution used the existing Linux ARM64/Python 3.12.15 Dev Container,
+offline with locked dependencies. Evidence root:
+`artifacts/review-fixes-20261021/f04/`.
+
+| Check | Observed result | Evidence |
+| --- | --- | --- |
+| Initial RED construction | 8 negative variants reproduced acceptance; an additional failure came from an overbroad request-builder fault affecting the final plan snapshot | `red.xml` |
+| Corrected transient fault, before implementation | 8 negative variants failed as expected; unsent-failure zero-request control passed | `red-2.xml` |
+| First post-fix core run | 22 passed, 1 failed: an old hand-written positive sample had an empty dimension map despite a BLOCKED environment assertion | `green-attempt.xml` |
+| Corrected positive input, original assertions retained | 23 passed | `green.xml` |
+| First fast graph | 7 gates passed; lint found two redundant list comprehensions in the new test | `fast/check-result.json`, `fast/lint.log` |
+| Core run after equivalent list-style correction, before added proof guard | 23 passed; zero failures/errors/skips | `green-2.xml` |
+| Related regressions before added proof guard | 81 passed; zero failures/errors/skips | `related.xml` |
+| Fast graph after lint correction, before added proof guard | All 8 gates passed, unchanged source; 475 Python unit/harness tests passed | `fast-2/check-result.json` |
+| Added captured-attempt/zero-request boundary, before guard | One coherent negative input still accepted; new regression failed as expected | `zero-proof-red.xml` |
+| Final core run after proof guard | 24 passed; zero failures/errors/skips | `green-3.xml` |
+| Final evidence/import/comparison/report/review/handoff/CLI regressions | 81 passed; zero failures/errors/skips | `related-2.xml` |
+| Final fast graph after proof guard | All 8 gates passed, unchanged source; 475 Python unit/harness tests passed | `fast-3/check-result.json`, `fast-3/unit.xml`, `fast-3/frontend-static/` |
+
+The initial eight independent variants contradict protocol, behavior, client or environment
+states; remove one/all dimensions; or declare coherent but false zero/two-request
+counts. The failed streaming case's four correct dimensions are asserted against
+literal expected values before mutation, independently of the shared reducer.
+The positive control raises a transient error before the send, confirms zero
+transport calls and preserves a valid zero-request indeterminate result. Related
+tests cover missing credentials, exclusions, deadlines, internal errors, replay
+zero requests, redaction and cancellation without weakening their expectations.
+
+Final boundary analysis added a ninth variant: a captured attempt is relabeled
+as an indeterminate execution failure, with zero count and matching case/profile
+states, while its capture inventory remains present. The intermediate exception
+incorrectly accepted it. The added guard requires absence of declared capture
+evidence before admitting a zero-request unsent failure; the new regression was
+observed RED first, and final core/fast/related suites were rerun on that source.
+
+The old synthetic unit input was explicitly corrected from an empty dimension map
+to protocol/behavior/client not_evaluated and environment BLOCKED. Its roundtrip
+and inconsistent-readiness assertions remain unchanged. This repairs a positive
+test fixture that did not model actual runner output; it does not update frozen
+result/capture goldens or excuse a contradictory input. All failed attempts above
+remain retained. The final test-only list() cleanup changes no expectation.
+
+Final fast observed the uncommitted patch on base `575f279`, with fingerprint
+`78b67246eaae373f7b5932a767a4f053e3767239ba3e69559e1bb0bfa0968985`.
+Focused counts overlap fast and are not summed as unique whole-stage tests. No
+full browser graph, installation/multi-architecture image rebuild, remote CI or
+live endpoint/client workflow ran. Existing runtime images and historical W2
+acceptance records remain tied to their old source. All four original findings
+are now corrected and locally verified; this is not whole-stage recertification.
+
+After every check completed, the development container was restored to its original
+stopped state. `container-final-state.json` records `exited`, `running=false`,
+exit code 0. No test/build task remains running; no replacement container, network
+or volume was created. Stop after the local F04 commit. A later full/container
+acceptance is a separate resumed task, not an implied outcome of this correction.

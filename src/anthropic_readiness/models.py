@@ -32,6 +32,19 @@ def aggregate_required(statuses: Sequence[Status]) -> Status:
     return next(s for s in order if s in statuses)
 
 
+def assertion_dimensions(assertions: Sequence[JsonObject]) -> JsonObject:
+    """Derive dimension states from required assertions only."""
+    result: JsonObject = {}
+    for dimension in ("protocol", "behavior", "client", "environment"):
+        statuses = [
+            Status(str(item["status"]))
+            for item in assertions
+            if item.get("required") is True and item.get("category") == dimension
+        ]
+        result[dimension] = aggregate_required(statuses).value if statuses else "not_evaluated"
+    return result
+
+
 def readiness(status: Status) -> str:
     return (
         "passed"

@@ -1,6 +1,6 @@
 # Local delivery status
 
-## Current follow-up: independent review fixes, paused after F03
+## Current follow-up: F01-F04 corrected locally
 
 The owner requested one complete fix per turn to preserve a safe stopping point
 within the available usage allowance. F01 is fixed locally: malformed intermediate
@@ -27,9 +27,23 @@ existing cancellation exit code 130 is preserved. The 31 evidence/CLI/review tes
 11 F02/comparison regressions and all eight fast gates passed (475 Python
 unit/harness tests). Original capture bytes and metadata remain unchanged on read.
 
+F04 is fixed in a separately authorized turn on 2026-10-21. Final result readers
+now reject dimensions that disagree with the required assertion categories, using
+the same pure aggregation rule as the runner. Live attempt counts follow the
+shipped single-request attempt model; an unsent indeterminate execution failure
+may retain zero only without declared capture evidence, while replay remains
+zero-request. Nine inconsistent-input variants were observed RED across the
+initial and added proof-boundary checks, then the final 24 core tests, 81 related regressions
+and all eight fast gates passed (475 Python unit/harness tests). Contradictory
+results cannot reach source views, evidence export or ZIP activation, and original
+inputs are preserved. A hand-written positive unit sample was completed with its
+actual BLOCKED dimensions; its assertions and versioned goldens were not changed.
+
 Read [the follow-up ledger](harness/independent-review-fixes-ledger.md) for evidence
-and the remaining F04 (P2), which has not been fixed. Do not repeat
-the whole independent review or reopen the completed W2 plan. These patches have
+and the four author correction records. No F01-F04 finding remains pending in
+this series. Stop after the F04 local commit; further full/container acceptance
+needs its own resumed turn. Do not repeat the whole independent review or reopen
+the completed W2 plan. These patches have
 not received new full/browser/image/remote/live acceptance;
 the W2 records below remain historical evidence for their specified source.
 

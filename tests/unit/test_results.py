@@ -40,7 +40,12 @@ def test_mixed_result_roundtrip_and_inconsistent_readiness() -> None:
         "status": "BLOCKED",
         "preconditions": [assertion.to_json()],
         "attempts": [],
-        "dimensions": {},
+        "dimensions": {
+            "protocol": "not_evaluated",
+            "behavior": "not_evaluated",
+            "client": "not_evaluated",
+            "environment": "BLOCKED",
+        },
     }
     profile: JsonObject = {
         "id": "basic",

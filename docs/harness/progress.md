@@ -861,3 +861,21 @@ implementation; all 31 evidence/CLI/review tests, 11 F02/comparison regressions 
 eight fast gates passed afterwards (475 Python unit/harness tests). The ledger
 retains both RED attempts and exact evidence. No new full/browser/image/remote/live
 acceptance is claimed. F04 remains pending; stop after the F03 local commit.
+
+## Independent review follow-up: F04 — 2026-10-21
+
+The owner authorized F04 from F03's clean checkpoint. Eight independent variants
+first reproduced unchecked derived dimensions and false live request counts.
+Runner generation and final-result reading now share one pure required-assertion
+dimension reduction; inconsistent maps are rejected. Live attempts retain their
+single-request accounting, with zero allowed for unsent indeterminate execution
+failure only without declared capture evidence; existing replay-zero and total
+checks remain. A ninth coherent captured-attempt/zero-count variant exposed the
+need for that proof guard and was observed RED before tightening it. Direct reads, export and
+ZIP import reject contradictions without modifying inputs or activating a baseline.
+An old hand-written positive unit sample was completed with its actual BLOCKED
+dimensions while retaining all original assertions; no versioned golden changed.
+The ledger retains initial fault-injection, positive-input and lint corrections.
+Final 24 core tests, 81 related regressions and all eight fast gates passed (475
+Python unit/harness tests). All F01-F04 findings are locally corrected; no new
+full/browser/image/remote/live acceptance is claimed. Stop after the F04 commit.

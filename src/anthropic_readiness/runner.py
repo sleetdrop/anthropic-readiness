@@ -46,6 +46,7 @@ from anthropic_readiness.models import (
     Status,
     ValidationResult,
     aggregate_required,
+    assertion_dimensions,
     object_value,
     readiness,
     strict_json,
@@ -163,11 +164,7 @@ def _tool_metadata() -> JsonObject:
 
 
 def _dimensions(assertions: Sequence[AssertionResult]) -> JsonObject:
-    result: JsonObject = {}
-    for dimension in ("protocol", "behavior", "client", "environment"):
-        statuses = [a.status for a in assertions if a.required and a.category == dimension]
-        result[dimension] = aggregate_required(statuses).value if statuses else "not_evaluated"
-    return result
+    return assertion_dimensions([item.to_json() for item in assertions])
 
 
 def _validate(capture: Capture, case: CaseDefinition, plan: RunPlan) -> ValidationResult:
