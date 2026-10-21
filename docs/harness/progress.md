@@ -879,3 +879,18 @@ The ledger retains initial fault-injection, positive-input and lint corrections.
 Final 24 core tests, 81 related regressions and all eight fast gates passed (475
 Python unit/harness tests). All F01-F04 findings are locally corrected; no new
 full/browser/image/remote/live acceptance is claimed. Stop after the F04 commit.
+
+## Corrected implementation: complete source verification — 2026-10-21
+
+The owner authorized the next single task: full-source verification on clean
+`9a3056707560c991449c1ae4988781f335b0add7`. No product or test changes were made.
+Offline locked sync succeeded in the existing Linux ARM64/Python 3.12.15 Dev
+Container. All thirteen full gates passed on unchanged source: 805 Python tests
+(475 unit/harness, 241 integration, 84 acceptance, 5 installed-package), 20 Node
+and 78 Chromium tests, with zero failures/errors/skips. Actual JUnit cases, gate
+execution, source fingerprint and clean recorded Git identity were independently
+checked; evidence is under `artifacts/review-fixes-20261021/full-9a30567/`.
+The correction ledger records exact hashes and limits. Source/browser/package
+verification is now current, while Docker image acceptance, remote CI and live
+endpoint/client verification remain unrun for these corrections. No old handoff
+was rebound and no registry/remote write ran. Stop after documentation closeout.

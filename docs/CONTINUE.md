@@ -1,6 +1,16 @@
 # Local delivery status
 
-## Current follow-up: F01-F04 corrected locally
+## Current follow-up: F01-F04 complete source verification passed
+
+On 2026-10-21 the owner authorized one full-source verification turn. Clean commit
+`9a3056707560c991449c1ae4988781f335b0add7` passed all thirteen gates on unchanged
+source: 805 Python tests (475 unit/harness, 241 integration, 84 acceptance and 5
+installed-package tests), 20 Node and 78 Chromium tests, with zero failures,
+errors or skips. Locked dependencies were synchronized offline in the existing
+Linux ARM64/Python 3.12.15 Dev Container. Exact records and a separately checked
+JUnit summary are retained under ignored
+`artifacts/review-fixes-20261021/full-9a30567/`. No product code changed in this
+verification turn; subsequent notes are documentation only.
 
 The owner requested one complete fix per turn to preserve a safe stopping point
 within the available usage allowance. F01 is fixed locally: malformed intermediate
@@ -41,10 +51,11 @@ actual BLOCKED dimensions; its assertions and versioned goldens were not changed
 
 Read [the follow-up ledger](harness/independent-review-fixes-ledger.md) for evidence
 and the four author correction records. No F01-F04 finding remains pending in
-this series. Stop after the F04 local commit; further full/container acceptance
-needs its own resumed turn. Do not repeat the whole independent review or reopen
-the completed W2 plan. These patches have
-not received new full/browser/image/remote/live acceptance;
+this series. This turn stops after recording the full-source result. A bounded
+correction-diff review and updated Docker image acceptance remain separate
+follow-ups. Do not repeat the whole independent review or reopen the completed W2
+plan. These patches now have full-source/browser/install verification but no new
+image, remote-CI or real endpoint/client acceptance;
 the W2 records below remain historical evidence for their specified source.
 
 ## W2 delivery baseline: completed locally

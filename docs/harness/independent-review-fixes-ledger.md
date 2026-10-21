@@ -283,3 +283,63 @@ stopped state. `container-final-state.json` records `exited`, `running=false`,
 exit code 0. No test/build task remains running; no replacement container, network
 or volume was created. Stop after the local F04 commit. A later full/container
 acceptance is a separate resumed task, not an implied outcome of this correction.
+
+## Full source verification after all four corrections — 2026-10-21
+
+The owner approved the proposed next step: run the complete source graph before
+another bounded review or Docker rebuild. This turn adds no product behavior,
+test expectation, dependency, schema or image change. The existing container was
+initially stopped and was started only for this offline verification.
+
+Verified source: `9a3056707560c991449c1ae4988781f335b0add7`, clean working tree,
+branch `codex/local-web-console`. `uv sync --locked --offline` succeeded using
+the prepared Linux ARM64/Python 3.12.15 environment. The actual full command was:
+
+```sh
+UV_OFFLINE=1 uv run --frozen python scripts/check.py --suite full \
+  --out artifacts/review-fixes-20261021/full-9a30567
+```
+
+All thirteen required gates completed with exit 0: lock, format, lint, strict type,
+architecture, packaged schemas, unit/harness, frontend static, Chromium browser,
+integration, acceptance, installed-package checks and documentation. The actual
+run took about 11.5 minutes. Source remained unchanged throughout.
+
+| Executed suite | Actual test cases | Outcome |
+| --- | ---: | --- |
+| Python unit/harness | 475 | Passed |
+| Python integration | 241 | Passed |
+| Python acceptance | 84 | Passed |
+| Installed-package checks | 5 | Passed |
+| Node | 20 | Passed |
+| Chromium | 78 | Passed |
+
+Python total: 805. Every referenced JUnit report contains actual cases and zero
+failures, errors or skipped cases. These are full-run counts, not sums of prior
+focused runs. The retained `verify_observation.py` independently parses the actual
+JUnit files, requires all thirteen executed gates, checks the clean recorded Git
+identity, and matches current source bytes to the observed fingerprint. Its
+exclusive `observed-summary.json` records the same outcomes without changing the
+original check result.
+
+Evidence root: `artifacts/review-fixes-20261021/full-9a30567/`.
+Main record: `check-result.json`, SHA-256
+`9532fdf7759865e2994cfb9f5e75afea31e84a628488afcc640001d4aca36e26`.
+Source fingerprint:
+`78b67246eaae373f7b5932a767a4f053e3767239ba3e69559e1bb0bfa0968985`.
+Per-gate logs, JUnit XML and actual browser artifacts remain in that directory.
+The documentation-only closeout does not replace or rebind any previous result.
+
+This establishes a new complete source verification baseline for the corrected
+implementation. The main record deliberately keeps `stage_readiness=incomplete`:
+updated container acceptance, remote CI and a new independent review are not_run.
+No Docker image build, registry write, real model endpoint, Claude Code workflow
+or Python 3.11/native AMD64 verification was performed in this turn. Existing W2
+image and whole-stage records still apply only to their original source. A bounded
+diff review and current-source Docker acceptance are separate next steps.
+
+After documentation and fingerprint checks completed, the development container
+was restored to its original stopped state. `container-final-state.json` records
+`exited`, `running=false`, exit code 0. No test/build task remains running; no
+replacement container, network or volume was created. This turn ends with a local
+documentation-only commit and a clean working tree, without any remote write.
