@@ -1,6 +1,34 @@
 # Local delivery status
 
-## Current follow-up: F06 corrected locally; full verification is next
+## Current follow-up: full verification blocked by integration timeout
+
+On 2026-10-21 the owner authorized one complete source verification turn on clean
+`cd955f78cd8ec0938455da1d7df37c2ef66712df`. The unchanged source completed twelve
+of thirteen gates; integration was **blocked by its 300-second timeout** and did
+not produce a JUnit report. Overall status is `blocked`, stage readiness remains
+`incomplete`. No complete integration pass or whole-source acceptance is claimed.
+
+Completed suites passed 475 Python unit/harness, 84 acceptance, 5 installed-package,
+20 Node and 78 Chromium tests, with no failures/errors/skips in those reports.
+The other completed gates include lock, format, lint, strict typing, architecture,
+schemas and documentation. The incomplete integration run is not included in a
+whole-suite test total. No assertion failure appears in its partial log, which
+does not establish why it exceeded the budget or prove that it would finish.
+
+Next bounded task: diagnose integration-suite runtime in the prepared container,
+then decide whether a budget or test-organization change is warranted. Preserve
+all assertions, test inventory and failed observations. Obtain a complete source
+verification result before updated Docker acceptance. Do not automatically start
+another repository review, image build or real endpoint run.
+
+Evidence: ignored `artifacts/review-fixes-20261021/full-cd955f7/`; authoritative
+gate records/JUnit reports are under `run-1/`, with a separately verified
+`observed-summary.json` at the parent. An initial output-directory startup failure
+is retained as `full.log` and executed no checks. No source/test/harness/dependency
+was changed in this turn. The development container is stopped again, exit 0;
+this turn ends after the local documentation commit.
+
+## F06 verification baseline
 
 On 2026-10-21 the owner authorized F06 only. Writer and report reader now share
 one pure assertion-to-evidence-file rule. HTTP/capture checks require response
@@ -17,10 +45,9 @@ unit/harness and 20 Node tests). Correct response/event proof, healthy recovery,
 F05 integrity checks and legacy cached-tail handling remain covered. No schema,
 golden, dependency or existing assertion expectation was weakened.
 
-The container is stopped again, exit 0. Stop after the local F06 commit.
-F01-F06 are now locally corrected within their recorded scope. Next is a separate
-complete source verification turn, followed by updated Docker acceptance. Do not
-automatically start another review, image build or real endpoint run. Exact
+F06 was delivered as `cd955f7` with the container stopped, exit 0. F01-F06 are
+locally corrected within their recorded scope. The subsequent full-source attempt
+above is blocked, so updated Docker acceptance remains pending. Exact
 observations and intermediate RED/GREEN records are in the correction ledger and
 ignored `artifacts/review-fixes-20261021/f06/`. The historical full-source record
 below still certifies only `9a30567`, not these later F05/F06 patches.

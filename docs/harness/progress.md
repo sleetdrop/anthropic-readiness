@@ -967,3 +967,28 @@ left running; stop after the local commit. All six scoped findings are locally
 corrected; complete source and
 updated Docker acceptance are separate next tasks, without another automatic
 review or endpoint run. Original full-source/review/W2 records remain unchanged.
+
+## Corrected implementation: full verification blocked — 2026-10-21
+
+The owner approved one full-source verification turn on clean `cd955f7`. Offline
+locked sync succeeded in the existing Linux ARM64/Python 3.12.15 Dev Container.
+The first invocation executed no checks because the parent had precreated the
+exclusive output directory; its traceback is retained separately. The corrected
+fresh-output invocation completed the graph in about 11.4 minutes: twelve gates
+passed, but integration reached its 300-second limit and produced no JUnit report.
+Overall status is `blocked`, not PASS. Partial progress without a visible assertion
+failure does not establish that all cases would complete or identify the slow cause.
+
+Actual completed reports contain 475 Python unit/harness, 84 acceptance, 5 package,
+20 Node and 78 Chromium cases, without failures/errors/skips. Integration has no
+complete count and is not folded into a whole-source total. All original records
+remain unchanged. The independently checked summary, exact identity/hashes and
+limits are in the correction ledger and
+`artifacts/review-fixes-20261021/full-cd955f7/` (`run-1/` for gate records).
+
+No source/test/harness/dependency changes, image build, remote CI or live endpoint/
+client run occurred. Next is a bounded integration-runtime diagnosis before any
+justified budget change, complete rerun or Docker acceptance. Documentation
+closeout checks passed, and the container is stopped again (exit 0), with no
+test/build task left running. Stop after the local documentation commit.
+Do not start another automatic review.

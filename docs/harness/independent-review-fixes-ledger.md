@@ -574,3 +574,66 @@ state. `container-final-state.json` records `exited`, `running=false`, exit code
 Stop after the local F06 commit with no test/build task running.
 No replacement container/network/volume, remote write
 or automatic follow-on verification/review/build is part of this turn.
+
+## Full source verification after F05/F06 — 2026-10-21
+
+The owner approved one full-source verification turn from clean
+`cd955f78cd8ec0938455da1d7df37c2ef66712df`. No source, tests, harness, dependencies,
+assertions or goldens changed. The existing Linux ARM64/Python 3.12.15 container
+started from stopped; `uv sync --locked --offline` succeeded.
+
+The first invocation exited before any check because its output directory had
+already been created for the log, while the harness creates its output directory
+exclusively. Its traceback remains `full.log`. The corrected invocation used a
+fresh subdirectory, without deleting or replacing that failed attempt:
+
+```sh
+UV_OFFLINE=1 uv run --frozen python scripts/check.py --suite full \
+  --out artifacts/review-fixes-20261021/full-cd955f7/run-1
+```
+
+The complete graph returned exit 1 after about 11.4 minutes. Twelve required gates
+passed; the required integration gate was `blocked`, reason `timeout`, at
+300.0526 seconds. It produced no `integration.xml`. The overall record correctly
+reports `status=blocked` and `stage_readiness=incomplete`. No assertion failure is
+visible in the partial integration log, but the cause of its runtime and the
+outcome of its remaining cases are not established. This is not a passing run.
+
+| Completed suite | Actual JUnit cases | Observation |
+| --- | ---: | --- |
+| Python unit/harness | 475 | Passed, no failures/errors/skips |
+| Python acceptance | 84 | Passed, no failures/errors/skips |
+| Installed-package | 5 | Passed, no failures/errors/skips |
+| Node | 20 | Passed, no failures/errors/skips |
+| Chromium | 78 | Passed, no failures/errors/skips |
+| Integration | Unavailable | Timed out; no complete test report |
+
+The twelve passing gates are lock, format, lint, strict type, architecture,
+packaged schemas, unit/harness, frontend static, browser, acceptance, packaging
+and documentation. No incomplete integration cases are counted as passed or
+summed into a whole-source test total. Prior focused F05/F06 checks and the old
+fully passing `9a30567` record do not replace this missing result.
+
+Evidence root: `artifacts/review-fixes-20261021/full-cd955f7/`.
+Authoritative record: `run-1/check-result.json`, SHA-256
+`1f8a1011e14ec0045ecbb97031180dae383f6f28b6b9728238aaeae3b7ad2266`.
+Unchanged source fingerprint:
+`8f501bbe8282195e311ea47128023c02c610ae7f20e22613dec22896a0bbfac5`.
+The actual command log is `full-run.log`; per-gate logs, completed JUnit reports
+and browser artifacts remain under `run-1/`. `verify_observation.py` checks the
+clean recorded Git identity, exact blocked gate, twelve executed passes, actual
+completed test cases, absence of an integration report and current source
+fingerprint. Its separate `observed-summary.json` retains the blocked status.
+
+Next task: diagnose the integration runtime and determine whether its budget or
+test organization needs a justified change, before another full-source run and
+updated image acceptance. Do not silently raise limits, remove cases, weaken
+assertions or relabel this timeout as PASS. No new broad review, Docker build,
+remote CI, real endpoint/client workflow or independent review ran in this turn.
+Old records and external not_run statuses remain unchanged.
+
+The post-closeout documentation check passed. After documentation and observation
+checks, the container was restored to its original stopped state;
+`container-final-state.json` records `exited`, `running=false`, exit code 0.
+Stop with a local documentation-only commit, without any test/build task left
+running. No replacement container/network/volume or remote write is part of this turn.
