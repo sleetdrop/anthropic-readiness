@@ -1,6 +1,34 @@
 # Local delivery status
 
-## Current follow-up: complete source verification passed
+## Current follow-up: native ARM64 image acceptance blocked during preparation
+
+On 2026-10-21 the owner authorized one native ARM64 full CLI/Web image job from
+clean `91275265018f08d45e54aeea720c48057b560960`, whose verified source bytes match
+`21653ca`. CLI and Web builds passed, but the dev image reached its configured
+7200-second build limit while downloading/preparing Chromium system libraries.
+The controller exited 2 with `status=blocked`; BuildKit recorded the build canceled.
+It did not reach functional image checks or the fresh developer full graph.
+All 21 missing required checks remain unrun. Docker acceptance has not passed.
+
+No source/test/harness/lock/Dockerfile changed. The two built images were inspected
+for architecture, revision and context identity; these extra metadata observations
+do not backfill the controller's unrun checks. No test containers, networks or data
+volumes were created. The two preexisting stopped containers remain unchanged.
+Built images and completed public build layers remain available locally.
+
+Next bounded task: finish the locked dev image environment using the existing
+completed-layer cache, then rerun native ARM64 full acceptance with fresh output.
+Preserve the blocked attempt, required checks and dependency sources/versions.
+Do not silently skip the dev graph, switch to smoke, or start AMD64, a new review,
+publishing or real endpoint calls. The complete source verification below remains
+current; this environment-preparation timeout does not replace that record.
+
+Evidence: ignored `artifacts/review-fixes-20261021/images-arm64-9127526/` and adjacent
+`.log`. The packaged result schema, actual cancellation, image/source identities
+and preserved container inventory were verified separately. The prepared container
+is stopped again, exit 0. Stop after the local documentation commit.
+
+## Complete source verification baseline
 
 On 2026-10-21 the owner authorized one full-source verification turn on clean
 `21653ca84eb4cb76c9f0ef7717d43fbf979b93e1`. All thirteen gates passed on unchanged
@@ -18,10 +46,11 @@ were checked separately by `verify_observation.py` and `observed-summary.json`.
 No source, test, dependency, assertion, golden or image changed in this turn.
 Original blocked and custom-diagnostic records remain unchanged.
 
-Next is a separately bounded updated Docker acceptance task. Do not repeat full
+The subsequent native ARM64 Docker attempt is blocked above. Do not repeat full
 source tests without a new change/failure, start another automatic repository
-review, or call a real endpoint. Current-source image acceptance, remote CI and
-real client/endpoint outcomes remain unrun; historical W2 image records below
+review, or call a real endpoint. Current-source image acceptance remains incomplete;
+remote CI and real client/endpoint outcomes remain unrun. Historical W2 image
+records below
 belong to their original source. The full result deliberately retains
 `stage_readiness=incomplete` and external `not_run` statuses.
 The prepared container is stopped again, exit 0. Stop after the local

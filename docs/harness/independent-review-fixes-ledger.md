@@ -772,3 +772,85 @@ was restored to its original stopped state; `container-final-state.json` records
 `exited`, `running=false`, exit code 0. Stop with a local documentation-only
 commit and no test/build task left running. No replacement container/network/
 volume or remote write is part of this turn.
+
+## Native ARM64 image acceptance blocked during dev preparation — 2026-10-21
+
+The owner approved Docker acceptance; this turn selected one native ARM64 full
+CLI/Web job. The Docker engine reported Linux/aarch64. The stdlib-only controller
+ran on host Python 3.12.15; all product builds were in Linux. It used clean
+`91275265018f08d45e54aeea720c48057b560960`, with source/harness bytes unchanged from
+the fully verified `21653ca` baseline. No source, test, harness, lock, assertion,
+golden or Dockerfile changed. No real target configuration or credentials were used.
+
+```sh
+/opt/homebrew/bin/python3.12 scripts/check_images.py \
+  --platform linux/arm64 --scope full --targets runtime,web \
+  --out artifacts/review-fixes-20261021/images-arm64-9127526
+```
+
+The controller ran from 10:27:50 to 12:33:34 UTC and returned exit 2. Runtime and
+Web builds passed. The dev build exhausted its 7200-second command limit while
+preparing Chromium system dependencies, and the overall 2.1 record is `blocked`.
+The original BuildKit log ends `CANCELED` / `context canceled`; the controller is
+finished. This is a preparation timeout, with no functional test outcome.
+
+Slow download observations were retained rather than changing sources/versions or
+stopping early: the 51 MB Node toolchain layer completed; Git/CJK/system packages
+installed; npm completed; Chromium's system-library preparation remained incomplete.
+No timeout or assertion was weakened. Only local images were loaded, never pushed.
+
+| Controller observation | Actual outcome |
+| --- | --- |
+| Git identity and engine architecture | Passed metadata observations |
+| CLI runtime image build | Passed |
+| Web image build | Passed |
+| Dev image build | Blocked: TimeoutExpired at 7200 seconds |
+| Controller error record | Blocked: same timeout |
+| Required functional/developer checks | 21 missing, not executed |
+
+The six controller rows contain four successful operations and two blocked rows;
+these are not six test cases. The build loop stops before runtime inspection,
+replay/signals, developer preparation/full graph or Web workflows. No image
+functional checks or fresh developer tests ran. Do not combine the existing
+822/20/78 source result with these builds into image acceptance. The old W2 image
+records still refer to their original source.
+
+Separate read-only inspection confirmed both new local images are ARM64 with
+revision `91275265018f08d45e54aeea720c48057b560960` and matching context:
+
+- CLI ID: `sha256:f8dc6048c2097dc2aa68c598a6bd89c62e293465ee95abdeb73c3b24c4273ffe`.
+- Web ID: `sha256:bc873c9b9811c8e8edda6dd12e52b851931584faad756e3b241a3a27f75648b2`.
+- Image context: `67af98398b0d7c995c8e704de44d441ce47f990339749ba28054d497804737e9`.
+- Source fingerprint remains
+  `535f0728e8456a0962aefbf1b5073474ed31db47454797236b6efab2cc020ba2`.
+
+Those image identities are metadata observations, not substitutions for the unrun
+controller checks. The packaged `image-result` schema and separate blocked-result
+verifier passed. The optional Buildx history `--local` filter could not run because
+this repository has no origin/upstream remote; cancellation is instead confirmed
+by the actual retained BuildKit log. No remote/account configuration was changed.
+
+No owned test containers, networks or data volumes had been created when the build
+loop stopped. The two initial stopped containers (`e7c4571ebe38`, `0b3efff1748b`)
+remain present and exited, with no new project test container. The prepared dev
+container was still stopped after the job; it was started briefly only for Linux
+schema/evidence/documentation checks. Completed build layers and local images are
+retained; no cache or existing user data was deleted. The PASS-only verification
+and token-cleanup helpers prepared during the wait were not run because no passing
+job or `dev-start` existed; `verify_blocked_observation.py` verifies the actual state.
+
+Evidence root: `artifacts/review-fixes-20261021/images-arm64-9127526/`, adjacent `.log`.
+`image-result.json` SHA-256:
+`1d1ee9990c52f8b1b449039cd69690c7140aa8cde4b5a774013a452d91d8805d`.
+Raw build/controller logs, `built-images.jsonl`, preserved container inventory,
+recovery snapshot and `blocked-summary.json` remain retained without rewriting
+the original result. No fresh full source graph, AMD64 run, registry write, remote
+CI, real endpoint/client workflow or new independent review was started.
+
+Next is a separate bounded completion of the dev environment using completed-layer
+cache, then a fresh native ARM64 full job. Keep its required checks and locked
+sources; do not bypass dev preparation or label smoke as full. Documentation and
+blocked-observation checks passed. The prepared container was restored to stopped;
+`container-final-state.json` records `exited`, `running=false`, exit code 0.
+Stop with a local documentation-only commit and no test/build task left running;
+no automatic retry is part of this turn.

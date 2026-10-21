@@ -1043,3 +1043,29 @@ Documentation closeout and observation checks passed. The container is stopped
 again (exit 0), with no test/build task left running. Stop after the local
 documentation commit.
 No image build, registry/remote write or automatic follow-on review was started.
+
+## Native ARM64 Docker attempt blocked during preparation — 2026-10-21
+
+The owner authorized one bounded Docker task. A native ARM64 full CLI/Web image
+job ran from clean `9127526` on a Linux/aarch64 engine, using host Python only for
+the stdlib controller. Runtime and Web builds passed. The dev build reached its
+7200-second limit while preparing Chromium system libraries after slow toolchain,
+APT and npm downloads. The controller exited 2 with blocked status, and BuildKit
+recorded cancellation. No runtime/Web functional checks or fresh developer full
+graph ran; 21 required checks remain missing. This is not image acceptance.
+
+No product/test/harness/lock/Dockerfile change occurred. Image/context/revision
+identities, the packaged result schema, canceled state and preserved container
+inventory were checked separately. Those checks do not backfill unrun acceptance.
+No test containers/networks/data volumes had been created; the two initial stopped
+containers remain unchanged. Local built images and completed public layers are
+retained. Exact hashes, outcomes and limitations are in the correction ledger and
+`artifacts/review-fixes-20261021/images-arm64-9127526/` plus adjacent `.log`.
+
+The complete source verification remains valid for its original source identity;
+old blocked/source/W2 records remain unchanged. Next is a bounded completion of
+the locked dev environment using cache, then native ARM64 full acceptance. AMD64,
+remote CI, real endpoints/clients and publishing remain unrun. Documentation and
+blocked-observation checks passed. The prepared container is stopped again (exit
+0), with no test/build task left running. Stop after the local documentation
+commit. No automatic retry, second platform or new review is part of this turn.
