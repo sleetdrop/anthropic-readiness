@@ -1144,3 +1144,24 @@ passed. Implementation/tests/locks/images/workflows remain unchanged. First-push
 and remote job outcomes are pending and will be recorded separately in the
 GitHub publication ledger. No registry push, package release, real API call or
 new review is included. Original source/image observations retain their identities.
+
+## First GitHub push completed; remote CI failed — 2026-10-22
+
+Public repository https://github.com/sleetdrop/anthropic-readiness is live on main,
+with MIT License recognized. First commit pushed: 7b69b53. Run 39630071527 completed
+with failure: native AMD64 smoke passed 31 checks; quality 3.11 passed 822 Python /
+20 Node tests but one of 78 browser cases timed out waiting for comparison export;
+quality 3.12 browser/integration gates timed out; Dev Container creation succeeded
+but its browser gate failed. ci-required correctly failed. No remote green/full
+acceptance is claimed. Missing reports are not counted as passing cases.
+
+Logs, artifacts, original machine records and screenshot/trace evidence are retained
+under ignored artifacts/publication-20261021; exact hashes, counts, limits and next
+bounded diagnosis are in the GitHub publication ledger and CONTINUE. No product,
+test, workflow, lock, image recipe, assertion or timeout changed and no CI rerun was
+requested. The closeout docs-only commit uses [skip ci] to retain the original red
+result without launching a redundant unchanged-code run. This is not a CI fix.
+Documentation/schema/evidence checks passed in Linux. The prepared container is
+stopped again, exit 0. No registry/package publication, extra container matrix,
+real API call, new review or unfinished local task remains. Stop after the final
+publication-record push; diagnose the new remote failures in the next bounded task.

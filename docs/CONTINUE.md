@@ -1,14 +1,25 @@
 # Local delivery status
 
-## GitHub first publication
+## GitHub published; first remote CI needs follow-up
 
 The owner approved the public repository
 https://github.com/sleetdrop/anthropic-readiness, MIT licensing and first push as
-`main`, followed by observing GitHub CI. Repository creation and targeted history
-preflight completed; first-push/CI observations belong in the
-[publication ledger](harness/github-publication-ledger.md). Pending or scheduled
-remote jobs are not PASS. Local correction/source/image baselines remain below
-with their original identities. No registry/package publication is included.
+`main`, followed by observing GitHub CI. First push `7b69b53` succeeded; GitHub
+confirmed the public repository, default `main` and MIT License. The first
+[CI run](https://github.com/sleetdrop/anthropic-readiness/actions/runs/39630071527)
+completed with failure. Native AMD64 smoke passed 31 checks. Python 3.11 passed
+all Python/Node tests but one browser case timed out waiting for comparison export.
+Python 3.12 browser/integration gates timed out; Dev Container's browser gate failed.
+The aggregate gate correctly failed. Remote CI is not green.
+
+Next bounded task is to diagnose the remote browser failure and CI gate timing
+from retained traces/records, reproduce meaningfully, and decide a justified fix.
+Do not assume a slow runner explains the export failure, increase limits blindly,
+skip assertions or repeatedly rerun until green. No product/test/workflow/budget
+change or CI retry was made during publication. See the
+[publication ledger](harness/github-publication-ledger.md) for exact counts,
+original failures and safe stopping state. Local correction/source/image baselines
+remain below with their original identities. No registry/package publication occurred.
 
 ## Current follow-up: correction verification and both image jobs passed
 
