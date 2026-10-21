@@ -916,3 +916,26 @@ remote CI or live endpoint/client ran. The development container is stopped agai
 (exit 0), with no test/build task left running. Stop after the local documentation
 commit; fix F05 then F06 in separate turns before Docker acceptance. Original
 full-source/W2 observations remain unchanged.
+
+## Independent review follow-up: F05 — 2026-10-21
+
+The owner authorized F05 only. Report-source verification now invokes the same
+capture-integrity reader used for replay after checking inventory binding. Five
+coherently hashed metadata contradictions (retained length, embedded request,
+original hash/length and structural digest) first reproduced false verified
+quality. All now remain readable but cannot regain retest/comparison eligibility,
+claim recovery or pass evidence-inclusive export; independently assembled ZIP
+import and repeated baseline reads preserve these limits and original bytes.
+Valid recovery and capture formats 1.0/1.1 with old cached-tail flags remain valid.
+The existing replay normalization and all golden expectations are unchanged.
+
+Core RED observed 5 failures/9 passes; corrected core passed 27 tests. Related
+regressions passed 102 tests after correcting a nonexistent test filename in the
+initial command (exit 4, no tests run; retained separately). All eight fast gates
+passed on unchanged source, including 475 Python unit/harness and 20 Node tests.
+Exact fingerprints, hashes, limits and artifact paths are in the correction
+ledger. Documentation contract/link checks passed. No broad browser/image/remote/
+live acceptance is claimed. The container is stopped again (exit 0), with no
+test/build task left running; stop after the local F05 commit.
+F06 remains the next separately bounded correction; historical
+full-source and review records are preserved.

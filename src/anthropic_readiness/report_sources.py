@@ -7,7 +7,7 @@ import re
 from pathlib import Path
 
 from anthropic_readiness.config import target_from_document
-from anthropic_readiness.evidence import capture_file_refs, safe_path, verify_evidence
+from anthropic_readiness.evidence import capture_file_refs, load_capture, safe_path, verify_evidence
 from anthropic_readiness.models import EvidenceRef, JsonObject, RunResult, object_value, strict_json
 from anthropic_readiness.operations.checkpoints import (
     checkpoint_refs,
@@ -73,6 +73,7 @@ def attempt_evidence_errors(
         for ref in capture_file_refs(metadata):
             if (prefix + ref.path, ref.sha256) not in inventory:
                 raise ValueError("capture_inventory_mismatch")
+        load_capture(safe_path(root, response))
     except (OSError, ValueError, KeyError) as exc:
         errors.append("invalid_capture_evidence:" + response + ":" + str(exc))
     for assertion in assertions:

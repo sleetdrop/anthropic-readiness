@@ -1,6 +1,25 @@
 # Local delivery status
 
-## Current follow-up: bounded review found two evidence-validation gaps
+## Current follow-up: F05 corrected locally; F06 remains next
+
+On 2026-10-21 the owner authorized F05 only. Report-source verification now reuses
+the existing capture reader after inventory checks, so its cross-file integrity
+checks also govern evidence eligibility. Five contradictory metadata variants
+were observed RED first. The corrected source passed 27 core tests, 102 related
+regressions and all eight fast gates (475 Python unit/harness and 20 Node tests).
+Invalid sources remain readable but cannot regain controlled comparison/retest
+or recovery claims through export/import. Complete valid captures with legacy
+cached-tail flags remain eligible in capture formats 1.0 and 1.1. No schema,
+golden, dependency or assertion expectation was weakened.
+
+The container is stopped again, exit 0; this turn ends after a local F05 commit.
+Next: fix F06 in its own bounded turn, then plan updated source/image acceptance.
+Do not start another review or Docker build automatically. See the correction
+ledger and ignored `artifacts/review-fixes-20261021/f05/` for observed checks,
+the retained failed command and source identity. The prior full-source record
+below remains tied to `9a30567`; it does not certify the new F05 source.
+
+## Bounded review baseline
 
 On 2026-10-21 the owner authorized one independent read-only review of the
 F01-F04 correction diff, without another repository-wide review or Docker build.
@@ -12,9 +31,9 @@ still permit comparison and an observed-recovery conclusion. The retained respon
 bodies are valid controls; this does not demonstrate an invalid protocol stream
 being classified PASS. No product code was changed during review.
 
-Fix F05 first in a separate bounded turn, then F06, before updated Docker image
-acceptance. Preserve the probes and add meaningful failing regressions before
-implementation. The independent report and one synthetic probe run are retained
+F05 is corrected above; F06 still requires failing regressions and correction
+before updated Docker image acceptance. The independent report and one synthetic
+probe run are retained
 under ignored `artifacts/review-fixes-20261021/bounded-review-9a30567/`.
 Read [the correction ledger](harness/independent-review-fixes-ledger.md) for author
 rulings, scope limits and the safe stopping state. Do not repeat the entire review
@@ -71,8 +90,9 @@ actual BLOCKED dimensions; its assertions and versioned goldens were not changed
 
 Read [the follow-up ledger](harness/independent-review-fixes-ledger.md) for evidence
 and the four original author correction records. Their original regression cases
-pass; the later bounded review above identified two additional F02-related gaps
-that remain open. Updated Docker image acceptance follows their corrections.
+pass; the later bounded review above identified two additional F02-related gaps.
+F05 is now corrected locally; F06 remains open. Updated Docker image acceptance
+follows their corrections.
 Do not repeat the whole independent review or reopen the completed W2 plan.
 These patches have full-source/browser/install verification but no new image,
 remote-CI or real endpoint/client acceptance;

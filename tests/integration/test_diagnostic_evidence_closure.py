@@ -11,7 +11,7 @@ from anthropic_readiness.application import prepare_assessment
 from anthropic_readiness.config import load_target
 from anthropic_readiness.diagnostics.context import ContextObserver
 from anthropic_readiness.diagnostics.service import DiagnosticService
-from anthropic_readiness.evidence import json_bytes
+from anthropic_readiness.evidence import json_bytes, load_capture
 from anthropic_readiness.models import JsonObject, JsonValue, object_value, strict_json
 from anthropic_readiness.operations.observer import DiskExecutionObserver
 from anthropic_readiness.runner import execute_run
@@ -65,12 +65,30 @@ def delivery_copy(original: Path, destination: Path, damage: str) -> Path:
             assertion["evidence_refs"] = [
                 ref for ref in objects(assertion["evidence_refs"]) if ref["path"] != missing
             ]
-    elif damage == "capture_manifest":
+    elif damage.startswith(("capture_", "cached_tail_")):
         relative = prefix + "response.json"
         metadata = read_json(destination / relative)
-        next(item for item in objects(metadata["files"]) if item["path"] == "body.bin")[
-            "sha256"
-        ] = "0" * 64
+        if damage == "capture_manifest":
+            next(item for item in objects(metadata["files"]) if item["path"] == "body.bin")[
+                "sha256"
+            ] = "0" * 64
+        elif damage == "capture_retained_bytes":
+            metadata["retained_bytes"] = int(str(metadata["retained_bytes"])) + 1
+        elif damage == "capture_request":
+            metadata["request"] = {**object_value(metadata["request"]), "streaming": False}
+        elif damage == "capture_original_sha256":
+            metadata["original_sha256"] = "0" * 64
+        elif damage == "capture_original_length":
+            metadata["original_length"] = int(str(metadata["original_length"])) + 1
+        elif damage == "capture_structure":
+            metadata["structural_sha256"] = "0" * 64
+        elif damage in {"cached_tail_1.0", "cached_tail_1.1"}:
+            metadata["schema_version"] = damage.removeprefix("cached_tail_")
+            if metadata["schema_version"] == "1.0":
+                metadata.pop("structural_sha256")
+            metadata["tail"] = {**object_value(metadata["tail"]), "pending_data": True}
+        else:
+            raise AssertionError("unknown_capture_mutation")
         data = json_bytes(metadata)
         (destination / relative).write_bytes(data)
         digest = hashlib.sha256(data).hexdigest()
@@ -106,6 +124,11 @@ def delivery_copy(original: Path, destination: Path, damage: str) -> Path:
         "events.jsonl",
         "response.json",
         "capture_manifest",
+        "capture_retained_bytes",
+        "capture_request",
+        "capture_original_sha256",
+        "capture_original_length",
+        "capture_structure",
         "pass_reference",
         "foreign_reference",
     ],
@@ -119,6 +142,10 @@ def test_incomplete_or_misbound_proof_cannot_claim_recovery(tmp_path: Path, dama
         for path in damaged.rglob("*")
         if path.is_file()
     }
+    if damage.startswith("capture_"):
+        response = next(damaged.glob("evidence/ANT-TEXT-SSE-001/*/response.json"))
+        with pytest.raises(ValueError, match="capture_integrity"):
+            load_capture(response)
     service = DiagnosticService(tmp_path / "data")
     facts = service.source_facts(damaged)
     assert object_value(facts["evidence_verification"])["status"] == "missing_or_invalid"
@@ -169,3 +196,24 @@ def test_complete_response_proof_can_establish_recovery(tmp_path: Path) -> None:
     comparison = service.compare_sources(before, after).document
     assert comparison["comparable"] is True
     assert comparison["all_previous_failures_passed"] is True
+
+
+@pytest.mark.parametrize("version", ["1.0", "1.1"])
+def test_legacy_cached_tail_does_not_invalidate_complete_response_proof(
+    tmp_path: Path, version: str
+) -> None:
+    before = execute(tmp_path / "before", failed=True)
+    after = execute(tmp_path / "after", failed=False)
+    delivered = delivery_copy(after, tmp_path / "delivered", "cached_tail_" + version)
+    response = next(delivered.glob("evidence/ANT-TEXT-SSE-001/*/response.json"))
+    original = response.read_bytes()
+    assert load_capture(response).capture.tail.pending_data is False
+    service = DiagnosticService(tmp_path / "data")
+    facts = service.source_facts(delivered)
+    assert object_value(facts["evidence_verification"])["status"] == "verified"
+    eligibility = object_value(facts["eligibility"])
+    assert eligibility["retest"] is eligibility["compare"] is True
+    comparison = service.compare_sources(before, delivered).document
+    assert comparison["comparable"] is True
+    assert comparison["all_previous_failures_passed"] is True
+    assert response.read_bytes() == original

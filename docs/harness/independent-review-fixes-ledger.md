@@ -18,11 +18,11 @@ review below adds two related evidence-validation findings requiring correction.
 | Finding | Priority | Current state | Next action |
 | --- | --- | --- | --- |
 | F01: malformed intermediate message delta is overwritten | P1 | Fixed and locally verified in 6ea328d | Complete |
-| F02: missing response evidence can still support recovery claims | P1 | Original regression fixed in fe5b4ad; follow-up gaps F05/F06 remain | See F05/F06 |
+| F02: missing response evidence can still support recovery claims | P1 | Original regression fixed in fe5b4ad; F05 corrected; F06 remains | See F06 |
 | F03: replay trusts contradictory cached tail metadata | P2 | Fixed and locally verified in 575f279 | Complete |
 | F04: imported dimensions and request counts contradict facts | P2 | Fixed and locally verified in 9a30567 | Complete |
-| F05: report reader accepts internally contradictory capture metadata | Important | Reproduced; accepted for correction | Next bounded fix |
-| F06: observed PASS assertions accept request-only proof | Important | Reproduced; accepted for correction | After F05 |
+| F05: report reader accepts internally contradictory capture metadata | Important | Fixed and locally verified in this delivery | Complete |
+| F06: observed PASS assertions accept request-only proof | Important | Reproduced; accepted for correction | Next bounded fix |
 
 ## F01: retain malformed stop-field failures
 
@@ -431,3 +431,70 @@ records `exited`, `running=false`, exit code 0. No test/build task remains runni
 no replacement container, network or volume was created. Stop with a local
 documentation-only commit. No Docker build, endpoint call, remote write, fix
 implementation or automatic follow-on review is part of this turn.
+
+## F05: align report evidence with existing capture integrity checks — 2026-10-21
+
+The owner authorized one F05 correction turn from clean `46da8c6`. F06, image
+acceptance and another review are outside this turn. Work uses the existing
+Linux ARM64/Python 3.12.15 Dev Container; offline locked sync succeeded.
+
+Root cause: `attempt_evidence_errors` checked the capture schema, complete local
+inventory and enclosing hashes, but omitted relational checks already enforced
+by `load_capture`. A package could therefore be invalid for replay but retain
+verified report quality, controlled retest/comparison and recovery claims.
+
+Correction: after inventory binding, call that same capture reader on the safe
+response path. Existing read/parse/integrity failures enter the existing readable
+evidence-limitation path. No duplicate integrity implementation, protocol
+revalidation, new contract/schema version or broader assertion-proof rule is
+introduced. F03's byte-derived EOF tail and conservative incomplete/transformed
+handling remain unchanged. This aligns the existing reader checks; it is not a
+claim of author authenticity or exhaustive validation of every capture field.
+
+New negative variants change only retained length, the embedded request, original
+body hash, original length or structural digest. Enclosing result/context and
+response hashes remain coherent. Each is first confirmed invalid by the existing
+capture reader, then tested through source facts, comparison, evidence export,
+independently assembled ZIP import and repeated stored-baseline reads. All five
+failed before implementation because report quality was still `verified`.
+After correction they remain readable with `missing_or_invalid` proof, without
+controlled permissions or recovery; evidence export rejects the invalid source.
+All submitted bytes remain unchanged on read. No old expectation was weakened.
+
+Positive controls preserve healthy recovery and admit complete valid captures
+with an obsolete pending-tail cache flag in both capture schema versions 1.0/1.1.
+The existing evidence tests also exercise transformed data, partial/cancelled
+captures and both directions of byte/cache disagreement. No golden was rewritten.
+
+| Executed check | Observed result | Retained evidence under `artifacts/review-fixes-20261021/f05/` |
+| --- | --- | --- |
+| Initial core RED | 5 failures, 9 passed; no errors/skips | `red.log`, `red.xml` |
+| Core after correction, including replay/evidence | 27 passed; no failures/errors/skips | `green.log`, `green.xml` |
+| Initial related command | Exit 4, no tests ran: nonexistent `tests/acceptance/test_review.py` | `related.log` |
+| Corrected report/import/export/comparison/accounting/runner/review regression command | 102 passed; no failures/errors/skips | `related-2.log`, `related-2.xml` |
+| Fast graph | All 8 gates passed on unchanged source; 475 Python unit/harness and 20 Node tests | `fast/check-result.json`, JUnit files |
+| Documentation contracts and links | Exit 0 | `documentation.log` |
+
+The initial related-command typo was corrected to the existing
+`test_review_regressions.py`; its failed log remains retained and does not count
+as a passing test. Focused counts overlap prior verification and are not summed
+into a whole-stage claim. No new broad browser, installed-package, image, remote
+CI or real endpoint/client workflow verification ran.
+
+Fast observed the uncommitted patch on base
+`46da8c6c42cf19dc814fb6ec7640a3ca28828833`, with source fingerprint
+`01205080ed51dcdce39ad1da4c4f51de533938481cf83868d4f57bdcfbeaa90b`.
+Main record SHA-256:
+`ae0db57bd351831b5bb3bc775233295d5793f08c096b6e858148838e073def85`.
+The exact source/test `correction.diff` has SHA-256
+`b630fbdabf23ef1fc85d37663a473ceb66676d0ef04f668b00dd7ebb09150308`.
+`verify_observation.py` checks actual JUnit cases, RED failures, executed fast
+gates and current fingerprint, retaining a separate `observed-summary.json`.
+Original full-source and review records remain unchanged and tied to their
+original source; fast still reports stage readiness incomplete.
+
+After documentation checks, the container was restored to its original stopped
+state. `container-final-state.json` records `exited`, `running=false`, exit code 0.
+Stop after the local F05 commit with no test/build task running.
+No replacement container/network/volume, remote write,
+F06 implementation or automatic follow-on review/build is part of this delivery.
