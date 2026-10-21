@@ -1165,3 +1165,25 @@ Documentation/schema/evidence checks passed in Linux. The prepared container is
 stopped again, exit 0. No registry/package publication, extra container matrix,
 real API call, new review or unfinished local task remains. Stop after the final
 publication-record push; diagnose the new remote failures in the next bounded task.
+
+## Sole unchanged CI retry still failed — 2026-10-22
+
+The owner authorized a retry if environmental variance was plausible. Prior trace
+inspection showed the original composite browser test had consumed 39.52 of 40
+seconds before waiting for export; the wait itself lasted 0.83 seconds. Exactly
+one failed-job rerun was requested on unchanged 7b69b53. Attempt 2 completed with
+failure: 3.12 reproduced the same comparison-export deadline; 3.11 browser suite
+hit 300 seconds; Dev Container browser gate failed. Both quality Python suites
+passed all 822 Python and 20 Node cases this time, including integration at 594.05
+and 529.25 seconds. Existing native AMD64 smoke success was retained, not rerun.
+
+The second trace also exhausted the overall 40-second budget near export. Evidence
+supports persistent CI timing/performance sensitivity, not a proven one-off outage;
+product hot-path cost versus composite test/budget design remains unproven. No
+protocol/report-value mismatch was observed in completed reports. No product,
+test, dependency, workflow or timeout was changed and no further retry was made.
+Original/new artifact IDs, traces, machine records, accurate counts and hashes are
+in the publication ledger and ignored artifacts/publication-20261021. Linux
+schema/evidence/documentation checks passed; the prepared container is stopped,
+exit 0. Stop after pushing this docs-only [skip ci] record. Next diagnose actual
+slow stages before deciding optimization, test restructuring or justified limits.

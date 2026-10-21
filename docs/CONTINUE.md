@@ -1,6 +1,6 @@
 # Local delivery status
 
-## GitHub published; first remote CI needs follow-up
+## GitHub published; unchanged CI retry confirms a persistent timing problem
 
 The owner approved the public repository
 https://github.com/sleetdrop/anthropic-readiness, MIT licensing and first push as
@@ -12,11 +12,26 @@ all Python/Node tests but one browser case timed out waiting for comparison expo
 Python 3.12 browser/integration gates timed out; Dev Container's browser gate failed.
 The aggregate gate correctly failed. Remote CI is not green.
 
+The owner then authorized one unchanged retry if evidence supported environmental
+variance. Trace inspection showed the first 40-second browser test had spent
+39.52 seconds before beginning its export-response wait; that wait lasted only
+0.83 seconds before the global deadline. Exactly one failed-job retry ran on the
+same `7b69b53`, with no source/dependency/timeout changes. Attempt 2 also failed:
+Python 3.12 reproduced the same comparison-export case at the 40-second deadline;
+Python 3.11's browser graph hit 300 seconds; Dev Container's browser gate failed.
+Both quality integration suites passed this time, in 594.05 and 529.25 seconds.
+The previously successful native AMD64 smoke was retained, not rerun.
+
+This is a repeatable timing/performance sensitivity on CI, not established as a
+one-off infrastructure failure. It does not yet identify a product defect versus
+an overlarge test/insufficient budget. No observed protocol/report-value assertion
+failure was found in the completed reports. Do not retry again without diagnosis.
+
 Next bounded task is to diagnose the remote browser failure and CI gate timing
 from retained traces/records, reproduce meaningfully, and decide a justified fix.
 Do not assume a slow runner explains the export failure, increase limits blindly,
 skip assertions or repeatedly rerun until green. No product/test/workflow/budget
-change or CI retry was made during publication. See the
+change was made during publication or the separately authorized retry. See the
 [publication ledger](harness/github-publication-ledger.md) for exact counts,
 original failures and safe stopping state. Local correction/source/image baselines
 remain below with their original identities. No registry/package publication occurred.

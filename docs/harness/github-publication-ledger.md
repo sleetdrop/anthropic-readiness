@@ -90,3 +90,65 @@ record of the failed run; it neither retries nor claims to repair that run.
 Documentation/schema/evidence checks passed locally in Linux. The prepared
 container was restored to stopped, exit 0; no local test/build task remains running.
 The first remote run is terminal. Stop after pushing this honest closeout record.
+
+## One unchanged failed-job retry — 2026-10-22
+
+The owner asked whether the failures were environmental or implementation-related,
+and authorized one retry if environmental variance was plausible. Systematic
+inspection of retained traces preceded the retry. The original failing test's
+first trace step to export-response wait consumed 39,524.59 ms of its configured
+40,000-ms test budget; the wait then lasted only 827.14 ms before timeout/teardown.
+The request was actually sent. This is not evidence that an export hung for forty
+seconds. No browser page exception or content-assertion failure was observed in
+that trace. Broader gate timing differed materially across the original runners.
+
+Exactly one `gh run rerun 39630071527 --failed` was requested, without changing
+source, locks, dependencies, assertions or any time budget. It became attempt 2 on
+the original `7b69b530f3997785808448b0cf1687c3bba3dfaa`. The original attempt's
+local logs, machine records, artifacts and hashes remain unchanged. The passed
+runtime-amd64 result retains its original 15:55–15:56 UTC execution, not a new run.
+
+Attempt 2 completed with failure. It ran the failed jobs between 16:23 and 16:42
+UTC on 2026-10-21 (00:23–00:42 Asia/Shanghai on 2026-10-22).
+
+| Job | Retry observation |
+| --- | --- |
+| quality (3.11) | Browser graph blocked at 301.06 seconds, no browser JUnit; all other 12 gates passed. All 822 Python and 20 Node tests passed; integration took 594.05 seconds |
+| quality (3.12) | Browser gate failed; the same comparison-export test hit its 40-second total limit, 77 other browser cases passed. All 822 Python and 20 Node tests passed; integration took 529.25 seconds |
+| devcontainer | Browser gate failed, remaining 12 gates passed per log; no per-case report upload exists for this job |
+| runtime-amd64 | Prior native AMD64 smoke success retained; not rerun |
+| ci-required | Failed, correctly retaining unsuccessful child outcomes |
+
+The second browser trace reached the export-response wait after 38,306.30 ms;
+that wait lasted 1,992.98 ms until timeout/teardown. Thus the same composite test
+again exhausted its total deadline near export, rather than proving an export
+specific forty-second hang. These two traces do not independently prove that
+export would complete or rule out a performance defect. Browser suite limits
+and integration limits are separate from this per-test deadline.
+
+Conclusion: CI timing/performance sensitivity persists across the sole unchanged
+retry; it cannot be dismissed as one transient infrastructure failure. Completed
+reports contain no observed protocol/report-value mismatch. Product hot-path cost,
+composite test design and budget calibration remain competing causes requiring
+measurement. No new timeout or test expectation was introduced to obtain green.
+Next is one bounded diagnosis of actual CI/local stage timings and the slow
+comparison/render/export path, then a justified correction with meaningful
+verification. Do not start another unchanged retry or general review loop.
+
+Retained evidence is under `artifacts/publication-20261021/`:
+`ci-retry-result.json`, `ci-retry-watch.log`, `ci-retry-devcontainer.log`, explicit
+new artifact-ID ZIPs/extractions (`ci-retry-py311`, `ci-retry-py312`) and both trace
+budget observations. New artifacts were downloaded by ID to avoid overwriting
+same-name attempt-1 artifacts. Result/schema/JUnit checks ran separately in Linux.
+
+| Record | SHA-256 |
+| --- | --- |
+| ci-retry-result.json | bea2d241e2cff8b7c123d0cd26701c9717026c9888015b6070dcb447fd62b5e1 |
+| ci-retry-py311/1792599825748240293/check-result.json | c4af47cb51169317f52391110e8a0561815fd332acec1b4f5defa2f5060a23e4 |
+| ci-retry-py312/1792599829934797774/check-result.json | 08662aeeaf12da737514b9715c91893b5213ded5d3a14806e9fe691eeccb7915 |
+
+Only documentation records changed in this diagnostic/retry turn. The closeout
+uses `[skip ci]` for this prose-only record, retaining attempt 2 as failed; it is
+not a CI fix or another retry. Documentation/schema/evidence checks passed.
+The prepared container was restored to stopped, exit 0. No local test/build task
+or remote retry remains running. Stop after the documentation-record push.
