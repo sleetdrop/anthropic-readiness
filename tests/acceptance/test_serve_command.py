@@ -48,7 +48,7 @@ def test_real_serve_start_and_signal_shutdown(tmp_path: Path) -> None:
     with socket.socket() as sock:
         sock.bind(("127.0.0.1", 0))
         port = sock.getsockname()[1]
-    process = subprocess.Popen(
+    with subprocess.Popen(
         [
             sys.executable,
             "-m",
@@ -62,25 +62,39 @@ def test_real_serve_start_and_signal_shutdown(tmp_path: Path) -> None:
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         text=True,
-    )
-    try:
-        with httpx.Client(trust_env=False, timeout=0.2) as client:
-            deadline = time.monotonic() + 5
-            while time.monotonic() < deadline:
-                try:
-                    response = client.get(f"http://127.0.0.1:{port}/health")
-                    if response.status_code == 200:
-                        break
-                except httpx.HTTPError:
-                    pass
-                time.sleep(0.02)
-            else:
-                raise AssertionError("serve_did_not_start")
-        os.kill(process.pid, signal.SIGTERM)
-        stdout, stderr = process.communicate(timeout=8)
-        # The locked Uvicorn replays SIGTERM only after lifespan shutdown.
-        assert process.returncode == -signal.SIGTERM, (stdout, stderr)
-    finally:
-        if process.poll() is None:
-            process.kill()
-            process.wait(timeout=2)
+    ) as process:
+        try:
+            with httpx.Client(trust_env=False) as client:
+                deadline = time.monotonic() + 5
+                ready = False
+                last_status = None
+                last_error = None
+                while (remaining := deadline - time.monotonic()) > 0 and process.poll() is None:
+                    try:
+                        # Cold contract validation may exceed 200 ms. Repeatedly
+                        # abandoning healthy requests adds competing server work.
+                        response = client.get(f"http://127.0.0.1:{port}/health", timeout=remaining)
+                        last_status = response.status_code
+                        if response.status_code == 200 and time.monotonic() <= deadline:
+                            ready = True
+                            break
+                    except httpx.HTTPError as error:
+                        last_error = type(error).__name__
+                    time.sleep(min(0.02, max(0, deadline - time.monotonic())))
+                if not ready:
+                    if process.poll() is None:
+                        process.kill()
+                    stdout, stderr = process.communicate(timeout=2)
+                    raise AssertionError(
+                        f"serve_did_not_start: returncode={process.returncode}; "
+                        f"last_status={last_status}; last_error={last_error}; "
+                        f"stdout={stdout!r}; stderr={stderr!r}"
+                    )
+            os.kill(process.pid, signal.SIGTERM)
+            stdout, stderr = process.communicate(timeout=8)
+            # The locked Uvicorn replays SIGTERM only after lifespan shutdown.
+            assert process.returncode == -signal.SIGTERM, (stdout, stderr)
+        finally:
+            if process.poll() is None:
+                process.kill()
+                process.wait(timeout=2)

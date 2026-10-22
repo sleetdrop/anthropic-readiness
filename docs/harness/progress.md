@@ -1333,3 +1333,44 @@ and `433fe2c1f83b5859d1d372eb15205af978a6b2c543a73f272e384b831941786b`.
 Record this observation locally without pushing it or starting another workflow.
 Full native matrix, repository protection, registry publishing and real APIs remain
 outside the completed publication/observation operation.
+
+## 2026-10-22: Startup acceptance probe correction, locally verified
+
+Owner authorized diagnosing and locally correcting the PR CI acceptance failure.
+Source baseline cd88f6d; existing checkout and Linux/Python 3.12 container reused.
+Original startup/report acceptance passed 14 locally, so historical scheduling
+could not simply be assumed. Three RED regressions then demonstrated that the old
+probe discarded an exited child's stderr/23 status, left its stdout/stderr open,
+and incorrectly rejected healthy 300-ms responses by repeatedly cancelling each
+at 200 ms. The shared five-second readiness deadline did not require that extra
+200-ms latency assertion. A controlled two-burner/single-CPU old/new comparison
+observed original failure at 5.138 seconds/two open pipes, corrected success at
+3.929 seconds/zero open pipes. A separate original-probe/GC diagnosis observed
+exactly two ResourceWarnings for the unclosed pipe wrappers.
+
+Only the acceptance probe and regression tests change behavior. Requests now use
+remaining readiness budget; late 200 responses are still rejected. Early exit or
+deadline failure preserves child status, last HTTP status/error and captured
+streams. Context ownership closes pipes and finally terminates/reaps active child
+processes. Five-second readiness, eight-second SIGTERM, two-second cleanup and
+the exact -SIGTERM success assertion remain intact. No product source, protocol,
+schema, golden file or warning-as-error policy was relaxed. Historical CI lacked
+startup stderr, so this establishes a reproducible mechanism, not proof that every
+historical failure had identical timing. Remote validation remains necessary.
+
+All 17 focused regressions/original related cases passed; Ruff and strict mypy
+passed. Initial diagnostic import-path and mypy module-export issues were fixed
+without changing behavior, and their original logs remain. One independent bounded
+static review found no material issue; no extra implementation/review agents ran.
+Final full unchanged-source Linux ARM64/Python 3.12.15 graph passed all thirteen
+gates: 842 Python (495 unit/harness, 258 integration, 84 acceptance, 5 package),
+20 Node, 78 Chromium; zero failures/errors/skips. Browser 191.76 seconds,
+integration 230.37 seconds, acceptance 57.88 seconds under original gate limits.
+Fingerprint `f88890a88a999e101ee4a23036db0a911beb3960b89ead4a1d92c76ed4ebed64`;
+record hash `5dd6dbabc83cff9a543d7346eca031db6892c74460da152051db775bc6036452`.
+The observed run was the patch on cd88f6d. Exact source/case accounting and all
+original attempts are retained in ignored artifacts/ci-startup-20261022/.
+
+Stop after the scoped local commit and container shutdown. No push, PR mutation,
+remote rerun, full image matrix, real model call or registry write occurred for this
+correction. PR 1 remains open with its original eb82885 failed remote result.
