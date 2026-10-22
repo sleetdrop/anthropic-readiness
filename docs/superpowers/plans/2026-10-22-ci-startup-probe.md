@@ -52,3 +52,13 @@ Watch completed with exit 0; raw outcomes, job logs and metadata are retained
 under ignored artifacts/ci-startup-20261022/new-ci-*. Original failed records
 remain intact. The observation closeout is a local-only docs commit; no second
 push, unchanged retry, merge, full native matrix or registry publication follows.
+
+## Subsequent owner-authorized PR merge
+
+- [x] Recheck exact PR head, latest PR CI and mergeability; merge PR 1 into main with a head-match guard.
+- [x] Verify GitHub MERGED state and record the distinct post-merge CI as pending.
+
+GitHub confirms merge commit `10c7933e76258abd1c1a5f953954287d719a7850`,
+2026-10-22T09:51:43Z. Automatic main push CI 39758681663 was observed running,
+not passed. Branches and local-only observation commits remain preserved. No
+full image matrix, extra push or registry publication is included in this step.

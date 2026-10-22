@@ -1,5 +1,20 @@
 # Local delivery status
 
+## PR 1 merged; main CI running
+
+The owner authorized merging PR 1. Rechecked its exact head `6dcd27a`, clean
+mergeability and all five successful PR CI jobs, then merged with a head-match
+guard. GitHub confirms MERGED at 2026-10-22T09:51:43Z into main, merge commit
+`10c7933e76258abd1c1a5f953954287d719a7850`.
+The [post-merge main CI](https://github.com/sleetdrop/anthropic-readiness/actions/runs/39758681663)
+was observed in progress, not yet passed. Prior successful PR CI remains distinct
+from this new run. No full native image matrix or registry publication started.
+
+Local branch and its unpublished observation commits are preserved; no branch
+deletion or extra push accompanies this merge. Merge metadata and initial main CI
+state are retained in ignored artifacts/ci-startup-20261022/. The earlier open-PR
+statements below describe their historical observation points.
+
 ## Startup probe correction published; fresh PR CI passed
 
 The owner authorized pushing the correction to the existing feature branch and

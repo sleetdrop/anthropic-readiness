@@ -1404,3 +1404,20 @@ Closeout documentation/collaboration checks passed in the existing Linux
 development container; whitespace validation passed. The PR description was
 updated successfully with the new CI result and its limits. Source implementation
 was unchanged during publication/observation; no full local suite was repeated.
+
+## 2026-10-22: Owner-authorized merge of PR 1
+
+Rechecked GitHub: PR 1 OPEN, non-draft, mergeable/CLEAN, exact source head
+6dcd27a9ce5e68c2c408e5bd331f32e454cb7880 and five successful jobs in its latest
+PR CI. Unrelated skipped feature-branch push checks were not counted as passes.
+Merged with merge-commit strategy and an exact head-match guard. GitHub confirms
+MERGED at 2026-10-22T09:51:43Z into main with merge commit
+10c7933e76258abd1c1a5f953954287d719a7850. Post-merge main CI 39758681663 was
+observed in progress; its completion is not yet verified. Existing PR evidence
+does not establish this new run's result.
+
+Local feature branch and unpublished observation commit 4cdfe66 are preserved.
+This handoff update is also local-only. No source changes, branch deletion,
+additional push, manual matrix dispatch, registry write or real endpoint call.
+Ignored pr-merge-result.json and post-merge-runs.json retain the remote responses
+under artifacts/ci-startup-20261022/.
