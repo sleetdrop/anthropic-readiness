@@ -1295,3 +1295,41 @@ No push, workflow dispatch, branch-protection setting, image publication or real
 model call occurred. The previous remote green run retains its original source;
 new remote CI and complete native container matrix outcomes are pending. Stop
 after local commit and shutdown; do not automatically begin another task.
+
+## 2026-10-22: PR 1 published; first remote observation is failed
+
+Owner explicitly approved pushing the feature branch and creating/observing its
+PR, stopping before merge or full matrix dispatch. Pushed code eb82885 and opened
+https://github.com/sleetdrop/anthropic-readiness/pull/1 against main, without force.
+Source was rechecked against local full-run evidence before pushing. The first PR
+run 39718653050 completed with failure: quality 3.11 and native AMD64 smoke passed;
+quality 3.12 and Dev Container failed acceptance; ci-required correctly failed.
+The separate branch push run 39718218768 was skipped, not passing acceptance.
+
+All four always-run summary/upload steps succeeded, and artifact expiration is
+2026-11-05 (14 days). The new Dev Container artifact was downloaded and inspected,
+closing the original evidence gap. Both downloaded failing environments observed
+clean PR merge commit 4af5a8e and unchanged fingerprint
+`946ea1950af2d0b0a78c351c339110db547f6cb1cac846779c3719ae1b9cd3bb`.
+Each retained 492 unit/harness, 258 integration, 84 acceptance (82 passed, 2 failed),
+5 package, 20 Node and 78 Chromium, zero skips. All twelve other gates passed.
+The committed summary script rendered failed acceptance and actual counts from
+the downloaded evidence. GitHub summary visual rendering was not inspected.
+
+Both first failed test_real_serve_start_and_signal_shutdown, with no health success
+within the existing five-second deadline. Subsequent report cases failed on
+unclosed-file ResourceWarnings, not report-content assertions. Startup root cause
+and warning allocation/cascade remain unproven; separate reproduction is needed.
+No product/test fix, deadline increase or rerun occurred. PR description now records
+the real failed outcomes and limits; it remains open and unmerged.
+
+Ignored artifacts/ci-observability-20261022 retains pr-ci-result.json, raw failed
+logs, pr-py312/ and pr-devcontainer/ complete downloads, pr-observed-summary.json
+and the rendered failed summary. Download was slow but completed. An auxiliary
+selective ZIP range attempt timed out and is retained separately, never used as
+successful evidence. Source result SHA-256 values are
+`135fa20c9c711f02e2dae6ec667b568e1571d11d95b6997cac86739f8dbfff9d`
+and `433fe2c1f83b5859d1d372eb15205af978a6b2c543a73f272e384b831941786b`.
+Record this observation locally without pushing it or starting another workflow.
+Full native matrix, repository protection, registry publishing and real APIs remain
+outside the completed publication/observation operation.

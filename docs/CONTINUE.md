@@ -1,6 +1,39 @@
 # Local delivery status
 
-## CI evidence and observability: locally verified, remote execution pending
+## PR 1 published: evidence upload verified, acceptance failures remain
+
+The owner authorized pushing `codex/ci-evidence-observability`, creating
+[PR 1](https://github.com/sleetdrop/anthropic-readiness/pull/1) and observing CI,
+then stopping before merge or full image-matrix dispatch. Code head is `eb82885`.
+The [first PR CI run](https://github.com/sleetdrop/anthropic-readiness/actions/runs/39718653050)
+completed with failure: Python 3.11 and native AMD64 smoke passed; Python 3.12 and
+Dev Container failed acceptance, and `ci-required` correctly failed. The separate
+non-default-branch push run was skipped, not a passing verification.
+
+All four summary and upload steps succeeded, including the new Dev Container
+artifact. Metadata confirms retention through 2026-11-05. Downloaded Python 3.12
+and Dev Container records observed clean PR merge commit `4af5a8e` with unchanged
+source fingerprint `946ea1950af2d0b0a78c351c339110db547f6cb1cac846779c3719ae1b9cd3bb`.
+Each retained 492 unit/harness, 258 integration, 84 acceptance (82 passed, 2 failed),
+5 package, 20 Node and 78 Chromium cases, zero skips; only acceptance failed.
+Rendering downloaded failed evidence with the committed summary script preserved
+the failures and actual counts. GitHub summary visual rendering was not inspected.
+
+Both first fail `test_real_serve_start_and_signal_shutdown`: no successful health
+response within its existing five-second deadline. Subsequent report cases fail on
+unclosed-file ResourceWarnings, not report-content assertions. The startup root
+cause and allocation/cascade need reproduction; do not label these environmental
+flakes or increase deadlines without evidence. No product/test fix or CI rerun was
+performed. Raw artifacts, failure logs and verified accounting remain in ignored
+`artifacts/ci-observability-20261022/`, especially `pr-observed-summary.json`.
+
+PR remains open and unmerged. Stop after the local observation record; do not push
+this docs-only record automatically or dispatch another workflow. Next bounded task
+is reproduction and diagnosis of the startup failure and failure-path pipe cleanup.
+Native full container matrix, repository protection and registry publishing remain
+separate later steps. The earlier local acceptance below is not remote green CI.
+
+## Previous local CI evidence implementation: offline verification passed
 
 The owner approved the first bounded CI follow-up. Changes are on local branch
 `codex/ci-evidence-observability`, based on `7fb1bcd`. Dev Container now uploads
