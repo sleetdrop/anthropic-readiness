@@ -1374,3 +1374,33 @@ original attempts are retained in ignored artifacts/ci-startup-20261022/.
 Stop after the scoped local commit and container shutdown. No push, PR mutation,
 remote rerun, full image matrix, real model call or registry write occurred for this
 correction. PR 1 remains open with its original eb82885 failed remote result.
+
+## 2026-10-22: Published startup probe correction; fresh PR CI passed
+
+Owner separately authorized pushing the correction and trying fresh CI. Read-only
+source/JUnit accounting before push matched the accepted local full record and
+fingerprint f88890a8. Pushed cd88f6d and correction 6dcd27a normally to the existing
+feature branch/PR 1; no main update or force push. New PR CI run 39737268733 on
+6dcd27a9ce5e68c2c408e5bd331f32e454cb7880 completed successfully. Its five jobs
+passed: quality (3.11), quality (3.12), actual Dev Container, native AMD64 runtime
+smoke and ci-required. Downloaded logs confirm all thirteen main gates passed
+in each full-check environment, including the previously failing acceptance
+groups. Watch used a 600-second interval and terminated with exit 0.
+
+All four summary/upload pairs succeeded. Artifact metadata records four retained
+archives expiring 2026-11-05; their PR merge identity is 5fd3785. Full remote JUnit
+archives were not downloaded or independently recounted, so no exact remote case
+counts are claimed. Separate branch push run 39737266229 was skipped by design,
+not passed. The first failed PR run and diagnostic RED evidence remain intact;
+fresh success does not recover its discarded startup stderr.
+
+Outcome metadata, full-check job logs and terminal watch output are retained in
+ignored artifacts/ci-startup-20261022/new-ci-*. Update PR description to the new
+observed state and make a local-only documentation closeout commit. No second
+push/retry, merge, full native image matrix, real endpoint call, registry write or
+repository-protection change belongs to this operation.
+
+Closeout documentation/collaboration checks passed in the existing Linux
+development container; whitespace validation passed. The PR description was
+updated successfully with the new CI result and its limits. Source implementation
+was unchanged during publication/observation; no full local suite was repeated.

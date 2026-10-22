@@ -1,6 +1,26 @@
 # Local delivery status
 
-## Startup acceptance probe corrected locally; remote revalidation pending
+## Startup probe correction published; fresh PR CI passed
+
+The owner authorized pushing the correction to the existing feature branch and
+observing fresh CI. PR 1 head is `6dcd27a9ce5e68c2c408e5bd331f32e454cb7880`.
+The [new PR CI run](https://github.com/sleetdrop/anthropic-readiness/actions/runs/39737268733)
+passed all five jobs: quality (3.11), quality (3.12), actual Dev Container,
+native AMD64 runtime smoke and ci-required. Downloaded job logs confirm all
+thirteen gates passed in each of the three full-check environments, including
+acceptance. All four summary/upload pairs succeeded; artifact metadata confirms
+retention through 2026-11-05. Full remote JUnit archives were not downloaded or
+independently recounted, so the exact local counts below are not remote counts.
+The separate feature-branch push run was skipped, not passing verification.
+
+The earlier failed PR run remains historical evidence. The correction now has
+fresh remote verification; this does not recover discarded historical stderr.
+PR remains open and unmerged. Record this observation in a local-only docs commit
+to avoid triggering another unchanged-source CI run. Full native AMD64/ARM64 image
+acceptance, repository protection and registry publishing remain separate steps.
+New evidence is retained under ignored `artifacts/ci-startup-20261022/new-ci-*`.
+
+## Previous local startup acceptance probe correction
 
 The owner authorized diagnosis and local correction of the failed PR CI. Follow
 [the bounded correction plan](superpowers/plans/2026-10-22-ci-startup-probe.md).
@@ -24,10 +44,9 @@ record SHA-256 `5dd6dbabc83cff9a543d7346eca031db6892c74460da152051db775bc6036452
 Observed source was the patch on cd88f6d, not a clean future commit.
 
 Retain all evidence under ignored `artifacts/ci-startup-20261022/`, especially
-full-final/, observed-summary.json and comparison.json. Stop after local commit
-and container shutdown. PR 1 remains on eb82885 with its earlier failed CI; no
-push, merge, remote retry or full image matrix was performed for this correction.
-The next step requires owner-authorized publication and fresh remote validation.
+full-final/, observed-summary.json and comparison.json. That local operation
+stopped after commit and container shutdown, with PR 1 still on eb82885. The
+subsequent owner-authorized publication and successful CI are recorded above.
 
 ## PR 1 published: evidence upload verified, acceptance failures remain
 
@@ -58,7 +77,7 @@ logs and verified accounting remain in ignored
 `artifacts/ci-observability-20261022/`, especially `pr-observed-summary.json`.
 
 PR remains open and unmerged. The owner subsequently authorized the local probe
-diagnosis/correction recorded above; remote revalidation is still pending. Native
+correction and fresh remote verification recorded above. Native
 full container matrix, repository protection and registry publishing remain
 separate later steps. The earlier local acceptance below is not remote green CI.
 
