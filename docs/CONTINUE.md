@@ -1,5 +1,27 @@
 # Local delivery status
 
+## User trial running; additional release acceptance deferred
+
+The owner prioritized hands-on use over another verification round. Current-source
+Web service is running at http://localhost:8765 in readiness-trial-readiness-1,
+with persistent volume readiness-trial_readiness-data. Keep this container
+running for the user. Health returned status ok and homepage returned HTTP 200.
+No real model request was sent. The installed scope remains four formal cases;
+do not describe this trial as comprehensive protocol/client certification.
+
+Current wheel was built using cached build stages and installed offline into the
+existing ARM64 Web environment; pyproject.toml, uv.lock and Dockerfile match its
+original revision e4e9de4. Package dependency checking passed. A normal Web build
+stalled downloading pydantic-core and was interrupted; its log is retained. The
+trial image is anthropic-readiness-web:trial-ready, revision a5b66e2; image-context
+label is explicitly unknown. This is local trial delivery, not fresh full image
+matrix acceptance or registry publication. No additional test graph was run.
+
+Run/stop configuration is ignored artifacts/ci-startup-20261022/trial-compose.yaml,
+used with compose.yaml and project readiness-trial. Preserve its data volume.
+The post-merge main CI 39758681663 was subsequently confirmed successful in all
+five jobs. The earlier running-CI observation below is historical.
+
 ## PR 1 merged; main CI running
 
 The owner authorized merging PR 1. Rechecked its exact head `6dcd27a`, clean

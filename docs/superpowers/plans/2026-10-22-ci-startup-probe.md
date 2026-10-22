@@ -62,3 +62,15 @@ GitHub confirms merge commit `10c7933e76258abd1c1a5f953954287d719a7850`,
 2026-10-22T09:51:43Z. Automatic main push CI 39758681663 was observed running,
 not passed. Branches and local-only observation commits remain preserved. No
 full image matrix, extra push or registry publication is included in this step.
+
+## User trial handoff
+
+Owner prioritized immediate use and deferred the proposed full native image
+matrix. Main CI 39758681663 subsequently completed successfully in all five jobs.
+Current-source ARM64 Web trial is running at localhost:8765, using cached locked
+dependencies, an offline current-wheel install and an independent persistent
+data volume. Health and homepage returned success. Standard build's stalled
+download was interrupted and retained; trial image-context is unknown. No full
+test graph, new protocol coverage, real endpoint call or publication occurred.
+Leave readiness-trial-readiness-1 running; collect user feedback before proposing
+another implementation or verification round.

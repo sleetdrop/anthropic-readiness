@@ -1421,3 +1421,24 @@ This handoff update is also local-only. No source changes, branch deletion,
 additional push, manual matrix dispatch, registry write or real endpoint call.
 Ignored pr-merge-result.json and post-merge-runs.json retain the remote responses
 under artifacts/ci-startup-20261022/.
+
+## 2026-10-22: Deliver local hands-on trial before further release checks
+
+Owner objected to postponing actual use behind another container acceptance
+round. Deferred full native matrix; no new feature or test graph was added.
+Post-merge main CI 39758681663 was confirmed completed/success with all five
+jobs. Built current wheel from cached stages, then installed it offline into the
+existing ARM64 Web image with identical pyproject.toml/uv.lock/Dockerfile to
+its source revision e4e9de4. Dependency check passed. Standard Web build stalled
+on pydantic-core download; interrupted it (exit 130), retaining its original log.
+The local trial image has revision a5b66e2 and explicitly unknown image-context;
+do not claim new full image acceptance. No production source change or real
+endpoint request occurred.
+
+Started readiness-trial-readiness-1 using Compose project readiness-trial and
+independent persistent volume readiness-trial_readiness-data. Only host loopback
+8765 is published. Health returned status ok; homepage HTTP 200, 88386 bytes.
+Initial sandbox-local HTTP attempts could not connect; host-permitted reads
+succeeded. Leave service running for user access at http://localhost:8765.
+The four formal cases remain the installed scope. Local build/start logs and
+the Compose override are ignored under artifacts/ci-startup-20261022/.
