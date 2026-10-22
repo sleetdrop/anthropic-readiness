@@ -1256,3 +1256,121 @@ upgrades remain unrun for this correction. Evidence/documentation checks passed;
 the prepared container is stopped again, exit 0. All observed remote jobs are
 terminal. Stop after the final docs-only [skip ci] observation commit/push, without
 another review, retry or feature stage.
+
+## 2026-10-22: CI evidence and observability, local delivery
+
+Owner-approved bounded task on `codex/ci-evidence-observability`, baseline 7fb1bcd.
+Dev Container now retains `artifacts/checks/`; full image matrix retains both
+image and inner developer results. A standard-library summary presents recorded
+status, gate durations, fingerprints, missing checks and actual JUnit testcase
+nodes. It neither changes gate verdicts nor certifies evidence integrity. Missing,
+malformed or empty evidence remains explicit; metadata is escaped and only
+selected scalar values are displayed. Outer quality/dev/smoke/aggregate budgets
+are 30/45/15/5 minutes, full matrix 180; per-ref full-matrix concurrency preserves
+active acceptance. New artifacts retain 14 days. Existing test deadlines, required
+children, locks, assertions, golden files and read-only permissions are unchanged.
+
+RED/GREEN: Five stub behavior assertions failed before implementation; a direct
+pytest import-path error was retained and corrected to documented `python -m
+pytest`. Markdown link injection separately reproduced before its fix. One fresh
+bounded reviewer identified huge-integer duration overflow; root reproduced that
+and nested metadata disclosure (two RED cases), then fixed both. Eight new summary
+tests plus six existing gate contracts passed. The exact four workflow summary
+shell commands and upload path expansion passed in disposable runner workspaces;
+existing remote artifacts also replayed offline. These are local checks only.
+
+The first full attempt retained a Ruff SIM102 failure and source changes during
+the browser wrapper; passing individual testcases did not make that run accepted.
+The final unchanged-source Linux ARM64/Python 3.12.15 full graph passed all thirteen
+gates: 839 Python (492 unit/harness, 258 integration, 84 acceptance, 5 package),
+20 Node and 78 Chromium, zero failures/errors/skips. Browser 188.59 seconds,
+integration 208.83 seconds under unchanged limits. Fingerprint
+`946ea1950af2d0b0a78c351c339110db547f6cb1cac846779c3719ae1b9cd3bb`;
+record SHA-256 `1dfbaafe65713a4d24c30b4fac8768472ed74a0f9b2e46f2fda88dc626bde107`.
+Observed source is the patch on 7fb1bcd. Logs and verified actual counts are under
+ignored `artifacts/ci-observability-20261022/`, especially `full-final/` and
+`observed-summary.json`; the plan carries detailed rulings and scope.
+
+No push, workflow dispatch, branch-protection setting, image publication or real
+model call occurred. The previous remote green run retains its original source;
+new remote CI and complete native container matrix outcomes are pending. Stop
+after local commit and shutdown; do not automatically begin another task.
+
+## 2026-10-22: PR 1 published; first remote observation is failed
+
+Owner explicitly approved pushing the feature branch and creating/observing its
+PR, stopping before merge or full matrix dispatch. Pushed code eb82885 and opened
+https://github.com/sleetdrop/anthropic-readiness/pull/1 against main, without force.
+Source was rechecked against local full-run evidence before pushing. The first PR
+run 39718653050 completed with failure: quality 3.11 and native AMD64 smoke passed;
+quality 3.12 and Dev Container failed acceptance; ci-required correctly failed.
+The separate branch push run 39718218768 was skipped, not passing acceptance.
+
+All four always-run summary/upload steps succeeded, and artifact expiration is
+2026-11-05 (14 days). The new Dev Container artifact was downloaded and inspected,
+closing the original evidence gap. Both downloaded failing environments observed
+clean PR merge commit 4af5a8e and unchanged fingerprint
+`946ea1950af2d0b0a78c351c339110db547f6cb1cac846779c3719ae1b9cd3bb`.
+Each retained 492 unit/harness, 258 integration, 84 acceptance (82 passed, 2 failed),
+5 package, 20 Node and 78 Chromium, zero skips. All twelve other gates passed.
+The committed summary script rendered failed acceptance and actual counts from
+the downloaded evidence. GitHub summary visual rendering was not inspected.
+
+Both first failed test_real_serve_start_and_signal_shutdown, with no health success
+within the existing five-second deadline. Subsequent report cases failed on
+unclosed-file ResourceWarnings, not report-content assertions. Startup root cause
+and warning allocation/cascade remain unproven; separate reproduction is needed.
+No product/test fix, deadline increase or rerun occurred. PR description now records
+the real failed outcomes and limits; it remains open and unmerged.
+
+Ignored artifacts/ci-observability-20261022 retains pr-ci-result.json, raw failed
+logs, pr-py312/ and pr-devcontainer/ complete downloads, pr-observed-summary.json
+and the rendered failed summary. Download was slow but completed. An auxiliary
+selective ZIP range attempt timed out and is retained separately, never used as
+successful evidence. Source result SHA-256 values are
+`135fa20c9c711f02e2dae6ec667b568e1571d11d95b6997cac86739f8dbfff9d`
+and `433fe2c1f83b5859d1d372eb15205af978a6b2c543a73f272e384b831941786b`.
+Record this observation locally without pushing it or starting another workflow.
+Full native matrix, repository protection, registry publishing and real APIs remain
+outside the completed publication/observation operation.
+
+## 2026-10-22: Startup acceptance probe correction, locally verified
+
+Owner authorized diagnosing and locally correcting the PR CI acceptance failure.
+Source baseline cd88f6d; existing checkout and Linux/Python 3.12 container reused.
+Original startup/report acceptance passed 14 locally, so historical scheduling
+could not simply be assumed. Three RED regressions then demonstrated that the old
+probe discarded an exited child's stderr/23 status, left its stdout/stderr open,
+and incorrectly rejected healthy 300-ms responses by repeatedly cancelling each
+at 200 ms. The shared five-second readiness deadline did not require that extra
+200-ms latency assertion. A controlled two-burner/single-CPU old/new comparison
+observed original failure at 5.138 seconds/two open pipes, corrected success at
+3.929 seconds/zero open pipes. A separate original-probe/GC diagnosis observed
+exactly two ResourceWarnings for the unclosed pipe wrappers.
+
+Only the acceptance probe and regression tests change behavior. Requests now use
+remaining readiness budget; late 200 responses are still rejected. Early exit or
+deadline failure preserves child status, last HTTP status/error and captured
+streams. Context ownership closes pipes and finally terminates/reaps active child
+processes. Five-second readiness, eight-second SIGTERM, two-second cleanup and
+the exact -SIGTERM success assertion remain intact. No product source, protocol,
+schema, golden file or warning-as-error policy was relaxed. Historical CI lacked
+startup stderr, so this establishes a reproducible mechanism, not proof that every
+historical failure had identical timing. Remote validation remains necessary.
+
+All 17 focused regressions/original related cases passed; Ruff and strict mypy
+passed. Initial diagnostic import-path and mypy module-export issues were fixed
+without changing behavior, and their original logs remain. One independent bounded
+static review found no material issue; no extra implementation/review agents ran.
+Final full unchanged-source Linux ARM64/Python 3.12.15 graph passed all thirteen
+gates: 842 Python (495 unit/harness, 258 integration, 84 acceptance, 5 package),
+20 Node, 78 Chromium; zero failures/errors/skips. Browser 191.76 seconds,
+integration 230.37 seconds, acceptance 57.88 seconds under original gate limits.
+Fingerprint `f88890a88a999e101ee4a23036db0a911beb3960b89ead4a1d92c76ed4ebed64`;
+record hash `5dd6dbabc83cff9a543d7346eca031db6892c74460da152051db775bc6036452`.
+The observed run was the patch on cd88f6d. Exact source/case accounting and all
+original attempts are retained in ignored artifacts/ci-startup-20261022/.
+
+Stop after the scoped local commit and container shutdown. No push, PR mutation,
+remote rerun, full image matrix, real model call or registry write occurred for this
+correction. PR 1 remains open with its original eb82885 failed remote result.

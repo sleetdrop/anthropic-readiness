@@ -5,8 +5,12 @@ on:
     - cron: '17 3 * * 1'
 permissions:
   contents: read
+concurrency:
+  group: container-matrix-${{ github.ref }}
+  cancel-in-progress: false
 jobs:
   images:
+    timeout-minutes: 180
     strategy:
       fail-fast: false
       matrix:
@@ -24,9 +28,15 @@ jobs:
           persist-credentials: false
       - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
       - run: python3 scripts/check_images.py --platform '${{ matrix.platform }}' --targets runtime,web
+      - name: Summarize recorded evidence
+        if: always()
+        run: python3 scripts/ci_summary.py >> "$GITHUB_STEP_SUMMARY"
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
           name: images-${{ github.sha }}-${{ matrix.arch }}
-          path: artifacts/images/
+          path: |
+            artifacts/images/
+            artifacts/checks/
           if-no-files-found: error
+          retention-days: 14

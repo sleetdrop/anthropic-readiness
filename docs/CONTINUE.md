@@ -1,5 +1,92 @@
 # Local delivery status
 
+## Startup acceptance probe corrected locally; remote revalidation pending
+
+The owner authorized diagnosis and local correction of the failed PR CI. Follow
+[the bounded correction plan](superpowers/plans/2026-10-22-ci-startup-probe.md).
+Three real-child regressions reproduced discarded stderr, unclosed pipes and
+false startup failure for a healthy 300-ms response. The corrected test keeps the
+overall five-second readiness deadline and SIGTERM/shutdown assertions, uses the
+remaining request budget, and owns/drains/closes the child on failure. Production
+source and API/protocol contracts are unchanged. Original related acceptance plus
+new regressions passed 17 cases; changed-file Ruff/mypy passed.
+
+A controlled two-burner/single-CPU comparison reproduced original failure at
+5.14 seconds with two open pipes; corrected probe passed at 3.93 seconds with none.
+This confirms the probe mechanism, not every historical CI circumstance. An
+isolated original-probe/GC diagnosis also observed two unclosed-file warnings.
+One independent bounded review found no material issue. Final unchanged-source
+Linux ARM64/Python 3.12 full verification passed all thirteen gates: 842 Python
+(495 unit/harness, 258 integration, 84 acceptance, 5 package), 20 Node and 78
+Chromium cases, zero failures/errors/skips. Fingerprint
+`f88890a88a999e101ee4a23036db0a911beb3960b89ead4a1d92c76ed4ebed64`;
+record SHA-256 `5dd6dbabc83cff9a543d7346eca031db6892c74460da152051db775bc6036452`.
+Observed source was the patch on cd88f6d, not a clean future commit.
+
+Retain all evidence under ignored `artifacts/ci-startup-20261022/`, especially
+full-final/, observed-summary.json and comparison.json. Stop after local commit
+and container shutdown. PR 1 remains on eb82885 with its earlier failed CI; no
+push, merge, remote retry or full image matrix was performed for this correction.
+The next step requires owner-authorized publication and fresh remote validation.
+
+## PR 1 published: evidence upload verified, acceptance failures remain
+
+The owner authorized pushing `codex/ci-evidence-observability`, creating
+[PR 1](https://github.com/sleetdrop/anthropic-readiness/pull/1) and observing CI,
+then stopping before merge or full image-matrix dispatch. Code head is `eb82885`.
+The [first PR CI run](https://github.com/sleetdrop/anthropic-readiness/actions/runs/39718653050)
+completed with failure: Python 3.11 and native AMD64 smoke passed; Python 3.12 and
+Dev Container failed acceptance, and `ci-required` correctly failed. The separate
+non-default-branch push run was skipped, not a passing verification.
+
+All four summary and upload steps succeeded, including the new Dev Container
+artifact. Metadata confirms retention through 2026-11-05. Downloaded Python 3.12
+and Dev Container records observed clean PR merge commit `4af5a8e` with unchanged
+source fingerprint `946ea1950af2d0b0a78c351c339110db547f6cb1cac846779c3719ae1b9cd3bb`.
+Each retained 492 unit/harness, 258 integration, 84 acceptance (82 passed, 2 failed),
+5 package, 20 Node and 78 Chromium cases, zero skips; only acceptance failed.
+Rendering downloaded failed evidence with the committed summary script preserved
+the failures and actual counts. GitHub summary visual rendering was not inspected.
+
+Both first fail `test_real_serve_start_and_signal_shutdown`: no successful health
+response within its existing five-second deadline. Subsequent report cases fail on
+unclosed-file ResourceWarnings, not report-content assertions. The startup root
+cause and allocation/cascade need reproduction; do not label these environmental
+flakes or increase deadlines without evidence. No product/test fix or CI rerun was
+performed during that publication/observation operation. Raw artifacts, failure
+logs and verified accounting remain in ignored
+`artifacts/ci-observability-20261022/`, especially `pr-observed-summary.json`.
+
+PR remains open and unmerged. The owner subsequently authorized the local probe
+diagnosis/correction recorded above; remote revalidation is still pending. Native
+full container matrix, repository protection and registry publishing remain
+separate later steps. The earlier local acceptance below is not remote green CI.
+
+## Previous local CI evidence implementation: offline verification passed
+
+The owner approved the first bounded CI follow-up. Changes are on local branch
+`codex/ci-evidence-observability`, based on `7fb1bcd`. Dev Container now uploads
+its check artifacts; the full image matrix uploads both image and inner developer
+evidence. Every environment has an always-run presentation summary. Explicit
+outer job budgets, 14-day retention and non-cancelling per-ref full-matrix
+concurrency are configured. Existing required jobs, product assertions and test
+deadlines remain unchanged. See the
+[completed plan and ledger](superpowers/plans/2026-10-22-ci-observability.md).
+
+Final Linux ARM64/Python 3.12 offline verification passed all thirteen gates:
+839 Python (492 unit/harness, 258 integration, 84 acceptance, 5 installed-package),
+20 Node and 78 Chromium cases, with zero failures/errors/skips. Source remained
+unchanged at `946ea1950af2d0b0a78c351c339110db547f6cb1cac846779c3719ae1b9cd3bb`.
+One independent bounded review was completed; its numeric-overflow finding and
+related nested-metadata concern were reproduced and fixed with regressions.
+Original RED and intermediate failed attempts remain retained under ignored
+`artifacts/ci-observability-20261022/`; `full-final/` is the accepted local graph.
+
+Stop after the scoped local commit and container shutdown. No push, workflow
+dispatch, repository rule change, real endpoint call or registry publication is
+included. New remote CI and complete native AMD64/ARM64 matrix execution remain
+pending; the prior green remote run below validates its original source only.
+
 ## Content-derived analysis reuse: local full and new remote CI passed
 
 Correction commit `7cc574c4b42a700bf310012e3d07ebf202903c5b` is pushed to `main`.
