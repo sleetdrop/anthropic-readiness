@@ -74,3 +74,11 @@ download was interrupted and retained; trial image-context is unknown. No full
 test graph, new protocol coverage, real endpoint call or publication occurred.
 Leave readiness-trial-readiness-1 running; collect user feedback before proposing
 another implementation or verification round.
+
+## Subsequent product-intent alignment
+
+Owner requested a durable root intends.md. Added the intent and linked it from
+AGENTS.md and the current handoff, keeping missing endpoint coverage visible.
+This separate documentation task adds no endpoint scenarios or runtime behavior.
+Future work follows the owner's intent and current instructions; the completed
+startup-probe plan is historical evidence, not a mandate to extend CI work.

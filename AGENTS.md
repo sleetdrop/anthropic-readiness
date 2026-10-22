@@ -1,8 +1,14 @@
 # Repository guide
 
-Build a black-box Anthropic Messages compatibility CLI. Read `docs/CONTINUE.md`
-for the current milestone, and the referenced specification/plan for its scope.
-Do not infer endpoint internals or mark untested capabilities as supported.
+Build a focused Anthropic Messages compatibility diagnostic tool with a shared
+CLI/Web engine. Read [intends.md](intends.md) first for product purpose and delivery
+priorities, then `docs/CONTINUE.md` and the referenced milestone specification/plan.
+A milestone's limited scope does not retire unfinished core product goals.
+Before choosing work, identify its user-visible diagnostic outcome. At delivery,
+state added/changed endpoint scenarios, detectable faults, how to use them and
+remaining gaps; explicitly identify supporting-only work. Keep endpoint coverage
+separate from assertions, self-test counts and CI success. Do not infer endpoint
+internals or mark untested capabilities as supported.
 
 ## Development
 

@@ -1,5 +1,22 @@
 # Local delivery status
 
+## Product alignment and next priority
+
+Read [project intent](../intends.md) before selecting further work. The owner
+identified that the formal catalog still has only four cases despite extensive
+presentation and engineering work. Prioritize expanding dependable diagnostic
+coverage: expected-rejection scenarios, multi-step tool/result conversations,
+streamed tool arguments, multi-turn messages and request/error contracts, then
+the remaining protocol/client/version-maintenance goals in intends.md. Existing
+W1/W2 scope exclusions are historical milestone boundaries, not completion or
+removal of these goals. No expanded catalog has been delivered yet.
+
+The prior private 90-scenario assessment is reference material, not a shipped
+suite or 90 independent capabilities. Its script is absent from the inspected
+original temporary harness directory; do not promise a direct import without
+recovering and auditing actual source. Use retained method/rulings and verified
+official protocol sources to reconstruct generic checks where needed.
+
 ## User trial running; additional release acceptance deferred
 
 The owner prioritized hands-on use over another verification round. Current-source

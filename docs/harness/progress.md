@@ -1442,3 +1442,15 @@ Initial sandbox-local HTTP attempts could not connect; host-permitted reads
 succeeded. Leave service running for user access at http://localhost:8765.
 The four formal cases remain the installed scope. Local build/start logs and
 the Compose override are ignored under artifacts/ci-startup-20261022/.
+
+## 2026-10-22: Record durable product intent and coverage priority
+
+Owner requested intends.md to reduce project drift after identifying the mismatch
+between substantial presentation/infrastructure delivery and four formal cases.
+Added root intent covering diagnostic users, repair handoff, protocol/client
+coverage, version maintenance, CLI/Web use and truthful delivery accounting.
+AGENTS.md now directs contributors to read it first; current handoff prioritizes
+missing core coverage and distinguishes historical scope limits from product
+completion. This is documentation-only alignment; it adds zero endpoint cases,
+no runtime behavior and no claim that a document alone prevents drift. No product
+suite, live call, image rebuild, remote write or service restart is needed.
