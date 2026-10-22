@@ -1256,3 +1256,42 @@ upgrades remain unrun for this correction. Evidence/documentation checks passed;
 the prepared container is stopped again, exit 0. All observed remote jobs are
 terminal. Stop after the final docs-only [skip ci] observation commit/push, without
 another review, retry or feature stage.
+
+## 2026-10-22: CI evidence and observability, local delivery
+
+Owner-approved bounded task on `codex/ci-evidence-observability`, baseline 7fb1bcd.
+Dev Container now retains `artifacts/checks/`; full image matrix retains both
+image and inner developer results. A standard-library summary presents recorded
+status, gate durations, fingerprints, missing checks and actual JUnit testcase
+nodes. It neither changes gate verdicts nor certifies evidence integrity. Missing,
+malformed or empty evidence remains explicit; metadata is escaped and only
+selected scalar values are displayed. Outer quality/dev/smoke/aggregate budgets
+are 30/45/15/5 minutes, full matrix 180; per-ref full-matrix concurrency preserves
+active acceptance. New artifacts retain 14 days. Existing test deadlines, required
+children, locks, assertions, golden files and read-only permissions are unchanged.
+
+RED/GREEN: Five stub behavior assertions failed before implementation; a direct
+pytest import-path error was retained and corrected to documented `python -m
+pytest`. Markdown link injection separately reproduced before its fix. One fresh
+bounded reviewer identified huge-integer duration overflow; root reproduced that
+and nested metadata disclosure (two RED cases), then fixed both. Eight new summary
+tests plus six existing gate contracts passed. The exact four workflow summary
+shell commands and upload path expansion passed in disposable runner workspaces;
+existing remote artifacts also replayed offline. These are local checks only.
+
+The first full attempt retained a Ruff SIM102 failure and source changes during
+the browser wrapper; passing individual testcases did not make that run accepted.
+The final unchanged-source Linux ARM64/Python 3.12.15 full graph passed all thirteen
+gates: 839 Python (492 unit/harness, 258 integration, 84 acceptance, 5 package),
+20 Node and 78 Chromium, zero failures/errors/skips. Browser 188.59 seconds,
+integration 208.83 seconds under unchanged limits. Fingerprint
+`946ea1950af2d0b0a78c351c339110db547f6cb1cac846779c3719ae1b9cd3bb`;
+record SHA-256 `1dfbaafe65713a4d24c30b4fac8768472ed74a0f9b2e46f2fda88dc626bde107`.
+Observed source is the patch on 7fb1bcd. Logs and verified actual counts are under
+ignored `artifacts/ci-observability-20261022/`, especially `full-final/` and
+`observed-summary.json`; the plan carries detailed rulings and scope.
+
+No push, workflow dispatch, branch-protection setting, image publication or real
+model call occurred. The previous remote green run retains its original source;
+new remote CI and complete native container matrix outcomes are pending. Stop
+after local commit and shutdown; do not automatically begin another task.

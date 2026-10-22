@@ -67,6 +67,26 @@ remain pinned SHAs with read-only permissions. Weekly/manual native amd64/arm64 
 run the full CLI/Web image matrix. No secrets, real model calls or publishing are
 required for fork PRs. Remote outcomes remain unrun until those workflows execute.
 
+Each environment writes an Actions step summary from its recorded check/image JSON
+and actual JUnit testcase nodes, retaining failed/blocked states and unknown counts.
+The summary is a presentation aid, not a gate or evidence-integrity validator.
+Download the job's artifact for result JSON, logs, JUnit and browser traces. The
+Dev Container uploads `artifacts/checks/`; the full image matrix uploads both
+`artifacts/images/` and its inner developer `artifacts/checks/`. Evidence uploads
+and summaries use `always()` so ordinary test failures retain diagnostics; a job
+timeout or forced cancellation can still prevent finalization. Missing evidence
+is explicitly unavailable, never passed. New artifacts are retained for 14 days;
+download evidence needed longer before expiration.
+
+Outer CI job budgets are 30 minutes for each quality job, 45 for Dev Container,
+15 for image smoke, 5 for aggregation and 180 for each full image-matrix job.
+These bound runner use without increasing individual test deadlines. Full matrix
+runs on the same ref are serialized without cancelling active acceptance; GitHub
+may replace a pending run with a newer one. Existing push/PR concurrency is unchanged.
+Caching, coverage repartitioning, repository protection and registry publication
+are separate changes. Locally verified workflow configuration is not proof that a
+remote job ran successfully.
+
 Keep `uv.lock`, `package-lock.json`, Docker pins and
 [harness/web-toolchain.json](harness/web-toolchain.json) synchronized when intentionally
 updating tooling. Review primary upstream sources; record versions and hashes, then

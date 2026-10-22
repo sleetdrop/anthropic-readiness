@@ -1,5 +1,30 @@
 # Local delivery status
 
+## CI evidence and observability: locally verified, remote execution pending
+
+The owner approved the first bounded CI follow-up. Changes are on local branch
+`codex/ci-evidence-observability`, based on `7fb1bcd`. Dev Container now uploads
+its check artifacts; the full image matrix uploads both image and inner developer
+evidence. Every environment has an always-run presentation summary. Explicit
+outer job budgets, 14-day retention and non-cancelling per-ref full-matrix
+concurrency are configured. Existing required jobs, product assertions and test
+deadlines remain unchanged. See the
+[completed plan and ledger](superpowers/plans/2026-10-22-ci-observability.md).
+
+Final Linux ARM64/Python 3.12 offline verification passed all thirteen gates:
+839 Python (492 unit/harness, 258 integration, 84 acceptance, 5 installed-package),
+20 Node and 78 Chromium cases, with zero failures/errors/skips. Source remained
+unchanged at `946ea1950af2d0b0a78c351c339110db547f6cb1cac846779c3719ae1b9cd3bb`.
+One independent bounded review was completed; its numeric-overflow finding and
+related nested-metadata concern were reproduced and fixed with regressions.
+Original RED and intermediate failed attempts remain retained under ignored
+`artifacts/ci-observability-20261022/`; `full-final/` is the accepted local graph.
+
+Stop after the scoped local commit and container shutdown. No push, workflow
+dispatch, repository rule change, real endpoint call or registry publication is
+included. New remote CI and complete native AMD64/ARM64 matrix execution remain
+pending; the prior green remote run below validates its original source only.
+
 ## Content-derived analysis reuse: local full and new remote CI passed
 
 Correction commit `7cc574c4b42a700bf310012e3d07ebf202903c5b` is pushed to `main`.
