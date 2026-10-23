@@ -197,6 +197,7 @@ test("coverage counts, checked field observations and evidence dialog preserve s
   await expect(filter).toBeFocused();
   await expect(filter).toHaveValue("FAIL");
   await page.locator('.view-tabs a[href*="view=issues"]').click();
+  await page.locator("a[data-issue-key]").first().click();
   await expect(page.locator("#issue-inspector")).toContainText("stop_sequence");
   const opener = page.locator("a[data-evidence-id]").first();
   await opener.focus();

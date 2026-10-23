@@ -94,7 +94,7 @@ colors for each component or recolor entire traces to indicate one failed check.
 | `--text` | `#262626` | `#dedede` | Reading text |
 | `--muted` | `#626262` | `#a8a8a8` | Secondary text; completed execution |
 | `--line` | `#d7d7d7` | `#3b3b3b` | Table/surface separators |
-| `--control` | `#8e8e8e` | `#666666` | Input/control boundaries |
+| `--control` | `#8e8e8e` | `#686868` | Input/control boundaries |
 | `--code` | `#f7f7f7` | `#191919` | Raw/parsed evidence surface |
 | `--accent` | `#416b7b` | `#93b6c5` | Running, active interaction, focus |
 | `--accent-soft` | `#eaf0f2` | `#29353b` | Selected occurrence/event or active view |
@@ -165,6 +165,10 @@ open the owner's everyday Chrome. Keep detailed checks/failed attempts in ignore
 artifacts and record material observations in the progress/implementation ledger.
 Update the reference images when a future accepted change changes their appearance.
 
-This documentation delivery changes no product code or endpoint coverage. Approval
-of the baseline does not authorize a new implementation stage. Follow the owner's
-small, usable increments and separate actual delivery from prototype acceptance.
+The owner subsequently authorized integrating this baseline into the product.
+See `docs/harness/console-baseline-implementation-ledger.md` for the bounded scope
+and observed verification. Web-only palette overrides preserve standalone report
+styles. Dark control outlines use #686868 instead of the prototype's #666666 to
+meet the 3:1 control contrast target (the latter measured 2.968:1). This correction
+does not change semantic colors or diagnostic verdicts. Follow small, usable
+increments and separate actual delivery from prototype acceptance.

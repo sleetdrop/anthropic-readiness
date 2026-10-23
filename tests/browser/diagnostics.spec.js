@@ -1,7 +1,15 @@
 import { writeFileSync } from "node:fs";
 import { pathToFileURL } from "node:url";
 import { test, expect } from "@playwright/test";
-import { fixture, control, count, preview, start, completed } from "./helpers.js";
+import {
+  fixture,
+  control,
+  count,
+  preview,
+  start,
+  completed,
+  choosePresentation,
+} from "./helpers.js";
 
 test.beforeEach(async ({ request }) => control(request, "reset"));
 test("import preview and activation never invoke the endpoint or reuse its address", async ({
@@ -19,6 +27,11 @@ test("import preview and activation never invoke the endpoint or reuse its addre
   await expect(page.locator("#endpoint")).toHaveValue("");
   await expect(page.locator('input[name="profile"]:checked')).toHaveCount(2);
   await page.locator("#endpoint").fill(fixture().peer_url + "/v1/messages");
+  expect(
+    await page
+      .locator("#assessment-form :invalid")
+      .evaluateAll((nodes) => nodes.map((node) => node.id || node.getAttribute("data-limit"))),
+  ).toEqual([]);
   await page.locator("#preview-button").click();
   await expect(page.locator("#start-button")).toBeEnabled();
   expect((await count(request)).count).toBe(0);
@@ -80,7 +93,7 @@ test("original-scope retest and comparison render actual paired repair evidence"
   expect(comparison.summary.new_failure).toBe(0);
   expect(comparison.coverage.matched_cases).toBe(4);
   for (const theme of ["light", "dark"]) {
-    await page.locator("#theme-choice").selectOption(theme);
+    await choosePresentation(page, "theme", theme);
     await expect(page.locator("html")).toHaveAttribute("data-theme", theme);
     await page.screenshot({ path: info.outputPath(`comparison-${theme}.png`), fullPage: true });
   }
@@ -124,14 +137,14 @@ test("comparison keeps recoveries, persistent failures, regressions and gaps tog
     .screenshot({ path: info.outputPath("mixed-counts.png") });
   await page.evaluate(() => scrollTo(0, 0));
   await page.screenshot({ path: info.outputPath("mixed-comparison-light.png"), fullPage: true });
-  await page.locator("#theme-choice").selectOption("dark");
+  await choosePresentation(page, "theme", "dark");
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
   await page.screenshot({ path: info.outputPath("mixed-comparison-dark.png"), fullPage: true });
   const member = page.locator(".comparison-group-table details").first();
   await member.locator("summary").focus();
   await member.locator("summary").press("Enter");
   await expect(member).toHaveJSProperty("open", true);
-  await page.locator("#locale-choice").selectOption("en");
+  await choosePresentation(page, "locale", "en");
   await expect(page.locator(".comparison-observations h2")).toHaveText("Observed checks");
   await expect(member).toHaveJSProperty("open", true);
   await page.locator("#comparison-technical summary").click();

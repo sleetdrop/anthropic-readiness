@@ -1,6 +1,17 @@
 # Local delivery status
 
-## Approved presentation baseline recorded
+## Approved console integration in progress
+
+The owner authorized implementing the accepted sample in the actual console.
+Read [the bounded ledger](harness/console-baseline-implementation-ledger.md).
+Existing five cases, checked progress, list/search, occurrence/evidence navigation,
+paired themes and bilingual controls are in scope; no real endpoint calls or new
+protocol scenarios. Frozen source verification passed all 13 local gates (88 browser and 280
+integration tests included); one independent review finding was fixed and verified.
+The installed trial on 8765 and its data are unchanged pending installation. The sample on 8767 is preserved.
+Do not treat intermediate check results below as final delivery acceptance.
+
+## Approved presentation baseline recorded (historical)
 
 The owner accepted the current flow sample's style, with future details refined
 through use. [Root design.md](../design.md) is the current presentation authority:

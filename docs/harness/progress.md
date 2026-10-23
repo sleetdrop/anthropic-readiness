@@ -1850,3 +1850,23 @@ Documentation checks verified local links, exact color-token values against CSS,
 PNG dimensions/provenance and source equality; whitespace passed. No runtime code,
 new tests, product coverage, actual endpoint, container/service, browser rerun,
 remote CI or publication change. Existing trial/preview remain available.
+
+## 2026-10-23: Implement the approved console baseline
+
+Owner authorized migrating the accepted flow sample into the actual local Web
+application. Implemented real persisted progress, independent searchable issue
+list, selected occurrence and bounded verified-evidence reading, with retained
+history/search/reading context. Bilingual controls and paired web-only tokens follow
+root design.md. The exported report and CLI retain their existing contracts.
+This is supporting interface work: zero endpoint scenarios added; the formal
+catalog remains five cases, and Claude Code readiness is not newly assessed.
+
+See [the implementation ledger](console-baseline-implementation-ledger.md) for
+RED/GREEN attempts, intentional HTML presentation version 2.0, a related input
+history blur/click repair and the one independent whole-increment review. The
+review's unloaded-event substitution finding was reproduced and fixed; bounded
+reading now identifies an unavailable referenced event without inventing a field
+verdict. Nine focused browser checks passed, including that regression, keyboard
+focus, narrow-screen accessibility and no-script reading. Earlier failing attempts
+remain in ignored artifacts/console-baseline/; final frozen verification and
+installed trial acceptance are recorded in the ledger when complete.

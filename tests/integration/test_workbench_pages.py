@@ -31,6 +31,27 @@ pytestmark = pytest.mark.anyio
 ROOT = Path(__file__).resolve().parents[2]
 
 
+async def test_console_list_search_and_occurrence_links_use_checked_facts(
+    client: httpx.AsyncClient, seeded_run: str
+) -> None:
+    path = "/runs/" + seeded_run
+    listing = await client.get(path, params={"view": "issues"})
+    assert listing.status_code == 200
+    assert 'class="issues-table"' in listing.text
+    assert 'id="issue-inspector"' not in listing.text
+    assert 'id="completion-bar"' in listing.text
+    assert 'id="language-toggle"' in listing.text
+    found = await client.get(path, params={"view": "issues", "q": "stop_sequence"})
+    assert found.status_code == 200
+    assert "stop_sequence" in found.text
+    absent = await client.get(path, params={"view": "issues", "q": "never-in-fixture"})
+    assert absent.status_code == 200
+    assert "data-issue-key=" not in absent.text
+    escaped = await client.get(path, params={"view": "issues", "q": '<img src=x onerror="bad">'})
+    assert '<img src=x onerror="bad">' not in escaped.text
+    assert (await client.get(path, params={"view": "issues", "q": "x" * 201})).status_code == 422
+
+
 @pytest.fixture(autouse=True)
 def seeded_run(tmp_path: Path, request: pytest.FixtureRequest) -> str:
     scenario = getattr(request, "param", "complete")
@@ -54,7 +75,7 @@ async def test_run_uses_independent_workbench_views_and_neutral_completion(
     response = await client.get("/runs/" + run_id)
     assert response.status_code == 200
     html = response.text
-    assert 'data-workbench-version="1.0"' in html
+    assert 'data-workbench-version="2.0"' in html
     assert 'data-lifecycle="completed"' in html
     assert 'data-lifecycle-tone="neutral"' in html
     assert 'id="report-panel"' not in html
@@ -81,8 +102,8 @@ async def test_checked_theme_and_language_are_applied_before_css(
     assert "Claude Code workflows not assessed" in html
     assert '"zh-CN"' in html
     assert '"en"' in html
-    assert 'id="locale-choice"' in html
-    assert 'id="theme-choice"' in html
+    assert 'id="language-toggle"' in html
+    assert 'id="theme-toggle"' in html
 
 
 @pytest.mark.parametrize("seeded_run", ["partial"], indirect=True)

@@ -153,11 +153,21 @@ def workbench_context(
         return text(CASE_KEYS[str(identifier)]) if str(identifier) in CASE_KEYS else str(identifier)
 
     def link(selected: str, **query: str) -> str:
+        if selected in {"issues", "overview"}:
+            keep = selected_view in {"issues", "overview"}
+            query = {
+                "filter": selected_filter if keep else "all",
+                "q": search if keep else "",
+                **query,
+            }
         return base_url + "?" + urlencode({"view": selected, **query})
 
     facts = object_value(value["facts"])
     cases = objects(facts["cases"])
     selected_filter = request.query_params.get("filter", "all")
+    search = request.query_params.get("q", "")
+    if len(search) > 200:
+        raise ValueError("invalid_request")
     matrix_scope: tuple[str, str, str] | None = None
     matrix_members: set[str] = set()
     matrix_label: str | None = None
@@ -218,6 +228,12 @@ def workbench_context(
     findings: list[JsonObject] = []
     for finding in objects(facts["findings"]):
         family = _issue_family(finding)
+        finding_members = finding.get("cases")
+        member_names = (
+            " / ".join(case_name(item) for item in finding_members)
+            if isinstance(finding_members, list)
+            else ""
+        )
         findings.append(
             {
                 **finding,
@@ -225,12 +241,14 @@ def workbench_context(
                 "label": text("issue." + family + ".title"),
                 "explanation": text("issue." + family + ".impact"),
                 "next_action": text("issue." + family + ".action"),
+                "case_names": member_names,
             }
         )
     shown_findings = [
         finding
         for finding in findings
         if _matches(finding["status"], "all" if matrix_scope else selected_filter)
+        and (not search or search.casefold() in json.dumps(finding, ensure_ascii=False).casefold())
     ]
     requested_issue = request.query_params.get("issue")
     selected_issue = (
@@ -239,7 +257,7 @@ def workbench_context(
             None,
         )
         if requested_issue
-        else (shown_findings[0] if shown_findings else None)
+        else None
     )
     requested_case = request.query_params.get("case")
     shown_cases = [
@@ -280,7 +298,7 @@ def workbench_context(
             for ref in objects(assertion["evidence_refs"]):
                 item = proof.get((str(ref["path"]), str(ref["sha256"])))
                 if item is not None:
-                    links.append({"id": item["id"], "path": ref["path"]})
+                    links.append({"id": item["id"], **ref})
             checks.append(
                 {
                     **assertion,
@@ -423,6 +441,7 @@ def workbench_context(
         "active_view": selected_view,
         "view_template": "workbench-" + selected_view + ".html",
         "selected_filter": selected_filter,
+        "search": search,
         "matrix_label": matrix_label,
         "matrix_link": matrix_link,
         "read_only": read_only,
@@ -469,6 +488,7 @@ def workbench_page(request: Request, run_id: str) -> HTMLResponse:
         "case",
         "filter",
         "baseline",
+        "q",
     }:
         raise ValueError("invalid_request")
     view, original = local_workbench(

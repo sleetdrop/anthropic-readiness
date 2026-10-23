@@ -1,5 +1,13 @@
 import { test, expect } from "@playwright/test";
-import { fixture, control, count, preview, start } from "./helpers.js";
+import {
+  fixture,
+  control,
+  count,
+  preview,
+  start,
+  choosePresentation,
+  openIssue,
+} from "./helpers.js";
 
 test.beforeEach(async ({ request }) => control(request, "reset"));
 
@@ -13,7 +21,7 @@ test("locale and theme preserve reviewed execution plan, credentials and focused
   await expect(page.locator("#start-button")).toBeEnabled();
   await page.locator("#credential").fill("synthetic-ephemeral");
   const original = await page.locator("#plan-preview").textContent();
-  await page.locator("#locale-choice").selectOption("en");
+  await choosePresentation(page, "locale", "en");
   await expect(page.locator("html")).toHaveAttribute("lang", "en");
   await expect(page.locator("#start-button")).toBeEnabled();
   await expect(page.locator("#credential")).toHaveValue("synthetic-ephemeral");
@@ -21,7 +29,7 @@ test("locale and theme preserve reviewed execution plan, credentials and focused
   expect(original).toBeTruthy();
   await expect(page.locator("#plan-preview")).toContainText("Frozen execution plan");
   await page.locator("#theme-choice").focus();
-  await page.locator("#theme-choice").selectOption("dark");
+  await choosePresentation(page, "theme", "dark");
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
   await expect(page.locator("#theme-choice")).toBeFocused();
   expect((await count(request)).count).toBe(0);
@@ -42,7 +50,7 @@ test("locale and theme preserve reviewed execution plan, credentials and focused
 test("tabs, selection, Back and refresh preserve canonical issue location", async ({ page }) => {
   await page.goto("/runs/" + fixture().completed_id);
   await page.locator('.view-tabs a[href*="view=issues"]').click();
-  await expect(page.locator("#issue-inspector")).toBeVisible();
+  await expect(page.locator(".issues-table")).toBeVisible();
   const last = page.locator("[data-issue-key]").last();
   const key = await last.getAttribute("data-issue-key");
   await last.click();
@@ -66,12 +74,12 @@ test("theme switches preserve inspector nodes, disclosure state, evidence focus 
   request,
 }) => {
   const id = fixture().completed_id;
-  await page.goto(`/runs/${id}?view=issues`);
+  await openIssue(page, id);
   const before = await (await page.request.get(`/api/v1/runs/${id}/workbench`)).json();
   const disclosure = page.locator("#issue-inspector details").last();
   await disclosure.locator("summary").click();
   const retained = await page.locator("#issue-inspector").elementHandle();
-  await page.locator("#theme-choice").selectOption("dark");
+  await choosePresentation(page, "theme", "dark");
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
   await expect(disclosure).toHaveJSProperty("open", true);
   expect(
@@ -96,7 +104,7 @@ test("active observation reconnects and cancellation never creates another reque
   await start(page);
   await expect.poll(async () => (await count(request)).count).toBe(1);
   await expect(page.locator("#worker-state")).toHaveAttribute("data-worker-state", "running");
-  await page.locator("#locale-choice").selectOption("en");
+  await choosePresentation(page, "locale", "en");
   await expect(page.locator("html")).toHaveAttribute("lang", "en");
   await page.evaluate(() => {
     window.dispatchEvent(new PageTransitionEvent("pagehide", { persisted: true }));
@@ -124,12 +132,12 @@ for (const locale of ["zh-CN", "en"]) {
     }, info) => {
       await page.setViewportSize(viewport);
       await page.goto("/runs/" + fixture().completed_id);
-      await page.locator("#locale-choice").selectOption(locale);
+      await choosePresentation(page, "locale", locale);
       await expect(page.locator("html")).toHaveAttribute("lang", locale);
-      await page.locator("#theme-choice").selectOption("light");
+      await choosePresentation(page, "theme", "light");
       await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
       const boxes = await page
-        .locator(".run-heading,.view-tabs,.run-metrics,.overview-columns")
+        .locator(".run-heading,.view-tabs,.issue-toolbar,.issues-table")
         .evaluateAll((nodes) =>
           nodes.map((node) => {
             const r = node.getBoundingClientRect();
@@ -147,10 +155,10 @@ for (const locale of ["zh-CN", "en"]) {
         path: info.outputPath(`${locale}-${viewport.width}-light.png`),
         fullPage: true,
       });
-      await page.locator("#theme-choice").selectOption("dark");
+      await choosePresentation(page, "theme", "dark");
       await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
       const dark = await page
-        .locator(".run-heading,.view-tabs,.run-metrics,.overview-columns")
+        .locator(".run-heading,.view-tabs,.issue-toolbar,.issues-table")
         .evaluateAll((nodes) =>
           nodes.map((node) => {
             const r = node.getBoundingClientRect();
@@ -171,7 +179,7 @@ for (const locale of ["zh-CN", "en"]) {
 test("new findings retain selected inspector, raw selection, disclosure and keyboard focus", async ({
   page,
 }) => {
-  await page.goto(`/runs/${fixture().completed_id}?view=issues`);
+  await openIssue(page);
   const first = page.locator("[data-issue-key]").first();
   await first.click();
   await expect(first).toHaveAttribute("aria-current", "true");
@@ -195,7 +203,7 @@ test("new findings retain selected inspector, raw selection, disclosure and keyb
     const incoming = root?.cloneNode(true);
     if (!(root instanceof Element) || !(incoming instanceof Element))
       throw new Error("missing_fixture");
-    const list = incoming.querySelector(".issue-list");
+    const list = incoming.querySelector(".view-tabs");
     const arrival = list?.firstElementChild?.cloneNode(true);
     if (arrival instanceof Element) {
       arrival.setAttribute("data-issue-key", "new-synthetic-arrival");
@@ -221,13 +229,15 @@ test("system appearance follows OS while explicit override and cookie survive re
   page,
 }) => {
   await page.goto("/runs/" + fixture().completed_id);
-  await page.locator("#theme-choice").selectOption("system");
+  await page.goto("/history");
+  await choosePresentation(page, "theme", "system");
+  await page.goto("/runs/" + fixture().completed_id);
   await page.emulateMedia({ colorScheme: "dark" });
-  await expect(page.locator("html")).toHaveCSS("background-color", "rgb(32, 34, 38)");
-  await page.locator("#theme-choice").selectOption("light");
+  await expect(page.locator("html")).toHaveCSS("background-color", "rgb(28, 28, 28)");
+  await choosePresentation(page, "theme", "light");
   await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
-  await expect(page.locator("html")).toHaveCSS("background-color", "rgb(250, 251, 249)");
-  await page.locator("#locale-choice").selectOption("en");
+  await expect(page.locator("html")).toHaveCSS("background-color", "rgb(252, 252, 252)");
+  await choosePresentation(page, "locale", "en");
   await expect(page.locator("html")).toHaveAttribute("lang", "en");
   await page.reload();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
@@ -243,7 +253,7 @@ test("presentation change invalidates reviewed export without changing execution
   await page.locator("#preview-export").click();
   await expect(page.locator("#create-export")).toBeEnabled();
   await page.locator("#close-export").click();
-  await page.locator("#locale-choice").selectOption("en");
+  await choosePresentation(page, "locale", "en");
   await expect(page.locator("html")).toHaveAttribute("lang", "en");
   await page.locator("#open-export").click();
   await expect(page.locator("#create-export")).toBeDisabled();
@@ -273,7 +283,7 @@ test("quiet empty issues and 96-row synthetic list keep primary navigation acces
   await start(page);
   await expect(page.locator("#job-state")).toHaveAttribute("data-lifecycle", "completed");
   await page.locator('.view-tabs a[href*="view=issues"]').click();
-  await expect(page.locator(".issue-list")).toContainText("当前筛选下没有问题");
+  await expect(page.locator(".issue-list")).toContainText("本次已评估检查未见异常");
   await page.locator('.view-tabs a[href*="view=cases"]').click();
   await expect(page.locator(".case-item")).toHaveCount(4);
   await page.evaluate(async () => {
@@ -308,8 +318,8 @@ for (const theme of ["light", "dark"]) {
   test(`text, code, states and meaningful controls meet contrast: ${theme}`, async ({
     page,
   }, info) => {
-    await page.goto(`/runs/${fixture().completed_id}?view=issues`);
-    await page.locator("#theme-choice").selectOption(theme);
+    await openIssue(page);
+    await choosePresentation(page, "theme", theme);
     await expect(page.locator("html")).toHaveAttribute("data-theme", theme);
     const measurements = await page.evaluate(() => {
       /** @param {string} value */
@@ -410,15 +420,16 @@ test("approved active composition uses actual two-checkpoint and three-request e
   await expect(page.locator("#request-progress")).toHaveText("3 / 4");
   await expect(page.locator("#active-phase")).toHaveText("正在等待响应头");
   expect(await page.evaluate(() => document.documentElement.scrollHeight)).toBeLessThanOrEqual(800);
-  await expect(page.locator(".attention-list li")).toHaveCount(2);
+  await expect(page.locator(".issues-table tbody tr")).toHaveCount(2);
   for (const theme of ["light", "dark"]) {
-    await page.locator("#theme-choice").selectOption(theme);
+    await choosePresentation(page, "theme", theme);
     await expect(page.locator("html")).toHaveAttribute("data-theme", theme);
     await expect(page.locator("#worker-state")).toHaveAttribute("data-worker-state", "running");
     await expect(page.locator("#connection-state")).toHaveText("已连接");
     await page.screenshot({ path: info.outputPath(`active-${theme}.png`), fullPage: true });
   }
   await page.locator('.view-tabs a[href*="view=issues"]').click();
+  await page.locator("a[data-issue-key]").first().click();
   await expect(page.locator("#issue-inspector")).toContainText("stop_sequence");
   await page.screenshot({ path: info.outputPath("active-issue-dark.png"), fullPage: true });
   expect((await count(request)).count).toBe(3);
@@ -443,7 +454,7 @@ test("saved appearance is present in initial HTML before scripts or styles", asy
   const page = await context.newPage();
   const response = await page.goto(origin + "/runs/" + fixture().completed_id);
   expect(await response?.text()).toContain('<html lang="en" data-theme="dark">');
-  await expect(page.locator("html")).toHaveCSS("background-color", "rgb(32, 34, 38)");
+  await expect(page.locator("html")).toHaveCSS("background-color", "rgb(28, 28, 28)");
   await expect(page.locator(".view-tabs")).toContainText("Overview");
   await context.close();
 });
@@ -461,7 +472,7 @@ test("long bilingual target names keep primary actions reachable", async ({
   for (const width of [1280, 390]) {
     await page.setViewportSize({ width, height: 800 });
     for (const locale of ["zh-CN", "en"]) {
-      await page.locator("#locale-choice").selectOption(locale);
+      await choosePresentation(page, "locale", locale);
       await expect(page.locator("html")).toHaveAttribute("lang", locale);
       const action = await page.locator("#open-export").boundingBox();
       expect(action?.x).toBeGreaterThanOrEqual(0);
@@ -481,7 +492,7 @@ test("long bilingual target names keep primary actions reachable", async ({
 test("initial selected issue is pinned before later persisted findings can arrive", async ({
   page,
 }) => {
-  await page.goto(`/runs/${fixture().completed_id}?view=issues`);
+  await openIssue(page);
   const key = await page.locator("[data-issue-key][aria-current]").getAttribute("data-issue-key");
   await expect(page).toHaveURL(new RegExp("issue=" + key));
 });
@@ -509,10 +520,10 @@ test("200 percent equivalent reflow keeps actions usable at 640 CSS pixels and d
   const origin = `http://127.0.0.1:${process.env.READINESS_BROWSER_PORT ?? "18765"}`;
   await page.goto(origin + "/runs/" + fixture().completed_id);
   for (const locale of ["zh-CN", "en"]) {
-    await page.locator("#locale-choice").selectOption(locale);
+    await choosePresentation(page, "locale", locale);
     await expect(page.locator("html")).toHaveAttribute("lang", locale);
     for (const theme of ["light", "dark"]) {
-      await page.locator("#theme-choice").selectOption(theme);
+      await choosePresentation(page, "theme", theme);
       await expect(page.locator("html")).toHaveAttribute("data-theme", theme);
       expect(await page.evaluate(() => ({ width: innerWidth, density: devicePixelRatio }))).toEqual(
         { width: 640, density: 2 },
@@ -556,10 +567,10 @@ test("paired inspector geometry and verified field composition", async ({ browse
     deviceScaleFactor: 1.24,
   });
   const page = await context.newPage();
-  await page.goto(`/runs/${fixture().completed_id}?view=issues`);
+  await openIssue(page);
   const boxes = [];
   for (const theme of ["light", "dark"]) {
-    await page.locator("#theme-choice").selectOption(theme);
+    await choosePresentation(page, "theme", theme);
     await expect(page.locator("html")).toHaveAttribute("data-theme", theme);
     await expect(page.locator("#issue-inspector")).toContainText("stop_sequence");
     await page.evaluate(() => window.scrollTo(0, 0));
@@ -585,7 +596,7 @@ test("paired inspector geometry and verified field composition", async ({ browse
 test("issue inspector shows one selected case while retaining full affected scope", async ({
   page,
 }) => {
-  await page.goto(`/runs/${fixture().completed_id}?view=issues`);
+  await openIssue(page);
   await expect(page.locator("#issue-inspector .field-comparison pre")).toHaveCount(2);
   await expect(page.locator("[data-observation-case]")).toHaveCount(4);
   await expect(page.locator("#issue-inspector header")).toContainText("影响 4 个不同用例");
@@ -597,11 +608,13 @@ test("issue inspector shows one selected case while retaining full affected scop
   );
   await expect(page.locator("#issue-inspector .field-comparison pre")).toHaveCount(2);
   await expect(page.locator("#issue-inspector .field-comparison")).toContainText("stop_reason");
-  await expect(page.locator("#issue-inspector .evidence-links a")).toHaveCount(4);
+  await expect(page.locator("#issue-inspector .observation-table a[data-evidence-id]")).toHaveCount(
+    4,
+  );
 });
 
 test("an unavailable evidence response is shown inside the active dialog", async ({ page }) => {
-  await page.goto(`/runs/${fixture().completed_id}?view=issues`);
+  await openIssue(page);
   await page.route(/\/api\/v1\/runs\/[^/]+\/evidence\//u, (route) =>
     route.fulfill({
       status: 404,
@@ -623,8 +636,8 @@ test("expired evidence reads recover once without resending model work", async (
   const initial = page.waitForResponse(
     (response) => response.url().endsWith("/workbench") && response.status() === 200,
   );
-  await page.goto(`/runs/${fixture().completed_id}?view=issues`);
-  await expect(page.locator("#connection-state")).toHaveCount(0);
+  await openIssue(page);
+  await expect(page.locator("#connection-state")).toContainText("观测已结束");
   // Wait for the initial checked local read before expiring this session.
   await expect(page.locator("#workbench")).toHaveAttribute("data-read-only", "false");
   await initial;

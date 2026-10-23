@@ -181,6 +181,7 @@ function configure(bootstrap) {
   let selectedPreset = null;
   /** @type {Storage|null} */
   let historyStorage = null;
+  let pendingHistoryDisplay = false;
   try {
     historyStorage = window.localStorage;
   } catch {
@@ -194,7 +195,8 @@ function configure(bootstrap) {
     element("model-history").replaceChildren(
       ...history.models.map((value) => new Option(value, value)),
     );
-    element("input-history-controls").hidden = !history.endpoints.length && !history.models.length;
+    element("input-history-controls").hidden =
+      !pendingHistoryDisplay && !history.endpoints.length && !history.models.length;
   }
   function rememberCurrentInputs() {
     rememberInput(historyStorage, "endpoints", input("endpoint").value);
@@ -206,6 +208,7 @@ function configure(bootstrap) {
       showError(new Error(message("form.history_clear_failed")));
       return;
     }
+    pendingHistoryDisplay = false;
     renderInputHistory();
     input("endpoint").focus();
   });
@@ -365,6 +368,12 @@ function configure(bootstrap) {
   fill(base, !bootstrap.copied && !bootstrap.reference);
   presetOptions();
   form.addEventListener("input", (event) => {
+    // Reveal history controls before blur can save the entry and shift a clicked button.
+    if (historyStorage && (event.target === input("endpoint") || event.target === input("model")))
+      if (input("endpoint").value || input("model").value) {
+        pendingHistoryDisplay = true;
+        element("input-history-controls").hidden = false;
+      }
     if (event.target !== input("credential") || select("auth-mode").value === "auto") invalidate();
   });
   form.addEventListener("change", invalidate);

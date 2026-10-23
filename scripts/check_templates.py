@@ -16,6 +16,7 @@ def main() -> int:
         "workbench.html",
         "workbench-overview.html",
         "workbench-issues.html",
+        "workbench-issue-list.html",
         "workbench-cases.html",
         "workbench-compare.html",
         "workbench-activity.html",

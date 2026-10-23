@@ -38,7 +38,8 @@ async def test_page_renders_only_installed_capabilities(
         assert f'data-case-id="{identifier}"' in html
     assert html.count("data-case-id=") == 5
     assert "开始测试" in html
-    assert "预览计划" in html
+    assert 'data-i18n="form.preview"' in html
+    assert "查看测试计划" in html
     assert 'type="password"' in html
     assert 'autocomplete="off"' in html
     assert "host.docker.internal" in html

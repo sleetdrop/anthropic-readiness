@@ -1,0 +1,14 @@
+<section class="issue-list" aria-label="{{ t('view.issues') }}">
+  <h1>{{ t('console.results') if terminal else t('console.findings_active') }}</h1>
+  <p class="lead">{{ t('console.finding_summary',count=all_findings|length) }} {{ t('run.dimension_summary',behavior=behavior_pass,protocol=protocol_fail) }}</p>
+  <form class="issue-toolbar" method="get">
+    <input type="hidden" name="view" value="{{ active_view }}" />
+    <nav class="filter-options" aria-label="{{ t('filter.label') }}">{% for value,key in [('all','filter.all'),('FAIL','filter.fail'),('unresolved','filter.unresolved')] %}<a href="{{ view_url(active_view,filter=value) }}" {% if selected_filter == value %}aria-current="true"{% endif %}>{{ t(key) }}</a>{% endfor %}</nav>
+    <input type="hidden" name="filter" value="{{ selected_filter }}" />
+    <label class="search-field"><span class="icon icon-search" aria-hidden="true"></span><span class="sr-only">{{ t('console.search') }}</span><input id="issue-search" type="search" name="q" maxlength="200" placeholder="{{ t('console.search_hint') }}" value="{{ search }}" /></label>
+    <button type="submit" class="secondary">{{ t('console.search') }}</button>
+    <span class="counter">{{ t('console.result_count',count=findings|length) }}</span>
+  </form>
+  <div class="table-scroll"><table class="issues-table"><thead><tr><th scope="col">{{ t('console.observation') }}</th><th scope="col">{{ t('console.type') }}</th><th scope="col">{{ t('console.affected') }}</th><th scope="col" class="number">#</th></tr></thead><tbody>{% for finding in findings %}<tr><td class="issue-name"><a data-issue-key="{{ finding.key }}" href="{{ view_url('issues',issue=finding.key) }}">{{ finding.label }}</a><small>{{ t('issue.affected',count=finding.affected_cases) }}</small></td><td><span class="issue-type {{ 'fail' if finding.status == 'FAIL' else 'unknown' }}">{{ state_names[finding.status] }}</span></td><td>{{ finding.case_names }}</td><td class="number">{{ finding.affected_cases }}</td></tr>{% else %}<tr><td colspan="4" class="empty">{{ t('issue.none') if search or selected_filter != 'all' else t('run.no_issues_final') if terminal else t('run.no_issues_active') }}</td></tr>{% endfor %}</tbody></table></div>
+  <p class="accounting">{{ t('issue.overlap') }}</p>
+</section>
