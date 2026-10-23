@@ -1,5 +1,16 @@
 # Local delivery status
 
+## External interaction references and independent identity
+
+On 2026-10-23 the owner requested comparable-tool research before further UX work
+and rejected adopting Anthropic's branding/palette. This durable direction is now
+in intends.md. Read the
+[reference study](reviews/2026-10-23-engineering-console-reference-study.md) for
+official-source mechanisms, adaptations and limits. Explore an inline scope/budget
+summary instead of assuming a separate confirmation page is required; preserve
+admission/opt-in rules. Recommendations await visual validation, not a new long
+implementation stage. Product source, trial and endpoint coverage are unchanged.
+
 ## Browser input history delivered; await owner feedback
 
 The owner requested endpoint/model autocomplete backed by localStorage. Only

@@ -36,6 +36,10 @@ remaining failures and missing coverage.
   matrices, light/dark themes, structured Agent-readable facts, references,
   expected/actual differences and enough sanitized evidence to reproduce issues.
   Handoff and repair verification preserve original results and expose omissions.
+- An independent, restrained engineering-tool identity. Supporting Anthropic's
+  protocol does not imply adopting its website/application branding or palette.
+  Ground interactions in comparable diagnostic/test tools and observed usage;
+  use deliberate information hierarchy in both light/dark themes.
 
 ## How to choose and finish work
 

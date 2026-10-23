@@ -1600,3 +1600,14 @@ browser fallback was authorized after browser control timeouts. Synthetic hold/c
 effects are excluded from production findings; no complete mobile/accessibility
 audit is claimed. Fixture cleanup verified. No source change or implementation
 started. See the entry ledger and ignored artifacts/ux-walkthrough-20261023/index.html.
+
+## 2026-10-23: External interaction research and independent visual identity
+
+Owner requested external grounding and rejected Anthropic brand imitation.
+Reviewed official Postman, Playwright, Allure, ReportPortal, Promptfoo and Primer
+documentation/examples. Recorded mechanisms separately from proposed adaptations
+in the engineering-console reference study; no competitor hands-on usability
+claim is made. Updated durable intent and reconsidered the earlier separate-plan
+confirmation recommendation. Existing admission, opt-in and evidence rules remain.
+This is documentation/research only: no new cases, product changes, model calls,
+container changes or remote writes. Product test suites were not rerun for prose.

@@ -116,3 +116,13 @@ is a production finding. No full accessibility/mobile audit or real endpoint che
 is claimed. All fixture processes/listeners were cleaned up. No product code was
 changed. Inspected screenshots, notes and a visual report remain ignored under
 artifacts/ux-walkthrough-20261023/. Await the owner's choice before implementation.
+
+## External reference follow-up
+
+On 2026-10-23 the owner requested comparable-tool research and an independent
+engineering-tool identity, rather than Anthropic branding. The
+[reference study](../reviews/2026-10-23-engineering-console-reference-study.md)
+records official-source mechanisms and distinguishes proposed adaptations from
+verified behavior. Reconsider the earlier separate confirmation-page recommendation:
+explore an inline summary while preserving validation and explicit live opt-in.
+No product implementation or additional endpoint coverage accompanies this study.
