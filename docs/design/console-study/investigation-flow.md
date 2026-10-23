@@ -172,3 +172,6 @@ stay neutral. Completed progress stays neutral, with verified-pass green reserve
 without inventing new passing content. Ten isolated-browser views passed sampled
 contrast/context checks (minimum text 5.06:1); see README.md and ignored
 artifacts/flow-semantic-colors-20261023/. No product execution or coverage changed.
+Owner authorized a teal-running trial: running heading/progress now use teal,
+with gray-blue interaction and neutral completion retained. Same ten-view checks
+passed and screenshots were compared; see artifacts/flow-running-teal-20261023/.

@@ -1,6 +1,6 @@
 /* Neutral reading surfaces; restrained colors identify interaction and observed outcomes. */
-:root { color-scheme: light; --surface: #fcfcfc; --subtle: #f2f2f2; --text: #262626; --muted: #626262; --line: #d7d7d7; --control: #8e8e8e; --accent: #416b7b; --accent-soft: #eaf0f2; --code: #f7f7f7; --fail: #984c57; --pass: #397052; --status-edge: var(--fail); font: 14px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans CJK SC", sans-serif; }
-:root[data-theme="dark"] { color-scheme: dark; --surface: #1c1c1c; --subtle: #242424; --text: #dedede; --muted: #a8a8a8; --line: #3b3b3b; --control: #666666; --accent: #93b6c5; --accent-soft: #29353b; --code: #191919; --fail: #d1949e; --pass: #9bbda9; --status-edge: var(--fail); }
+:root { color-scheme: light; --surface: #fcfcfc; --subtle: #f2f2f2; --text: #262626; --muted: #626262; --line: #d7d7d7; --control: #8e8e8e; --accent: #416b7b; --running: #356f65; --accent-soft: #eaf0f2; --code: #f7f7f7; --fail: #984c57; --pass: #397052; --status-edge: var(--fail); font: 14px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans CJK SC", sans-serif; }
+:root[data-theme="dark"] { color-scheme: dark; --surface: #1c1c1c; --subtle: #242424; --text: #dedede; --muted: #a8a8a8; --line: #3b3b3b; --control: #666666; --accent: #93b6c5; --running: #8fb9ad; --accent-soft: #29353b; --code: #191919; --fail: #d1949e; --pass: #9bbda9; --status-edge: var(--fail); }
 * { box-sizing: border-box; }
 body { margin: 0; color: var(--text); background: var(--surface); display: flex; flex-direction: column; height: 100vh; height: 100dvh; }
 button, select, input { font: inherit; color: var(--text); }
@@ -13,8 +13,8 @@ header strong { font-size: 13px; }
 header > span { color: var(--muted); }
 .appearance { margin-left: auto; display: flex; align-items: center; gap: 5px; }
 .appearance button { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-color: transparent; background: transparent; font-size: 12px; padding: 0; }
-.run-context { --progress-fill: var(--accent); display: grid; grid-template-columns: minmax(0, 1fr) 250px; align-items: center; gap: 12px 24px; padding: 14px 18px; border-bottom: 1px solid var(--line); flex-shrink: 0; }
-.run-context[data-state="running"] #run-status { color: var(--accent); }
+.run-context { --progress-fill: var(--running); display: grid; grid-template-columns: minmax(0, 1fr) 250px; align-items: center; gap: 12px 24px; padding: 14px 18px; border-bottom: 1px solid var(--line); flex-shrink: 0; }
+.run-context[data-state="running"] #run-status { color: var(--running); }
 .run-context[data-state="completed"] { --progress-fill: var(--muted); }
 .run-heading { display: flex; align-items: baseline; flex-wrap: wrap; gap: 6px 14px; }
 .run-heading strong { font-size: 16px; font-weight: 600; }

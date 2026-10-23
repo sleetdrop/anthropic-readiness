@@ -1818,3 +1818,12 @@ bilingual narrow width checked. Compared screenshots with the preceding palette.
 No page/console/resource errors or external requests. Evidence is ignored in
 artifacts/flow-semantic-colors-20261023/. No model call, product source/coverage,
 container, product suite, remote CI or publication change. Await owner feedback.
+
+## 2026-10-23: Trial teal running state
+
+Owner authorized a green-family running trial. Added a distinct teal running token
+for the heading/progress in both themes; interaction stays gray-blue, completion
+neutral, and success green reserved for verified passes. The same ten-view browser
+contrast/context checks passed, minimum sampled text contrast 5.06:1. Compared
+screenshots with the preceding header and inspected both themes. Evidence is
+ignored in artifacts/flow-running-teal-20261023/. No product or endpoint change.

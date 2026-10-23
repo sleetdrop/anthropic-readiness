@@ -17,12 +17,15 @@ and language captions to EN/中, retaining localized hover/accessibility names.
 Targeted keyboard/theme/language/context checks passed; see the sample README.
 
 Owner clarified that the problem was palette coordination, not color itself.
-The latest sample uses restrained gray-blue for execution/interaction, soft red
+The latest sample uses restrained gray-blue for interaction, teal for running, soft red
 for confirmed protocol deviations and neutral text/surfaces otherwise. Finished
-execution stays neutral, independent of passing results. Green is reserved for
+execution stays neutral, independent of passing results. Success green is reserved for
 verified passes; no new passing result was added to this issue-only sample.
 Ten targeted light/dark views passed contrast/context checks, minimum sampled text
 contrast 5.06:1. See the sample's current color section. Await owner feedback.
+The owner authorized a teal-running trial after the gray-blue iteration; running
+heading/progress use teal while focus/selection stay gray-blue. Targeted checks
+passed in both themes; see ignored artifacts/flow-running-teal-20261023/.
 
 ## Current design discussion: investigation flow before layout
 
