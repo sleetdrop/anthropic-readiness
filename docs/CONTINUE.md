@@ -19,6 +19,11 @@ attempts remain in ignored artifacts/investigation-flow-20261023/. No visual/lay
 target is selected. Product source, trial and endpoint coverage are unchanged.
 Stop here for owner feedback on navigation before another increment.
 
+Owner subsequently accepted the overall sample direction and requested less color
+in backgrounds and text. flow.html now uses neutral light/dark reading/selection
+tones with muted protocol-status edges only. Targeted before/after browser checks
+passed; see README.md. Await feedback on this styling adjustment.
+
 ## Earlier unselected console samples
 
 An earlier iteration responded to report-like layout feedback with

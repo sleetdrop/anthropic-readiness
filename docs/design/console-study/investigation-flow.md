@@ -125,3 +125,10 @@ bounds and test-fixture corrections; all attempts remain in ignored
 artifacts/investigation-flow-20261023/. The broader configuration/repair/export
 exercise above is not implemented here. No layout/palette is selected or product
 coverage added. Stop for owner feedback before another increment.
+
+Owner follow-up accepted the overall sample direction but requested less color in
+both blocks and text, especially dark mode. The sample now uses neutral reading
+text and selection, with muted status edges only. Sample-local light/dark tokens
+replace its dependency on the earlier palettes. Targeted isolated-browser visual
+and sampled contrast checks passed; README.md records limits. Final styling still
+awaits owner feedback. Navigation, product source and coverage are unchanged.

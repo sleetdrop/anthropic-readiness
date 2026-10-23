@@ -1,5 +1,6 @@
-:root { color-scheme: light; --surface: #fff; --subtle: #f7f7f7; --page: #f2f2f2; --text: #242424; --muted: #626262; --line: #dedede; --control: #909090; --accent: #343434; --accent-soft: #eaeaea; --fail: #9f3339; --fail-soft: #f6eded; --unknown: #775417; --unknown-soft: #f4f0e7; font: 14px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans CJK SC", sans-serif; }
-:root[data-theme="dark"] { color-scheme: dark; }
+/* Reading and interaction use neutral tones. Color is limited to a status edge. */
+:root { color-scheme: light; --surface: #fcfcfc; --subtle: #f2f2f2; --text: #262626; --muted: #626262; --line: #d7d7d7; --control: #8e8e8e; --accent: #4b4b4b; --accent-soft: #e8e8e8; --code: #f7f7f7; --status-edge: #9a4f46; font: 14px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans CJK SC", sans-serif; }
+:root[data-theme="dark"] { color-scheme: dark; --surface: #1c1c1c; --subtle: #242424; --text: #dedede; --muted: #a8a8a8; --line: #3b3b3b; --control: #666666; --accent: #bababa; --accent-soft: #333333; --code: #191919; --status-edge: #b68077; }
 * { box-sizing: border-box; }
 body { margin: 0; color: var(--text); background: var(--surface); display: flex; flex-direction: column; height: 100vh; height: 100dvh; }
 button, select, input { font: inherit; color: var(--text); }
@@ -35,8 +36,10 @@ th, td { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line)
 .issue-name { font-size: 13px; font-weight: 550; }
 .issue-name button { font-weight: inherit; }
 .issue-name small { display: block; color: var(--muted); font-size: 11px; font-weight: 400; margin-top: 4px; }
-.fail { color: var(--fail); }
-.unknown { color: var(--unknown); }
+.fail { color: var(--text); }
+.unknown { color: var(--muted); }
+.issues-table .fail { box-shadow: inset 2px 0 var(--status-edge); }
+.issue-type.fail { border-left: 2px solid var(--status-edge); padding-left: 7px; }
 .muted { color: var(--muted); }
 .accounting { font-size: 11px; color: var(--muted); padding: 12px 0; }
 .back { margin-bottom: 15px; font-size: 12px; }
@@ -46,13 +49,13 @@ th, td { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line)
 .difference dt { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
 .difference dd { margin: 0; font-size: 13px; }
 .observation-row.selected { background: var(--accent-soft); }
+.observation-row.selected td:first-child { box-shadow: inset 2px 0 var(--accent); }
 .observation-row label { display: flex; align-items: center; gap: 8px; cursor: pointer; }
 .observation-row input { accent-color: var(--accent); }
 .observation-row button { font-size: 11px; white-space: nowrap; }
 .selected-context { font-size: 12px; margin: 11px 0; }
 .scope-note { color: var(--muted); font-size: 12px; max-width: 950px; }
-.evidence-location { margin: 12px 0; padding: 9px 11px; font-size: 12px; border-left: 3px solid var(--fail); background: var(--fail-soft); }
-.evidence-location.condition { border-left-color: var(--unknown); background: var(--unknown-soft); }
+.evidence-location { margin: 12px 0; padding: 9px 11px; font-size: 12px; border-left: 2px solid var(--control); background: var(--subtle); }
 .event-controls { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; padding: 10px 0; font-size: 12px; }
 .event-controls button[aria-pressed="true"], .payload-tabs button[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); }
 .event-controls input { width: 220px; max-width: 100%; }
@@ -61,13 +64,13 @@ th, td { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line)
 .event-table th { position: sticky; top: 0; }
 .event-table th, .event-table td { padding: 7px 11px; }
 .event-table tr[aria-selected="true"] { background: var(--accent-soft); }
-.event-table tr.violation { color: var(--fail); }
-.event-table tr.violation[aria-selected="true"] { background: var(--fail-soft); }
+.event-table tr[aria-selected="true"] td:first-child { box-shadow: inset 2px 0 var(--accent); }
+.event-table tr.violation td:last-child { box-shadow: inset 2px 0 var(--status-edge); }
 .event-table button { font: inherit; color: inherit; }
 .event-table .gap td { background: var(--subtle); color: var(--muted); text-align: center; font-size: 11px; padding: 4px; }
 .event-number { font-variant-numeric: tabular-nums; white-space: nowrap; }
 .payload-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 17px 0 10px; font-size: 12px; }
-.payload-pane { border: 1px solid var(--line); max-height: 390px; overflow: auto; }
+.payload-pane { border: 1px solid var(--line); background: var(--code); max-height: 390px; overflow: auto; }
 pre { font: 12px/1.75 ui-monospace, "SFMono-Regular", Consolas, monospace; padding: 13px 15px; margin: 0; white-space: pre; }
 code { font-family: ui-monospace, "SFMono-Regular", Consolas, monospace; font-size: .95em; }
 .parsed { padding: 11px 14px; font-size: 12px; }

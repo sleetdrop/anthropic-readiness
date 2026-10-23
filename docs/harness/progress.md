@@ -1699,3 +1699,15 @@ page/console errors or external requests observed. No personal Chrome access,
 model call, product source/coverage change, container action, product suite or
 remote CI/write. No visual/layout target is selected. The investigation-flow
 artifact ledger records scope. Keep preview 8767 and trial 8765 for owner feedback.
+
+## 2026-10-23: Neutral prototype text and diagnostic color
+
+Owner accepted the overall flow but rejected colored blocks and text, especially
+dark mode. Scoped the sample's own light/dark tokens, neutralized all reading/status
+text and selection fills, removed red/amber explanation fills, and retained muted
+protocol-status edges. Earlier prototypes/palettes and navigation are unchanged.
+Isolated before/after captures covered both themes and list/stream/timeout views;
+sampled text contrast minimum was 5.44:1. Neutral text, language/theme controls and
+390px dark width passed; no page/console errors or external requests observed.
+Screenshots were compared. Evidence: ignored artifacts/flow-tone-20261023/. No
+complete accessibility, product suite, endpoint, container or remote check/write.

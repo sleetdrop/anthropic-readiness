@@ -22,8 +22,8 @@ the original as a reference. No sample is an approved visual/layout target.
 ## Current bounded navigation sample
 
 Open http://127.0.0.1:8767/flow.html. This exercises issue -> affected occurrence
--> evidence -> return. Plain presentation reuses unselected neutral tokens; no
-final style or whole-application layout is proposed.
+-> evidence -> return. Presentation uses sample-local neutral light/dark tokens;
+no final style or whole-application layout is selected.
 
 - Filter/search three fictional results: two protocol observations affecting
   three cases and one inconclusive condition. Similar observations do not prove
@@ -51,6 +51,22 @@ artifacts/investigation-flow-20261023/.
 No personal Chrome profile, live endpoint, product/container/CI check or complete
 accessibility/performance audit is involved. Repair, export and the full run/case
 workspace are outside this sample. It adds zero formal endpoint cases.
+
+### Neutral text/color follow-up
+
+Owner accepted the overall direction but rejected the colored backgrounds and
+text, especially in dark mode. All reading text, including status labels, event
+names and numbers, now uses neutral tones. Selection uses gray fill and a neutral
+edge; protocol status retains a small muted red edge only. Evidence explanations
+and inconclusive conditions have no red/amber fill. This sample has its own theme
+tokens; earlier palette alternatives are unchanged.
+
+Isolated before/after captures covered light/dark lists, stream evidence and
+partial timeout evidence. Sampled text contrast after the change was at least
+5.44:1; neutral text, language/theme controls and 390px dark document bounds were
+checked. No page/console error or external request was observed. Captures were
+visually compared. Evidence: ignored artifacts/flow-tone-20261023/. This is bounded
+prototype verification, not complete accessibility or product acceptance.
 
 ## Earlier runner sample (unselected)
 
