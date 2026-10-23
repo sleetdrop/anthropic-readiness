@@ -1,16 +1,29 @@
 # Local delivery status
 
-## Console sample available for owner inspection
+## Current design discussion: investigation flow before layout
 
-Latest feedback: the owner rejected the report-like layout, not only its palette.
-The current review sample is http://127.0.0.1:8767/runner.html, a bounded runner/
+The owner clarified that Wireshark/Charles are references for organizing complex
+information, not a request to clone their style or layout. Earlier overview,
+palette and runner samples are unselected discussion material. Read the
+[investigation-flow exercise](design/console-study/investigation-flow.md) before
+further design work. It maps configuration, quiet progress, exception triage,
+linked evidence, colleague/Agent handoff and comparable repair verification using
+five fictional cases, six requests and a long stream. This is a design desk
+exercise grounded in existing contracts, not a browser/usability or endpoint test.
+No new layout is selected or prototype/product behavior changed. The next bounded
+artifact should illustrate one problem-to-evidence-and-back journey, preserving
+context, rather than another complete reskin. Await owner discussion of this flow.
+
+## Earlier unselected console samples
+
+An earlier iteration responded to report-like layout feedback with
+http://127.0.0.1:8767/runner.html, a bounded runner/
 evidence-inspector alternative. Read the
 [current sample description](design/console-study/README.md) for interactions and
 limits. It uses case navigation, linked events/captures/checks, adjustable panes,
 an activity log and fixed status/accounting. Final synthetic prototype browser
-checks passed; production source and trial remain unchanged. Await feedback on
-this interaction structure before any production implementation. Earlier overview
-and palette samples below are preserved for comparison, not the current proposal.
+checks passed; production source and trial remain unchanged. This structure was
+not selected. Overview and palette samples below are also preserved for comparison.
 
 The owner approved one representative overview/issue-detail sample following the
 external reference study. The standalone

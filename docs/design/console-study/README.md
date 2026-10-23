@@ -1,19 +1,25 @@
 # Console interaction study
 
+Current status: none of the visual samples below has been selected. The owner
+clarified that Wireshark/Charles are information-organization references, not
+visual/layout targets. Start with the
+[investigation-flow exercise](investigation-flow.md). It defines task-based detail
+disclosure and navigation context before choosing another arrangement or style.
+
 This directory contains standalone, dependency-free HTML/CSS/JavaScript design
 samples. They are not part of the installed application, report renderer or
-execution engine. The current review sample is [runner.html](runner.html), created
+execution engine. The latest existing visual sample is [runner.html](runner.html), created
 after the owner explained that the original layout still felt like a report.
 The earlier [overview sample](index.html) remains available for comparison.
 
 The [reference study](../../reviews/2026-10-23-engineering-console-reference-study.md)
 explains the external mechanisms and independent visual direction. The existing
 application and its preceding desktop walkthrough provided product structure.
-The owner selected one representative layout. Following feedback on its generic
-blue-gray appearance, the same layout now offers three palette alternatives and
-the original as a reference. This is not a recreation of a selected raster mockup.
+The initial exercise used one representative layout. Following feedback on its
+generic blue-gray appearance, that layout offered three palette alternatives and
+the original as a reference. No sample is an approved visual/layout target.
 
-## Current runner sample
+## Earlier runner sample (unselected)
 
 Open http://127.0.0.1:8767/runner.html. The working structure follows the selected
 case and its captured exchanges: compact run controls, a grouped case navigator,

@@ -152,3 +152,9 @@ status with independently scrolling/resizable panes. Original samples are retain
 for comparison. Final bounded isolated-browser and visual verification is recorded
 in the prototype README and runner-study artifacts. No formal case or production
 change accompanies this alternative; await owner feedback on interaction structure.
+
+Information-organization ruling: Wireshark/Charles are references for handling
+complex information, not selected visual/layout targets. No previous sample is
+approved. The investigation-flow.md desk exercise now grounds the next bounded
+design in tasks, disclosure, context preservation and comparable repair evidence.
+No new visual sample, product implementation, endpoint call or usability test ran.

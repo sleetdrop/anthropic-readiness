@@ -4,6 +4,10 @@ Date: 2026-10-23. Audience: local endpoint users and inference-stack maintainers
 running checks, investigating exceptions, sharing evidence and verifying repairs.
 The owner requested external grounding and an identity independent of Anthropic.
 
+Later owner feedback supersedes any implied fixed arrangement or palette below.
+Use the [investigation-flow exercise](../design/console-study/investigation-flow.md)
+for the current task-based direction; no preceding visual sample was selected.
+
 ## Evidence and limits
 
 Reviewed official documentation and published interface examples linked below.

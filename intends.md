@@ -42,6 +42,9 @@ remaining failures and missing coverage.
   protocol does not imply adopting its website/application branding or palette.
   Ground interactions in comparable diagnostic/test tools and observed usage;
   use deliberate information hierarchy in both light/dark themes.
+  Learn from how tools such as Wireshark and Charles organize complex information;
+  this does not prescribe copying their visual style or fixed window layout.
+  Reveal detail according to the user's task and preserve investigation context.
 
 ## How to choose and finish work
 

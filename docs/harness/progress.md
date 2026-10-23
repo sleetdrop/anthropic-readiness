@@ -1667,3 +1667,18 @@ No page/console errors or external requests observed. The owner's everyday Chrom
 was not accessed; no app-browser troubleshooting or plugin installation occurred.
 This is prototype verification only, not product/client/container/CI acceptance.
 Evidence is ignored in artifacts/runner-study-20261023/. Await owner design feedback.
+
+## 2026-10-23: Information organization clarified before more visual work
+
+Owner rejected repeated template-like designs and clarified that Wireshark/Charles
+are references for handling complex information, not a selected layout or palette.
+Recorded the investigation-flow desk exercise against the current case catalog,
+recipe/comparison/package contracts. Fictional accounting distinguishes five cases,
+six requests, two protocol observations across three cases and one inconclusive
+condition. A 206-event illustrative stream puts the duplicate start at event 58.
+These counts were calculated independently; no endpoint was called or UI usability
+or performance claim made. The flow defines progressive disclosure, preserved
+navigation context, grouped observable phenomena, complete prerequisite reruns and
+comparable before/after conclusions. Existing prototypes remain unselected.
+This is documentation only, with zero added endpoint cases or product changes;
+no browser, plugin installation, container, product suite or remote action occurred.
