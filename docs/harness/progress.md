@@ -1792,3 +1792,12 @@ or external requests. Original failure and final captures/observations remain in
 ignored artifacts/flow-controls-20261023/. This is manually simulated design work;
 no backend/execution, product source/coverage, endpoint call, container, product
 suite, publication or remote CI change. Await owner feedback.
+
+## 2026-10-23: Simplify header theme and language controls
+
+Owner requested icon-only day/night switching and abbreviated language captions.
+Added EN/中 with full localized hover/accessibility names; theme keeps its decorative
+glyph and full accessible action name in a 32px button. Four targeted language/theme
+keyboard combinations passed at 737x694, preserving event query/raw tab/run state;
+390px width checked. Inspected settled icon captures; earlier captures are retained
+in ignored artifacts/flow-header-controls-20261023/. No product/endpoint change.

@@ -12,6 +12,9 @@ Targeted isolated-browser checks passed all eight language/theme/state combinati
 at 736x769, keyboard filters/state switching, retained evidence/navigation context
 and 390px width. See the sample README and investigation-flow ledger. No actual
 execution/backend, product source or endpoint coverage changed. Await owner trial.
+The owner's next header annotation simplified theme switching to a day/night icon
+and language captions to EN/中, retaining localized hover/accessibility names.
+Targeted keyboard/theme/language/context checks passed; see the sample README.
 
 ## Current design discussion: investigation flow before layout
 

@@ -161,3 +161,6 @@ The missing progress representation was observed before implementation; final
 eight language/theme/state variants, keyboard controls, navigation/context retention
 and narrow width passed isolated-browser checks. See README.md and ignored
 artifacts/flow-controls-20261023/. No production execution or coverage change.
+Owner then requested a familiar icon-only theme switch and abbreviated language
+captions. EN/中 and day/night icons retain full localized titles/accessibility names;
+four keyboard-switch variants and retained evidence context passed targeted checks.

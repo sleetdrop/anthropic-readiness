@@ -11,8 +11,8 @@ select, input[type="search"] { background: var(--surface); border: 1px solid var
 header { display: flex; align-items: center; min-height: 46px; gap: 20px; padding: 7px 18px; border-bottom: 1px solid var(--line); background: var(--subtle); font-size: 12px; flex-shrink: 0; }
 header strong { font-size: 13px; }
 header > span { color: var(--muted); }
-.appearance { margin-left: auto; display: flex; gap: 5px; }
-.appearance button { border-color: transparent; background: transparent; font-size: 12px; padding: 4px 7px; }
+.appearance { margin-left: auto; display: flex; align-items: center; gap: 5px; }
+.appearance button { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-color: transparent; background: transparent; font-size: 12px; padding: 0; }
 .run-context { display: grid; grid-template-columns: minmax(0, 1fr) 250px; align-items: center; gap: 12px 24px; padding: 14px 18px; border-bottom: 1px solid var(--line); flex-shrink: 0; }
 .run-heading { display: flex; align-items: baseline; flex-wrap: wrap; gap: 6px 14px; }
 .run-heading strong { font-size: 16px; font-weight: 600; }

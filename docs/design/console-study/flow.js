@@ -4,6 +4,7 @@
 history.scrollRestoration = "manual";
 const copy = {
   zh: {
+    switchLanguage: "切换到英文（English）", switchDark: "切换到深色主题", switchLight: "切换到浅色主题",
     runFinished: "运行已结束", liveHint: "结果持续更新，可先查看已结束用例。", doneHint: "仍有协议偏差与未能判断项。", casesFinished: "用例已结束", requestsSent: "请求已发出", caseProgress: "用例进度", listLiveTitle: "当前已发现的问题", listFinalTitle: "本次运行结果",
     prototype: "交互流程练习 · 视觉样式未定", client: "Claude Code 未实测", demoState: "样稿状态", running: "运行中", completed: "已结束", light: "浅色", dark: "深色", limits: "全部为模拟数据；仅验证问题、证据和返回路径，不调用模型，不生成正式报告。",
     list: "问题列表", issue: "问题", evidence: "证据", listTitle: "需要查看的结果", listLead: "2 类协议偏差影响 3 个用例；另有 1 个用例未能判断。", filter: "筛选", all: "全部", protocol: "协议偏差", condition: "未能判断", search: "搜索问题", searchHint: "现象、字段或用例名称", phenomenon: "观测现象", kind: "类型", affected: "受影响用例", action: "操作", open: "查看问题", results: "项结果", clear: "清除搜索", noResults: "没有符合条件的结果。", counts: "问题类别数、受影响用例数和失败断言数分别统计；同类现象不代表已确定共同根因。",
@@ -12,6 +13,7 @@ const copy = {
     parentLocation: "定位到父对象 $：这里应包含 stop_sequence；缺失字段没有可高亮的原始字节。", streamLocation: "关联位置：第 58 / 206 个事件；同时保留第 1 个起始事件和附近上下文。", timeoutLocation: "这是超时前已收到的部分数据，未取得消息结束事件。", nearby: "相关上下文", full: "完整序列（206）", eventSearch: "查找事件", eventHint: "例如 message_start", event: "事件", elapsed: "相对时间", observation: "观测", recorded: "已记录", duplicate: "重复起始", omitted: "个事件未展开", expand: "展开完整序列", fields: "结构化字段", raw: "原始数据", capture: "整段 SSE", capturedOnly: "下方仅展示捕获中实际存在的字段；解释不会插入原始数据。", eventSelected: "当前事件", rootObject: "根对象", eventCount: "个事件", noEvents: "没有匹配的事件；当前选中的数据仍保留。", sequenceNote: "长流用于导航结构练习；没有增加正式测试用例或验证渲染性能。", interpretation: "当前问题", frames: "已结束", requests: "请求", restoration: "已恢复上次筛选和阅读位置。"
   },
   en: {
+    switchLanguage: "Switch to Chinese (中文)", switchDark: "Switch to dark theme", switchLight: "Switch to light theme",
     runFinished: "Run finished", liveHint: "Results are updating; finished cases are available.", doneHint: "Deviations and inconclusive results remain.", casesFinished: "Cases finished", requestsSent: "Requests sent", caseProgress: "Case progress", listLiveTitle: "Issues found so far", listFinalTitle: "Run results",
     prototype: "Interaction study · Visual style undecided", client: "Claude Code not tested", demoState: "Prototype state", running: "Running", completed: "Completed", light: "Light", dark: "Dark", limits: "Synthetic data only. This demonstrates issue/evidence navigation, without model calls or production reports.",
     list: "Issues", issue: "Issue", evidence: "Evidence", listTitle: "Results to investigate", listLead: "2 protocol deviations affect 3 cases; 1 other case is inconclusive.", filter: "Filter", all: "All", protocol: "Protocol deviation", condition: "Inconclusive", search: "Search issues", searchHint: "Observation, field or case", phenomenon: "Observed phenomenon", kind: "Type", affected: "Affected cases", action: "Action", open: "Inspect issue", results: "results", clear: "Clear search", noResults: "No results match the current selection.", counts: "Issue categories, affected cases and failed assertions are separate counts. Similar observations do not establish a common root cause.",
@@ -59,7 +61,11 @@ function globalContext() {
   $("#run-progress").setAttribute("aria-label", t("caseProgress"));
   document.querySelectorAll("[data-run-state]").forEach(button => { button.setAttribute("aria-pressed", String(button.dataset.runState === app.runState)); });
   if ($("#issue-title")) $("#issue-title").textContent = t(running ? "listLiveTitle" : "listFinalTitle");
-  $("#language").textContent = app.lang === "zh" ? "English" : "中文"; $("#theme").innerHTML = iconLabel(app.theme === "light" ? "moon" : "sun", t(app.theme === "light" ? "dark" : "light"));
+  $("#language").textContent = app.lang === "zh" ? "EN" : "中";
+  $("#language").lang = app.lang === "zh" ? "en" : "zh-CN";
+  $("#language").setAttribute("aria-label", t("switchLanguage")); $("#language").title = t("switchLanguage");
+  $("#theme").innerHTML = `<span class="icon icon-${app.theme === "light" ? "moon" : "sun"}" aria-hidden="true"></span>`;
+  $("#theme").setAttribute("aria-label", t(app.theme === "light" ? "switchDark" : "switchLight")); $("#theme").title = t(app.theme === "light" ? "switchDark" : "switchLight");
 }
 function filteredIssues() { const query = state.search.trim().toLowerCase(); return issues.filter(issue => (state.filter === "all" || issue.kind === state.filter) && (!query || [t(issue.title), t(issue.sub), ...issue.occurrences.map(item => t(item.label))].join(" ").toLowerCase().includes(query))); }
 function listRows() {

@@ -70,10 +70,11 @@ prototype verification, not complete accessibility or product acceptance.
 
 ### Restrained action icons
 
-Owner requested a few clear, visually subordinate icons. Back, search
-and theme switching use 14px neutral Heroicons outline glyphs beside
-visible labels. Decorative spans are hidden from the accessibility tree; there
-are no icon-only actions or icons repeated through event rows. Four upstream SVGs
+Owner requested a few clear, visually subordinate icons. Back/search use 14px
+neutral Heroicons outline glyphs alongside visible or accessible labels. The owner
+later requested icon-only theme switching and EN/中 language captions; both retain
+full localized accessible names and native hover titles. Decorative glyphs are
+hidden from the accessibility tree, with no icons repeated through event rows. Four upstream SVGs
 are local, with provenance and MIT license in icons/. No runtime dependency or
 external icon service is introduced.
 
@@ -157,6 +158,12 @@ state changes and return/history navigation, empty-result recovery and 390px wid
 Screenshots were inspected; no page/console/resource error or external request.
 Evidence: ignored artifacts/flow-controls-20261023/, including the original failure.
 These are synthetic prototype checks, not product or full accessibility acceptance.
+
+The header simplification passed four language/theme keyboard-switch combinations
+at 737x694, retaining event search/raw-tab/run context; 390px width was checked.
+Screenshots were inspected after local mask assets settled, retaining earlier
+captures. Evidence: ignored artifacts/flow-header-controls-20261023/. This adds no
+endpoint coverage or product behavior.
 
 ## Earlier runner sample (unselected)
 
