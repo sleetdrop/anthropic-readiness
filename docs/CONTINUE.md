@@ -1,6 +1,6 @@
 # Local delivery status
 
-## Tool-result round trip implemented; final local trial handoff
+## Tool-result round trip delivered; await owner trial feedback
 
 The owner approved one small addition: `ANT-TOOL-LOOP-001` v1 in profile
 `anthropic-tool-loop`. Source and the running local Web trial now provide five
@@ -12,11 +12,11 @@ the owner can select only the round-trip profile to test it separately.
 
 Dedicated fault/timeout/cancellation/evidence checks passed, as did actual CLI,
 Web API and the new browser flow against synthetic endpoints. One independent
-review's extra-tool false PASS was reproduced and fixed; all 17 dedicated
-regressions passed. Final stable-source fast graph passed eight gates; 77 targeted
+review's extra-tool false PASS was reproduced and fixed. Final stable-source fast graph passed eight gates; 77 targeted
 checks, including 20 round-trip regressions, passed. New-case browser verification
 passed with verified evidence; corrected catalog/installed-package checks passed
-six tests. A first-step failure stays visible in repair comparison even if the
+six tests, with five final installed-package checks reverified after the last
+code corrections. A first-step failure stays visible in repair comparison even if the
 second step passed. Exports retain both exchanges.
 The broader graph's old catalog/budget fixture failures were corrected and
 reverified separately; its failed/changed-source records remain intact. No single
@@ -27,20 +27,25 @@ Trial http://localhost:8765 has been updated with a cached-wheel/offline depende
 reuse image. Existing persistent history is retained. Keep this trial running;
 stop only the development check container after its work finishes. No agent call
 to the owner's endpoint, remote push, image publication or full native matrix.
-Refresh the trial to the final local commit before declaring the handoff complete.
+Final trial revision is local feature commit `eb82c90`; all 157 installed package
+files match the source. Health/home checks passed and both prior completed runs
+remain present. Development checks are finished; keep the trial service running.
+Wait for owner feedback before choosing another feature. The feature is committed
+locally and has not been pushed; remote main still has four cases.
 Streaming/parallel tool loops, error-result recovery and real client workflows
 remain future work. Older four-case observations below are historical.
 
-## Product alignment and next priority
+## Product alignment and remaining coverage
 
 Read [project intent](../intends.md) before selecting further work. The owner
-identified that the formal catalog still has only four cases despite extensive
+identified that the formal catalog had only four cases despite extensive
 presentation and engineering work. Prioritize expanding dependable diagnostic
 coverage: expected-rejection scenarios, multi-step tool/result conversations,
 streamed tool arguments, multi-turn messages and request/error contracts, then
 the remaining protocol/client/version-maintenance goals in intends.md. Existing
 W1/W2 scope exclusions are historical milestone boundaries, not completion or
-removal of these goals. No expanded catalog has been delivered yet.
+removal of these goals. The first addition above brings the local catalog to five;
+the remaining goals are not yet delivered.
 
 The prior private 90-scenario assessment is reference material, not a shipped
 suite or 90 independent capabilities. Its script is absent from the inspected
@@ -48,7 +53,7 @@ original temporary harness directory; do not promise a direct import without
 recovering and auditing actual source. Use retained method/rulings and verified
 official protocol sources to reconstruct generic checks where needed.
 
-## User trial running; additional release acceptance deferred
+## Historical four-case trial; superseded by the delivery above
 
 The owner prioritized hands-on use over another verification round. Current-source
 Web service is running at http://localhost:8765 in readiness-trial-readiness-1,

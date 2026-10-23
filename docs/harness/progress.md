@@ -1498,3 +1498,16 @@ whole-graph evidence. Original interrupted/failed/collection-error records remai
 No single all-green full graph for final source, new remote CI, full native image
 matrix or genuine endpoint assessment is claimed. Exact source and positive
 JUnit counts are in ignored tool-loop-observed-summary.json.
+
+Final trial handoff: local feature commit eb82c9076b431db8ad46fb0bc25b47cd30781931
+is installed at http://localhost:8765. All 157 installed package files match the
+final source; source fingerprint is
+794289ddf4f7f8bf1b0fe6dbfb16ed6735ed53fc2c1af9377c8ddafb7df98098.
+Five final installed-package checks passed after the last code corrections.
+Health and homepage checks passed; both prior completed run IDs remain present.
+The explicitly synthetic ignored-result report was regenerated with verified
+evidence at artifacts/ci-startup-20261022/tool-loop-synthetic-ignored-verified/.
+The trial container stays running for the owner. Development checks are finished;
+the development container is stopped at handoff. This is a local delivery only:
+no remote push, registry publication or real endpoint call. Await owner feedback
+before selecting another increment.

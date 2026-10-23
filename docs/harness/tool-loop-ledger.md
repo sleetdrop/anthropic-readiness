@@ -101,7 +101,12 @@ Final closure on 2026-10-23:
 The controlled oracle requires a text-only, exact token echo after surrounding
 whitespace is removed. Extra explanation or another tool call fails that bounded
 task; such failure alone does not prove that a gateway dropped the tool result.
-The final trial refresh and local commit are recorded in progress.md.
+The final trial runs feature commit `eb82c90` at http://localhost:8765. All 157
+installed package files match the final source. Health/home checks passed and
+both previously completed runs remain present. Five final installed-package
+checks also passed after the last code corrections. The feature is local only;
+no push or genuine endpoint assessment was performed. Owner trial feedback is
+the next checkpoint; no further feature is underway.
 
 Logs are ignored under artifacts/ci-startup-20261022/tool-loop-*.
 
