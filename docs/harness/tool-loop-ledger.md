@@ -110,6 +110,33 @@ the next checkpoint; no further feature is underway.
 
 Logs are ignored under artifacts/ci-startup-20261022/tool-loop-*.
 
+## Owner trial follow-up: bounded independent raw requests
+
+On 2026-10-23 the owner requested independent endpoint confirmation after a
+five-case/six-request run completed all controlled behaviors but failed the
+message structure check. Its stored evidence verified successfully. Four
+non-stream response copies passed the core check after adding only a null
+stop_sequence in memory; original evidence was unchanged. Both stored stream
+samples lacked the nullable stop fields but had normal completion events.
+
+Under explicit live opt-in, two independent direct HTTP requests bypassed the
+assessment engine: one non-stream and one stream, no authentication, no retry,
+128 max_tokens each, 40-second per-call deadline within a 90-second budget.
+Both returned HTTP 200 and the requested text in approximately one second.
+Missing stop_sequence was reproduced. The new stream also contained a second
+message_start between its text delta and content_block_stop, followed by a
+normal message_delta/message_stop. Neither earlier stream sample showed that
+duplicate; frequency and component attribution are not established.
+
+Nullable-field omission is a contract deviation, not proof of a client failure.
+The current official Python Message model defaults stop_sequence to None; the
+official TypeScript stream accumulator rejects a second message_start before
+message_stop. These source observations explain possible tolerance and risk,
+but the owner's installed Claude Code path/version was not tested. The owner
+reports that it currently works. No additional live requests or source changes
+were made. Private requests/responses and summary remain ignored under
+artifacts/live-kimi-field-check-20261023/; do not publish them.
+
 ## Limits and protocol reference
 
 This covers one non-stream client-tool call and one successful synthetic result,

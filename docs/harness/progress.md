@@ -1511,3 +1511,15 @@ The trial container stays running for the owner. Development checks are finished
 the development container is stopped at handoff. This is a local delivery only:
 no remote push, registry publication or real endpoint call. Await owner feedback
 before selecting another increment.
+
+Owner trial follow-up (2026-10-23): read and verified the owner's saved evidence,
+then sent two explicitly authorized independent raw requests, bounded to two
+calls/90 seconds with no retry. Both returned HTTP 200 and completed normally;
+nullable stop-field omissions reproduced. The fresh stream additionally had a
+duplicate message_start, absent from the two earlier stream samples. Treat this
+as one observed lifecycle deviation, not a measured rate or proof of a Claude
+Code failure. The owner reports working Claude Code usage; its installed client
+was not exercised. See tool-loop-ledger.md for the distinction between contract
+conformance, client tolerance and observed task completion. No product source
+change, further model call or remote write accompanies this diagnosis. Private
+raw evidence is retained only in ignored artifacts/live-kimi-field-check-20261023/.
