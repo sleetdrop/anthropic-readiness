@@ -1577,3 +1577,13 @@ Both history browser checks passed again after the lint/type corrections; the
 seven earlier related browser checks remain separate evidence. Documentation
 checks and the cached package build passed. No full graph is claimed. Current
 trial refresh is the remaining delivery step; no further feature work is underway.
+
+Input-history handoff complete: feature commit
+e8e270e4ba10b7195a106fa9e9559c9eecfbb2c0 is installed at
+http://localhost:8765/new. All 157 installed package files match current source;
+health and history-control checks passed, and all three prior completed records
+remain. Final source fingerprint:
+09743636d859e95d704e97a9974bd556841de18fae0ec25b806d657e3f4339dc.
+The current wheel build and offline trial assembly passed. The trial remains
+running with its volume; the development container is stopped at handoff. No
+real endpoint call or remote publication was performed. Await owner feedback.

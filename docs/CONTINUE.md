@@ -1,6 +1,6 @@
 # Local delivery status
 
-## Browser input history implemented; final trial refresh pending
+## Browser input history delivered; await owner feedback
 
 The owner requested endpoint/model autocomplete backed by localStorage. Only
 these two fields are remembered, with 20 recent values each, no automatic filling
@@ -13,7 +13,11 @@ Final stable-source fast checks passed eight gates. Seven related browser checks
 passed, and the final history implementation passed two additional browser checks.
 One bounded independent read-only review found no material issue. No endpoint
 coverage, real endpoint request, new remote CI or remote write is included.
-The local trial refresh and installed-source identity are recorded at handoff.
+Trial http://localhost:8765/new runs local feature commit `e8e270e`. All 157
+installed package files match source; health and input-history controls were
+checked and all three prior completed records remain. Keep the trial running;
+the development check container is stopped at handoff. This work is local only.
+Await owner feedback before selecting another increment.
 
 ## Simplified entry delivered; await owner feedback
 
