@@ -111,6 +111,21 @@ Syntax, whitespace and exact-restoration checks passed; no fresh browser run was
 needed for this visual rollback. The experiment and its observations remain
 historical evidence, not a selected design.
 
+### Table hierarchy and short status marks
+
+Owner questioned headers being weaker than primary first-column content, and
+requested refinement of the original status line. Issue-table headers and primary
+names share 12px; header weight is 600 and name weight 500, with secondary notes
+still 11px/400. The status mark is a 10px vertical rule beside plain neutral text,
+with consistent placement across list/detail/event observations. No boxes return.
+
+Isolated-browser checks passed light/dark views, equal header/name sizing,
+header weight, short-rule bounds, navigation, bilingual controls and narrow width.
+Sampled text contrast minimum remains 5.44:1. The owner's 736x769 annotated viewport
+and dark list were visually inspected. Evidence is ignored in
+artifacts/flow-table-balance-20261023/. This changes the sample CSS only, plus
+its cache version; no product or complete accessibility acceptance is claimed.
+
 ## Earlier runner sample (unselected)
 
 Open http://127.0.0.1:8767/runner.html. The working structure follows the selected

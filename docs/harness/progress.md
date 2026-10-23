@@ -1753,3 +1753,15 @@ table character. Restored sample CSS/JS exactly to `852ef59`, retaining neutral
 themes, limited icons and the text-only evidence button. Syntax, whitespace and
 exact-restoration checks passed. No fresh browser/product/endpoint/container check
 or remote action; rejected experiment and its observed checks remain preserved.
+
+## 2026-10-23: Balance table typography and shorten status rules
+
+Owner questioned weak headers versus larger/heavier first-column text and requested
+refinement of the status line. Changed sample CSS: equal 12px header/name size,
+600/500 weights and 10px status rules beside plain text in list/detail/event views.
+No boxes or new colored text. Isolated browser checks passed hierarchy/short-rule
+measurements, light/dark rendering, navigation, bilingual controls and narrow width;
+sampled text contrast minimum 5.44:1. Inspected the owner's 736x769 viewport and
+dark list. No page/console errors or external requests. Evidence is ignored in
+artifacts/flow-table-balance-20261023/. No product coverage, endpoint, container,
+product suite or remote changes. Await owner feedback on this bounded adjustment.

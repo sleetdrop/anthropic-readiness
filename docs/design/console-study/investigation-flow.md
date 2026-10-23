@@ -147,3 +147,6 @@ ignored artifacts/flow-status-labels-20261023/. No product behavior changed.
 The owner rejected boxed status labels in favor of the preceding technical-article
 table style. CSS/JS were restored exactly to `852ef59`; static checks passed.
 Keep the experiment as historical evidence, not the current design target.
+Owner next requested stronger table-header hierarchy and refinement of the rule.
+Matched header/name font size, strengthened headers and shortened status rules
+to 10px beside text. Targeted browser checks passed; see the sample README.
