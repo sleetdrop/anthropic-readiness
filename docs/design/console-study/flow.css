@@ -46,7 +46,7 @@ th, td { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line)
 .fail { color: var(--text); }
 .unknown { color: var(--muted); }
 .issues-table td:nth-child(2) { position: relative; padding-left: 22px; }
-.issues-table .fail::before, .issue-type.fail::before, .event-table tr.violation td:last-child::before { content: ""; position: absolute; top: 50%; height: 10px; border-left: 2px solid var(--status-edge); transform: translateY(-50%); }
+.issues-table .fail::before, .issue-type.fail::before, .event-table tr.violation td:last-child::before { content: ""; position: absolute; top: 50%; height: 24px; border-left: 2px solid var(--status-edge); transform: translateY(-50%); }
 .issues-table .fail::before { left: 12px; }
 .issue-type.fail { position: relative; padding-left: 10px; }
 .issue-type.fail::before { left: 0; }

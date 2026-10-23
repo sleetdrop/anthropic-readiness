@@ -150,3 +150,5 @@ Keep the experiment as historical evidence, not the current design target.
 Owner next requested stronger table-header hierarchy and refinement of the rule.
 Matched header/name font size, strengthened headers and shortened status rules
 to 10px beside text. Targeted browser checks passed; see the sample README.
+Owner found 10px letter-like; lengthened the mark to 24px. Six light/dark
+list/detail/event checks passed with space remaining around the mark.

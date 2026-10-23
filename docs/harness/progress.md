@@ -1765,3 +1765,11 @@ sampled text contrast minimum 5.44:1. Inspected the owner's 736x769 viewport and
 dark list. No page/console errors or external requests. Evidence is ignored in
 artifacts/flow-table-balance-20261023/. No product coverage, endpoint, container,
 product suite or remote changes. Await owner feedback on this bounded adjustment.
+
+## 2026-10-23: Lengthen letter-like status mark
+
+Owner found the 10px rule easy to mistake for a letter. Changed only its height
+to 24px and refreshed the CSS version. Six isolated light/dark list/detail/event
+checks at 736x769 passed: marker height exceeds text height and stays below its
+row/title region height. Screenshots inspected; no page/console errors. Evidence:
+ignored artifacts/flow-rule-height-20261023/. No product or endpoint change.

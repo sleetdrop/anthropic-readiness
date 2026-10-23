@@ -36,7 +36,8 @@ restored exactly to `852ef59`, keeping neutral text, limited icons and the text-
 evidence button. No further embellishment or new design stage is selected.
 Owner then requested clearer header/body hierarchy and a refinement of the status
 line. Issue-table headers and primary names now share 12px, with stronger headers;
-status lines are 10px marks adjacent to text, not full-cell rules. Targeted browser
+status lines are 24px marks adjacent to text, not full-cell rules. The initial
+10px mark resembled a letter and was lengthened after owner feedback. Targeted browser
 checks passed. Existing neutral themes and navigation remain; await owner feedback.
 
 ## Earlier unselected console samples

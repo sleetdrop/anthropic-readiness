@@ -116,7 +116,7 @@ historical evidence, not a selected design.
 Owner questioned headers being weaker than primary first-column content, and
 requested refinement of the original status line. Issue-table headers and primary
 names share 12px; header weight is 600 and name weight 500, with secondary notes
-still 11px/400. The status mark is a 10px vertical rule beside plain neutral text,
+still 11px/400. The status mark is a 24px vertical rule beside plain neutral text,
 with consistent placement across list/detail/event observations. No boxes return.
 
 Isolated-browser checks passed light/dark views, equal header/name sizing,
@@ -125,6 +125,12 @@ Sampled text contrast minimum remains 5.44:1. The owner's 736x769 annotated view
 and dark list were visually inspected. Evidence is ignored in
 artifacts/flow-table-balance-20261023/. This changes the sample CSS only, plus
 its cache version; no product or complete accessibility acceptance is claimed.
+
+The initial 10px rule looked like a letter to the owner. Lengthened it to 24px;
+six targeted light/dark list/detail/event captures at 736x769 confirmed that the
+mark exceeds text height while retaining space within each row/title region.
+Screenshots were inspected; no page/console errors. Evidence is ignored in
+artifacts/flow-rule-height-20261023/.
 
 ## Earlier runner sample (unselected)
 
