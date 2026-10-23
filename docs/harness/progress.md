@@ -1870,3 +1870,14 @@ verdict. Nine focused browser checks passed, including that regression, keyboard
 focus, narrow-screen accessibility and no-script reading. Earlier failing attempts
 remain in ignored artifacts/console-baseline/; final frozen verification and
 installed trial acceptance are recorded in the ledger when complete.
+
+Final frozen-source full verification passed all 13 gates with source unchanged:
+495 unit/harness, 29 frontend unit, 88 browser, 280 integration, 84 acceptance and
+five installed-package tests, without failures/skips. A standard offline Docker
+build lacked an uncached dependency; a cached local wheel/trial build passed.
+This is not clean networked Docker or remote-CI acceptance. Feature `315f23f` is
+installed on 8765; all 163 installed package files match source, and four runs /
+154 historical run files retain identical hashes. Retained the original volume,
+old image and 8767 reference. Requested the run's issue page in Codex's built-in
+browser (queued); owner trial remains separate from automated verification.
+No agent real-endpoint requests, remote writes or added endpoint scenarios.

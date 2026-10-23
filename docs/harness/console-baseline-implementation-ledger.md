@@ -22,7 +22,8 @@ Sequential delivery:
   passed (50 resolved packages, 48 checked). Source tree initially clean.
 - Product service on 8765 and its persistent volume remain intact. Static sample
   on 8767 remains a reference, separate from the running product.
-- Implementation and verification are pending; container startup is not acceptance.
+- Initial implementation and verification were pending; container startup alone
+  was not acceptance. Final outcomes follow below.
 
 ## Implemented behavior and contract boundaries
 
@@ -79,7 +80,7 @@ Evidence directory: ignored `artifacts/console-baseline/`.
 - Inspected actual-product light evidence and paired dark issue-list screenshots;
   waited for the translated server projection before assessing the English view.
   Synthetic fixtures do not establish any additional endpoint compatibility.
-- Final frozen full graph, installation and local delivery are pending below.
+- Final frozen full graph, installation and local delivery are recorded below.
 
 ## Frozen source acceptance
 
@@ -97,3 +98,29 @@ A standard `--network=none` Docker build could not download an uncached dependen
 that failed attempt is retained. Building the wheel on the existing cached build
 image then passed entirely offline. This is local trial preparation, not clean
 networked Docker or remote-CI acceptance. Installed-container verification follows.
+
+## Local delivery and remaining limits
+
+All five sequential delivery steps are complete. Feature commit `315f23f` is
+installed in the existing `readiness-trial` service on port 8765, using the same
+persistent volume. New image manifest:
+`sha256:9ffc1b65a5996e4cbd535faad6712628001429ceec2744da91b10f4bd2769776`.
+The prior image remains tagged `anthropic-readiness-web:before-console-baseline`.
+The local trial recipe reuses cached dependencies; image-context identity remains
+unknown, so it is not a release/publishing proof.
+
+Post-install read-only acceptance passed: health OK, workbench HTML version 2.0,
+actual issue table present, all four run IDs visible, all 154 historical run-file
+hashes unchanged, and every one of 163 installed package files identical to source.
+Detailed snapshots/hashes remain ignored in `artifacts/console-baseline/`; no real
+targets, credentials or captured source records were added to the repository.
+Requested the existing run's Issues page in Codex's built-in browser; the app
+returned queued, so that request alone is not evidence of human visual approval.
+The static sample on 8767 is preserved. No user Chrome automation was used.
+
+This increment adds zero endpoint scenarios and makes no new protocol/client
+support claim. The catalog remains five formal cases. Streaming tool loops,
+broader multi-turn/request-error coverage and real SDK/Claude Code tests remain
+unfinished core goals. No live endpoint calls or remote writes occurred. Reports
+retain their existing independently exported presentation. Owner hands-on feedback
+is next; evidence display remains bounded and full files remain downloadable.

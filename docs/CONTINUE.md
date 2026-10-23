@@ -1,15 +1,27 @@
 # Local delivery status
 
-## Approved console integration in progress
+## Approved console integration delivered for owner trial
 
-The owner authorized implementing the accepted sample in the actual console.
+The accepted flow sample is now implemented in the actual local Web application.
 Read [the bounded ledger](harness/console-baseline-implementation-ledger.md).
-Existing five cases, checked progress, list/search, occurrence/evidence navigation,
-paired themes and bilingual controls are in scope; no real endpoint calls or new
-protocol scenarios. Frozen source verification passed all 13 local gates (88 browser and 280
-integration tests included); one independent review finding was fixed and verified.
-The installed trial on 8765 and its data are unchanged pending installation. The sample on 8767 is preserved.
-Do not treat intermediate check results below as final delivery acceptance.
+On http://localhost:8765, open an existing run and follow Issues -> occurrence ->
+View evidence -> Back to issues. Search/filter, selected occurrence and evidence
+reading context are retained; bilingual light/dark controls follow root design.md.
+Real persisted progress remains visible. Retest/export and CLI remain available.
+
+Feature commit: `315f23f`. All 13 frozen-source local gates passed, including 88
+browser and 280 integration tests. One independent review finding was fixed and
+verified. The cached local trial image is installed; all 163 packaged files match
+source. Four existing runs and all 154 run files retain their hashes. Static
+sample 8767 and the old image remain available. No agent real-endpoint calls,
+remote CI, registry publication or clean networked Docker acceptance occurred.
+
+This increment is supporting interface work: the five formal endpoint cases are
+unchanged. Core coverage gaps remain, including streaming tool flows, broader
+multi-turn/validation/error cases and actual SDK/Claude Code verification. Do not
+confuse offline test counts or UI completion with endpoint compatibility. Owner
+hands-on feedback is the next step; do not start a new long implementation stage
+without discussing the next concrete diagnostic outcome.
 
 ## Approved presentation baseline recorded (historical)
 
