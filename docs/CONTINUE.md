@@ -10,9 +10,14 @@ further design work. It maps configuration, quiet progress, exception triage,
 linked evidence, colleague/Agent handoff and comparable repair verification using
 five fictional cases, six requests and a long stream. This is a design desk
 exercise grounded in existing contracts, not a browser/usability or endpoint test.
-No new layout is selected or prototype/product behavior changed. The next bounded
-artifact should illustrate one problem-to-evidence-and-back journey, preserving
-context, rather than another complete reskin. Await owner discussion of this flow.
+The owner authorized one issue-to-evidence-and-back journey. The bounded sample
+is ready at http://127.0.0.1:8767/flow.html; see its
+[description and verification](design/console-study/README.md). It demonstrates
+affected-occurrence selection, linked long-stream context, whole-capture search
+and retained navigation/run context. Final isolated-browser checks passed; failed
+attempts remain in ignored artifacts/investigation-flow-20261023/. No visual/layout
+target is selected. Product source, trial and endpoint coverage are unchanged.
+Stop here for owner feedback on navigation before another increment.
 
 ## Earlier unselected console samples
 

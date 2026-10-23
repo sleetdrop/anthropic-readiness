@@ -1682,3 +1682,20 @@ navigation context, grouped observable phenomena, complete prerequisite reruns a
 comparable before/after conclusions. Existing prototypes remain unselected.
 This is documentation only, with zero added endpoint cases or product changes;
 no browser, plugin installation, container, product suite or remote action occurred.
+
+## 2026-10-23: Bounded issue-to-evidence navigation sample
+
+Owner authorized one clickable journey. Added standalone flow.html/CSS/JS with
+synthetic affected-occurrence selection, missing-key parent-object inspection,
+206-event context/full-sequence views and parsed/raw evidence. Context-only search
+was reproduced before correction to whole-capture search. Final isolated Chromium
+checks passed filter/query/selection/tab and reading-position restoration,
+independent simulated progress, direct-link parent fallback and 1280x900/390x844
+document bounds. Actual list click position restored at 286px, main evidence at
+20px and event-table at 900px. Two test-fixture assumptions (fresh-document hash
+loading and automation pre-click scroll) were corrected; all attempts remain in
+ignored artifacts/investigation-flow-20261023/. Screenshots were inspected; no
+page/console errors or external requests observed. No personal Chrome access,
+model call, product source/coverage change, container action, product suite or
+remote CI/write. No visual/layout target is selected. The investigation-flow
+artifact ledger records scope. Keep preview 8767 and trial 8765 for owner feedback.

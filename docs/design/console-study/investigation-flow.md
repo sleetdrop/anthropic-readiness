@@ -114,3 +114,14 @@ The next design artifact should demonstrate one issue-to-evidence-and-back journ
 with these mixed outcomes and long stream. Decide presentation from those tasks;
 do not start another complete application skin or assume a Charles/Wireshark clone.
 The preceding static samples remain discussion material, not approved designs.
+
+## Bounded artifact ledger: 2026-10-23
+
+Owner authorized the issue/evidence/return sample, now delivered as flow.html.
+Its synthetic affected-occurrence selection, 206-event navigation and retained
+context passed final isolated-browser checks. Context-only search was reproduced
+before correction to whole-capture search. README.md records observed positions,
+bounds and test-fixture corrections; all attempts remain in ignored
+artifacts/investigation-flow-20261023/. The broader configuration/repair/export
+exercise above is not implemented here. No layout/palette is selected or product
+coverage added. Stop for owner feedback before another increment.

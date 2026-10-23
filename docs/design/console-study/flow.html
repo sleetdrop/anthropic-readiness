@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="zh-CN" data-palette="graphite" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Anthropic Readiness · Investigation flow</title>
+  <link rel="stylesheet" href="flow.css?v=1">
+  <link rel="stylesheet" href="palettes.css?v=1">
+  <script src="flow.js?v=1" defer></script>
+</head>
+<body>
+  <header><strong>Anthropic Readiness</strong><span data-text="prototype"></span><div class="appearance"><button type="button" id="language" aria-label="Switch language">English</button><button type="button" id="theme"></button></div></header>
+  <section class="run-context" aria-label="Run context"><strong>run-demo-024</strong><span id="run-counts"></span><span data-text="client"></span><label><span data-text="demoState"></span><select id="run-state"><option value="running" data-text="running"></option><option value="completed" data-text="completed"></option></select></label></section>
+  <nav id="trail" aria-label="Investigation context"></nav>
+  <main id="main" tabindex="-1"></main>
+  <footer data-text="limits"></footer>
+  <div id="announcement" class="sr-only" aria-live="polite"></div>
+</body>
+</html>

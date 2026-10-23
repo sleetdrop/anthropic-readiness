@@ -8,8 +8,8 @@ disclosure and navigation context before choosing another arrangement or style.
 
 This directory contains standalone, dependency-free HTML/CSS/JavaScript design
 samples. They are not part of the installed application, report renderer or
-execution engine. The latest existing visual sample is [runner.html](runner.html), created
-after the owner explained that the original layout still felt like a report.
+execution engine. The latest bounded navigation sample is [flow.html](flow.html).
+The earlier [runner sample](runner.html) followed the report-like layout feedback.
 The earlier [overview sample](index.html) remains available for comparison.
 
 The [reference study](../../reviews/2026-10-23-engineering-console-reference-study.md)
@@ -18,6 +18,39 @@ application and its preceding desktop walkthrough provided product structure.
 The initial exercise used one representative layout. Following feedback on its
 generic blue-gray appearance, that layout offered three palette alternatives and
 the original as a reference. No sample is an approved visual/layout target.
+
+## Current bounded navigation sample
+
+Open http://127.0.0.1:8767/flow.html. This exercises issue -> affected occurrence
+-> evidence -> return. Plain presentation reuses unselected neutral tokens; no
+final style or whole-application layout is proposed.
+
+- Filter/search three fictional results: two protocol observations affecting
+  three cases and one inconclusive condition. Similar observations do not prove
+  a common cause. Inspect either missing-field occurrence's parent JSON without
+  inserting an invented missing field into raw data.
+- Follow duplicate start to event 58 of 206. View the original start and nearby
+  context, expand all events or search the whole capture regardless of expansion.
+  Switch among parsed fields, an original-format frame and synthetic full SSE.
+- Return using buttons or browser history with filters, query, occurrence,
+  evidence selection/tab and main/event-table positions retained. Language, theme
+  and simulated run progress stay current. Direct evidence links have a parent
+  path within the sample. Timeout evidence remains partial and inconclusive.
+
+Final isolated Chromium checks on 2026-10-23 passed these paths, including searching
+outside the initial context and narrow layouts. Main/event-table positions restored
+at 20px/900px; a short-viewport list restored the actual click position at 286px.
+Documents fit 1280x900 and 390x844 with internal detail scrolling. Screenshots were
+visually inspected; no page/console errors or external requests were observed.
+An initial check reproduced context-only search, then reverified whole-capture
+search after correction. Other failed checks had two fixture assumptions corrected:
+loading a hash link in a fresh document and measuring position at the actual click
+after automation scrolls its target into view. All attempts remain in ignored
+artifacts/investigation-flow-20261023/.
+
+No personal Chrome profile, live endpoint, product/container/CI check or complete
+accessibility/performance audit is involved. Repair, export and the full run/case
+workspace are outside this sample. It adds zero formal endpoint cases.
 
 ## Earlier runner sample (unselected)
 
