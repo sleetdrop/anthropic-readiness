@@ -126,3 +126,14 @@ records official-source mechanisms and distinguishes proposed adaptations from
 verified behavior. Reconsider the earlier separate confirmation-page recommendation:
 explore an inline summary while preserving validation and explicit live opt-in.
 No product implementation or additional endpoint coverage accompanies this study.
+
+## Representative interaction sample
+
+The owner approved one overview/issue-detail design sample after the reference
+study. See [prototype scope and verification](../design/console-study/README.md).
+It is a separate static preview on 8767 with fictional observations; the current
+product trial and its original results remain on 8765. Final desktop/narrow browser
+checks and visual inspection completed after preserving/fixing the initial layout
+overflow and transient dark-button contrast failure. No production implementation,
+new diagnostic case, actual endpoint call or container upgrade accompanies this
+sample. Await owner feedback before choosing a production change.

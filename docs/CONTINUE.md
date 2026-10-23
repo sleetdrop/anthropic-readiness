@@ -1,5 +1,17 @@
 # Local delivery status
 
+## Console sample available for owner inspection
+
+The owner approved one representative overview/issue-detail sample following the
+external reference study. The standalone
+[prototype and limits](design/console-study/README.md) are ready at
+http://127.0.0.1:8767/ with bilingual light/dark, mixed outcomes, evidence drilldown,
+simulated running/stopped states and purpose-based export previews. Every result
+is synthetic. Production source, installed trial on 8765 and its data are unchanged.
+Final prototype browser checks passed at desktop/narrow widths; failed layout
+and theme-transition observations are retained in ignored artifacts.
+Await owner feedback on the sample before selecting a production increment.
+
 ## External interaction references and independent identity
 
 On 2026-10-23 the owner requested comparable-tool research before further UX work

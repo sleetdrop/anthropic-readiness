@@ -1611,3 +1611,24 @@ claim is made. Updated durable intent and reconsidered the earlier separate-plan
 confirmation recommendation. Existing admission, opt-in and evidence rules remain.
 This is documentation/research only: no new cases, product changes, model calls,
 container changes or remote writes. Product test suites were not rerun for prose.
+
+## 2026-10-23: One bounded console interaction prototype
+
+Owner approved one sample, not production implementation. Added dependency-free
+design HTML/CSS/JavaScript in docs/design/console-study with overview/issue details,
+separate task/protocol outcomes, grouped causes, affected-case evidence, bilingual
+themes, simulated run/stop and purpose-based export previews. Only synthetic JSON
+can be downloaded; no full report/bundle/client workflow is implemented here.
+No model call, product source change, new case, image build or trial-data mutation.
+
+The initial 1280x900 completed overview measured 925px and was compacted to fit.
+Visual review identified a background-only transition causing dark-theme button
+text to briefly appear on a light background; preserved failures, removed that
+transition and reverified a 13.21:1 text contrast. Final walkthrough covered filters,
+case/evidence tabs, languages/themes, run/stop/configuration and both export paths.
+390px overview/issue layouts have no document horizontal overflow. No console/page
+errors or external requests were observed in final verification. No full mobile,
+screen-reader or accessibility conformance claim is made. Existing browser fallback
+authorization was reused after Chrome control timeouts; no product test suite ran.
+Evidence: ignored artifacts/console-study-20261023/. Keep independent static preview
+8767 and actual trial 8765 available; await owner design feedback.
