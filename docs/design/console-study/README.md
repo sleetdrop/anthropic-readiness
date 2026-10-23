@@ -19,6 +19,34 @@ The initial exercise used one representative layout. Following feedback on its
 generic blue-gray appearance, that layout offered three palette alternatives and
 the original as a reference. No sample is an approved visual/layout target.
 
+## Current semantic color direction
+
+Owner clarified that earlier feedback concerned palette quality/coordination,
+not a grayscale-only restriction. This direction supersedes the earlier neutral-
+text-only trial below, keeping its table hierarchy and interaction structure.
+Neutral surfaces and reading text remain dominant; color is applied where its
+meaning can be named.
+
+| Role | Light | Dark | Use |
+| --- | --- | --- | --- |
+| Interaction/execution | `#416b7b` | `#93b6c5` | Running status/progress, active filters, focus and selection accents |
+| Selection surface | `#eaf0f2` | `#29353b` | Selected occurrence/event and active payload controls |
+| Observed deviation | `#984c57` | `#d1949e` | Short protocol-status text and its existing rule, not entire traces |
+| Verified pass | `#397052` | `#9bbda9` | Reserved palette role; no new pass UI/result is fabricated in this sample |
+
+Inconclusive/untested conditions remain neutral. Execution completion also uses
+neutral heading/progress colors: finishing a run does not establish protocol or
+client readiness. Long expected/observed explanations, event names and raw payloads
+retain neutral reading colors even when their selected row has a deviation.
+
+Ten targeted isolated-browser light/dark list/detail/evidence/state views passed:
+minimum sampled text contrast 5.06:1, focus contrast at least 3:1, neutral completion
+and inconclusive presentation, and retained filter/query/raw-tab context across
+state changes. Bilingual narrow width was checked; screenshots were compared with
+the preceding palette. No page/console/resource error or external request observed.
+Evidence: ignored artifacts/flow-semantic-colors-20261023/. Earlier color trials
+remain historical. No product/endpoint/complete accessibility acceptance is claimed.
+
 ## Current bounded navigation sample
 
 Open http://127.0.0.1:8767/flow.html. This exercises issue -> affected occurrence

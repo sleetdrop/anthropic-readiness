@@ -53,6 +53,7 @@ function globalContext() {
   document.documentElement.lang = app.lang === "zh" ? "zh-CN" : "en"; document.documentElement.dataset.theme = app.theme;
   document.querySelectorAll("[data-text]").forEach(node => { node.textContent = t(node.dataset.text); });
   const running = app.runState === "running";
+  $(".run-context").dataset.state = app.runState;
   $("#run-status").textContent = t(running ? "running" : "runFinished");
   $("#run-hint").textContent = t(running ? "liveHint" : "doneHint");
   $("#run-counts").textContent = `${t("casesFinished")} ${running ? 4 : 5}/5`;

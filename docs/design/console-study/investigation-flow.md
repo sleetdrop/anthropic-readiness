@@ -164,3 +164,11 @@ artifacts/flow-controls-20261023/. No production execution or coverage change.
 Owner then requested a familiar icon-only theme switch and abbreviated language
 captions. EN/中 and day/night icons retain full localized titles/accessibility names;
 four keyboard-switch variants and retained evidence context passed targeted checks.
+
+Owner clarified that restrained semantic color, rather than grayscale-only UI, is
+the intended direction. Applied coordinated light/dark gray-blue interaction/run
+colors and soft-red observed-deviation status; reading surfaces and unknown states
+stay neutral. Completed progress stays neutral, with verified-pass green reserved
+without inventing new passing content. Ten isolated-browser views passed sampled
+contrast/context checks (minimum text 5.06:1); see README.md and ignored
+artifacts/flow-semantic-colors-20261023/. No product execution or coverage changed.

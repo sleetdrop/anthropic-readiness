@@ -1801,3 +1801,20 @@ glyph and full accessible action name in a 32px button. Four targeted language/t
 keyboard combinations passed at 737x694, preserving event query/raw tab/run state;
 390px width checked. Inspected settled icon captures; earlier captures are retained
 in ignored artifacts/flow-header-controls-20261023/. No product/endpoint change.
+
+## 2026-10-23: Restore restrained semantic color with coordinated palettes
+
+Owner clarified that the earlier palette was unsuitable, not that color must be
+eliminated. Updated durable intent and sample light/dark roles: muted gray-blue
+execution/interaction, soft-red confirmed deviation, neutral reading and unknown
+states. Completed execution uses neutral progress/status independent of success;
+green is reserved for verified passes without new passing UI or fabricated results.
+Existing table layout, 24px status marks, icon choices and navigation remain.
+
+Ten targeted isolated-browser light/dark views passed color-role/context checks,
+minimum sampled text contrast 5.06:1 and focus contrast at least 3:1. Exercised
+filter/search/evidence navigation and state changes with query/raw-tab retention;
+bilingual narrow width checked. Compared screenshots with the preceding palette.
+No page/console/resource errors or external requests. Evidence is ignored in
+artifacts/flow-semantic-colors-20261023/. No model call, product source/coverage,
+container, product suite, remote CI or publication change. Await owner feedback.
