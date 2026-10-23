@@ -30,7 +30,7 @@ meaning can be named.
 | Role | Light | Dark | Use |
 | --- | --- | --- | --- |
 | Interaction | `#416b7b` | `#93b6c5` | Active filters, focus and selection accents |
-| Running | `#356f65` | `#8fb9ad` | Running heading and progress, separate from test outcomes |
+| Running | `#416b7b` | `#93b6c5` | Running heading and progress, separate from test outcomes |
 | Selection surface | `#eaf0f2` | `#29353b` | Selected occurrence/event and active payload controls |
 | Observed deviation | `#984c57` | `#d1949e` | Short protocol-status text and its existing rule, not entire traces |
 | Verified pass | `#397052` | `#9bbda9` | Reserved palette role; no new pass UI/result is fabricated in this sample |
@@ -53,7 +53,10 @@ changed; completed state remains neutral and interaction remains gray-blue.
 Reran the same ten-view contrast/context checks with separate running/interaction/
 pass tokens; all passed, minimum sampled text contrast 5.06:1. Compared the preceding
 gray-blue run header with the teal trial and inspected both themes. Evidence is
-ignored in artifacts/flow-running-teal-20261023/. Final palette awaits owner feedback.
+ignored in artifacts/flow-running-teal-20261023/. The owner subsequently rejected
+teal and chose the preceding gray-blue running presentation. Restored CSS exactly
+to `93220f5`, with static/exact-restoration checks; no new browser run. The teal
+trial remains historical evidence, not the current palette.
 
 ## Current bounded navigation sample
 

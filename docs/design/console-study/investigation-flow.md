@@ -175,3 +175,6 @@ artifacts/flow-semantic-colors-20261023/. No product execution or coverage chang
 Owner authorized a teal-running trial: running heading/progress now use teal,
 with gray-blue interaction and neutral completion retained. Same ten-view checks
 passed and screenshots were compared; see artifacts/flow-running-teal-20261023/.
+After comparing, the owner chose the preceding gray-blue running presentation.
+Restored CSS exactly to `93220f5`; static/exact-restoration checks passed. Teal
+trial observations remain historical; no product change or new browser run.

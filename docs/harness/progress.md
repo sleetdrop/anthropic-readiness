@@ -1827,3 +1827,10 @@ neutral, and success green reserved for verified passes. The same ten-view brows
 contrast/context checks passed, minimum sampled text contrast 5.06:1. Compared
 screenshots with the preceding header and inspected both themes. Evidence is
 ignored in artifacts/flow-running-teal-20261023/. No product or endpoint change.
+
+## 2026-10-23: Restore owner-selected gray-blue running presentation
+
+Owner compared and rejected teal, choosing the preceding blue running state.
+Restored sample CSS exactly to `93220f5` and refreshed its cache version. Static
+and exact-restoration checks passed. Retained teal trial history/evidence; no
+fresh browser/product/endpoint/container check or remote action.
