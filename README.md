@@ -5,6 +5,10 @@ of Anthropic Messages. Preview a fixed plan, explicitly start it, observe real
 progress, and inspect or export the evidence-led report. Execution completion and
 protocol compatibility are separate outcomes; untested capabilities stay untested.
 
+The owner-approved [design baseline](design.md) records the current presentation
+direction and reference prototype. Its acceptance is separate from migration to
+the installed console; see [current delivery status](docs/CONTINUE.md).
+
 The installed scope is five versioned cases: non-stream text, a streamed greeting,
 a streamed count from 1 to 5, a forced non-stream tool call, and a non-stream tool
 result round trip. `anthropic-basic` runs three cases; `anthropic-tools-smoke`

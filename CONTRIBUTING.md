@@ -4,6 +4,7 @@ Humans and coding Agents use the same contracts and evidence. Start with
 [AGENTS.md](AGENTS.md), [current milestone](docs/CONTINUE.md),
 [architecture](docs/architecture.md) and the approved scope linked there.
 Read existing code before proposing a change. Discuss scope changes in an issue.
+For interface/report presentation, also read the owner-approved [design baseline](design.md).
 
 ## Work and validate
 

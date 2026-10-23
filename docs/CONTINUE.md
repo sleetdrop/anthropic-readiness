@@ -1,6 +1,21 @@
 # Local delivery status
 
-## Latest bounded sample: controls and explicit run state
+## Approved presentation baseline recorded
+
+The owner accepted the current flow sample's style, with future details refined
+through use. [Root design.md](../design.md) is the current presentation authority:
+gray-blue running/interaction, paired light/dark tokens, technical-article table
+hierarchy, 24px status rules, restrained icons, aligned controls and context-preserving
+navigation. It includes four checked-in synthetic reference images. AGENTS.md and
+contributor/project entry points link to it; older QA/experiments are historical.
+
+Reference source is `bf98290` (CSS/JS equal `93220f5`); the latest teal trial remains
+rejected. Documentation/reference consistency checks passed. No product code,
+endpoint scope, service/container or remote state changed; this is not a migration
+of the standalone sample into the installed console. No next implementation stage
+is authorized by this documentation request. Preserve the trial and preview.
+
+## Earlier controls and color refinements (historical)
 
 Owner annotated the issue toolbar, ambiguous running/completed presentation and
 the demo dropdown mixed into run information. flow.html now uses inline text
@@ -28,7 +43,7 @@ gray-blue running presentation. CSS is restored exactly to `93220f5`; static and
 exact-restoration checks passed. Trial evidence remains historical in ignored
 artifacts/flow-running-teal-20261023/. No new browser or product check was needed.
 
-## Current design discussion: investigation flow before layout
+## Earlier information-organization exploration (historical)
 
 The owner clarified that Wireshark/Charles are references for organizing complex
 information, not a request to clone their style or layout. Earlier overview,

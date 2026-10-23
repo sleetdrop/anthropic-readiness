@@ -1834,3 +1834,19 @@ Owner compared and rejected teal, choosing the preceding blue running state.
 Restored sample CSS exactly to `93220f5` and refreshed its cache version. Static
 and exact-restoration checks passed. Retained teal trial history/evidence; no
 fresh browser/product/endpoint/container check or remote action.
+
+## 2026-10-23: Record the owner-approved design baseline
+
+Owner accepted the current flow style and requested root design.md to prevent
+iteration drift. Recorded the bounded source `bf98290`, equivalent CSS/JS
+`93220f5`, typography/geometry, paired semantic tokens, controls/icons, lifecycle
+meaning and navigation preservation. Added four checked-in synthetic reference
+images from the equivalent verified sample. Linked Agent/project/contributor
+entry points and clarified historical QA/experimentation authority. Existing
+protocol/evidence/product contracts remain; no whole-application layout, migration
+or next implementation stage is newly approved.
+
+Documentation checks verified local links, exact color-token values against CSS,
+PNG dimensions/provenance and source equality; whitespace passed. No runtime code,
+new tests, product coverage, actual endpoint, container/service, browser rerun,
+remote CI or publication change. Existing trial/preview remain available.

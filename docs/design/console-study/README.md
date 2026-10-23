@@ -1,10 +1,10 @@
 # Console interaction study
 
-Current status: none of the visual samples below has been selected. The owner
-clarified that Wireshark/Charles are information-organization references, not
-visual/layout targets. Start with the
-[investigation-flow exercise](investigation-flow.md). It defines task-based detail
-disclosure and navigation context before choosing another arrangement or style.
+Current status: the owner accepted the flow sample's style on 2026-10-23. The
+authoritative [design baseline](../../../design.md) records its scope, tokens,
+interaction rules and checked-in reference images. Earlier overview/runner/palette
+samples and iteration notes below are historical. Wireshark/Charles informed
+information organization, not a prescribed appearance or fixed window layout.
 
 This directory contains standalone, dependency-free HTML/CSS/JavaScript design
 samples. They are not part of the installed application, report renderer or
@@ -17,7 +17,8 @@ explains the external mechanisms and independent visual direction. The existing
 application and its preceding desktop walkthrough provided product structure.
 The initial exercise used one representative layout. Following feedback on its
 generic blue-gray appearance, that layout offered three palette alternatives and
-the original as a reference. No sample is an approved visual/layout target.
+the original as a reference. Those earlier alternatives are not the selected
+baseline; use design.md and the current flow sample for subsequent work.
 
 ## Current semantic color direction
 
@@ -27,13 +28,9 @@ text-only trial below, keeping its table hierarchy and interaction structure.
 Neutral surfaces and reading text remain dominant; color is applied where its
 meaning can be named.
 
-| Role | Light | Dark | Use |
-| --- | --- | --- | --- |
-| Interaction | `#416b7b` | `#93b6c5` | Active filters, focus and selection accents |
-| Running | `#416b7b` | `#93b6c5` | Running heading and progress, separate from test outcomes |
-| Selection surface | `#eaf0f2` | `#29353b` | Selected occurrence/event and active payload controls |
-| Observed deviation | `#984c57` | `#d1949e` | Short protocol-status text and its existing rule, not entire traces |
-| Verified pass | `#397052` | `#9bbda9` | Reserved palette role; no new pass UI/result is fabricated in this sample |
+The authoritative light/dark token table and role mapping are in
+[design.md](../../../design.md#light-and-dark-color-roles). Update that baseline
+deliberately when an accepted refinement changes the design.
 
 Inconclusive/untested conditions remain neutral. Execution completion also uses
 neutral heading/progress colors: finishing a run does not establish protocol or
@@ -62,7 +59,8 @@ trial remains historical evidence, not the current palette.
 
 Open http://127.0.0.1:8767/flow.html. This exercises issue -> affected occurrence
 -> evidence -> return. Presentation uses sample-local neutral light/dark tokens;
-no final style or whole-application layout is selected.
+the current sample style is accepted. A whole-application migration/layout is
+outside this bounded approval.
 
 - Filter/search three fictional results: two protocol observations affecting
   three cases and one inconclusive condition. Similar observations do not prove
@@ -312,7 +310,7 @@ acceptance. Captures and observations are in ignored artifacts/console-palettes-
 
 ## Handoff
 
-Review this sample before choosing a bounded production change. Do not infer
+Use the accepted baseline before choosing a bounded production change. Do not infer
 approval of implementation, a new frontend stack or another whole-product stage.
 The existing application and its stored runs remain unchanged. Product source
 still provides five formal endpoint cases; this prototype adds zero coverage.

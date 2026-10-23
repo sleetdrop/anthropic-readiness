@@ -1,5 +1,9 @@
 # W2 operational workbench design QA
 
+Historical W2 verification record. The current owner-approved presentation
+baseline is [design.md](design.md); it supersedes conflicting visual compositions
+here without erasing these observed checks or claiming a completed UI migration.
+
 Scope: Task 12 operational Web UI. Independent presentation-3 documents are a
 separate Task 13 deliverable and are not accepted by this record. This is author
 visual/interaction QA; the independent whole-W2 review remains Task 15.

@@ -1,9 +1,10 @@
-# Investigation flow before layout selection
+# Investigation flow and iteration history
 
-Date: 2026-10-23. Status: proposed interaction structure for owner discussion.
-This supersedes treating any preceding overview, runner or palette as a selected
-direction. Wireshark and Charles are references for managing complex information;
-the owner did not request their appearance or window layout to be copied.
+Date: 2026-10-23. This is the historical desk exercise and iteration ledger.
+The owner subsequently accepted the bounded flow sample's style; the current
+authority is [design.md](../../../design.md). Earlier proposed/awaiting-selection
+statements below describe their time, not the current decision. Wireshark/Charles
+informed information organization, not a copied appearance or fixed window layout.
 
 ## Scope and evidence
 
@@ -103,7 +104,7 @@ Reuse the existing package/recipe/evidence-integrity contracts; new content or
 cross-assertion grouping must be mapped or versioned explicitly during implementation.
 Runtime credentials and source evidence must never be conflated in export previews.
 
-## Decisions and next bounded artifact
+## Initial decisions and next bounded artifact (historical)
 
 Keep global run status accessible, group by observed phenomenon rather than claimed
 root cause, reveal evidence progressively and preserve context across navigation.
@@ -178,3 +179,11 @@ passed and screenshots were compared; see artifacts/flow-running-teal-20261023/.
 After comparing, the owner chose the preceding gray-blue running presentation.
 Restored CSS exactly to `93220f5`; static/exact-restoration checks passed. Teal
 trial observations remain historical; no product change or new browser run.
+
+Owner accepted the current style and requested a durable design.md. Recorded the
+approved source `bf98290` and bounded scope in root design.md, with four checked-in
+synthetic light/dark issue/evidence images from equivalent source `93220f5`.
+Linked project/contributor/Agent entry points and marked older QA/explorations as
+historical. Local links, token values, image provenance/dimensions, source equality
+and whitespace checked. No browser/product/endpoint/container/remote check or
+implementation change is claimed for this documentation delivery.

@@ -10,6 +10,11 @@ remaining gaps; explicitly identify supporting-only work. Keep endpoint coverage
 separate from assertions, self-test counts and CI success. Do not infer endpoint
 internals or mark untested capabilities as supported.
 
+Before interface/report presentation changes, read [design.md](design.md) for the
+owner-approved baseline, reference images and scope. Preserve accepted patterns
+and semantic colors; record intentional refinements instead of following older
+visual experiments. Prototype acceptance is separate from product implementation.
+
 ## Development
 
 - Use the checked-in Dev Container (Linux/Python 3.12), not host-specific Python.

@@ -48,6 +48,8 @@ remaining failures and missing coverage.
   Learn from how tools such as Wireshark and Charles organize complex information;
   this does not prescribe copying their visual style or fixed window layout.
   Reveal detail according to the user's task and preserve investigation context.
+  Follow the accepted [design baseline](design.md) and update it deliberately
+  when the owner refines the presentation; historical prototypes are not defaults.
 
 ## How to choose and finish work
 
