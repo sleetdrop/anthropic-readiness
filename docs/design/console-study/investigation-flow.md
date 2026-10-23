@@ -132,3 +132,9 @@ text and selection, with muted status edges only. Sample-local light/dark tokens
 replace its dependency on the earlier palettes. Targeted isolated-browser visual
 and sampled contrast checks passed; README.md records limits. Final styling still
 awaits owner feedback. Navigation, product source and coverage are unchanged.
+
+Owner then requested restrained supporting icons. Added small neutral licensed
+Heroicons alongside back/search/evidence/theme labels. Targeted isolated-browser
+checks passed seven views, icon-area clicks, bilingual themes and narrow width;
+all assets loaded locally. See README.md and ignored artifacts/flow-icons-20261023/.
+No production behavior or endpoint scope changed.

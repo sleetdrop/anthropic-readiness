@@ -1711,3 +1711,16 @@ sampled text contrast minimum was 5.44:1. Neutral text, language/theme controls 
 390px dark width passed; no page/console errors or external requests observed.
 Screenshots were compared. Evidence: ignored artifacts/flow-tone-20261023/. No
 complete accessibility, product suite, endpoint, container or remote check/write.
+
+## 2026-10-23: Restrained action icons in the flow sample
+
+Owner requested simple supporting icons. Added local Heroicons 2.2.0 outline
+assets with provenance/MIT license for back, search, evidence and theme actions;
+14px neutral glyphs retain visible labels and are decorative to assistive tools.
+Targeted isolated-browser checks passed seven views, both themes, bilingual labels,
+search/evidence/back paths including clicks on icon areas, and 390px width. All
+five SVGs loaded locally; no page/console/resource errors or external requests.
+Screenshots were inspected. Evidence: ignored artifacts/flow-icons-20261023/.
+Initial asset download was blocked by sandbox proxy access; the authorized retry
+succeeded. No product source/coverage change, model call, container, product suite
+or remote write. Keep the sample and existing trial available for owner feedback.

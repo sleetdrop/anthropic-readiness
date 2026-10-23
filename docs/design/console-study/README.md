@@ -68,6 +68,21 @@ checked. No page/console error or external request was observed. Captures were
 visually compared. Evidence: ignored artifacts/flow-tone-20261023/. This is bounded
 prototype verification, not complete accessibility or product acceptance.
 
+### Restrained action icons
+
+Owner requested a few clear, visually subordinate icons. Back, search, inspect
+evidence and theme switching now use 14px neutral Heroicons outline glyphs beside
+visible labels. Decorative spans are hidden from the accessibility tree; there
+are no icon-only actions or icons repeated through event rows. Five upstream SVGs
+are local, with provenance and MIT license in icons/. No runtime dependency or
+external icon service is introduced.
+
+Targeted isolated-browser checks passed seven rendered views across both themes,
+Chinese/English labels, icon-area back clicks, search, evidence navigation and
+390px width. All five SVGs loaded locally; no page/console/resource errors or
+external requests were observed. Screenshots were inspected. Evidence is ignored
+in artifacts/flow-icons-20261023/. Product source and endpoint coverage are unchanged.
+
 ## Earlier runner sample (unselected)
 
 Open http://127.0.0.1:8767/runner.html. The working structure follows the selected

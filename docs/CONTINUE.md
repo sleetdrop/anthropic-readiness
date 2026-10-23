@@ -24,6 +24,10 @@ in backgrounds and text. flow.html now uses neutral light/dark reading/selection
 tones with muted protocol-status edges only. Targeted before/after browser checks
 passed; see README.md. Await feedback on this styling adjustment.
 
+The owner also requested restrained supporting icons. Back/search/evidence/theme
+actions now pair visible text with small neutral local Heroicons; targeted browser
+checks passed. See the sample README and artifact ledger. This remains design-only.
+
 ## Earlier unselected console samples
 
 An earlier iteration responded to report-like layout feedback with
