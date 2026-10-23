@@ -44,8 +44,16 @@ five cases with up to six requests for all profiles.
   issue. It did not run tests or claim independent execution acceptance.
 - Final-source fast graph passed eight gates with unchanged source. An additional
   imported original-scope retest/comparison browser check passed. Documentation
-  checks passed. Final local-container handoff is recorded in progress.md when
-  complete. No full graph or new remote CI is claimed.
+  checks passed. Local trial revision `decd559` is running at
+  http://localhost:8765/new; all 157 installed package files match source, health
+  and new-form checks passed, and the three prior completed records remain.
+  Keep the trial running; the development container is stopped at handoff.
+  No full graph or new remote CI is claimed.
+- The first package build used an incompatible no-network cache key and failed
+  dependency resolution. An intermediate image assembled before that package
+  build completed was not deployed. Restored the original cached build mode,
+  awaited its successful completion, rebuilt the trial image and verified all
+  installed source hashes before declaring delivery. Failed logs remain retained.
 
 Evidence is ignored under artifacts/simplified-entry-20261023/. This iteration
 does not call an owner's model endpoint, push to GitHub or publish an image.

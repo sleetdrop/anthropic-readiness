@@ -1,6 +1,6 @@
 # Local delivery status
 
-## Simplified entry implemented; final trial refresh pending
+## Simplified entry delivered; await owner feedback
 
 The owner approved a bounded entry-flow improvement: endpoint and model are the
 only required visible fields; API Key is optional, scope and advanced controls
@@ -11,8 +11,13 @@ no diagnostic scenario was added. Read [the ledger](harness/simplified-entry-led
 Final-source fast checks passed all eight gates with unchanged source. Related
 browser checks passed 47 tests; Chinese/English light/dark screenshots and mobile
 layout were inspected. One bounded independent review found no material blocker.
-The final local trial refresh is recorded below when complete; no remote push,
-new remote CI or genuine endpoint call is included in this iteration.
+An additional imported original-scope retest/comparison check passed. The trial
+at http://localhost:8765/new now runs feature commit `decd559`; all 157 installed
+package files match source. Health/home checks passed and all three prior
+completed records remain. Keep the trial container running; development checks
+are complete and the development container is stopped at handoff. No remote
+push, new remote CI or genuine endpoint call is included in this iteration.
+Pause feature work here for owner feedback on the simplified entry.
 
 ## Tool-result round trip delivered; await owner trial feedback
 

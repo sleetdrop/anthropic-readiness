@@ -1542,3 +1542,16 @@ trial update follows separately. The additional imported original-scope retest
 and comparison browser check passed; documentation checks passed. No full graph
 or new remote CI is claimed. See simplified-entry-ledger.md and ignored
 artifacts/simplified-entry-20261023/ for retained evidence and failed attempts.
+
+Final simplified-entry trial handoff: local feature commit
+decd559def0df18a7f6b32e5a96cc6d3dda7f2c8 is running at
+http://localhost:8765/new. All 157 installed package files match source; health
+and new-form checks passed. All three prior completed records remain, including
+the owner's latest assessment. No active/queued task was present before restart.
+The first no-network package build failed because that option missed the existing
+dependency cache; its premature intermediate image was not deployed. The normal
+cached package build and subsequent offline trial assembly succeeded. Final
+content hashes, not the image label alone, establish installed-source identity.
+Keep the trial service and persistent volume; the development container is stopped
+at handoff. No owner endpoint call, remote write, registry publication or full
+matrix acceptance accompanies this UI-only increment. Await owner feedback.
