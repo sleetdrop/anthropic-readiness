@@ -96,3 +96,23 @@ build, offline local image assembly and documentation checks passed. Trial
 revision e8e270e is running; 157 installed files match source, health/new-form
 checks passed, and all three original records remain. Keep the trial running and
 stop the completed development container. No single full graph is claimed.
+
+## User-perspective walkthrough
+
+On 2026-10-23 the owner requested an actual usage review, without implementation.
+Inspected nine current desktop screenshots from entry through standalone HTML
+download, using the existing disposable fixture. Entry and the running overview
+are usable. Highest-priority opportunities: compact the technical plan confirmation;
+foreground concrete outcomes/impact after completion; organize export by reading
+versus diagnostic handoff and collapse raw file inventories. Issue excerpts remain
+useful but generic next actions need more context. Raw policy IDs, verbose helper
+labels and skipped report section numbering are secondary polish items.
+
+The in-app browser was unavailable and Chrome control timed out. The owner/tool
+approval authorized fallback to the existing independent test browser. Six calls
+went only to the synthetic peer. Its deliberately held count stream timed out
+during the progress observation; neither that timeout nor the fixture clock age
+is a production finding. No full accessibility/mobile audit or real endpoint check
+is claimed. All fixture processes/listeners were cleaned up. No product code was
+changed. Inspected screenshots, notes and a visual report remain ignored under
+artifacts/ux-walkthrough-20261023/. Await the owner's choice before implementation.

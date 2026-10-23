@@ -1587,3 +1587,16 @@ remain. Final source fingerprint:
 The current wheel build and offline trial assembly passed. The trial remains
 running with its volume; the development container is stopped at handoff. No
 real endpoint call or remote publication was performed. Await owner feedback.
+
+## 2026-10-23: User-perspective walkthrough, no implementation
+
+Owner requested usage review. Captured and inspected nine current desktop steps:
+empty entry, filled form, plan, running, completed, issue inspector, export setup,
+export manifest preview and downloaded standalone HTML. Used six synthetic peer
+calls; no owner model call or trial data mutation. Entry/running overview are
+usable. Prioritize compact plan confirmation, concrete outcome/impact explanations,
+and purpose-based diagnostic export with collapsed file details. Independent test
+browser fallback was authorized after browser control timeouts. Synthetic hold/clock
+effects are excluded from production findings; no complete mobile/accessibility
+audit is claimed. Fixture cleanup verified. No source change or implementation
+started. See the entry ledger and ignored artifacts/ux-walkthrough-20261023/index.html.
