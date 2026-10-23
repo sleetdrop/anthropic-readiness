@@ -1,5 +1,19 @@
 # Local delivery status
 
+## Simplified entry implemented; final trial refresh pending
+
+The owner approved a bounded entry-flow improvement: endpoint and model are the
+only required visible fields; API Key is optional, scope and advanced controls
+are collapsed, and the name defaults to the model. Fresh forms keep all five
+cases/up to six requests. Existing checks and explicit review/start remain intact;
+no diagnostic scenario was added. Read [the ledger](harness/simplified-entry-ledger.md).
+
+Final-source fast checks passed all eight gates with unchanged source. Related
+browser checks passed 47 tests; Chinese/English light/dark screenshots and mobile
+layout were inspected. One bounded independent review found no material blocker.
+The final local trial refresh is recorded below when complete; no remote push,
+new remote CI or genuine endpoint call is included in this iteration.
+
 ## Tool-result round trip delivered; await owner trial feedback
 
 The owner approved one small addition: `ANT-TOOL-LOOP-001` v1 in profile

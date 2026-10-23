@@ -121,6 +121,7 @@ def configure(
         "presets": list(manager.store.presets()),
         "baseline_id": retest_id,
         "reference": reference,
+        "request_counts": {case.id: case.request_count for case in list_cases()},
     }
     return page(
         "configure.html",
@@ -136,6 +137,14 @@ def configure(
             "limits": target["limits"],
             "reference": reference,
             "baseline_id": retest_id,
+            "scope_cases": sum(
+                1 for case in list_cases() if any(profile in profiles for profile in case.profiles)
+            ),
+            "scope_requests": sum(
+                case.request_count
+                for case in list_cases()
+                if any(profile in profiles for profile in case.profiles)
+            ),
         },
         request=request,
     )

@@ -8,6 +8,8 @@ test("late credentials and equivalent alias order preserve the reviewed plan", a
   request,
 }) => {
   await page.goto("/new");
+  await page.locator("#scope-settings > summary").click();
+  await page.locator("#advanced-settings > summary").click();
   await page.locator('input[value="anthropic-tool-loop"]').uncheck();
   await page.locator("#model").fill("synthetic-pass");
   await page.locator("#endpoint").fill(fixture().peer_url + "/v1/messages");

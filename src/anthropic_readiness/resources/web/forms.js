@@ -50,10 +50,11 @@ export function resolveEndpoint(value, mode) {
     parsed.password ||
     /[?#\s]/u.test(value) ||
     Array.from(value).some((character) => character.charCodeAt(0) < 32) ||
-    !["base", "messages"].includes(mode)
+    !["base", "messages", "auto"].includes(mode)
   )
     throw new Error("invalid_url");
   if (mode === "messages") return value;
+  if (mode === "auto" && parsed.pathname.endsWith("/messages")) return value;
   if (parsed.pathname === "/") return value.replace(/\/+$/, "") + "/v1/messages";
   if (["/v1", "/v1/"].includes(parsed.pathname)) return value.replace(/\/+$/, "") + "/messages";
   throw new Error("ambiguous_base_url");

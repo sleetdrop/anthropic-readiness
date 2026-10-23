@@ -22,9 +22,11 @@ export async function count(request) {
 /** @param {Page} page @param {string} [model] @param {string|null} [key] */
 export async function preview(page, model = "synthetic-pass", key = null) {
   await page.goto("/new");
+  await page.locator("#advanced-settings > summary").click();
   await page.locator("#target-name").fill("Browser synthetic assessment");
   await page.locator("#model").fill(model);
   await page.locator("#endpoint").fill(fixture().peer_url + "/v1/messages");
+  await page.locator("#scope-settings > summary").click();
   await page.locator('input[value="anthropic-tools-smoke"]').check();
   // These existing workflows retain their original four-case scope and allowance.
   await page.locator('input[value="anthropic-tool-loop"]').uncheck();

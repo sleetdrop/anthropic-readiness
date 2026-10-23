@@ -7,6 +7,7 @@ test("new catalog offers a separate two-request tool round trip", async ({ page,
   await page.goto("/new");
   await expect(page.locator('input[name="profile"]:checked')).toHaveCount(3);
   await expect(page.locator('[data-limit="max_requests"]')).toHaveValue("6");
+  await page.locator("#scope-settings > summary").click();
   await page.locator('input[value="anthropic-basic"]').uncheck();
   await page.locator('input[value="anthropic-tools-smoke"]').uncheck();
   await page.locator("#model").fill("synthetic-pass");

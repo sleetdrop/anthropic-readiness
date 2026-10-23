@@ -1523,3 +1523,22 @@ was not exercised. See tool-loop-ledger.md for the distinction between contract
 conformance, client tolerance and observed task completion. No product source
 change, further model call or remote write accompanies this diagnosis. Private
 raw evidence is retained only in ignored artifacts/live-kimi-field-check-20261023/.
+
+## 2026-10-23: Simplified entry source verified
+
+Owner approved the minimal new-test entry: two required fields, optional API Key,
+collapsed scope/advanced settings, automatic naming and inline plan confirmation.
+All five default cases/up to six requests and the existing identity/rule/evidence
+checks remain unchanged. No endpoint scenario or protocol assertion was added.
+Automatic URL handling and the browser entry test failed before implementation.
+An initial viewport failure was fixed through layout changes, not weaker checks.
+Final stable-source fast graph passed all eight gates. Related browser checks
+passed 47 tests, including accessibility at 390/1280px, key secrecy and preview
+invalidation, scope counting, existing workflows and tool round trips. Inspected
+both Chinese/English and light/dark screenshots; primary action fits the tested
+900px viewport. One independent bounded read-only review found no material issue.
+All requests were synthetic; the agent sent no owner endpoint request. Local
+trial update follows separately. The additional imported original-scope retest
+and comparison browser check passed; documentation checks passed. No full graph
+or new remote CI is claimed. See simplified-entry-ledger.md and ignored
+artifacts/simplified-entry-20261023/ for retained evidence and failed attempts.

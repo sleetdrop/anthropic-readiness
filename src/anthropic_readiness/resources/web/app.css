@@ -661,17 +661,32 @@ tbody th {
   border-top: 1px solid var(--line);
   min-width: 0;
 }
-.configuration-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 290px;
-  gap: 36px;
-  align-items: start;
+.configure-workspace {
+  max-width: 720px;
+  margin-inline: auto;
+}
+.configure-workspace .page-title {
+  margin-bottom: 16px;
+}
+.configure-workspace .preset-picker {
+  justify-content: flex-end;
+  margin-bottom: 20px;
+}
+.configure-workspace #advanced-settings,
+.scope-overview {
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+}
+.scope-overview > p {
+  margin: 0 0 6px;
+  font-size: 14px;
+  font-weight: 550;
+}
+.configure-workspace #advanced-settings[open] > summary {
+  margin-bottom: 20px;
 }
 .preview-panel {
-  position: sticky;
-  top: 20px;
-  padding-left: 24px;
-  border-left: 1px solid var(--line);
+  margin-top: 12px;
 }
 .preview-panel h2 {
   margin-bottom: 16px;
@@ -1135,10 +1150,6 @@ dialog::backdrop {
   .attention {
     border: 0;
     padding: 0;
-  }
-  .configuration-grid {
-    grid-template-columns: 1fr;
-    gap: 16px;
   }
   .preview-panel {
     position: static;
