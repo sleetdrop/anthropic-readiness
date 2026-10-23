@@ -172,3 +172,21 @@ styles. Dark control outlines use #686868 instead of the prototype's #666666 to
 meet the 3:1 control contrast target (the latter measured 2.968:1). This correction
 does not change semantic colors or diagnostic verdicts. Follow small, usable
 increments and separate actual delivery from prototype acceptance.
+
+
+### Product cascade corrections, 2026-10-23
+
+Owner feedback triggered a comparison of installed rendering with the baseline.
+The older `thead th` selector had overridden the intended issue-table heading
+weight/color; first/last-column rules removed its inset. Product selectors now
+preserve the approved 600/primary-text header and 12px cell inset (10px/8px narrow),
+with 500 issue names and 400 secondary descriptions. Native progress pseudo-elements
+explicitly reset old rounded corners. Running/queued fills remain gray-blue;
+finished fills remain neutral, using one inherited state-specific fill variable.
+
+At 737px, restore progress beside run identity; stack at the approved 650px
+breakpoint. Production-only stop/export/copy actions sit beside the existing view
+tabs, wrapping below them on narrow screens. This keeps the reference run/progress
+composition while retaining product controls absent from the bounded sample.
+No token or execution-state meaning changed. Full exported-report composition
+and a replacement for configuration/repair screens remain outside this refinement.

@@ -188,7 +188,8 @@ select {
 }
 .run-heading {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(210px, 280px) auto;
+  --run-progress-fill: var(--muted);
+  grid-template-columns: minmax(0, 1fr) 250px;
   align-items: center;
   gap: 12px 24px;
   padding: 14px 0;
@@ -212,6 +213,9 @@ select {
 }
 .run-title > span {
   font-size: 12px;
+}
+.run-heading:is([data-state="running"], [data-state="queued"]) {
+  --run-progress-fill: var(--accent);
 }
 .run-heading[data-state="running"] #job-state,
 .run-heading[data-state="queued"] #job-state {
@@ -269,23 +273,33 @@ select {
   border-radius: 0;
   appearance: none;
   background: var(--line);
-  color: var(--accent);
+  color: var(--run-progress-fill);
 }
 .run-progress progress::-webkit-progress-bar {
   background: var(--line);
+  border-radius: 0;
 }
 .run-progress progress::-webkit-progress-value {
-  background: var(--accent);
+  background: var(--run-progress-fill);
+  border-radius: 0;
 }
 .run-progress progress::-moz-progress-bar {
-  background: var(--accent);
+  background: var(--run-progress-fill);
+  border-radius: 0;
 }
-.run-heading:not([data-state="running"]):not([data-state="queued"])
-  progress::-webkit-progress-value {
-  background: var(--muted);
+.workbench-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid var(--line);
 }
-.run-heading:not([data-state="running"]):not([data-state="queued"]) progress::-moz-progress-bar {
-  background: var(--muted);
+.workbench-navigation .heading-actions {
+  flex-shrink: 0;
+}
+.workbench-navigation .view-tabs {
+  min-width: 0;
+  border-bottom: 0;
 }
 .view-tabs {
   min-height: 42px;
@@ -311,6 +325,7 @@ select {
 .lead {
   font-size: 13px;
   margin: 6px 0 13px;
+  color: var(--muted);
 }
 .issue-list {
   max-height: none;
@@ -395,8 +410,14 @@ th {
   color: var(--text);
   font-weight: 600;
 }
+.issues-table th,
 .issues-table td {
+  padding: 12px;
   font-size: 12px;
+}
+.issues-table thead th {
+  color: var(--text);
+  font-weight: 600;
 }
 .issues-table th:first-child {
   width: 36%;
@@ -601,16 +622,6 @@ th {
   border-radius: 0;
   font-size: 12px;
 }
-@media (max-width: 850px) {
-  .run-heading {
-    grid-template-columns: minmax(0, 1fr) auto;
-  }
-  .run-progress {
-    grid-row: 2;
-    grid-column: 1 / -1;
-    max-width: 400px;
-  }
-}
 @media (max-width: 650px) {
   .app-rail {
     flex-wrap: wrap;
@@ -627,7 +638,19 @@ th {
     font-size: 17px;
   }
   .run-heading {
+    grid-template-columns: minmax(0, 1fr);
     gap: 10px 12px;
+  }
+  .workbench-navigation {
+    flex-wrap: wrap;
+    gap: 0 12px;
+    padding-bottom: 8px;
+  }
+  .workbench-navigation .view-tabs {
+    flex-basis: 100%;
+  }
+  .workbench-navigation .heading-actions {
+    margin-left: auto;
   }
   .heading-actions {
     flex-wrap: wrap;
@@ -651,7 +674,9 @@ th {
     min-width: 0;
   }
   th,
-  td {
+  td,
+  .issues-table th,
+  .issues-table td {
     padding: 10px 8px;
   }
   .issues-table {

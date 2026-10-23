@@ -124,3 +124,36 @@ broader multi-turn/request-error coverage and real SDK/Claude Code tests remain
 unfinished core goals. No live endpoint calls or remote writes occurred. Reports
 retain their existing independently exported presentation. Owner hands-on feedback
 is next; evidence display remains bounded and full files remain downloadable.
+
+
+## Owner-triggered presentation conformance correction
+
+Owner questioned the gray progress bar and fidelity of the installed page. Actual
+read-only capture confirmed the opened run was completed: neutral progress agrees
+with the accepted baseline; running remains blue. The comparison also found real
+cascade defects: issue headers rendered weight 450 / muted instead of 600 / primary;
+first/last cell padding rendered zero; native progress retained old rounded corners.
+The 850px product breakpoint also moved progress below identity earlier than the
+sample's 650px breakpoint. Fixed those selectors and progress state styling;
+placed production actions alongside view tabs to retain the reference header layout.
+Updated root design.md with this bounded refinement; no palette redesign.
+
+User explicitly approved isolated Dev Container browser capture because the Browser
+runtime did not expose `iab` (discovery only offered the owner's daily Chrome).
+No daily Chrome control was used. Fresh installed light/dark captures preceded
+implementation; paired synthetic source captures exercised real persisted 2/4-case,
+3/4-request execution, followed by actual terminal transition, in both languages
+and themes. No production lifecycle, counters or findings were fabricated.
+
+Evidence is ignored under `artifacts/presentation-audit-20261023/`. New rendered-
+style regression reproduced the 450-weight heading before the fix (RED). Initial
+fast check caught nullable test geometry; retained that failure and corrected the
+checks. Final fast graph passed all eight gates with source unchanged. Ten focused
+browser executions passed, then 18 executions passed including nonzero running
+progress, paired geometry (390/640/1280/1440), long target names, 200% reflow,
+contrast, export invalidation and existing investigation/evidence paths. Four new
+presentation cases overlap the two runs; these are not 28 unique cases or added
+endpoint coverage. Independent static follow-up found no concrete two-file
+regression. The previous full source graph remains evidence for its own revision;
+a full graph/remote CI/live endpoint run was not repeated for this bounded fix.
+Installation acceptance follows below.

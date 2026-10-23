@@ -1881,3 +1881,23 @@ installed on 8765; all 163 installed package files match source, and four runs /
 old image and 8767 reference. Requested the run's issue page in Codex's built-in
 browser (queued); owner trial remains separate from automated verification.
 No agent real-endpoint requests, remote writes or added endpoint scenarios.
+
+
+## 2026-10-23: Correct installed presentation against the approved reference
+
+Owner feedback exposed legacy cascade overrides missed by token-only checks:
+issue-table headers were muted/450 instead of primary/600, outer cell insets were
+zero and native progress retained old roundness. Restored the reference typography,
+insets and straight 4px progress. Progress stays beside run identity down to 650px;
+production actions moved alongside tabs. Completion was correctly neutral in the
+opened historical run; real synthetic running/queued semantics remain gray-blue.
+Root design.md records the refinement without changing palette/state meanings.
+
+User approved the isolated test browser after in-app control was unavailable.
+Fresh captures and rendered-style RED/GREEN checks, paired languages/themes,
+nonzero persisted running progress, completed transition, geometry/reflow, contrast
+and investigation paths passed. Final fast graph passed unchanged-source checks;
+10 + 18 focused browser executions passed (four overlap). One independent bounded
+static follow-up found no concrete regression. Detailed failures/evidence remain
+ignored in artifacts/presentation-audit-20261023/. This is supporting-only UI work:
+zero endpoint scenarios added; no real endpoint, remote CI or publishing action.
