@@ -1,6 +1,6 @@
 # Heroicons used by the interaction study
 
-These five SVGs are unmodified Heroicons 24px outline assets, version 2.2.0.
+These four SVGs are unmodified Heroicons 24px outline assets, version 2.2.0.
 Source: https://github.com/tailwindlabs/heroicons/tree/v2.2.0/optimized/24/outline
 The adjacent LICENSE is the upstream MIT license, copyright Tailwind Labs, Inc.
 

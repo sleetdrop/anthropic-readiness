@@ -27,6 +27,8 @@ passed; see README.md. Await feedback on this styling adjustment.
 The owner also requested restrained supporting icons. Back/search/evidence/theme
 actions now pair visible text with small neutral local Heroicons; targeted browser
 checks passed. See the sample README and artifact ledger. This remains design-only.
+The owner subsequently rejected the evidence-button icon as redundant; that button
+is now text-only. Back/search/theme icons remain. See the README for this correction.
 
 ## Earlier unselected console samples
 

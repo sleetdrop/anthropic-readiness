@@ -138,3 +138,5 @@ Heroicons alongside back/search/evidence/theme labels. Targeted isolated-browser
 checks passed seven views, icon-area clicks, bilingual themes and narrow width;
 all assets loaded locally. See README.md and ignored artifacts/flow-icons-20261023/.
 No production behavior or endpoint scope changed.
+Owner's next annotation removed the redundant evidence-button icon; remaining
+icons must add recognition/direction. Static checks only for this small removal.

@@ -23,7 +23,6 @@ header > span { color: var(--muted); }
 .icon { display: inline-block; flex: 0 0 14px; width: 14px; height: 14px; color: var(--muted); background: currentColor; mask: var(--icon) center / contain no-repeat; pointer-events: none; }
 .icon-back { --icon: url("icons/chevron-right.svg"); transform: rotate(180deg); }
 .icon-search { --icon: url("icons/magnifying-glass.svg"); }
-.icon-document { --icon: url("icons/document-text.svg"); }
 .icon-moon { --icon: url("icons/moon.svg"); }
 .icon-sun { --icon: url("icons/sun.svg"); }
 #trail button { color: var(--text); }

@@ -1724,3 +1724,11 @@ Screenshots were inspected. Evidence: ignored artifacts/flow-icons-20261023/.
 Initial asset download was blocked by sandbox proxy access; the authorized retry
 succeeded. No product source/coverage change, model call, container, product suite
 or remote write. Keep the sample and existing trial available for owner feedback.
+
+## 2026-10-23: Remove redundant evidence-button icon
+
+Owner annotated the evidence button as already clear from its text. Removed its
+document glyph, unused SVG/CSS and refreshed sample asset URLs. Back/search/theme
+icons remain; icons must add recognition/direction rather than decorate buttons.
+JavaScript syntax, whitespace and removal/reference checks passed. This reversible
+visual removal did not rerun browser/product suites or change product coverage.

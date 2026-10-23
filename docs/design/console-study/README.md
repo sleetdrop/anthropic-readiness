@@ -70,12 +70,18 @@ prototype verification, not complete accessibility or product acceptance.
 
 ### Restrained action icons
 
-Owner requested a few clear, visually subordinate icons. Back, search, inspect
-evidence and theme switching now use 14px neutral Heroicons outline glyphs beside
+Owner requested a few clear, visually subordinate icons. Back, search
+and theme switching use 14px neutral Heroicons outline glyphs beside
 visible labels. Decorative spans are hidden from the accessibility tree; there
-are no icon-only actions or icons repeated through event rows. Five upstream SVGs
+are no icon-only actions or icons repeated through event rows. Four upstream SVGs
 are local, with provenance and MIT license in icons/. No runtime dependency or
 external icon service is introduced.
+
+Owner then annotated the evidence button: its text already communicates the
+action, so its icon was redundant. Removed that glyph and unused asset. Use
+icons only where they add recognition or directional meaning, not to decorate
+every button. This small removal was checked statically; the browser observations
+below describe the preceding five-asset iteration.
 
 Targeted isolated-browser checks passed seven rendered views across both themes,
 Chinese/English labels, icon-area back clicks, search, evidence navigation and
