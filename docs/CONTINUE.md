@@ -9,7 +9,15 @@ View evidence -> Back to issues. Search/filter, selected occurrence and evidence
 reading context are retained; bilingual light/dark controls follow root design.md.
 Real persisted progress remains visible. Retest/export and CLI remain available.
 
-Feature commit: `315f23f`. All 13 frozen-source local gates passed, including 88
+Latest owner-feedback correction: `c4e3d5d` is installed on 8765. Actual rendered
+issue headers now retain primary text / weight 600 / 12px insets; progress is
+straight and stays beside identity until 650px. Running is gray-blue; the opened
+historical run is completed and correctly neutral. Production actions sit beside
+view tabs. Fresh installed light/dark captures, 163 package-file hashes and all
+four runs / 154 run-file hashes passed verification. Eight fast gates, focused
+browser and 11 backend checks passed; no full graph/remote CI/live call was repeated.
+
+Original migration commit: `315f23f`. Its 13 frozen-source local gates passed, including 88
 browser and 280 integration tests. One independent review finding was fixed and
 verified. The cached local trial image is installed; all 163 packaged files match
 source. Four existing runs and all 154 run files retain their hashes. Static

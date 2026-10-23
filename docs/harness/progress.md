@@ -1901,3 +1901,10 @@ and investigation paths passed. Final fast graph passed unchanged-source checks;
 static follow-up found no concrete regression. Detailed failures/evidence remain
 ignored in artifacts/presentation-audit-20261023/. This is supporting-only UI work:
 zero endpoint scenarios added; no real endpoint, remote CI or publishing action.
+
+Correction `c4e3d5d` is installed on the preserved 8765 service. Read-only acceptance:
+health OK, 163 application files match source, four historical runs / 154 run files
+unchanged, and actual installed light/dark measurements now show 600/primary/12px
+issue headers. The completed historical run remains neutral by design. Eleven
+backend page tests passed; detailed before/after screenshots and the numbered
+conformance audit are ignored locally. No added endpoint coverage or live calls.

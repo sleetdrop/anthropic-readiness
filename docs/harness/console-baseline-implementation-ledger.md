@@ -156,4 +156,17 @@ presentation cases overlap the two runs; these are not 28 unique cases or added
 endpoint coverage. Independent static follow-up found no concrete two-file
 regression. The previous full source graph remains evidence for its own revision;
 a full graph/remote CI/live endpoint run was not repeated for this bounded fix.
-Installation acceptance follows below.
+Installation acceptance follows below (completed).
+
+
+Correction feature `c4e3d5d` is installed on the same 8765 service and persistent
+volume. All 163 packaged files match source, all four run IDs / 154 run-file hashes
+are unchanged, and health is OK. The first comparison also included a newly created
+Finder resources/.DS_Store, which is not a packaged product file; retained snapshots
+and excluded only that OS metadata from the corrected package comparison. No code
+or resource mismatch was hidden. Installed browser measurements now show weight
+600, primary header text, 12px inset and neutral completed progress in both themes.
+Fresh screenshots in `after/` were inspected; running fill was visibly gray-blue
+in real synthetic 2/4-checkpoint captures. Eleven backend page tests and final
+document checks passed. No full graph or endpoint/remote acceptance is newly claimed.
+A numbered inline audit with current screenshots is retained in ignored `AUDIT.md`.
