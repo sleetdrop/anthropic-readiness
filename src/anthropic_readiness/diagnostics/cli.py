@@ -131,7 +131,7 @@ def dispatch_diagnostics(args: argparse.Namespace) -> int:
         _print(value)
         return 0
     print(
-        f"Planned requests: {len(plan.cases)}; no retries. Conditions are recorded in assessment-context.json.",
+        f"Planned requests: {plan.planned_requests}; no retries. Conditions are recorded in assessment-context.json.",
         file=sys.stderr,
     )
     result = run_assessment(

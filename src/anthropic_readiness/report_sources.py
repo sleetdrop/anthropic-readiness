@@ -28,6 +28,7 @@ from anthropic_readiness.operations.storage import MAX_DOCUMENT_BYTES
 from anthropic_readiness.report_models import ReportSource
 from anthropic_readiness.report_reading import message_diagnostic
 from anthropic_readiness.schema import result_from_document
+from anthropic_readiness.tool_loop import CASE_ID as TOOL_LOOP_CASE_ID
 
 
 def source_bytes(root: Path, relative: str) -> bytes:
@@ -89,7 +90,15 @@ def attempt_evidence_errors(
             errors.append("missing_assertion_evidence:" + str(assertion["id"]))
         if any(not ref.path.startswith(prefix) for ref in references):
             errors.append("assertion_evidence_wrong_attempt:" + str(assertion["id"]))
-        if any(
+        if case_id == TOOL_LOOP_CASE_ID and assertion["id"] == "LOOP-STEP":
+            expected_paths = {prefix + "body.bin", prefix + "request.json"}
+            if (
+                len(references) != 2
+                or {ref.path for ref in references} != expected_paths
+                or any(ref.event is not None for ref in references)
+            ):
+                errors.append("tool_loop_evidence_incomplete")
+        elif any(
             ref.path != prefix + assertion_evidence_file(str(assertion["id"]), ref.event)
             for ref in references
         ):

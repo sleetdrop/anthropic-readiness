@@ -112,13 +112,13 @@ def test_projection_preserves_provenance_and_original_assertion_references() -> 
     )
 
 
-def test_capability_groups_match_the_actual_four_case_catalog() -> None:
+def test_capability_groups_match_the_installed_case_catalog() -> None:
     from anthropic_readiness.cases import list_cases
     from anthropic_readiness.report_view import GROUPS
 
     grouped = [case_id for _, _, case_ids in GROUPS for case_id in case_ids]
     assert set(grouped) == {case.id for case in list_cases()}
-    assert len(grouped) == 4
+    assert len(grouped) == 5
     forced = next(title for key, title, _ in GROUPS if key == "forced_tool")
     assert "非完整工具闭环" in forced
 

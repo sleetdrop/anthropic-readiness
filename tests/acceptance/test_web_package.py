@@ -108,7 +108,8 @@ def test_web_install_contains_templates_schemas_and_assets(tmp_path: Path) -> No
                     time.sleep(0.02)
             with urllib.request.urlopen(url + "/new", timeout=2) as response:
                 page = response.read().decode()
-            assert page.count("data-case-id=") == 4
+            assert page.count("data-case-id=") == 5
+            assert 'data-case-id="ANT-TOOL-LOOP-001"' in page
             for asset in ("web/app.js", "web/app.css", "report-v2.js", "report-v2.css"):
                 with urllib.request.urlopen(url + "/assets/" + asset, timeout=2) as response:
                     assert len(response.read()) > 100

@@ -26,6 +26,11 @@ export async function preview(page, model = "synthetic-pass", key = null) {
   await page.locator("#model").fill(model);
   await page.locator("#endpoint").fill(fixture().peer_url + "/v1/messages");
   await page.locator('input[value="anthropic-tools-smoke"]').check();
+  // These existing workflows retain their original four-case scope and allowance.
+  await page.locator('input[value="anthropic-tool-loop"]').uncheck();
+  await page.locator(".budget-details > summary").click();
+  await page.locator('[data-limit="max_requests"]').fill("4");
+  await page.locator(".budget-details > summary").click();
   if (key) {
     await page.locator("#auth-mode").selectOption("api_key");
     await page.locator("#credential").fill(key);

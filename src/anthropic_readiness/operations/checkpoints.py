@@ -18,6 +18,8 @@ from anthropic_readiness.models import (
 from anthropic_readiness.operations.contracts import validate_operational
 from anthropic_readiness.operations.reduction import objects
 from anthropic_readiness.operations.storage import locked, read_document
+from anthropic_readiness.tool_loop import CASE_ID as TOOL_LOOP_CASE_ID
+from anthropic_readiness.tool_loop import complete_record
 
 
 def checkpoint_refs(document: JsonObject) -> tuple[EvidenceRef, ...]:
@@ -53,6 +55,12 @@ def _validate_checkpoint(
     ):
         raise ValueError("checkpoint_identity")
     case = object_value(document["case_record"])
+    if (
+        case.get("id") == TOOL_LOOP_CASE_ID
+        and case.get("status") == "PASS"
+        and not complete_record(case)
+    ):
+        raise ValueError("tool_loop_incomplete")
     planned = objects(object_value(context["plan"])["cases"])
     definition = next((item for item in planned if item["id"] == document["case_id"]), None)
     if (

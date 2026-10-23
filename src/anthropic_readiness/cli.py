@@ -127,7 +127,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             if args.dry_run:
                 print(json.dumps(plan.to_json(), ensure_ascii=False, indent=2))
                 return 0
-            print(f"Planned requests: {len(plan.cases)}; no retries.", file=sys.stderr)
+            print(f"Planned requests: {plan.planned_requests}; no retries.", file=sys.stderr)
             result = run_assessment(
                 plan,
                 args.out,

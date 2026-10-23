@@ -18,6 +18,8 @@ from anthropic_readiness.models import (
     strict_json,
 )
 from anthropic_readiness.requirements import CASE_IDS, PROFILE_CASES, SUPPORTED, assertion_plan
+from anthropic_readiness.tool_loop import CASE_ID as TOOL_LOOP_CASE_ID
+from anthropic_readiness.tool_loop import complete_record
 
 
 def load_schema(name: str) -> JsonObject:
@@ -123,6 +125,12 @@ def validate_result_semantics(value: JsonObject) -> list[str]:
     planned_cases = {str(c["id"]): c for c in _objects(plan.get("cases", []))}
     actual_requests = 0
     for case in cases:
+        if (
+            case.get("id") == TOOL_LOOP_CASE_ID
+            and case.get("status") == "PASS"
+            and not complete_record(case)
+        ):
+            errors.append("tool_loop_incomplete")
         expected_case = planned_cases.get(str(case.get("id")), {})
         if expected_case and (
             case.get("version") != expected_case.get("version")

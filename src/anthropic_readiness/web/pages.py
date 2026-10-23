@@ -8,6 +8,7 @@ from urllib.parse import urlencode
 from fastapi import APIRouter, Request
 from starlette.responses import HTMLResponse, Response
 
+from anthropic_readiness.cases import list_cases
 from anthropic_readiness.config import Limits
 from anthropic_readiness.diagnostics.service import DiagnosticService
 from anthropic_readiness.models import JsonObject, JsonValue, object_value
@@ -70,7 +71,7 @@ def initial_target(catalog: JsonObject) -> JsonObject:
         },
         "response_model_policy": "request_or_alias",
         "response_model_aliases": [],
-        "limits": Limits().to_json(),
+        "limits": Limits(max_requests=sum(case.request_count for case in list_cases())).to_json(),
     }
 
 

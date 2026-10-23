@@ -1,7 +1,15 @@
 """Conservative operation eligibility from explicitly verified metadata facts."""
 
 from anthropic_readiness.diagnostics.inventory import categorized_cases
-from anthropic_readiness.models import JsonObject, JsonValue, RunResult, object_value
+from anthropic_readiness.models import (
+    JsonObject,
+    JsonValue,
+    RunResult,
+    Status,
+    aggregate_required,
+    object_value,
+)
+from anthropic_readiness.tool_loop import CASE_ID as TOOL_LOOP_CASE_ID
 
 
 def controlled_result_complete(result: RunResult | None) -> bool:
@@ -18,6 +26,50 @@ def _objects(value: JsonValue) -> list[JsonObject]:
     if not isinstance(value, list):
         raise ValueError("diagnostic_case_inventory")
     return [object_value(item) for item in value]
+
+
+def _loop_assertions(record: JsonObject) -> list[JsonObject]:
+    """Project both fixed exchanges conservatively; never use last-pass-wins."""
+    attempts = _objects(record["attempts"])
+    if len(attempts) > 2 or [row["index"] for row in attempts] != list(range(1, len(attempts) + 1)):
+        raise ValueError("diagnostic_tool_loop_exchange_order")
+    groups: list[tuple[int, list[JsonObject]]] = [(0, _objects(record["preconditions"]))]
+    groups.extend((int(str(row["index"])), _objects(row["assertions"])) for row in attempts)
+    buckets: dict[tuple[str, ...], list[tuple[int, JsonObject]]] = {}
+    for step, assertions in groups:
+        seen: set[tuple[str, ...]] = set()
+        for assertion in assertions:
+            key = tuple(
+                str(assertion[field]) for field in ("id", "version", "category", "required")
+            )
+            if key in seen:
+                raise ValueError("diagnostic_repeated_comparison_check")
+            seen.add(key)
+            buckets.setdefault(key, []).append((step, assertion))
+    result: list[JsonObject] = []
+    for rows in buckets.values():
+        if len(rows) == 1:
+            result.append(rows[0][1])
+            continue
+        status = aggregate_required([Status(str(row["status"])) for _, row in rows])
+        lead = next(row for _, row in rows if row["status"] == status.value)
+        refs: list[JsonValue] = []
+        for _, row in rows:
+            refs.extend(_objects(row["evidence_refs"]))
+        result.append(
+            {
+                **lead,
+                "status": status.value,
+                "expected": "; ".join(
+                    f"exchange {step}: {row['expected']}" for step, row in rows if row["expected"]
+                ),
+                "actual": "; ".join(
+                    f"exchange {step}: {row['actual']}" for step, row in rows if row["actual"]
+                ),
+                "evidence_refs": refs,
+            }
+        )
+    return result
 
 
 def comparison_inventory(
@@ -41,9 +93,12 @@ def comparison_inventory(
         )
         assertions: list[JsonObject] = []
         if record is not None:
-            assertions.extend(_objects(record["preconditions"]))
-            for attempt in _objects(record["attempts"]):
-                assertions.extend(_objects(attempt["assertions"]))
+            if case_id == TOOL_LOOP_CASE_ID:
+                assertions = _loop_assertions(record)
+            else:
+                assertions.extend(_objects(record["preconditions"]))
+                for attempt in _objects(record["attempts"]):
+                    assertions.extend(_objects(attempt["assertions"]))
         actual: dict[tuple[str, ...], JsonObject] = {}
         for assertion in assertions:
             key = tuple(

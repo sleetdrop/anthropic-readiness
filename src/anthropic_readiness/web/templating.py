@@ -35,6 +35,7 @@ CASE_KEYS = {
     "ANT-TEXT-SSE-001": "case.sse_greeting",
     "ANT-TEXT-SSE-002": "case.sse_count",
     "ANT-TOOL-FORCED-001": "case.forced_tool",
+    "ANT-TOOL-LOOP-001": "case.tool_loop",
 }
 
 
@@ -49,9 +50,11 @@ def page(name: str, context: dict[str, object], *, request: Request) -> HTMLResp
         return text(CASE_KEYS[identifier]) if identifier in CASE_KEYS else identifier
 
     def profile_name(identifier: str) -> str:
-        key = {"anthropic-basic": "profile.basic", "anthropic-tools-smoke": "profile.tools"}.get(
-            identifier
-        )
+        key = {
+            "anthropic-basic": "profile.basic",
+            "anthropic-tools-smoke": "profile.tools",
+            "anthropic-tool-loop": "profile.tool_loop",
+        }.get(identifier)
         return text(key) if key else identifier
 
     def phase_name(phase: str) -> str:

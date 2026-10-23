@@ -33,15 +33,17 @@ async def test_page_renders_only_installed_capabilities(
         "ANT-TEXT-SSE-001",
         "ANT-TEXT-SSE-002",
         "ANT-TOOL-FORCED-001",
+        "ANT-TOOL-LOOP-001",
     ):
         assert f'data-case-id="{identifier}"' in html
-    assert html.count("data-case-id=") == 4
+    assert html.count("data-case-id=") == 5
     assert "开始测试" in html
     assert "预览计划" in html
     assert 'type="password"' in html
     assert 'autocomplete="off"' in html
     assert "host.docker.internal" in html
-    assert "完整工具闭环" in html
+    assert "工具结果完整往返" in html
+    assert "未覆盖流式工具" in html
     assert not server.requests
     assert (await client.get("/history")).status_code == 200
     assert (await client.get("/assets/web/app.js")).status_code == 200

@@ -26,7 +26,7 @@ from anthropic_readiness.context import build_report_context
 from anthropic_readiness.document_rendering import render_document_html
 from anthropic_readiness.documents import build_document_view
 from anthropic_readiness.jobs.store import JobStore
-from anthropic_readiness.models import JsonObject, object_value
+from anthropic_readiness.models import JsonObject, object_value, strict_json
 from anthropic_readiness.operations.observer import DiskExecutionObserver
 from anthropic_readiness.operations.reduction import objects
 from anthropic_readiness.presentation import PresentationOptions
@@ -267,6 +267,17 @@ def main() -> None:
                 name = "message-valid-tool.json" if "tools" in payload else "message-valid.json"
                 message = object_value(json.loads((FIXTURES / name).read_bytes()))
                 message["model"] = response_model
+                if payload.get("tool_choice") == {"type": "none"}:
+                    messages = payload["messages"]
+                    assert isinstance(messages, list)
+                    blocks = object_value(messages[-1])["content"]
+                    assert isinstance(blocks, list)
+                    result = object_value(strict_json(str(object_value(blocks[0])["content"])))
+                    message = object_value(
+                        json.loads((FIXTURES / "message-valid.json").read_bytes())
+                    )
+                    message["model"] = response_model
+                    message["content"] = [{"type": "text", "text": result["verification_token"]}]
                 if broken_fields:
                     message.pop("stop_sequence", None)
                 if repair and repair_phase[0] == "after" and "tools" in payload:

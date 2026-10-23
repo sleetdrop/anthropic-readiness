@@ -1454,3 +1454,47 @@ missing core coverage and distinguishes historical scope limits from product
 completion. This is documentation-only alignment; it adds zero endpoint cases,
 no runtime behavior and no claim that a document alone prevents drift. No product
 suite, live call, image rebuild, remote write or service restart is needed.
+
+## 2026-10-23: First incremental core-coverage addition available for trial
+
+Owner approved one tool-result round trip and requested usable intermediate
+checkpoints. New formal scenario ANT-TOOL-LOOP-001 v1/profile anthropic-tool-loop
+adds two sequential non-stream exchanges under one case. It verifies the model
+consumes a fresh 128-bit token, retaining separate captures and truthful request
+counts across failure, cancellation and deadline paths. Original profiles/case
+versions remain unchanged. New case is selectable in CLI/Web and represented in
+Chinese/English reports. Single-capture replay rejects an incomplete conversation.
+Same-scope recipes verify the dynamic continuation against its recorded predecessor.
+
+One bounded independent review's extra-tool false PASS was reproduced RED and
+fixed with a text-only final-response requirement. Seventeen dedicated regressions
+passed; actual synthetic CLI/Web checks and a new browser flow passed. Original
+browser tests now explicitly select their original four-case scope, preserving
+their assertions; the new test verifies three-profile/six-request defaults and a
+two-request standalone loop. Initial harness errors and interrupted whole-graph
+attempts are retained. Final strict typing passed; whole-graph closure pending.
+
+Delivered the verified feature to localhost:8765 before broader regression ended.
+Reused cached current-wheel build and unchanged locked ARM64 Web dependencies
+offline; the image explicitly labels a worktree revision/unknown image-context.
+The trial volume was preserved; only completed jobs were present before restart.
+Health and homepage returned success, and the new case appears. No owner's real
+endpoint was called. See tool-loop-ledger.md and ignored
+artifacts/ci-startup-20261022/tool-loop-* for exact scope, proof and limits.
+
+Final local code closure: stable-source fast graph passed all eight gates, and
+77 targeted checks passed, including 20 round-trip-specific regressions. The
+stable-source new browser flow passed and checks verified evidence; six targeted
+catalog/installed-package checks passed. Additional repair tests reproduced old
+duplicate-check rejection and request/body evidence typing assumptions. The new
+case now conservatively combines both exchange observations for comparisons and
+requires both request/body proof. Original results are not rewritten. Raw first
+step failures survive later success, and actual ZIP export is exercised.
+
+The broader completed graph failed three stale catalog/budget fixture expectations;
+each was corrected and reverified. The later 79-case browser run's tests passed,
+but its aggregate detected unrelated source edits, so it is not accepted as stable
+whole-graph evidence. Original interrupted/failed/collection-error records remain.
+No single all-green full graph for final source, new remote CI, full native image
+matrix or genuine endpoint assessment is claimed. Exact source and positive
+JUnit counts are in ignored tool-loop-observed-summary.json.

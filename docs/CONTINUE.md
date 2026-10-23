@@ -1,5 +1,36 @@
 # Local delivery status
 
+## Tool-result round trip implemented; final local trial handoff
+
+The owner approved one small addition: `ANT-TOOL-LOOP-001` v1 in profile
+`anthropic-tool-loop`. Source and the running local Web trial now provide five
+formal scenarios. The new case reserves two sequential non-stream requests and
+checks consumption of a fresh tool-result token; it is one scenario, not two
+independent cases or retries. Existing two profiles retain their original scope.
+The default new Web form selects all three profiles with a six-request allowance;
+the owner can select only the round-trip profile to test it separately.
+
+Dedicated fault/timeout/cancellation/evidence checks passed, as did actual CLI,
+Web API and the new browser flow against synthetic endpoints. One independent
+review's extra-tool false PASS was reproduced and fixed; all 17 dedicated
+regressions passed. Final stable-source fast graph passed eight gates; 77 targeted
+checks, including 20 round-trip regressions, passed. New-case browser verification
+passed with verified evidence; corrected catalog/installed-package checks passed
+six tests. A first-step failure stays visible in repair comparison even if the
+second step passed. Exports retain both exchanges.
+The broader graph's old catalog/budget fixture failures were corrected and
+reverified separately; its failed/changed-source records remain intact. No single
+green final-source full graph or new remote CI is claimed.
+Read [the bounded ledger and usage](harness/tool-loop-ledger.md).
+
+Trial http://localhost:8765 has been updated with a cached-wheel/offline dependency
+reuse image. Existing persistent history is retained. Keep this trial running;
+stop only the development check container after its work finishes. No agent call
+to the owner's endpoint, remote push, image publication or full native matrix.
+Refresh the trial to the final local commit before declaring the handoff complete.
+Streaming/parallel tool loops, error-result recovery and real client workflows
+remain future work. Older four-case observations below are historical.
+
 ## Product alignment and next priority
 
 Read [project intent](../intends.md) before selecting further work. The owner
