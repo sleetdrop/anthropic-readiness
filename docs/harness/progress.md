@@ -1745,3 +1745,11 @@ labels are non-interactive and full-cell status rules are absent. Screenshots we
 inspected; no page/console/external-request error observed. Evidence is ignored in
 artifacts/flow-status-labels-20261023/. No product source/coverage, endpoint call,
 container, product suite or remote action; final style awaits owner feedback.
+
+## 2026-10-23: Restore preceding table presentation
+
+Owner rejected boxed status labels and preferred the preceding technical-article
+table character. Restored sample CSS/JS exactly to `852ef59`, retaining neutral
+themes, limited icons and the text-only evidence button. Syntax, whitespace and
+exact-restoration checks passed. No fresh browser/product/endpoint/container check
+or remote action; rejected experiment and its observed checks remain preserved.

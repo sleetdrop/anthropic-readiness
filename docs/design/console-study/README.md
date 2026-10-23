@@ -83,10 +83,16 @@ icons only where they add recognition or directional meaning, not to decorate
 every button. This small removal was checked statically; the browser observations
 below describe the preceding five-asset iteration.
 
-### Compact status labels
+Targeted isolated-browser checks passed seven rendered views across both themes,
+Chinese/English labels, icon-area back clicks, search, evidence navigation and
+390px width. All five SVGs loaded locally; no page/console/resource errors or
+external requests were observed. Screenshots were inspected. Evidence is ignored
+in artifacts/flow-icons-20261023/. Product source and endpoint coverage are unchanged.
+
+### Compact status labels (rejected)
 
 Owner questioned the full-cell colored rule and welcomed a more meaningful
-visual treatment. Replaced isolated status edges with compact non-interactive
+visual treatment. An experiment replaced isolated status edges with compact non-interactive
 labels in the list, issue heading and duplicate-event observation. Protocol
 labels use a muted outline; inconclusive labels use a neutral dashed outline.
 Both keep neutral text/fill; selection retains its independent gray row treatment.
@@ -98,11 +104,12 @@ contrast minimum was 5.44:1; labels have no button role/tab stop and no cell-hei
 colored rule remains. Screenshots were inspected. Evidence is ignored in
 artifacts/flow-status-labels-20261023/. No product or full accessibility acceptance.
 
-Targeted isolated-browser checks passed seven rendered views across both themes,
-Chinese/English labels, icon-area back clicks, search, evidence navigation and
-390px width. All five SVGs loaded locally; no page/console/resource errors or
-external requests were observed. Screenshots were inspected. Evidence is ignored
-in artifacts/flow-icons-20261023/. Product source and endpoint coverage are unchanged.
+The owner rejected the boxed appearance and preferred the preceding table style,
+like tables in technical articles. Restored CSS/JS exactly to `852ef59`, preserving
+the neutral themes, limited supporting icons and text-only evidence buttons.
+Syntax, whitespace and exact-restoration checks passed; no fresh browser run was
+needed for this visual rollback. The experiment and its observations remain
+historical evidence, not a selected design.
 
 ## Earlier runner sample (unselected)
 

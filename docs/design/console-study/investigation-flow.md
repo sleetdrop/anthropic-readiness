@@ -144,3 +144,6 @@ Owner then welcomed an alternative to ambiguous full-cell status rules. Compact
 status labels now unify list/detail/event observations, retaining neutral text and
 independent gray selection. Targeted browser checks passed; see README.md and
 ignored artifacts/flow-status-labels-20261023/. No product behavior changed.
+The owner rejected boxed status labels in favor of the preceding technical-article
+table style. CSS/JS were restored exactly to `852ef59`; static checks passed.
+Keep the experiment as historical evidence, not the current design target.

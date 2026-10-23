@@ -30,8 +30,10 @@ checks passed. See the sample README and artifact ledger. This remains design-on
 The owner subsequently rejected the evidence-button icon as redundant; that button
 is now text-only. Back/search/theme icons remain. See the README for this correction.
 The owner's next annotation questioned status rules resembling table dividers.
-These now use compact neutral-text status labels with subdued outlines, including
-neutral dashed inconclusive labels. Targeted browser checks passed; await feedback.
+A compact status-label experiment passed targeted browser checks but was rejected:
+the owner prefers the preceding technical-article table character. CSS/JS are
+restored exactly to `852ef59`, keeping neutral text, limited icons and the text-only
+evidence button. No further embellishment or new design stage is selected.
 
 ## Earlier unselected console samples
 

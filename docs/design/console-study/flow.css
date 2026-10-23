@@ -1,6 +1,6 @@
-/* Reading and interaction use neutral tones. Color is confined to status labels. */
-:root { color-scheme: light; --surface: #fcfcfc; --subtle: #f2f2f2; --text: #262626; --muted: #626262; --line: #d7d7d7; --control: #8e8e8e; --accent: #4b4b4b; --accent-soft: #e8e8e8; --code: #f7f7f7; --status-border: #c7aaa5; font: 14px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans CJK SC", sans-serif; }
-:root[data-theme="dark"] { color-scheme: dark; --surface: #1c1c1c; --subtle: #242424; --text: #dedede; --muted: #a8a8a8; --line: #3b3b3b; --control: #666666; --accent: #bababa; --accent-soft: #333333; --code: #191919; --status-border: #755650; }
+/* Reading and interaction use neutral tones. Color is limited to a status edge. */
+:root { color-scheme: light; --surface: #fcfcfc; --subtle: #f2f2f2; --text: #262626; --muted: #626262; --line: #d7d7d7; --control: #8e8e8e; --accent: #4b4b4b; --accent-soft: #e8e8e8; --code: #f7f7f7; --status-edge: #9a4f46; font: 14px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans CJK SC", sans-serif; }
+:root[data-theme="dark"] { color-scheme: dark; --surface: #1c1c1c; --subtle: #242424; --text: #dedede; --muted: #a8a8a8; --line: #3b3b3b; --control: #666666; --accent: #bababa; --accent-soft: #333333; --code: #191919; --status-edge: #b68077; }
 * { box-sizing: border-box; }
 body { margin: 0; color: var(--text); background: var(--surface); display: flex; flex-direction: column; height: 100vh; height: 100dvh; }
 button, select, input { font: inherit; color: var(--text); }
@@ -44,13 +44,13 @@ th, td { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line)
 .issue-name small { display: block; color: var(--muted); font-size: 11px; font-weight: 400; margin-top: 4px; }
 .fail { color: var(--text); }
 .unknown { color: var(--muted); }
-.status-label { display: inline-block; padding: 1px 6px; border: 1px solid var(--line); border-radius: 2px; background: var(--subtle); color: var(--text); font-size: 11px; line-height: 1.6; white-space: nowrap; cursor: default; }
-.status-label.fail { border-color: var(--status-border); }
-.status-label.unknown { border-style: dashed; color: var(--muted); }
+.issues-table .fail { box-shadow: inset 2px 0 var(--status-edge); }
+.issue-type.fail { border-left: 2px solid var(--status-edge); padding-left: 7px; }
 .muted { color: var(--muted); }
 .accounting { font-size: 11px; color: var(--muted); padding: 12px 0; }
 .back { margin-bottom: 15px; font-size: 12px; }
 .title-line { display: flex; align-items: center; flex-wrap: wrap; justify-content: space-between; gap: 10px; }
+.issue-type { font-size: 12px; }
 .difference { display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 12px 0; gap: 20px; margin: 16px 0; max-width: 1000px; }
 .difference dt { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
 .difference dd { margin: 0; font-size: 13px; }
@@ -71,6 +71,7 @@ th, td { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line)
 .event-table th, .event-table td { padding: 7px 11px; }
 .event-table tr[aria-selected="true"] { background: var(--accent-soft); }
 .event-table tr[aria-selected="true"] td:first-child { box-shadow: inset 2px 0 var(--accent); }
+.event-table tr.violation td:last-child { box-shadow: inset 2px 0 var(--status-edge); }
 .event-table button { font: inherit; color: inherit; }
 .event-table .gap td { background: var(--subtle); color: var(--muted); text-align: center; font-size: 11px; padding: 4px; }
 .event-number { font-variant-numeric: tabular-nums; white-space: nowrap; }
