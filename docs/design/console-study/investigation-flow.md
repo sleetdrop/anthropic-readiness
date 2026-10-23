@@ -152,3 +152,12 @@ Matched header/name font size, strengthened headers and shortened status rules
 to 10px beside text. Targeted browser checks passed; see the sample README.
 Owner found 10px letter-like; lengthened the mark to 24px. Six light/dark
 list/detail/event checks passed with space remaining around the mark.
+
+Owner then annotated toolbar alignment and ambiguous execution/demo state.
+Reorganized filters/search into aligned controls; explicit running/finished heading
+and native case progress persist above investigation content. Moved manual sample
+switching to the footer. Finished runs retain issue/inconclusive qualification.
+The missing progress representation was observed before implementation; final
+eight language/theme/state variants, keyboard controls, navigation/context retention
+and narrow width passed isolated-browser checks. See README.md and ignored
+artifacts/flow-controls-20261023/. No production execution or coverage change.

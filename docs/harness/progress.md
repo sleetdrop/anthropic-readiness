@@ -1773,3 +1773,22 @@ to 24px and refreshed the CSS version. Six isolated light/dark list/detail/event
 checks at 736x769 passed: marker height exceeds text height and stays below its
 row/title region height. Screenshots inspected; no page/console errors. Evidence:
 ignored artifacts/flow-rule-height-20261023/. No product or endpoint change.
+
+## 2026-10-23: Align controls and distinguish run state in the sample
+
+Owner annotated toolbar label/input composition, weak running/finished distinction
+and demo controls mixed into run information. Added inline exclusive filter buttons
+and integrated labeled search fields; explicit persistent run heading/native case
+progress with separate request-sent accounting; footer-only prototype-state buttons.
+List headings now distinguish provisional findings from finished results. Finish
+does not imply all pass; issue/inconclusive and client-unverified notices remain.
+
+A pre-change browser assertion reproduced missing visible progress. Final isolated
+Chromium checks passed eight language/theme/state combinations at 736x769, aligned
+32px filter/search centers, keyboard actions, search/filter and empty-result paths,
+full-stream search, preserved evidence/tab/query across state changes and history
+returns, and 390px width. Screenshots inspected; no page/console/resource errors
+or external requests. Original failure and final captures/observations remain in
+ignored artifacts/flow-controls-20261023/. This is manually simulated design work;
+no backend/execution, product source/coverage, endpoint call, container, product
+suite, publication or remote CI change. Await owner feedback.

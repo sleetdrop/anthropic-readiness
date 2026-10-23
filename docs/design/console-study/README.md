@@ -132,6 +132,32 @@ mark exceeds text height while retaining space within each row/title region.
 Screenshots were inspected; no page/console errors. Evidence is ignored in
 artifacts/flow-rule-height-20261023/.
 
+### Toolbar and explicit running/finished presentation
+
+Owner annotated three hierarchy problems: labels and inputs felt disjointed, run
+status was hard to distinguish from final results, and the demo dropdown mixed
+simulation controls into run information. The issue toolbar now uses inline
+exclusive text-filter buttons with selection underlines, an integrated search
+icon/input with a retained accessible label, and a separate result count. Event
+search uses the same field pattern. Selected filters and search align at 32px.
+
+The persistent run section now emphasizes Running/Run finished and a native case
+progress bar, with finished-case counts separate from sent-request counts. List
+headings distinguish issues found so far from run results. Finished status retains
+deviation/inconclusive reminders and the client-not-tested qualification. It does
+not mean that every case passed. Footer buttons clearly labeled Prototype state
+replace the demo dropdown. Both states remain manually simulated, with no automatic
+progress, actual execution or new network calls behind these controls.
+
+A pre-change browser check reproduced the missing progress representation. Final
+isolated-browser checks passed all eight language/theme/state combinations at
+736x769; filter/search fields align with zero center difference. Exercised keyboard
+filter/state controls, whole-stream search, retained raw tab/query/selection on
+state changes and return/history navigation, empty-result recovery and 390px width.
+Screenshots were inspected; no page/console/resource error or external request.
+Evidence: ignored artifacts/flow-controls-20261023/, including the original failure.
+These are synthetic prototype checks, not product or full accessibility acceptance.
+
 ## Earlier runner sample (unselected)
 
 Open http://127.0.0.1:8767/runner.html. The working structure follows the selected

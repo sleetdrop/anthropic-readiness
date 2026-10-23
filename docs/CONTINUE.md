@@ -1,5 +1,18 @@
 # Local delivery status
 
+## Latest bounded sample: controls and explicit run state
+
+Owner annotated the issue toolbar, ambiguous running/completed presentation and
+the demo dropdown mixed into run information. flow.html now uses inline text
+filters, an integrated labeled search field, and a persistent explicit run heading
+with native case progress and separate sent-request counts. The list heading
+distinguishes provisional findings from finished results; completion still exposes
+deviations/inconclusive cases. Manual prototype-state controls moved to the footer.
+Targeted isolated-browser checks passed all eight language/theme/state combinations
+at 736x769, keyboard filters/state switching, retained evidence/navigation context
+and 390px width. See the sample README and investigation-flow ledger. No actual
+execution/backend, product source or endpoint coverage changed. Await owner trial.
+
 ## Current design discussion: investigation flow before layout
 
 The owner clarified that Wireshark/Charles are references for organizing complex
