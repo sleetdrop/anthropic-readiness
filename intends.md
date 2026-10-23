@@ -32,6 +32,8 @@ remaining failures and missing coverage.
   The Web view emphasizes global progress and actionable exceptions; details are
   available without turning the overview into a long report. CLI runs also write
   reports. Exported reports work independently of the running application.
+  The interactive workspace prioritizes running tests and inspecting selected
+  evidence; do not use a report narrative as its primary interaction structure.
 - Concise, professional Chinese/English reports and interfaces, useful charts and
   matrices, light/dark themes, structured Agent-readable facts, references,
   expected/actual differences and enough sanitized evidence to reproduce issues.

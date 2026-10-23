@@ -2,6 +2,16 @@
 
 ## Console sample available for owner inspection
 
+Latest feedback: the owner rejected the report-like layout, not only its palette.
+The current review sample is http://127.0.0.1:8767/runner.html, a bounded runner/
+evidence-inspector alternative. Read the
+[current sample description](design/console-study/README.md) for interactions and
+limits. It uses case navigation, linked events/captures/checks, adjustable panes,
+an activity log and fixed status/accounting. Final synthetic prototype browser
+checks passed; production source and trial remain unchanged. Await feedback on
+this interaction structure before any production implementation. Earlier overview
+and palette samples below are preserved for comparison, not the current proposal.
+
 The owner approved one representative overview/issue-detail sample following the
 external reference study. The standalone
 [prototype and limits](design/console-study/README.md) are ready at

@@ -144,3 +144,11 @@ original reference, all with light/dark and bilingual controls. Graphite is only
 a proposed default. Bounded isolated-browser rendering and sampled contrast/width
 checks are recorded in the prototype README and ignored console-palettes artifacts.
 No owner's Chrome profile, production source, endpoint or container was accessed.
+
+Layout correction: owner explained that the original sample felt like an HTML
+report rather than an interactive tool. A separate runner.html sample now tests
+case selection, linked event/evidence/check inspection, run controls and fixed
+status with independently scrolling/resizable panes. Original samples are retained
+for comparison. Final bounded isolated-browser and visual verification is recorded
+in the prototype README and runner-study artifacts. No formal case or production
+change accompanies this alternative; await owner feedback on interaction structure.

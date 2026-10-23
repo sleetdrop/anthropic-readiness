@@ -1647,3 +1647,23 @@ fits 900px, and the 390px overview/issue views have no document horizontal overf
 Selector/theme/language/URL behavior was checked. No full accessibility, product
 suite, endpoint, container or remote validation is claimed. Captures and recorded
 checks remain ignored in artifacts/console-palettes-20261023/. Await owner choice.
+
+## 2026-10-23: Runner/inspector layout following owner correction
+
+Owner clarified that the report-like page structure was the problem beyond color.
+Added a separate runner.html sample: compact execution controls, grouped cases,
+linked event/payload views, current-check inspector, resizable panes and an activity
+log with fixed run status/accounting. Earlier overview/palette samples remain as
+comparisons. Updated durable intent to keep the interactive workspace distinct
+from exported report narrative. No production code or endpoint coverage changed.
+
+Final isolated-browser walkthrough passed after refining check-specific evidence
+navigation, JSON/framing explanations and deviation/timeout color roles. Exercised
+case/event/check/log selection, evidence tabs, tool round-trip steps, run/stop
+simulations, attention filters, scope-limited logs, keyboard/pointer splitters,
+bilingual light/dark, export/download and narrow pane navigation. Desktop and
+mobile document bounds matched 1280x900 and 390x844 with internal pane scrolling.
+No page/console errors or external requests observed. The owner's everyday Chrome
+was not accessed; no app-browser troubleshooting or plugin installation occurred.
+This is prototype verification only, not product/client/container/CI acceptance.
+Evidence is ignored in artifacts/runner-study-20261023/. Await owner design feedback.

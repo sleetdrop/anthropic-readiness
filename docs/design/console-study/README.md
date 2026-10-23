@@ -1,8 +1,10 @@
 # Console interaction study
 
-This standalone, dependency-free HTML/CSS/JavaScript prototype explores the
-owner-approved overview and issue-inspection direction. It is design material,
-not part of the installed application, report renderer or execution engine.
+This directory contains standalone, dependency-free HTML/CSS/JavaScript design
+samples. They are not part of the installed application, report renderer or
+execution engine. The current review sample is [runner.html](runner.html), created
+after the owner explained that the original layout still felt like a report.
+The earlier [overview sample](index.html) remains available for comparison.
 
 The [reference study](../../reviews/2026-10-23-engineering-console-reference-study.md)
 explains the external mechanisms and independent visual direction. The existing
@@ -11,7 +13,42 @@ The owner selected one representative layout. Following feedback on its generic
 blue-gray appearance, the same layout now offers three palette alternatives and
 the original as a reference. This is not a recreation of a selected raster mockup.
 
-## Open and use
+## Current runner sample
+
+Open http://127.0.0.1:8767/runner.html. The working structure follows the selected
+case and its captured exchanges: compact run controls, a grouped case navigator,
+an evidence workspace, an adjacent check inspector and a collapsible run log.
+Run state/accounting remain in a fixed status bar. Panes scroll independently;
+there is no large title, narrative summary or metric-card row in this sample.
+References: [Playwright Trace Viewer](https://playwright.dev/docs/trace-viewer)
+for action/evidence linkage and
+[Postman Collection Runner](https://learning.postman.com/docs/tests-and-scripts/running-collections/intro-to-collection-runs)
+for execution controls and per-request inspection. This is an adaptation, not a
+clone or an independently validated competitor usability comparison.
+
+- Select cases and the two tool-loop exchanges; use Request/Response/Stream
+  events/Headers to inspect their fictional captures.
+- Select an event to inspect its payload; select a check and Locate evidence
+  to navigate to the appropriate header, response or event view.
+- Filter case attention, scope the run log, select log entries and adjust the
+  pane splitters by dragging or arrow keys. The mobile view switches panes.
+- Rerun/stop are explicit simulations. An unfinished exchange does not reveal
+  the completed response or count as passed. Export provides purpose previews
+  and a clearly labeled synthetic JSON only.
+- Chinese/English, three palettes and light/dark remain available. The six checks
+  shown per case are examples for interface discussion, not a complete assertion
+  catalog or additional shipped test coverage.
+
+Final isolated-browser verification on 2026-10-23 exercised those interactions,
+tool-result steps, both languages, light/dark and narrow pane navigation. The
+1280x900 and 390x844 documents fit their viewports; content scrolls within panes.
+No console/page error or external request was observed. Screenshots were visually
+inspected. No full mobile/accessibility, production, container, endpoint or remote
+CI acceptance is claimed. Evidence: ignored artifacts/runner-study-20261023/.
+The owner's everyday Chrome profile was not used. Do not investigate app browser
+integration merely to continue this design discussion.
+
+## Earlier overview sample
 
 Serve this directory with any static file server. The local design preview uses
 http://127.0.0.1:8767/ independently of the actual application on port 8765.
@@ -38,7 +75,7 @@ All identities and observations are fictional; the example.test endpoint does
 not identify a user service. No credentials, original logs or private trial data
 are embedded. The prototype does not fetch data or use browser storage.
 
-## Observed verification and limits
+## Earlier overview verification and limits
 
 On 2026-10-23, the standalone sample was inspected in Chromium at 1280x900 and
 390x844. The completed Chinese desktop overview fits one 900px screen. Narrow
