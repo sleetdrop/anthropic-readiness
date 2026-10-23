@@ -29,6 +29,9 @@ actions now pair visible text with small neutral local Heroicons; targeted brows
 checks passed. See the sample README and artifact ledger. This remains design-only.
 The owner subsequently rejected the evidence-button icon as redundant; that button
 is now text-only. Back/search/theme icons remain. See the README for this correction.
+The owner's next annotation questioned status rules resembling table dividers.
+These now use compact neutral-text status labels with subdued outlines, including
+neutral dashed inconclusive labels. Targeted browser checks passed; await feedback.
 
 ## Earlier unselected console samples
 

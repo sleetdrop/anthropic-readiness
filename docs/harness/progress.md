@@ -1732,3 +1732,16 @@ document glyph, unused SVG/CSS and refreshed sample asset URLs. Back/search/them
 icons remain; icons must add recognition/direction rather than decorate buttons.
 JavaScript syntax, whitespace and removal/reference checks passed. This reversible
 visual removal did not rerun browser/product suites or change product coverage.
+
+## 2026-10-23: Compact status labels replace ambiguous status rules
+
+Owner questioned the full-cell colored rule and welcomed a clearer visual cue.
+Replaced status edges with small neutral-text/fill labels: muted protocol outline,
+neutral dashed inconclusive outline. Applied consistently to list/detail/event
+observations; selected rows keep separate gray emphasis. Isolated browser checks
+passed both themes, list/stream/partial evidence, issue/evidence return navigation,
+bilingual controls and narrow width. Sampled text contrast minimum was 5.44:1;
+labels are non-interactive and full-cell status rules are absent. Screenshots were
+inspected; no page/console/external-request error observed. Evidence is ignored in
+artifacts/flow-status-labels-20261023/. No product source/coverage, endpoint call,
+container, product suite or remote action; final style awaits owner feedback.

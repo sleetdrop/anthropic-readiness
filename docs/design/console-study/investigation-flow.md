@@ -140,3 +140,7 @@ all assets loaded locally. See README.md and ignored artifacts/flow-icons-202610
 No production behavior or endpoint scope changed.
 Owner's next annotation removed the redundant evidence-button icon; remaining
 icons must add recognition/direction. Static checks only for this small removal.
+Owner then welcomed an alternative to ambiguous full-cell status rules. Compact
+status labels now unify list/detail/event observations, retaining neutral text and
+independent gray selection. Targeted browser checks passed; see README.md and
+ignored artifacts/flow-status-labels-20261023/. No product behavior changed.
