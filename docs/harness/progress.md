@@ -1632,3 +1632,18 @@ screen-reader or accessibility conformance claim is made. Existing browser fallb
 authorization was reused after Chrome control timeouts; no product test suite ran.
 Evidence: ignored artifacts/console-study-20261023/. Keep independent static preview
 8767 and actual trial 8765 available; await owner design feedback.
+
+## 2026-10-23: Restrained palette alternatives
+
+Owner rejected the generic blue-gray prototype appearance. Added Graphite, Slate
+and Ink palette alternatives on the same layout, with Original retained as a
+comparison and a bilingual URL-backed selector. Graphite is proposed, not approved.
+Carbon's neutral layering/semantic role guidance informed the alternatives without
+adopting its brand blue. This changes design assets only, with zero new cases.
+One isolated temporary browser rendered all eight palette/theme combinations;
+the owner's Chrome profile was not accessed. Final checks observed no console/page
+errors or external requests; sampled text contrast minimum 4.72:1, desktop overview
+fits 900px, and the 390px overview/issue views have no document horizontal overflow.
+Selector/theme/language/URL behavior was checked. No full accessibility, product
+suite, endpoint, container or remote validation is claimed. Captures and recorded
+checks remain ignored in artifacts/console-palettes-20261023/. Await owner choice.

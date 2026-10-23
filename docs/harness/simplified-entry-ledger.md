@@ -137,3 +137,10 @@ checks and visual inspection completed after preserving/fixing the initial layou
 overflow and transient dark-button contrast failure. No production implementation,
 new diagnostic case, actual endpoint call or container upgrade accompanies this
 sample. Await owner feedback before choosing a production change.
+
+Palette follow-up: the owner rejected the original blue-gray appearance. The
+standalone sample now offers three restrained neutral alternatives plus the
+original reference, all with light/dark and bilingual controls. Graphite is only
+a proposed default. Bounded isolated-browser rendering and sampled contrast/width
+checks are recorded in the prototype README and ignored console-palettes artifacts.
+No owner's Chrome profile, production source, endpoint or container was accessed.

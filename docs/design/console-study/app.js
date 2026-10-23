@@ -4,6 +4,7 @@
 const messages = {
   zh: {
     skip: "跳至内容", workspace: "本机工作区", prototype: "交互样稿 · 模拟数据", records: "测试记录", assessment: "端点兼容性检查",
+    palette: "配色", graphite: "石墨 · 黑白中性", slate: "冷灰 · 低饱和", ink: "墨色 · 暖灰", original: "原版蓝灰（对照）",
     export: "导出…", retest: "按原配置复测", scope: "5 个用例 · 3 个测试集", configuration: "查看运行配置", scenario: "演示状态", completed: "已完成", running: "运行中",
     overview: "概览", issues: "问题", close: "关闭", dark: "深色", light: "浅色",
     disclaimer: "设计预览 · 所有结果均为虚构，不会访问模型端点。", coverageNote: "当前目录：5 个正式用例。界面样稿不增加测试覆盖。",
@@ -37,6 +38,7 @@ const messages = {
   },
   en: {
     skip: "Skip to content", workspace: "Local workspace", prototype: "Prototype · Synthetic data", records: "Test runs", assessment: "Endpoint compatibility assessment",
+    palette: "Palette", graphite: "Graphite · Neutral", slate: "Slate · Cool gray", ink: "Ink · Warm gray", original: "Original blue (reference)",
     export: "Export…", retest: "Rerun configuration", scope: "5 cases · 3 profiles", configuration: "Run configuration", scenario: "Demo state", completed: "Completed", running: "Running",
     overview: "Overview", issues: "Issues", close: "Close", dark: "Dark", light: "Light",
     disclaimer: "Design preview · Fictional results. No model endpoint is contacted.", coverageNote: "Current catalog: 5 formal cases. This prototype adds no coverage.",
@@ -70,7 +72,7 @@ const messages = {
   }
 };
 const initial = new URLSearchParams(location.search);
-const state = { lang: initial.get("lang") === "en" ? "en" : "zh", theme: initial.get("theme") === "dark" ? "dark" : "light", view: initial.get("view") === "issues" ? "issues" : "overview", scenario: ["running", "stopped"].includes(initial.get("state")) ? initial.get("state") : "completed", issue: 0, filter: "all", evidence: "observation", caseIndex: 0 };
+const state = { lang: initial.get("lang") === "en" ? "en" : "zh", theme: initial.get("theme") === "dark" ? "dark" : "light", palette: ["graphite", "slate", "ink", "original"].includes(initial.get("palette")) ? initial.get("palette") : "graphite", view: initial.get("view") === "issues" ? "issues" : "overview", scenario: ["running", "stopped"].includes(initial.get("state")) ? initial.get("state") : "completed", issue: 0, filter: "all", evidence: "observation", caseIndex: 0 };
 const cases = [
   { id: "ANT-MESSAGE-001", requests: 1, duration: "1.1s", task: "pass", protocol: "fail", issue: 0 },
   { id: "ANT-TEXT-SSE-001", requests: 1, duration: "2.6s", task: "pass", protocol: "fail", issue: 1 },
@@ -85,12 +87,13 @@ const esc = (value) => String(value).replace(/[&<>"']/g, (char) => ({ "&": "&amp
 const badge = (status, label = status) => `<span class="badge ${status}">${t(label)}</span>`;
 const issueTone = (index) => index === 2 ? "unknown" : "fail";
 function syncUrl() {
-  const query = new URLSearchParams({ lang: state.lang, theme: state.theme, view: state.view, state: state.scenario });
+  const query = new URLSearchParams({ lang: state.lang, theme: state.theme, palette: state.palette, view: state.view, state: state.scenario });
   history.replaceState(null, "", `?${query}`);
 }
 function render() {
   document.documentElement.lang = state.lang === "zh" ? "zh-CN" : "en";
   document.documentElement.dataset.theme = state.theme;
+  document.documentElement.dataset.palette = state.palette;
   document.querySelectorAll("[data-text]").forEach((node) => { node.textContent = t(node.dataset.text); });
   $("#language").textContent = state.lang === "zh" ? "English" : "中文";
   $("#theme").textContent = t(state.theme === "light" ? "dark" : "light");
@@ -98,6 +101,7 @@ function render() {
   $("#run-status").textContent = t(state.scenario);
   $("#run-status").classList.toggle("active", state.scenario === "running");
   $("#scenario").value = state.scenario;
+  $("#palette").value = state.palette;
   $("#retest").textContent = t(state.scenario === "running" ? "stop" : "retest");
   document.querySelectorAll("[data-view]").forEach((node) => {
     if (node.dataset.view === state.view) node.setAttribute("aria-current", "page"); else node.removeAttribute("aria-current");
@@ -186,6 +190,7 @@ document.addEventListener("click", (event) => {
 });
 $("#language").addEventListener("click", () => { if ($("#dialog").open) $("#dialog").close(); state.lang = state.lang === "zh" ? "en" : "zh"; render(); });
 $("#theme").addEventListener("click", () => { state.theme = state.theme === "light" ? "dark" : "light"; render(); });
+$("#palette").addEventListener("change", (event) => { state.palette = event.target.value; render(); });
 $("#scenario").addEventListener("change", (event) => { state.scenario = event.target.value; render(); });
 $("#configuration").addEventListener("click", () => plan(false));
 $("#retest").addEventListener("click", () => { if (state.scenario === "running") { state.scenario = "stopped"; render(); } else plan(true); });

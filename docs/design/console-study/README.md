@@ -7,8 +7,9 @@ not part of the installed application, report renderer or execution engine.
 The [reference study](../../reviews/2026-10-23-engineering-console-reference-study.md)
 explains the external mechanisms and independent visual direction. The existing
 application and its preceding desktop walkthrough provided product structure.
-The owner selected one representative sample; this is not a three-option exercise
-or a faithful recreation of a selected raster mockup.
+The owner selected one representative layout. Following feedback on its generic
+blue-gray appearance, the same layout now offers three palette alternatives and
+the original as a reference. This is not a recreation of a selected raster mockup.
 
 ## Open and use
 
@@ -18,6 +19,11 @@ No build, dependency installation or backend is required; index.html also works
 as a local file where browser history APIs permit file URLs.
 
 - Toggle Chinese/English and light/dark using the header controls.
+- Use Palette to compare Graphite (neutral gray with charcoal controls), Slate
+  (cool gray with subdued steel accents), and Ink (warm gray with ink controls).
+  Original blue remains available for comparison. Graphite is the proposed
+  default for review, not an approved production identity. Palette selection is
+  retained in the local page URL, including after theme/language changes.
 - The Overview displays five cases and six requests with separate task/protocol
   judgments. These numbers match the current catalog, not newly implemented tests.
 - Select a case or grouped issue to inspect differences, stream ordering, raw
@@ -57,6 +63,24 @@ initial sample, but viewport/evaluation calls later timed out. Existing authoriz
 independent-browser fallback was used to complete checks. No complete accessibility,
 screen-reader, browser matrix or arbitrary long-content acceptance is claimed.
 No product/container/remote CI or real endpoint check accompanied this work.
+
+## Palette follow-up: 2026-10-23
+
+The owner rejected the previous generic blue-gray appearance and requested a
+professional direction. The alternatives use neutral surface layers and preserve
+the same diagnostic color roles and layout, allowing a fair comparison. The
+[Carbon color guidance](https://www.carbondesignsystem.com/building-blocks/foundations/color/overview)
+informed neutral layering and role separation; its brand blue is not adopted by
+the three alternatives. No palette has yet been selected by the owner.
+
+An isolated temporary test browser rendered all eight palette/theme combinations;
+the owner's everyday Chrome profile was not connected or inspected. Final checks
+recorded no page/console errors, no external requests, and a minimum 4.72:1 contrast
+among sampled body/secondary text, primary/secondary buttons and status badges.
+The 1280x900 completed overview still fits one screen. English labels, selector
+behavior, URL restoration and 390px overview/issue width were checked. These are
+bounded prototype observations, not complete accessibility conformance or product
+acceptance. Captures and observations are in ignored artifacts/console-palettes-20261023/.
 
 ## Handoff
 

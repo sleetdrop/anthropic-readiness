@@ -10,7 +10,12 @@ simulated running/stopped states and purpose-based export previews. Every result
 is synthetic. Production source, installed trial on 8765 and its data are unchanged.
 Final prototype browser checks passed at desktop/narrow widths; failed layout
 and theme-transition observations are retained in ignored artifacts.
-Await owner feedback on the sample before selecting a production increment.
+The owner rejected the initial generic blue-gray palette. The sample now offers
+Graphite, Slate and Ink alternatives with the original as a comparison; Graphite
+is the proposed default, pending selection. All eight palette/theme combinations
+were rendered in an isolated temporary browser, without the owner's Chrome profile.
+See the prototype README for sampled contrast/width checks and limits. Await owner
+feedback on palette and sample before selecting a production increment.
 
 ## External interaction references and independent identity
 

@@ -1,0 +1,54 @@
+/* Independent alternatives. Roles and layout remain constant for comparison. */
+:root[data-palette="graphite"] {
+  --page: #f2f2f2; --surface: #ffffff; --subtle: #f7f7f7;
+  --text: #242424; --muted: #626262; --line: #dedede; --control: #9a9a9a;
+  --accent: #343434; --accent-hover: #181818; --accent-soft: #eaeaea;
+  --primary: #343434; --primary-hover: #181818; --on-primary: #ffffff;
+  --code: #f5f5f5; --shadow: 0 16px 64px #00000022;
+}
+:root[data-palette="graphite"][data-theme="dark"] {
+  --page: #1b1b1b; --surface: #252525; --subtle: #2d2d2d;
+  --text: #e6e6e6; --muted: #ababab; --line: #424242; --control: #747474;
+  --accent: #dfdfdf; --accent-hover: #f3f3f3; --accent-soft: #383838;
+  --primary: #dedede; --primary-hover: #ffffff; --on-primary: #202020;
+  --code: #202020; --shadow: 0 16px 64px #00000066;
+}
+:root[data-palette="slate"] {
+  --page: #edf1f2; --surface: #fdfefe; --subtle: #f4f7f8;
+  --text: #233239; --muted: #5b6b72; --line: #d4dee2; --control: #879ba4;
+  --accent: #3e5963; --accent-hover: #263f49; --accent-soft: #e0e9ed;
+  --primary: #3e5963; --primary-hover: #263f49; --on-primary: #ffffff;
+  --code: #eff3f5; --shadow: 0 16px 64px #14202722;
+}
+:root[data-palette="slate"][data-theme="dark"] {
+  --page: #1e2528; --surface: #272f33; --subtle: #2d373b;
+  --text: #e2e9ec; --muted: #adb9bd; --line: #445055; --control: #718187;
+  --accent: #a9c0c9; --accent-hover: #cee1e8; --accent-soft: #34464e;
+  --primary: #a9c0c9; --primary-hover: #cee1e8; --on-primary: #18252b;
+  --code: #222a2e; --shadow: 0 16px 64px #00000066;
+}
+:root[data-palette="ink"] {
+  --page: #efeeeb; --surface: #fcfcfa; --subtle: #f5f4f1;
+  --text: #2d2b28; --muted: #68645d; --line: #d9d6ce; --control: #a59f93;
+  --accent: #5b5144; --accent-hover: #40392f; --accent-soft: #e8e3d9;
+  --primary: #51483d; --primary-hover: #393229; --on-primary: #ffffff;
+  --code: #f1f0ec; --shadow: 0 16px 64px #211a1022;
+}
+:root[data-palette="ink"][data-theme="dark"] {
+  --page: #201f1c; --surface: #2a2824; --subtle: #302e29;
+  --text: #e9e6de; --muted: #b6b0a4; --line: #48443c; --control: #81796b;
+  --accent: #cbbfa9; --accent-hover: #e6ddcb; --accent-soft: #3d382f;
+  --primary: #c5b597; --primary-hover: #e6ddcb; --on-primary: #242019;
+  --code: #24221e; --shadow: 0 16px 64px #00000066;
+}
+/* Diagnostic status colors are shared, so palette choice cannot change meaning. */
+:root[data-palette]:not([data-palette="original"]) {
+  --pass: #256044; --pass-soft: #eaf1ed;
+  --fail: #9f3339; --fail-soft: #f6eded;
+  --unknown: #775417; --unknown-soft: #f4f0e7;
+}
+:root[data-theme="dark"][data-palette]:not([data-palette="original"]) {
+  --pass: #a3c4b1; --pass-soft: #2d3831;
+  --fail: #d5a0a3; --fail-soft: #3d2c2e;
+  --unknown: #d0b984; --unknown-soft: #3b352b;
+}
