@@ -1,4 +1,14 @@
-import { object, objects, strings, resolveEndpoint, resolvePreviewState } from "./forms.js";
+import {
+  object,
+  objects,
+  strings,
+  resolveEndpoint,
+  resolvePreviewState,
+  INPUT_HISTORY_KEY,
+  readInputHistory,
+  rememberInput,
+  clearInputHistory,
+} from "./forms.js";
 import { parseExecution, reduceSnapshot } from "./progress.js";
 import { mountReport, setupDrawer } from "./report.js";
 /** @typedef {import("./forms.js").JsonObject} JsonObject */
@@ -169,6 +179,40 @@ function configure(bootstrap) {
   let presets = objects(bootstrap.presets);
   /** @type {string|null} */
   let selectedPreset = null;
+  /** @type {Storage|null} */
+  let historyStorage = null;
+  try {
+    historyStorage = window.localStorage;
+  } catch {
+    // Browsers may deny storage without preventing an assessment.
+  }
+  function renderInputHistory() {
+    const history = readInputHistory(historyStorage);
+    element("endpoint-history").replaceChildren(
+      ...history.endpoints.map((value) => new Option(value, value)),
+    );
+    element("model-history").replaceChildren(
+      ...history.models.map((value) => new Option(value, value)),
+    );
+    element("input-history-controls").hidden = !history.endpoints.length && !history.models.length;
+  }
+  function rememberCurrentInputs() {
+    rememberInput(historyStorage, "endpoints", input("endpoint").value);
+    rememberInput(historyStorage, "models", input("model").value);
+    renderInputHistory();
+  }
+  button("clear-input-history").addEventListener("click", () => {
+    if (!clearInputHistory(historyStorage)) {
+      showError(new Error(message("form.history_clear_failed")));
+      return;
+    }
+    renderInputHistory();
+    input("endpoint").focus();
+  });
+  window.addEventListener("storage", (event) => {
+    if (event.key === INPUT_HISTORY_KEY || event.key === null) renderInputHistory();
+  });
+  renderInputHistory();
 
   function usesApiKey() {
     const mode = select("auth-mode").value;
@@ -324,6 +368,14 @@ function configure(bootstrap) {
     if (event.target !== input("credential") || select("auth-mode").value === "auto") invalidate();
   });
   form.addEventListener("change", invalidate);
+  form.addEventListener("change", (event) => {
+    if (event.target === input("endpoint"))
+      rememberInput(historyStorage, "endpoints", input("endpoint").value);
+    else if (event.target === input("model"))
+      rememberInput(historyStorage, "models", input("model").value);
+    else return;
+    renderInputHistory();
+  });
   select("preset").addEventListener("change", () => {
     selectedPreset = select("preset").value || null;
     const saved = presets.find((item) => item.id === selectedPreset);
@@ -375,6 +427,7 @@ function configure(bootstrap) {
         throw new Error(message("preview.changed"));
       }
       state = { target: object(frozen.target), previewId: String(frozen.id) };
+      rememberCurrentInputs();
       operation = crypto.randomUUID();
       reviewedProfiles = JSON.stringify(profiles);
       const plan = object(frozen.plan);

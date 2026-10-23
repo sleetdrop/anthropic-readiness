@@ -1,5 +1,20 @@
 # Local delivery status
 
+## Browser input history implemented; final trial refresh pending
+
+The owner requested endpoint/model autocomplete backed by localStorage. Only
+these two fields are remembered, with 20 recent values each, no automatic filling
+or requests, and a clear control that preserves server history/presets. API Keys
+remain excluded. This explicitly supersedes earlier zero-browser-storage
+expectations for endpoint/model strings only. Read the follow-up section in
+[the entry ledger](harness/simplified-entry-ledger.md).
+
+Final stable-source fast checks passed eight gates. Seven related browser checks
+passed, and the final history implementation passed two additional browser checks.
+One bounded independent read-only review found no material issue. No endpoint
+coverage, real endpoint request, new remote CI or remote write is included.
+The local trial refresh and installed-source identity are recorded at handoff.
+
 ## Simplified entry delivered; await owner feedback
 
 The owner approved a bounded entry-flow improvement: endpoint and model are the

@@ -1555,3 +1555,25 @@ content hashes, not the image label alone, establish installed-source identity.
 Keep the trial service and persistent volume; the development container is stopped
 at handoff. No owner endpoint call, remote write, registry publication or full
 matrix acceptance accompanies this UI-only increment. Await owner feedback.
+
+## 2026-10-23: Browser endpoint/model input history
+
+Owner requested browser-local autocomplete memory. Only valid endpoint/model
+strings enter the versioned localStorage history, capped at 20 per field; API Keys
+and target objects remain excluded. Clearing removes only this history key.
+Selections do not start requests or replace the explicit preview/start sequence.
+Native suggestions survive refresh; corrupt/blocked/full storage degrades safely.
+The two earlier zero-storage browser assertions now check the exact allowlisted
+history plus absence of credentials, following this explicit requirement change.
+RED reproduced missing history. Four helper tests and seven related browser
+checks passed; one independent bounded read-only review found no material issue.
+First fast checks found two tooling issues (test typing and a disallowed regex),
+corrected without weakening checks. Final check/trial closure follows. No endpoint
+case, protocol rule or real endpoint request was added. Details and retained
+evidence: simplified-entry-ledger.md and ignored artifacts/input-history-20261023/.
+
+Final input-history source checks: stable-source fast graph passed eight gates.
+Both history browser checks passed again after the lint/type corrections; the
+seven earlier related browser checks remain separate evidence. Documentation
+checks and the cached package build passed. No full graph is claimed. Current
+trial refresh is the remaining delivery step; no further feature work is underway.

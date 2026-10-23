@@ -80,7 +80,18 @@ test("test_start_clears_submitted_secret", async ({ page, request }) => {
       return field instanceof HTMLInputElement ? field.value : "missing";
     }),
   ).toBe("");
-  expect(await page.evaluate(() => sessionStorage.length + localStorage.length)).toBe(0);
+  const storage = await page.evaluate(() => ({
+    local: { ...localStorage },
+    session: { ...sessionStorage },
+  }));
+  expect(storage.session).toEqual({});
+  expect(Object.keys(storage.local)).toEqual(["anthropic-readiness.input-history.v1"]);
+  expect(JSON.parse(storage.local["anthropic-readiness.input-history.v1"])).toEqual({
+    version: 1,
+    endpoints: [fixture().peer_url + "/v1/messages"],
+    models: ["synthetic-hold"],
+  });
+  expect(JSON.stringify(storage)).not.toContain(key);
   expect(JSON.stringify(run)).not.toContain(key);
   await page.unrouteAll({ behavior: "wait" });
   await page.goto("/runs/" + run.id);

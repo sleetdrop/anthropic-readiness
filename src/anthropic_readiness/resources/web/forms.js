@@ -1,6 +1,80 @@
 /** @typedef {import("./contracts.js").JsonValue} JsonValue */
 /** @typedef {import("./contracts.js").JsonObject} JsonObject */
 /** @typedef {{target:JsonObject,previewId:string|null}} PreviewState */
+/** @typedef {{version:1,endpoints:string[],models:string[]}} InputHistory */
+/** @typedef {"endpoints"|"models"} HistoryField */
+/** @typedef {Pick<Storage,"getItem"|"setItem"|"removeItem">} HistoryStorage */
+
+export const INPUT_HISTORY_KEY = "anthropic-readiness.input-history.v1";
+const HISTORY_LIMIT = 20;
+
+/** @param {unknown} value @param {HistoryField} field @returns {string[]} */
+function historyValues(value, field) {
+  if (!Array.isArray(value)) return [];
+  const values = value.filter((item) => {
+    if (
+      typeof item !== "string" ||
+      !item.trim() ||
+      Array.from(item).some(
+        (character) => character.charCodeAt(0) < 32 || character.charCodeAt(0) === 127,
+      )
+    )
+      return false;
+    if (item.length > (field === "endpoints" ? 2048 : 512)) return false;
+    if (field === "endpoints") {
+      try {
+        resolveEndpoint(item.trim(), "messages");
+      } catch {
+        return false;
+      }
+    }
+    return true;
+  });
+  return [...new Set(values.map((item) => String(item).trim()))].slice(0, HISTORY_LIMIT);
+}
+
+/** @param {HistoryStorage|null} storage @returns {InputHistory} */
+export function readInputHistory(storage) {
+  /** @type {InputHistory} */
+  const empty = { version: 1, endpoints: [], models: [] };
+  try {
+    const raw = storage?.getItem(INPUT_HISTORY_KEY);
+    if (!raw || raw.length > 65536) return empty;
+    const value = object(JSON.parse(raw));
+    if (value.version !== 1) return empty;
+    return {
+      version: 1,
+      endpoints: historyValues(value.endpoints, "endpoints"),
+      models: historyValues(value.models, "models"),
+    };
+  } catch {
+    return empty;
+  }
+}
+
+/** @param {HistoryStorage|null} storage @param {HistoryField} field @param {string} value @returns {InputHistory} */
+export function rememberInput(storage, field, value) {
+  const previous = readInputHistory(storage);
+  const accepted = historyValues([value], field);
+  if (!accepted.length || !storage) return previous;
+  const next = { ...previous, [field]: historyValues([...accepted, ...previous[field]], field) };
+  try {
+    storage.setItem(INPUT_HISTORY_KEY, JSON.stringify(next));
+    return next;
+  } catch {
+    return previous;
+  }
+}
+
+/** @param {HistoryStorage|null} storage @returns {boolean} */
+export function clearInputHistory(storage) {
+  try {
+    storage?.removeItem(INPUT_HISTORY_KEY);
+    return true;
+  } catch {
+    return false;
+  }
+}
 
 /** @param {JsonValue} value @returns {JsonValue} */
 function canonical(value) {

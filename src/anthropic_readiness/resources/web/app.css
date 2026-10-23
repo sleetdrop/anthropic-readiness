@@ -668,6 +668,18 @@ tbody th {
 .configure-workspace .page-title {
   margin-bottom: 16px;
 }
+.input-history-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.input-history-controls button {
+  font-size: 12px;
+  padding: 4px 8px;
+}
 .configure-workspace .preset-picker {
   justify-content: flex-end;
   margin-bottom: 20px;

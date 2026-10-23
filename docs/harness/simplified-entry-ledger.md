@@ -57,3 +57,35 @@ five cases with up to six requests for all profiles.
 
 Evidence is ignored under artifacts/simplified-entry-20261023/. This iteration
 does not call an owner's model endpoint, push to GitHub or publish an image.
+
+## Browser input history follow-up
+
+The owner explicitly requested localStorage memory for endpoint/model autocomplete.
+Only these two fields may now persist in browser storage; earlier zero-storage
+expectations are superseded for these fields only. API Keys, credential references,
+full target objects, reports and captures are not persisted by this feature.
+
+The versioned history key is anthropic-readiness.input-history.v1, limited to 20
+unique recent values per field. Valid values are remembered on change or after a
+successful plan preview. Native datalists expose suggestions after refresh, without
+restoring field contents or starting requests. URL credentials/query/fragment data,
+control characters and excessively long values are excluded. Storage is scoped to
+the browser origin; it is separate from server presets and assessment history.
+Clear input history removes only this key and its suggestions. Corrupt, unavailable
+or full storage must not prevent normal configuration. Clear failures are reported
+rather than claiming deletion. Other tabs refresh suggestions on storage changes.
+
+RED browser verification observed missing history after leaving the input fields.
+Four helper tests cover recency/deduplication, bounds, corrupt documents, allowed
+fields, rejected URLs and storage failures/clear ownership. Seven related browser
+checks passed, including existing secret clearing and locale/theme behavior. Those
+privacy tests now assert the exact allowed storage document and absence of secrets,
+instead of requiring all browser storage to remain empty. One independent bounded
+read-only review found no material issue. The first fast run caught missing test
+type annotations and a disallowed control-character regex; corrected without
+relaxing the validation. Final checks and trial identity are recorded in progress.md.
+
+This follow-up adds zero endpoint scenarios or protocol rules. Private inputs are
+never copied from the owner's trial into source or build context. Evidence is
+ignored under artifacts/input-history-20261023/; no genuine endpoint call, remote
+CI, push or image publication accompanies this work.

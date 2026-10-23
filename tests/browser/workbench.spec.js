@@ -25,7 +25,18 @@ test("locale and theme preserve reviewed execution plan, credentials and focused
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
   await expect(page.locator("#theme-choice")).toBeFocused();
   expect((await count(request)).count).toBe(0);
-  expect(await page.evaluate(() => localStorage.length + sessionStorage.length)).toBe(0);
+  const storage = await page.evaluate(() => ({
+    local: { ...localStorage },
+    session: { ...sessionStorage },
+  }));
+  expect(storage.session).toEqual({});
+  expect(Object.keys(storage.local)).toEqual(["anthropic-readiness.input-history.v1"]);
+  expect(JSON.parse(storage.local["anthropic-readiness.input-history.v1"])).toEqual({
+    version: 1,
+    endpoints: [fixture().peer_url + "/v1/messages"],
+    models: ["synthetic-pass"],
+  });
+  expect(JSON.stringify(storage)).not.toContain("synthetic-ephemeral");
 });
 
 test("tabs, selection, Back and refresh preserve canonical issue location", async ({ page }) => {
