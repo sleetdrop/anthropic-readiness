@@ -2023,3 +2023,13 @@ regression. Syntax/format/docs checks passed, no full product graph repeated.
 Evidence: ignored `artifacts/evidence-token-marker-20261025/` and existing study
 ledger/visual QA. Supporting-only prototype, pending owner trial: zero endpoint
 scenarios/faults added, zero real calls, no installed application or remote changes.
+
+## 2026-10-25: Owner accepted token-adjacent evidence annotation
+
+Owner accepted `446d695`. Recorded the indicator placement, non-shifting JSON,
+popover dismissal/focus, semantic colors and evidence-only boundary in root
+design.md. Added two previously verified synthetic light/dark reference images;
+updated the sample status, handoff and ledger. Documentation checks passed.
+This is supporting-only documentation: no runtime, endpoint scenarios/faults,
+live calls or remote changes. Actual evidence-view integration is next; Activity
+interaction details remain separate and do not gain issue markers.

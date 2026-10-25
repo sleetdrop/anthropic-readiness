@@ -17,8 +17,9 @@ The earlier [overview sample](index.html) remains available for comparison.
 The owner requested a small interactive evidence-location study before production
 integration. Open [evidence-annotation.html](evidence-annotation.html), currently
 served at http://localhost:8768/evidence-annotation.html in a separate static
-preview. This extends the accepted visual language; its new interactions await
-owner trial and are not an approved replacement baseline.
+preview. The owner accepted revision `446d695` on 2026-10-25; root design.md now
+records its evidence annotation rules and paired reference images. Integration
+into the installed application's evidence view remains the next bounded task.
 
 - Use the footer selector to inspect missing-field, wrong-value-type and repeated
   SSE samples. They are synthetic reading examples, not executed endpoint cases.

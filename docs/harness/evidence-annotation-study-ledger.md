@@ -12,7 +12,8 @@ increment. No production migration is included in this study.
 Initial checkout: clean `d2369f8` on `codex/tool-result-round-trip`.
 Source: `docs/design/console-study/evidence-annotation.{html,css,js}`, extending
 root design.md and the existing flow sample's local fonts, icons and color tokens.
-The new interactions await owner review. Root design.md remains unchanged.
+The owner accepted final sample `446d695` on 2026-10-25. Root design.md records
+the token-marker/popover rules and paired synthetic reference captures.
 
 ## Current revision: marker beside the exact token
 
@@ -32,8 +33,13 @@ no character overlap, unchanged JSON geometry on open/close and marker hiding,
 and prior source/folding/keyboard/download controls. No page errors or model calls.
 Evidence is ignored in `artifacts/evidence-token-marker-20261025/`; original failed
 and passed attempts are retained. Full product gates were not repeated. Product
-8765, its five cases, Activity and reports remain unchanged. Owner visual trial is
-pending; the sample is not a new root design.md baseline or production migration.
+8765, its five cases, Activity and reports remain unchanged. Owner acceptance is
+now recorded in root design.md; product integration is the next bounded task.
+
+Acceptance-recording follow-up: copied two verified synthetic 737x800 type-value
+captures into tracked design references, updated current handoff/status and ran
+documentation checks. No source/runtime or endpoint coverage changed. Detailed
+failed attempts and broader screenshot samples remain ignored.
 
 ## Previous gutter-marker revision, e85ddea (historical)
 

@@ -9,7 +9,8 @@ Source: `e85ddea` synthetic sample with gutter marker, captured at
 Owner-directed change: place the indicator beside the relevant key/value without
 covering characters, consuming text space or changing JSON indentation. Missing
 fields must still locate their real parent. This is a scoped prototype refinement;
-owner visual trial and production binding remain separate.
+the owner subsequently accepted `446d695` on 2026-10-25. Production binding remains
+the next bounded implementation task.
 
 Implementation: `evidence-annotation.html?rev=8`, missing-field, Chinese/light,
 popover open. Capture: `artifacts/evidence-token-marker-20261025/iab-final-light.png`.
@@ -51,9 +52,11 @@ regression; it did not repeat the browser run.
 Direct IAB additionally inspected the value marker at the owner's current desktop
 width, the comparable 1280x720 light state and 390x844 dark. Narrow capture:
 `artifacts/evidence-token-marker-20261025/iab-final-narrow-dark.png`.
-Normal viewport and Chinese/light are restored for the owner's trial.
+Normal viewport and Chinese/light were restored for the owner's trial, which
+subsequently accepted this version.
 
 Earlier gutter/inline findings and their corrections remain historical in the
 study ledger and ignored artifact directories. Full accessibility, screen-reader,
 cross-browser, very long/invalid capture and multiple-finding acceptance are not
-claimed. Product/Activity integration and root design.md baseline are unchanged.
+claimed. Product/Activity integration is unchanged; root design.md now records
+the owner's acceptance separately from this verification report.

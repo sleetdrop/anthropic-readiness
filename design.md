@@ -213,3 +213,35 @@ Actual in-app-browser verification also found a redundant vertical scrollbar on
 the horizontal tab strip. The strip clips vertical overflow, removes the inherited
 negative link margin and draws keyboard focus inside the tab, while retaining
 horizontal reachability. This corrects deployment rendering within the baseline.
+
+## Evidence-node annotation, approved 2026-10-25
+
+The owner accepted the token-adjacent indicator and click-popover sample at
+`446d695`. Reference: [evidence-annotation.html](docs/design/console-study/evidence-annotation.html),
+with its local CSS/JavaScript. Synthetic 737x800 reference captures:
+[light](docs/design/evidence-baseline-2026-10-25/type-light.png) and
+[dark](docs/design/evidence-baseline-2026-10-25/type-dark.png).
+
+- Put a restrained semantic indicator beside the relevant key/value, clearing
+  punctuation and all existing characters. It may overlay unused space but must
+  not consume text width, change indentation or move JSON rows. The accepted
+  samples mark the actual value; a missing field targets its existing parent
+  opening brace. Never invent a missing key/value in captured data.
+- Click the indicator to open a non-modal detail popover containing the issue,
+  expected/observed facts and relevant evidence links. Keep fault indicators rose
+  and related context neutral; retain gray-blue for the current location.
+- Prefer spare space beside visible data, then above/below the target. Narrow
+  placement can use the bottom edge when it leaves the target visible. Keep the
+  panel inside the viewport. Close through repeated indicator click, outside
+  click, Close or Escape; Close/Escape return keyboard focus to the indicator.
+- Preserve JSON geometry, source bytes, folding and reading context. Diagnostic
+  content must stay outside copied/downloaded source. Navigation, external scroll
+  and resize can dismiss transient details without resetting the investigation.
+- Reserve annotation for evidence inspection. Activity/run records expose
+  interaction details separately, without issue markers in this increment.
+
+This supersedes the inserted-note and gutter-indicator experiments for evidence
+annotation. It approves the presentation, not a claim that the installed product
+implements it. Production integration must derive locations from validated
+findings and evidence, with explicit conservative fallback when a node/event
+cannot be located. Other layout, report and endpoint-coverage boundaries remain.

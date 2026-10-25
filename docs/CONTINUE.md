@@ -1,6 +1,6 @@
 # Local delivery status
 
-## Evidence annotation sample ready for owner trial
+## Evidence annotation design accepted; product integration next
 
 The latest bounded increment is a standalone evidence-location sample at
 http://localhost:8768/evidence-annotation.html. Read
@@ -18,7 +18,10 @@ refinement. Final targeted checks passed 36 width/theme/language/scenario sample
 including near-token distance, character avoidance and unchanged geometry with
 markers shown/hidden. Full product gates were not repeated.
 
-This awaits owner feedback, not production integration approval. The installed
+The owner accepted sample revision `446d695`; root design.md now records the
+token-marker/popover rules and two synthetic reference captures. The next bounded
+implementation task is integrating this behavior into actual evidence inspection.
+This acceptance-recording increment changed documentation only. The installed
 feature remains `3bfc375` at port 8765; no run data, report, CLI or endpoint verdict
 changed. Five formal cases remain unchanged and no live calls occurred. Activity
 interaction details remain a separate pending increment, without issue annotations.
