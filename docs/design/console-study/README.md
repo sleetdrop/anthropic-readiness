@@ -25,8 +25,11 @@ owner trial and are not an approved replacement baseline.
 - A missing key locates its existing parent; no fictional JSON line is inserted.
   Wrong type locates `/usage/output_tokens`. Repeated start selects event #5;
   event #0 is neutral related context rather than another marked fault.
-- Gray-blue indicates the current location. A small rose gutter icon marks the
-  sample deviation; a neutral information icon marks related context. Click the
+- Gray-blue indicates the current location. A small rose icon floats just after
+  the specific value token; a neutral information icon marks related context.
+  Missing-field indicators sit beside the existing parent opening brace. Icons
+  clear trailing punctuation and do not occupy text space or cover characters.
+  The line-number/folding columns retain the original three-column layout. Click the
   marker for a non-modal detail popover containing expected/observed information.
   Opening/closing it never inserts rows or shifts JSON text. Click the marker
   again, click outside, use Close or press Escape to dismiss. Keyboard activation

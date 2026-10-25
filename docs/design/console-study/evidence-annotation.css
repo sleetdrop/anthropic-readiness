@@ -126,7 +126,7 @@ a,
 .data-row {
   position: relative;
   display: grid;
-  grid-template-columns: 24px 28px 18px minmax(max-content, 1fr);
+  grid-template-columns: 34px 18px minmax(max-content, 1fr);
   align-items: center;
   min-height: 25px;
   font:
@@ -143,11 +143,13 @@ a,
 .data-row.is-target {
   background: var(--accent-soft);
 }
-.marker-gutter {
-  display: flex;
-  justify-content: center;
+.location-token {
+  position: relative;
 }
 .node-marker {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -182,7 +184,7 @@ a,
 }
 .node-code {
   white-space: pre;
-  padding-right: 16px;
+  padding-right: 40px;
   color: var(--text);
 }
 .fold {
@@ -395,7 +397,7 @@ footer {
     width: calc(100vw - 24px);
   }
   .data-row {
-    grid-template-columns: 24px 24px 14px minmax(max-content, 1fr);
+    grid-template-columns: 24px 14px minmax(max-content, 1fr);
   }
   .line-number {
     padding-right: 5px;

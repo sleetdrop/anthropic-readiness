@@ -1,70 +1,59 @@
-# Evidence popover refinement QA
+# Evidence token-marker refinement QA
 
 final result: passed
 
 ## Comparison truth and scope
 
-Source visual: the existing `a057d2c` synthetic evidence sample, grounded in root
-design.md, captured before editing at
-`artifacts/evidence-bubble-20261025/before-light.png`.
-Owner-approved change: replace inserted diagnostic notes with a gutter marker and
-click popover, keeping the JSON layout stable. This authorizes a scoped refinement,
-not pixel equality with the superseded inserted-note structure or acceptance of
-the final new appearance. Owner visual trial remains pending.
-
-Implementation: `evidence-annotation.html?rev=4`, missing-field scenario,
-Chinese/light, popup open. Capture:
+Source: `e85ddea` synthetic sample with gutter marker, captured at
 `artifacts/evidence-bubble-20261025/iab-final-light.png`.
-Both images are 1280x720 pixels at 1280x720 CSS pixels, density 1; no resizing was
-used in the comparison artifact. Full-view pair: `compare-final.png` in that
-artifact directory. Focused pair: `compare-detail.png`, made from equal 650x350
-regions at x24/y245. Both pairs were opened and visually inspected. Screenshot
-composition used existing ImageMagick; Pillow was unavailable and not installed.
+Owner-directed change: place the indicator beside the relevant key/value without
+covering characters, consuming text space or changing JSON indentation. Missing
+fields must still locate their real parent. This is a scoped prototype refinement;
+owner visual trial and production binding remain separate.
 
-## Findings and correction history
+Implementation: `evidence-annotation.html?rev=8`, missing-field, Chinese/light,
+popover open. Capture: `artifacts/evidence-token-marker-20261025/iab-final-light.png`.
+Both captures are 1280x720 pixels at 1280x720 CSS pixels, density 1. Full pair:
+`compare-final.png` in the latter artifact directory. Focused pair:
+`compare-detail.png`, using equal 650x300 regions at x24/y245. Both pairs were
+opened and compared; no density normalization was needed. The comparison restores
+the original line-number/fold/text grid deliberately, rather than matching the
+superseded extra gutter. No remaining actionable P0/P1/P2 mismatch was observed.
 
-- Initial panel capture `iab-after-light.png` placed missing-root detail just
-  after the opening brace, covering neighboring JSON despite wide spare space
-  (P2). Retained initial pair: `compare-initial.png`. Correction uses the right
-  edge of all visible JSON text to choose side placement. Final full/focused
-  pairs show the panel beside the data. No remaining P0/P1/P2 finding.
-- Independent static review found the icon inherited a fixed muted color from
-  flow.css (P3); child icons now inherit their parent's fault/context color.
-  Final visual and computed-style checks confirm the semantic distinction.
-- Review suggested repeated-marker activation; it was reproduced as a native
-  light-dismiss/reopen problem, then corrected with explicit popover invoker
-  association and controlled activation. Final browser checks confirm toggling.
+## Fidelity surfaces
 
-## Required fidelity surfaces
+- Typography: system/CJK UI and monospace JSON families, compact weights/sizes and
+  neutral token text retained. No new syntax coloring or font dependency.
+- Spacing/layout: absolute marker beside the actual value (`"8"`,
+  `"message_start"`) or parent `{`. It clears the trailing comma/collapsed suffix;
+  JSON characters and row positions do not move when markers/popovers toggle.
+  Constant end padding makes room in the reader's own horizontal scroll area.
+  Popover geometry and spare-space/target-avoidance behavior are retained.
+- Colors: accepted gray-blue location, rose fault, neutral related context and
+  paired surfaces retained. No new semantic colors or inferred pass state.
+- Assets: existing unmodified local Heroicons 2.2.0 outline glyphs and MIT license,
+  now in an absolute token-adjacent button. No added or approximated imagery.
+- Copy/content: same expected/observed facts; diagnostic notes remain separate
+  from JSON. Source copy/download and missing-parent/SSE-context meaning unchanged.
 
-- Typography: existing system/CJK and monospace families retained; compact 12px
-  data/note hierarchy, 10px secondary annotation label and 11px actions. No new
-  font download or syntax coloring. Full/focused pairs show consistent weights.
-- Spacing/layout: header, navigation and reader controls retained. A permanently
-  reserved marker gutter changes the reading inset deliberately. Notes no longer
-  take vertical space; every data row stays fixed during open/close. Panel has a
-  modest 4px radius and restrained shadow to distinguish it as an overlay.
-- Colors/tokens: existing gray-blue target, neutral data and surfaces, rose fault
-  and neutral related context retained. No alternative palette or added pass claim.
-- Assets: two unmodified local Heroicons 2.2.0 outline assets, with existing MIT
-  license; 15px glyphs in 24x25px keyboard-accessible gutter buttons. No generated
-  imagery, approximated icons or decorative assets.
-- Copy/content: expected/observed facts remain separate from source; missing
-  stop_sequence remains absent in JSON. Popovers explicitly identify diagnostic
-  content. Full source copy/download stays unchanged. SSE first event is related
-  context, not another fault. No product verdict is generated by the sample.
+## Verification and history
 
-## Interaction and responsive checks
+The new token-location check was observed RED against the old gutter version.
+After implementation, targeted Linux Dev Container checks passed all 36
+width/theme/language/scenario combinations. They assert near-token positioning,
+no character overlap, viewport fit, target avoidance, identical JSON geometry
+before/during/after popovers and when marker visibility changes. Prior marker
+repeat-click, outside/Close/Escape, keyboard focus, folding/Locate, source-copy
+byte equality, full download and related-context checks remain green. No page
+errors or API/model requests. One independent static review found no clear
+regression; it did not repeat the browser run.
 
-Targeted Chromium verification passed 36 width/theme/language/scenario samples;
-all JSON text-row geometry was compared before/during/after popup visibility.
-Checked viewport fit, target avoidance, marker toggle, keyboard open/Escape/focus,
-Close/outside dismissal, annotation hiding, folding/Locate, issue return, neutral
-SSE context, copy fidelity and full sample download. No page errors or model/API
-requests. Direct IAB narrow dark capture at 390x844:
-`artifacts/evidence-bubble-20261025/iab-final-narrow-dark.png`.
+Direct IAB additionally inspected the value marker at the owner's current desktop
+width, the comparable 1280x720 light state and 390x844 dark. Narrow capture:
+`artifacts/evidence-token-marker-20261025/iab-final-narrow-dark.png`.
+Normal viewport and Chinese/light are restored for the owner's trial.
 
-Residual limits: no screen-reader/full accessibility or cross-browser claim;
-oversized/invalid capture fallbacks, multiple markers and production binding are
-outside this synthetic sample. Default 1280x720 Chinese/light preview is restored
-for owner trial. No automatic production integration follows from QA success.
+Earlier gutter/inline findings and their corrections remain historical in the
+study ledger and ignored artifact directories. Full accessibility, screen-reader,
+cross-browser, very long/invalid capture and multiple-finding acceptance are not
+claimed. Product/Activity integration and root design.md baseline are unchanged.

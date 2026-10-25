@@ -329,19 +329,25 @@ function renderJSON() {
   rows.replaceChildren();
   line = 0;
   const ref = point();
-  function row(pointer, depth, text, container, expanded, closing = false) {
+  function row(
+    pointer,
+    depth,
+    text,
+    container,
+    expanded,
+    closing = false,
+    tokenStart = 0,
+    tokenLength = text.length,
+  ) {
     const item = element("div", "data-row");
     item.dataset.pointer = closing ? pointer + "/@close" : pointer;
     const target = !closing && pointer === ref.pointer;
     item.classList.toggle("is-target", target);
     item.classList.toggle("is-fault", target && state.notes && ref.kind === "fault");
     item.tabIndex = -1;
-    const gutter = element("span", "marker-gutter");
+    let marker;
     if (target && state.notes && ref.note) {
-      const marker = element(
-        "button",
-        "node-marker" + (ref.kind === "context" ? " is-context" : ""),
-      );
+      marker = element("button", "node-marker" + (ref.kind === "context" ? " is-context" : ""));
       marker.type = "button";
       marker.setAttribute(
         "aria-label",
@@ -355,9 +361,7 @@ function renderJSON() {
       const icon = element("span", "icon");
       icon.setAttribute("aria-hidden", "true");
       marker.append(icon);
-      gutter.append(marker);
     }
-    item.append(gutter);
     item.append(element("span", "line-number", String(++line)));
     if (container && !closing) {
       const fold = element("button", "fold");
@@ -370,6 +374,17 @@ function renderJSON() {
       item.append(fold);
     } else item.append(element("span"));
     const code = element("code", "node-code", "  ".repeat(depth) + text);
+    if (marker) {
+      const end = tokenStart + tokenLength;
+      const token = element("span", "location-token", text.slice(tokenStart, end));
+      marker.style.left = "calc(100% + " + (text.length - end) + "ch + 6px)";
+      token.append(marker);
+      code.replaceChildren(
+        document.createTextNode("  ".repeat(depth) + text.slice(0, tokenStart)),
+        token,
+        document.createTextNode(text.slice(end)),
+      );
+    }
     item.append(code);
     if (container && !expanded && ref.pointer.startsWith(pointer + "/"))
       code.append(element("span", "collapsed-note", t("contains")));
@@ -389,6 +404,9 @@ function renderJSON() {
         prefix + opening + (expanded ? "" : " … " + closing + comma),
         true,
         expanded,
+        false,
+        prefix.length,
+        1,
       );
       if (expanded) {
         entries.forEach(([name, child], index) =>
@@ -402,7 +420,17 @@ function renderJSON() {
         );
         row(pointer, depth, closing + comma, true, true, true);
       }
-    } else row(pointer, depth, prefix + JSON.stringify(data) + comma, false, false);
+    } else
+      row(
+        pointer,
+        depth,
+        prefix + JSON.stringify(data) + comma,
+        false,
+        false,
+        false,
+        prefix.length,
+        JSON.stringify(data).length,
+      );
   }
   visit(value(), "", 0, null, "");
   if (previousFocus !== null && previousFocus !== undefined)

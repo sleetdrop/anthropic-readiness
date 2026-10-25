@@ -8,12 +8,15 @@ http://localhost:8768/evidence-annotation.html. Read
 [sample instructions](design/console-study/README.md#evidence-annotation-study-2026-10-25).
 Try missing-field parent location, wrong-type exact node and repeated SSE with
 neutral related context. Original data remains separate from diagnostic notes.
-Latest owner refinement replaces inserted notes with gutter markers and click
-popovers, preserving JSON geometry. Click the marker again/outside, Close or Escape
+Latest owner refinement places overlay markers beside the specific JSON value,
+or the observed parent opening brace for missing keys, rather than in a gutter.
+Click popovers preserve JSON geometry and clear punctuation/adjacent characters.
+Click the marker again/outside, Close or Escape
 to dismiss; desktop spare space and narrow placement avoid the target text.
-One independent static review completed for this refinement; inherited icon color
-and a reproduced repeated-click issue were corrected. Final targeted checks passed
-36 width/theme/language/scenario samples. Full product gates were not repeated.
+One independent static review found no clear regression in this token-placement
+refinement. Final targeted checks passed 36 width/theme/language/scenario samples,
+including near-token distance, character avoidance and unchanged geometry with
+markers shown/hidden. Full product gates were not repeated.
 
 This awaits owner feedback, not production integration approval. The installed
 feature remains `3bfc375` at port 8765; no run data, report, CLI or endpoint verdict

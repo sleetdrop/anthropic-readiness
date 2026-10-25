@@ -14,7 +14,28 @@ Source: `docs/design/console-study/evidence-annotation.{html,css,js}`, extending
 root design.md and the existing flow sample's local fonts, icons and color tokens.
 The new interactions await owner review. Root design.md remains unchanged.
 
-## Current revision: gutter marker and popover
+## Current revision: marker beside the exact token
+
+The owner clarified that the indicator belongs beside the actual key/value, not
+at the start of a row. Refined `e85ddea` with an absolute marker next to the value
+token (`"8"` or `"message_start"`); missing fields locate the existing parent `{`.
+Punctuation remains in place and has explicit clearance before the icon. Restored
+the original line-number/fold/text grid; marker placement never inserts characters
+or consumes text width. Constant trailing padding keeps the overlay reachable at
+the horizontal scroll edge. No new scenario or endpoint fault is claimed.
+
+DONE: absent token-location RED, source refinement, final targeted browser check,
+direct IAB and paired visual comparison, one independent static review (no clear
+regression), syntax/format/docs checks and local delivery commit. The final check
+passed 36 width/theme/language/scenario combinations, plus exact token proximity,
+no character overlap, unchanged JSON geometry on open/close and marker hiding,
+and prior source/folding/keyboard/download controls. No page errors or model calls.
+Evidence is ignored in `artifacts/evidence-token-marker-20261025/`; original failed
+and passed attempts are retained. Full product gates were not repeated. Product
+8765, its five cases, Activity and reports remain unchanged. Owner visual trial is
+pending; the sample is not a new root design.md baseline or production migration.
+
+## Previous gutter-marker revision, e85ddea (historical)
 
 After trying `a057d2c`, the owner requested keeping JSON layout intact and opening
 details from a small indicator instead of inserting explanatory rows. The owner

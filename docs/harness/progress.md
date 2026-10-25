@@ -2005,3 +2005,21 @@ Supporting-only prototype, awaiting owner visual trial: no formal endpoint cases
 detectable faults added, no real calls, report/CLI/engine changes, product update or
 remote write. Five endpoint cases and installed 3bfc375 at 8765 remain unchanged.
 Activity details are still pending separately, without issue annotations.
+
+## 2026-10-25: Attach the indicator to the actual JSON token
+
+Owner clarified that the prompt should sit beside the relevant key/value rather
+than the line's gutter. The synthetic sample now positions an absolute indicator
+after the exact value token, clearing punctuation; absent keys target the observed
+parent opening brace. Restored the original line-number/fold/text columns. JSON
+characters, indentation and folding remain unchanged when markers or popovers
+toggle. Existing click/keyboard/source controls are retained.
+
+Observed missing-token-target RED before implementation, then 36 final browser
+width/theme/language/scenario samples passed, with exact proximity and character
+avoidance checks. Direct IAB desktop/light and 390px/dark inspected; full/focused
+paired screenshots compared. One independent static review found no clear
+regression. Syntax/format/docs checks passed, no full product graph repeated.
+Evidence: ignored `artifacts/evidence-token-marker-20261025/` and existing study
+ledger/visual QA. Supporting-only prototype, pending owner trial: zero endpoint
+scenarios/faults added, zero real calls, no installed application or remote changes.
