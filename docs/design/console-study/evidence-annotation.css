@@ -126,7 +126,7 @@ a,
 .data-row {
   position: relative;
   display: grid;
-  grid-template-columns: 34px 18px minmax(max-content, 1fr);
+  grid-template-columns: 24px 28px 18px minmax(max-content, 1fr);
   align-items: center;
   min-height: 25px;
   font:
@@ -143,14 +143,35 @@ a,
 .data-row.is-target {
   background: var(--accent-soft);
 }
-.data-row.is-fault::before {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 0;
-  height: 24px;
-  border-left: 2px solid var(--fail);
-  transform: translateY(-50%);
+.marker-gutter {
+  display: flex;
+  justify-content: center;
+}
+.node-marker {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 25px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--fail);
+}
+.node-marker .icon {
+  color: inherit;
+  width: 15px;
+  height: 15px;
+  --icon: url("icons/exclamation-circle.svg");
+}
+.node-marker.is-context {
+  color: var(--muted);
+}
+.node-marker.is-context .icon {
+  --icon: url("icons/information-circle.svg");
+}
+.node-marker[aria-expanded="true"] {
+  background: var(--accent-soft);
 }
 .line-number {
   text-align: right;
@@ -192,10 +213,20 @@ a,
   white-space: normal;
 }
 .node-annotation {
-  margin: 3px 14px 8px 52px;
-  padding: 8px 0 8px 12px;
+  position: fixed;
+  inset: auto;
+  box-sizing: border-box;
+  width: 360px;
+  max-width: calc(100vw - 24px);
+  max-height: min(420px, calc(100vh - 24px));
+  overflow: auto;
+  margin: 0;
+  padding: 12px 14px;
   background: var(--surface);
-  border-left: 1px solid var(--line);
+  color: var(--text);
+  border: 1px solid var(--control);
+  border-radius: 4px;
+  box-shadow: 0 4px 16px rgb(0 0 0 / 12%);
   font:
     12px/1.55 -apple-system,
     BlinkMacSystemFont,
@@ -206,8 +237,13 @@ a,
 .annotation-heading {
   display: flex;
   flex-wrap: wrap;
-  align-items: baseline;
+  align-items: center;
+  justify-content: space-between;
   gap: 5px 10px;
+}
+.annotation-heading button {
+  font-size: 11px;
+  min-height: 26px;
 }
 .annotation-heading strong {
   font-size: 12px;
@@ -218,6 +254,7 @@ a,
   color: var(--muted);
 }
 .annotation-label {
+  display: block;
   color: var(--muted);
   font-size: 10px;
 }
@@ -237,7 +274,7 @@ a,
 }
 .expected-actual {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: 14px;
   max-width: 640px;
   margin: 8px 0;
@@ -355,12 +392,10 @@ footer {
     max-height: 55vh;
   }
   .node-annotation {
-    margin-left: 38px;
-    margin-right: 8px;
-    padding-left: 8px;
+    width: calc(100vw - 24px);
   }
   .data-row {
-    grid-template-columns: 24px 14px minmax(max-content, 1fr);
+    grid-template-columns: 24px 24px 14px minmax(max-content, 1fr);
   }
   .line-number {
     padding-right: 5px;

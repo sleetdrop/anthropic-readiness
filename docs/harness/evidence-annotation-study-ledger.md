@@ -14,7 +14,52 @@ Source: `docs/design/console-study/evidence-annotation.{html,css,js}`, extending
 root design.md and the existing flow sample's local fonts, icons and color tokens.
 The new interactions await owner review. Root design.md remains unchanged.
 
-## Sequential ledger
+## Current revision: gutter marker and popover
+
+After trying `a057d2c`, the owner requested keeping JSON layout intact and opening
+details from a small indicator instead of inserting explanatory rows. The owner
+approved this bounded revision. It remains a standalone sample awaiting visual
+feedback, not a production migration or root design.md baseline change.
+
+DONE sequentially: observe old behavior; add failing marker test; replace inserted
+notes with a fixed native non-modal popover; check layout and source fidelity;
+inspect paired images and direct IAB; complete one independent static review;
+correct its actionable finding and verify the final sample; update handoff and
+commit locally. Fixed-width gutter space remains present even with markers hidden.
+Fault/context use unmodified Heroicons 2.2.0 exclamation/information circle assets.
+
+The panel uses spare desktop space after visible JSON content when possible;
+otherwise it fits above/below the target, or at the narrow screen's bottom edge
+when that leaves the target visible. It never inserts data/annotation rows.
+Clicking the marker again, clicking outside, Close and Escape dismiss it;
+Close/Escape restore marker focus. Navigation, external scroll and resize dismiss
+temporary details without resetting JSON folding/reading state.
+
+Final Linux Dev Container browser check passed 36 combinations of three widths
+(1280/737/390px), two themes, two languages and three synthetic scenarios. Assertions
+compare every JSON text row's content/position/size before opening, while open and
+after dismissal; popovers must fit the viewport and avoid the target text. Checked
+repeated marker toggling, keyboard activation/focus, outside dismissal, parent and
+exact-node locations, related SSE neutrality, retained folding, raw clipboard byte
+equality, seven-record download and icon color inheritance. No page errors or
+API/model requests occurred. Direct IAB additionally inspected 1280x720 light and
+390x844 dark, with the same final appearance left at normal size/Chinese/light.
+
+Retained REDs cover the initially absent marker, desktop panel obscuring nearby
+JSON despite spare space, and repeated marker click reopening after native light
+dismiss. An independent static review found muted inherited icon color and
+suggested the repeated-click check; the latter was reproduced before correction.
+Icons now inherit semantic parent color; explicit native invoker association plus
+controlled activation fixes repeated clicking. All final targeted checks passed.
+Syntax, explicit formatting and repository documentation checks passed; no full
+product graph was rerun. Source data, endpoint cases, reports and installed 8765
+remain unchanged. Activity interaction details are still a separate pending task.
+
+Detailed evidence: ignored `artifacts/evidence-bubble-20261025/`; original inline
+evidence remains below. [Visual QA](../design/console-study/design-qa.md) records
+the intentionally changed presentation and paired screenshot comparison.
+
+## Original sequential ledger, a057d2c (historical)
 
 1. DONE: read intent, handoff and presentation baseline; inspect actual installed
    issue view in the in-app browser; establish synthetic-only scope.
@@ -35,7 +80,7 @@ The new interactions await owner review. Root design.md remains unchanged.
 6. DONE: document the sample and scope, check syntax/format/documentation and
    make a local delivery commit. No remote write or installed-product update.
 
-## Observed verification
+## Original inline-study verification (historical)
 
 Environment: checked-in cached Linux/Python 3.12 Dev Container, offline uv runner
 and its existing Chromium/Playwright. No new dependencies were installed.

@@ -100,6 +100,9 @@ const words = {
   navigation: ["调查位置", "Investigation location"],
   data_view: ["数据视图", "Data view"],
   evidence_data: ["证据数据", "Evidence data"],
+  open_note: ["查看问题详情", "Inspect issue details"],
+  open_context: ["查看相关证据说明", "Inspect related context"],
+  close_note: ["关闭", "Close"],
 };
 const sampleRaw = {
   missing:
@@ -174,7 +177,6 @@ function currentState() {
     saved.set(app.scenario, {
       mode: "parsed",
       notes: true,
-      details: false,
       event: 5,
       expanded: new Set([""]),
       scroll: 0,
@@ -221,9 +223,9 @@ function writeLocation(push = false) {
 }
 function annotation() {
   const ref = point();
-  const note = element("aside", "node-annotation" + (ref.kind === "context" ? " is-context" : ""));
-  note.id = "annotation";
-  note.setAttribute("aria-label", t("annotation"));
+  const note = $("annotation");
+  note.replaceChildren();
+  note.className = "node-annotation" + (ref.kind === "context" ? " is-context" : "");
   const heading = element("div", "annotation-heading");
   const title = element(
     "strong",
@@ -231,9 +233,16 @@ function annotation() {
     t(ref.kind === "context" ? "related" : app.scenario + "_case"),
   );
   title.id = "note-title";
-  heading.append(title, element("span", "annotation-label", t("annotation")));
-  note.append(heading, element("p", "", t(ref.note + "_note")));
-  if (state.details && ref.kind === "fault") {
+  const close = element("button", "link", t("close_note"));
+  close.type = "button";
+  close.id = "close-annotation";
+  heading.append(title, close);
+  note.append(
+    heading,
+    element("span", "annotation-label", t("annotation")),
+    element("p", "", t(ref.note + "_note")),
+  );
+  if (ref.kind === "fault") {
     const columns = element("dl", "expected-actual");
     for (const [label, key] of [
       ["expected", "expected"],
@@ -246,13 +255,6 @@ function annotation() {
     note.append(columns);
   }
   const actions = element("div", "annotation-actions");
-  if (ref.kind === "fault") {
-    const details = element("button", "link", t(state.details ? "collapse_note" : "details"));
-    details.type = "button";
-    details.id = "note-details";
-    details.setAttribute("aria-expanded", String(state.details));
-    actions.append(details);
-  }
   if (app.scenario === "sse") {
     const related = element(
       "button",
@@ -266,9 +268,63 @@ function annotation() {
   note.append(actions);
   return note;
 }
+function closeAnnotation(restoreFocus = false) {
+  const panel = $("annotation");
+  if (!panel.matches(":popover-open")) return;
+  panel.hidePopover();
+  const marker = document.querySelector(".node-marker");
+  marker?.setAttribute("aria-expanded", "false");
+  if (restoreFocus) marker?.focus({ preventScroll: true });
+}
+function openAnnotation(marker) {
+  const panel = annotation();
+  panel.showPopover();
+  marker.setAttribute("aria-expanded", "true");
+  positionAnnotation(marker);
+  $("close-annotation").focus({ preventScroll: true });
+}
+function positionAnnotation(marker) {
+  const panel = $("annotation");
+  const row = marker.closest(".data-row");
+  const range = document.createRange();
+  range.selectNodeContents(row.querySelector(".node-code"));
+  const target = range.getBoundingClientRect();
+  const edge = 12,
+    gap = 10;
+  panel.style.maxHeight = Math.min(420, innerHeight - edge * 2) + "px";
+  const width = panel.getBoundingClientRect().width;
+  let height = panel.getBoundingClientRect().height;
+  const contentRight = Math.max(
+    ...Array.from($("json-rows").querySelectorAll(".node-code"), (code) => {
+      const content = document.createRange();
+      content.selectNodeContents(code);
+      return content.getBoundingClientRect().right;
+    }),
+  );
+  let left, top;
+  if (innerWidth > 650 && contentRight + gap + width <= innerWidth - edge) {
+    left = contentRight + gap;
+    top = Math.max(edge, Math.min(target.top, innerHeight - height - edge));
+    panel.dataset.placement = "side";
+  } else {
+    const below = innerHeight - target.bottom - gap - edge;
+    const above = target.top - gap - edge;
+    const useBelow = below >= height || below >= above;
+    panel.style.maxHeight = Math.max(40, Math.min(420, useBelow ? below : above)) + "px";
+    height = panel.getBoundingClientRect().height;
+    left = Math.max(edge, Math.min(target.left, innerWidth - width - edge));
+    top = useBelow ? target.bottom + gap : target.top - gap - height;
+    panel.dataset.placement = useBelow ? "below" : "above";
+    if (innerWidth <= 650 && useBelow) {
+      top = innerHeight - edge - height;
+      panel.dataset.placement = "bottom";
+    }
+  }
+  panel.style.left = left + "px";
+  panel.style.top = top + "px";
+}
 function renderJSON() {
   const previousFocus = document.activeElement?.getAttribute("data-fold");
-  const focusId = document.activeElement?.id;
   const rows = $("json-rows");
   rows.replaceChildren();
   line = 0;
@@ -280,6 +336,28 @@ function renderJSON() {
     item.classList.toggle("is-target", target);
     item.classList.toggle("is-fault", target && state.notes && ref.kind === "fault");
     item.tabIndex = -1;
+    const gutter = element("span", "marker-gutter");
+    if (target && state.notes && ref.note) {
+      const marker = element(
+        "button",
+        "node-marker" + (ref.kind === "context" ? " is-context" : ""),
+      );
+      marker.type = "button";
+      marker.setAttribute(
+        "aria-label",
+        t(ref.kind === "context" ? "open_context" : "open_note") + " · " + (pointer || "$"),
+      );
+      marker.title = marker.getAttribute("aria-label");
+      marker.setAttribute("aria-expanded", "false");
+      marker.setAttribute("aria-haspopup", "dialog");
+      marker.setAttribute("aria-controls", "annotation");
+      marker.setAttribute("popovertarget", "annotation");
+      const icon = element("span", "icon");
+      icon.setAttribute("aria-hidden", "true");
+      marker.append(icon);
+      gutter.append(marker);
+    }
+    item.append(gutter);
     item.append(element("span", "line-number", String(++line)));
     if (container && !closing) {
       const fold = element("button", "fold");
@@ -296,7 +374,6 @@ function renderJSON() {
     if (container && !expanded && ref.pointer.startsWith(pointer + "/"))
       code.append(element("span", "collapsed-note", t("contains")));
     rows.append(item);
-    if (target && state.notes && ref.note) rows.append(annotation());
   }
   function visit(data, pointer, depth, key, comma) {
     const prefix = key === null ? "" : JSON.stringify(key) + ": ";
@@ -332,8 +409,6 @@ function renderJSON() {
     rows
       .querySelector('[data-fold="' + CSS.escape(previousFocus) + '"]')
       ?.focus({ preventScroll: true });
-  else if (focusId === "note-details" || focusId === "related-event")
-    $(focusId)?.focus({ preventScroll: true });
 }
 function renderEvents() {
   const focusedEvent = document.activeElement?.getAttribute("data-event");
@@ -372,6 +447,7 @@ function renderEvents() {
       ?.focus({ preventScroll: true });
 }
 function render() {
+  closeAnnotation();
   state = currentState();
   document.documentElement.lang = app.lang === "en" ? "en" : "zh-CN";
   document.documentElement.dataset.theme = app.theme;
@@ -469,17 +545,30 @@ document.addEventListener("click", async (event) => {
     writeLocation(true);
     render();
     return;
+  } else if (button.classList.contains("node-marker")) {
+    event.preventDefault();
+    if ($("annotation").matches(":popover-open")) closeAnnotation(true);
+    else openAnnotation(button);
+    return;
+  } else if (button.id === "close-annotation") {
+    closeAnnotation(true);
+    return;
   } else if (button.id === "mode-raw" || button.id === "mode-parsed")
     state.mode = button.id === "mode-raw" ? "raw" : "parsed";
-  else if (button.id === "note-details") state.details = !state.details;
   else if (button.id === "event-scope") state.allEvents = !state.allEvents;
   else if (
     button.id === "related-event" ||
     button.id === "previous-location" ||
     button.id === "next-location"
-  )
+  ) {
     state.event = state.event === 5 ? 0 : 5;
-  else if (button.dataset.event !== undefined) state.event = Number(button.dataset.event);
+    if (button.id === "related-event") {
+      render();
+      const marker = document.querySelector(".node-marker");
+      if (marker) openAnnotation(marker);
+      return;
+    }
+  } else if (button.dataset.event !== undefined) state.event = Number(button.dataset.event);
   else if (button.dataset.fold !== undefined) {
     const pointer = button.dataset.fold;
     if (state.expanded.has(pointer)) state.expanded.delete(pointer);
@@ -508,6 +597,25 @@ $("show-notes").addEventListener("change", () => {
   state.notes = $("show-notes").checked;
   render();
 });
+$("annotation").addEventListener("toggle", (event) => {
+  document
+    .querySelector(".node-marker")
+    ?.setAttribute("aria-expanded", String(event.newState === "open"));
+});
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && $("annotation").matches(":popover-open")) {
+    event.preventDefault();
+    closeAnnotation(true);
+  }
+});
+window.addEventListener(
+  "scroll",
+  (event) => {
+    if (!$("annotation").contains(event.target)) closeAnnotation();
+  },
+  true,
+);
+window.addEventListener("resize", () => closeAnnotation());
 $("sample-scenario").addEventListener("change", () => {
   remember();
   app.scenario = $("sample-scenario").value;

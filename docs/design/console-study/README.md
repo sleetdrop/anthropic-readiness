@@ -25,17 +25,24 @@ owner trial and are not an approved replacement baseline.
 - A missing key locates its existing parent; no fictional JSON line is inserted.
   Wrong type locates `/usage/output_tokens`. Repeated start selects event #5;
   event #0 is neutral related context rather than another marked fault.
-- Gray-blue indicates the current location; a restrained rose rule/short label
-  identifies the sample deviation. The adjacent note is explicitly outside the
-  response. Expand expected/observed detail, hide annotations or fold objects;
-  Locate target expands ancestors. Parsed row numbers depend on folding and are
+- Gray-blue indicates the current location. A small rose gutter icon marks the
+  sample deviation; a neutral information icon marks related context. Click the
+  marker for a non-modal detail popover containing expected/observed information.
+  Opening/closing it never inserts rows or shifts JSON text. Click the marker
+  again, click outside, use Close or press Escape to dismiss. Keyboard activation
+  is supported; Escape/Close returns focus to the marker. On wide screens the
+  panel uses spare space beside visible JSON when available; otherwise it goes
+  above/below the target. Narrow layouts may use the bottom edge, while avoiding
+  the target text. Hide annotations or fold objects; Locate target expands
+  ancestors. Parsed row numbers depend on folding and are
   not raw-file line numbers; JSON Pointer and event index identify the location.
 - Source record, original-data copy and full-sample download omit annotations.
   SSE source is a captured JSONL record; the decoded data object is shown in Parsed
   view. Download includes all seven JSONL records, not raw SSE wire bytes.
 - Return to the sample issue and reopen evidence to retain the selected event,
-  folding, note detail and reading position. Language/theme controls preserve
-  investigation state. Reload starts the selected sample at its target; this
+  folding and reading position. Language/theme controls preserve investigation
+  state. Popovers close on navigation, external scrolling or resize; temporary
+  open state is not restored. Reload starts the selected sample at its target; this
   prototype does not persist reading state across reloads or offer portable
   event-specific deep links.
 

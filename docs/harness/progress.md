@@ -1978,3 +1978,30 @@ Supporting-only prototype, pending owner trial: no new endpoint scenarios or
 detectable endpoint faults, no real calls, production updates, data-volume changes,
 remote CI or publishing. Installed feature remains 3bfc375 at port 8765. Activity
 details and conservative production annotation binding remain future increments.
+
+## 2026-10-25: Preserve JSON layout with marker-triggered details
+
+Owner preferred an on-demand bubble to diagnostic rows inserted into JSON. Updated
+only the standalone 8768 sample: permanent gutter markers open native non-modal
+popovers; original JSON geometry stays unchanged. Missing keys still target the
+observed parent, exact type faults target their node and related first SSE stays
+neutral. Close/Escape restore marker focus; repeated click/outside dismissal work.
+Desktop placement uses spare space beside visible JSON; narrow placement avoids
+the target. Navigation/external scroll/resize close transient details.
+
+Observed REDs: absent marker, nearby data unnecessarily obscured, and repeated
+click closing then reopening. One independent static review found inherited muted
+icon color and suggested the repeated-click check; corrected both. Final targeted
+Dev Container browser check passed 36 width/theme/language/scenario combinations,
+with stable text-row geometry before/during/after visibility, viewport fit, target
+avoidance, source-copy/download fidelity and no page errors or model/API requests.
+Direct IAB desktop light/narrow dark and full/focused before/after comparisons were
+inspected. Syntax/format/docs checks passed; full product checks were not repeated.
+See [the ledger](evidence-annotation-study-ledger.md) and
+[visual QA](../design/console-study/design-qa.md). Detailed attempts are ignored in
+`artifacts/evidence-bubble-20261025/`.
+
+Supporting-only prototype, awaiting owner visual trial: no formal endpoint cases or
+detectable faults added, no real calls, report/CLI/engine changes, product update or
+remote write. Five endpoint cases and installed 3bfc375 at 8765 remain unchanged.
+Activity details are still pending separately, without issue annotations.
