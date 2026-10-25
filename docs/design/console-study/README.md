@@ -12,6 +12,42 @@ execution engine. The latest bounded navigation sample is [flow.html](flow.html)
 The earlier [runner sample](runner.html) followed the report-like layout feedback.
 The earlier [overview sample](index.html) remains available for comparison.
 
+## Evidence annotation study, 2026-10-25
+
+The owner requested a small interactive evidence-location study before production
+integration. Open [evidence-annotation.html](evidence-annotation.html), currently
+served at http://localhost:8768/evidence-annotation.html in a separate static
+preview. This extends the accepted visual language; its new interactions await
+owner trial and are not an approved replacement baseline.
+
+- Use the footer selector to inspect missing-field, wrong-value-type and repeated
+  SSE samples. They are synthetic reading examples, not executed endpoint cases.
+- A missing key locates its existing parent; no fictional JSON line is inserted.
+  Wrong type locates `/usage/output_tokens`. Repeated start selects event #5;
+  event #0 is neutral related context rather than another marked fault.
+- Gray-blue indicates the current location; a restrained rose rule/short label
+  identifies the sample deviation. The adjacent note is explicitly outside the
+  response. Expand expected/observed detail, hide annotations or fold objects;
+  Locate target expands ancestors. Parsed row numbers depend on folding and are
+  not raw-file line numbers; JSON Pointer and event index identify the location.
+- Source record, original-data copy and full-sample download omit annotations.
+  SSE source is a captured JSONL record; the decoded data object is shown in Parsed
+  view. Download includes all seven JSONL records, not raw SSE wire bytes.
+- Return to the sample issue and reopen evidence to retain the selected event,
+  folding, note detail and reading position. Language/theme controls preserve
+  investigation state. Reload starts the selected sample at its target; this
+  prototype does not persist reading state across reloads or offer portable
+  event-specific deep links.
+
+Only this evidence interaction is demonstrated. Run records/Activity still need
+their separate interaction-details increment, with no issue annotations there.
+Production binding, annotation derivation from validated findings, oversized or
+unparseable capture fallbacks and full-capture search are not implemented here.
+The existing flow sample retains its broader navigation/search demonstration.
+The installed application, reports, five formal cases and historical captures
+are unchanged. See [the study ledger](../../harness/evidence-annotation-study-ledger.md)
+for bounded verification and remaining work.
+
 The [reference study](../../reviews/2026-10-23-engineering-console-reference-study.md)
 explains the external mechanisms and independent visual direction. The existing
 application and its preceding desktop walkthrough provided product structure.

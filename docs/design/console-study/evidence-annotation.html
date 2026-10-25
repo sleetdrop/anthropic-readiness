@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Anthropic Readiness · Evidence annotation study</title>
+    <link rel="stylesheet" href="flow.css?v=13" />
+    <link rel="stylesheet" href="evidence-annotation.css?v=1" />
+    <script src="evidence-annotation.js?v=1" defer></script>
+  </head>
+  <body>
+    <header>
+      <strong>Anthropic Readiness</strong><span data-copy="study"></span>
+      <div class="appearance">
+        <button id="language" type="button">EN</button
+        ><button id="theme" type="button">
+          <span class="icon icon-moon" aria-hidden="true"></span>
+        </button>
+      </div>
+    </header>
+    <nav id="trail" aria-label="Investigation location">
+      <button id="back-problem" class="link icon-label" type="button">
+        <span class="icon icon-back" aria-hidden="true"></span
+        ><span data-copy="back"></span></button
+      ><span aria-hidden="true">/</span><span id="trail-title"></span>
+    </nav>
+    <main id="main" tabindex="-1">
+      <section id="problem-view" hidden>
+        <h1 id="problem-title"></h1>
+        <p id="problem-summary" class="lead"></p>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th data-copy="case"></th>
+                <th data-copy="phenomenon"></th>
+                <th data-copy="action"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td data-copy="sample_case"></td>
+                <td id="problem-name"></td>
+                <td><button id="open-evidence" type="button" data-copy="open"></button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+      <section id="evidence-view" aria-labelledby="evidence-title">
+        <div class="evidence-heading">
+          <h1 id="evidence-title" data-copy="title"></h1>
+          <a id="download-capture" download data-copy="download"></a>
+        </div>
+        <p class="capture-context" id="capture-context"></p>
+        <section id="event-section" aria-labelledby="events-title" hidden>
+          <div class="event-heading">
+            <h2 id="events-title" data-copy="events"></h2>
+            <button id="event-scope" class="link" type="button"></button>
+          </div>
+          <div class="event-list table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th data-copy="event"></th>
+                  <th data-copy="context"></th>
+                </tr>
+              </thead>
+              <tbody id="event-rows"></tbody>
+            </table>
+          </div>
+        </section>
+        <div class="reading-controls">
+          <div class="mode-tabs" aria-label="Data view">
+            <button id="mode-parsed" type="button" data-copy="parsed" aria-pressed="true"></button
+            ><button id="mode-raw" type="button" data-copy="raw" aria-pressed="false"></button>
+          </div>
+          <label class="notes-choice"
+            ><input type="checkbox" id="show-notes" checked /><span data-copy="notes"></span
+          ></label>
+          <div class="location-navigation">
+            <button id="previous-location" type="button" data-copy="previous"></button
+            ><span id="position-count"></span
+            ><button id="next-location" type="button" data-copy="next"></button
+            ><button id="locate" type="button" data-copy="locate"></button>
+          </div>
+        </div>
+        <div class="location-strip">
+          <span data-copy="location"></span><code id="location-pointer"></code
+          ><span id="location-kind"></span
+          ><button id="copy-location" class="link" type="button" data-copy="copy_location"></button>
+        </div>
+        <div id="json-scroll" class="json-scroll" tabindex="0" aria-label="Evidence data">
+          <div id="json-rows"></div>
+          <pre id="raw-source" hidden></pre>
+        </div>
+        <div class="reader-footer">
+          <p id="source-note"></p>
+          <button id="copy-source" class="link" type="button" data-copy="copy_source"></button>
+        </div>
+        <p id="status" role="status" aria-live="polite"></p>
+      </section>
+    </main>
+    <footer>
+      <span class="prototype-note" data-copy="limits"></span
+      ><label class="demo-controls"
+        ><span data-copy="scenario"></span
+        ><select id="sample-scenario">
+          <option value="missing" data-copy="missing_case"></option>
+          <option value="type" data-copy="type_case"></option>
+          <option value="sse" data-copy="sse_case"></option></select
+      ></label>
+    </footer>
+  </body>
+</html>

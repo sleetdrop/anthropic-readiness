@@ -1,5 +1,22 @@
 # Local delivery status
 
+## Evidence annotation sample ready for owner trial
+
+The latest bounded increment is a standalone evidence-location sample at
+http://localhost:8768/evidence-annotation.html. Read
+[the study ledger](harness/evidence-annotation-study-ledger.md) and
+[sample instructions](design/console-study/README.md#evidence-annotation-study-2026-10-25).
+Try missing-field parent location, wrong-type exact node and repeated SSE with
+neutral related context. Original data remains separate from diagnostic notes.
+One independent static review found keyboard event-focus loss; it was reproduced
+and fixed. Final targeted interaction checks passed with 18 viewport/theme/scenario
+screenshots and bilingual reflow checks. Full product gates were not repeated.
+
+This awaits owner feedback, not production integration approval. The installed
+feature remains `3bfc375` at port 8765; no run data, report, CLI or endpoint verdict
+changed. Five formal cases remain unchanged and no live calls occurred. Activity
+interaction details remain a separate pending increment, without issue annotations.
+
 ## Whole UI/deployment sweep delivered for owner trial
 
 Latest feature: `3bfc375`, installed on http://localhost:8765. Read the

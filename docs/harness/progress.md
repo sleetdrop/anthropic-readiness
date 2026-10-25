@@ -1955,3 +1955,26 @@ Inspected 48 deployed screenshots and native IAB 390px Chinese-light/English-dar
 restored normal viewport and Chinese/light. No console errors in the final native
 check. Source, synthetic checks, installed acceptance and actual endpoint outcomes
 remain separate: zero new endpoint cases, zero agent real calls and no remote writes.
+
+## 2026-10-25: Evidence annotation interaction sample
+
+Owner clarified annotations belong only in evidence inspection; Activity should
+later expose interaction details without issue markers. Built a separate synthetic
+sample at port 8768 extending the accepted design language. Missing keys locate
+their observed parent, wrong types locate a concrete JSON Pointer, and repeated
+SSE event #5 links to neutral first-event #0 context. Diagnostic notes are separate
+from copied/downloaded source. Folding, detail disclosure, location recovery,
+theme/language controls and issue/evidence return are interactive.
+
+Initial absent-file RED and review-driven keyboard-focus RED were observed and
+retained. Final bounded Chromium check passed with 18 screenshot samples at
+1280/737/390px in both themes, plus English reflow, copy fidelity, full sample
+download and return-state checks. Direct IAB inspection included desktop light,
+desktop dark and narrow dark. One independent static review completed; its focus
+finding was corrected. Syntax/format/docs checks passed; full product graph was
+not repeated. See [the study ledger](evidence-annotation-study-ledger.md).
+
+Supporting-only prototype, pending owner trial: no new endpoint scenarios or
+detectable endpoint faults, no real calls, production updates, data-volume changes,
+remote CI or publishing. Installed feature remains 3bfc375 at port 8765. Activity
+details and conservative production annotation binding remain future increments.
