@@ -1940,3 +1940,18 @@ was reproduced and fixed, with static reviewer confirmation and focused GREEN.
 Detailed before/after captures and failed attempts are ignored in
 artifacts/ui-sweep-20261025/. Full frozen checks and installed acceptance follow.
 This is supporting-only work: no added endpoint scenarios or real endpoint calls.
+
+
+Sweep feature `3bfc375` is installed on the preserved trial volume. Final fast gates
+passed (498 unit/harness and 30 frontend unit), five package checks and 27 browser
+executions passed. The first frozen full graph passed 103 browser / 281 integration /
+84 acceptance tests but remains FAILED on Finder-metadata inventory; exact .DS_Store
+exclusion and real-resource failure controls were verified separately. Do not
+relabel that graph. Native tab-scroller refinement was tested after it.
+
+Installed read-only acceptance passed: 165 package-file hashes match, four runs /
+154 historical files unchanged, matching UI meta/header and three versioned styles.
+Inspected 48 deployed screenshots and native IAB 390px Chinese-light/English-dark;
+restored normal viewport and Chinese/light. No console errors in the final native
+check. Source, synthetic checks, installed acceptance and actual endpoint outcomes
+remain separate: zero new endpoint cases, zero agent real calls and no remote writes.

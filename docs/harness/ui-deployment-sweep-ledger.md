@@ -118,3 +118,27 @@ failure is retained separately; current-source acceptance is the combination of
 these final checks and applicable unchanged Web-backend checks from that graph,
 not a claimed second full-graph pass. No tests or protocol assertions were weakened.
 Cached final wheel construction passed entirely offline. Installation follows.
+
+
+## Installed acceptance
+
+Feature `3bfc375` is installed in the existing readiness-trial service on 8765,
+using its original persistent volume. All 165 application package files match
+source, all four historical runs and 154 run-file hashes remain identical, and
+health is OK. Packaged UI identity agrees with the health header and HTML meta;
+all three stylesheets carry their resource hashes. Cached trial build only: clean
+networked Docker/remote CI/publication was not performed.
+
+Saved and inspected 48 fresh installed screenshots across eight routes and six
+locale/theme/width combinations, all 200 with no document-width overflow. Direct
+IAB verification at 390px confirmed block stacking, heading width 351px, correct
+narrow insets, no vertical tab scroller, English/dark rendering and no false update
+notice during language/theme changes. The default viewport and Chinese/light
+preferences were restored. No browser console errors were reported in the final
+IAB check. A current screenshot/step report is ignored at AUDIT.md in the evidence
+folder. The original full failed graph, RED attempts and subsequent GREEN checks
+remain available. Historical target content appears only in ignored local evidence.
+
+All scoped steps are complete. No endpoint scenarios were added, no real model
+calls were made, and no untested client feature was marked supported. The five
+formal scenarios and remaining core coverage/client gaps still apply.

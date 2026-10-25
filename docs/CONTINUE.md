@@ -1,6 +1,33 @@
 # Local delivery status
 
-## Approved console integration delivered for owner trial
+## Whole UI/deployment sweep delivered for owner trial
+
+Latest feature: `3bfc375`, installed on http://localhost:8765. Read the
+[UI/deployment sweep ledger](harness/ui-deployment-sweep-ledger.md).
+Direct IAB walkthrough and paired desktop/narrow captures found and fixed inherited
+narrow flex squeezing, ordinary table insets/headings, redundant vertical tab
+scrolling and stale-deployment handling. Styles have content versions; valid changed
+UI identity or incompatible HTML prompts deliberate reload without clearing the
+current form automatically. Page-cache return resumes checking. Reports, endpoint
+verdicts and five formal scenarios are unchanged.
+
+Final fast gates passed with source unchanged, five installed-package acceptance
+checks passed and 27 final browser executions passed. An earlier full frozen graph
+passed 103 browser / 281 integration / 84 acceptance checks but FAILED two packaging
+checks because Finder metadata was treated as a product resource. That failure is
+retained; only exact .DS_Store metadata is now excluded, with missing/changed real
+resource controls preserved. Do not describe this as a second all-green full graph.
+
+Installed acceptance: all 165 package files match source; four historical runs /
+154 run files retain their hashes; health, UI meta/header and three versioned style
+links agree. Captured 48 post-install screens, inspected paired views and directly
+confirmed 390px Chinese-light/English-dark in IAB. Restored the owner's default
+viewport and Chinese/light appearance; leave the verified overview open.
+No live endpoint calls, remote CI, registry publishing or remote writes occurred.
+This is supporting-only work. Await hands-on feedback; broader protocol and actual
+client coverage remain core unfinished goals below.
+
+## Previous console integration (historical)
 
 The accepted flow sample is now implemented in the actual local Web application.
 Read [the bounded ledger](harness/console-baseline-implementation-ledger.md).
