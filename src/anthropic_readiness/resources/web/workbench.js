@@ -1,3 +1,4 @@
+import { acceptUIRevision } from "./ui-update.js";
 import { object, objects } from "./forms.js";
 /** @typedef {import("./contracts.js").ActivityView} ActivityView */
 /** @typedef {import("./contracts.js").WorkbenchState} WorkbenchState */
@@ -232,6 +233,12 @@ export function mountWorkbench(bootstrap, ports) {
     if (!response.ok) throw new Error("workbench_unavailable");
     const page = new DOMParser().parseFromString(await response.text(), "text/html");
     if (ticket !== navigation || closed) return;
+    if (
+      !acceptUIRevision(
+        page.querySelector('meta[name="readiness-ui-revision"]')?.getAttribute("content") ?? null,
+      )
+    )
+      return;
     const incoming = page.getElementById("workbench");
     if (!incoming || !root) throw new Error("invalid_document");
     const data = object(JSON.parse(page.getElementById("bootstrap")?.textContent ?? "{}"));

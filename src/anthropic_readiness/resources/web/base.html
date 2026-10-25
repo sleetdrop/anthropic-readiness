@@ -3,10 +3,11 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="readiness-ui-revision" content="{{ ui_revision }}" />
     <title>{{ title }} · Anthropic Readiness</title>
-    <link rel="stylesheet" href="/assets/themes.css" />
-    <link rel="stylesheet" href="/assets/web/app.css" />
-    <link rel="stylesheet" href="/assets/web/console.css" />
+    <link rel="stylesheet" href="{{ asset_url('themes.css') }}" />
+    <link rel="stylesheet" href="{{ asset_url('web/app.css') }}" />
+    <link rel="stylesheet" href="{{ asset_url('web/console.css') }}" />
   </head>
   <body data-page="{{ bootstrap.page }}">
     <a class="skip-link" href="#main" data-i18n="shell.skip">{{ t('shell.skip') }}</a>
@@ -34,6 +35,7 @@
             <span class="workspace-label" data-i18n="shell.local">{{ t('shell.local') }}</span>
           </div>
         </header>
+        <div id="ui-update-notice" class="ui-update-notice" role="status" hidden><span data-i18n="shell.ui_updated">{{ t('shell.ui_updated') }}</span><button id="reload-ui" type="button" data-i18n="shell.reload">{{ t('shell.reload') }}</button></div>
         <main id="main" tabindex="-1">
           <div id="app-message" role="status" aria-live="polite" hidden></div>
           {% block content %}{% endblock %}

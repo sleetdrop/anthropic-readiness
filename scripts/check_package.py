@@ -9,7 +9,7 @@ def verify_wheel_resources(wheel: Path, root: Path) -> list[str]:
     errors: list[str] = []
     with zipfile.ZipFile(wheel) as archive:
         for source in (root / "src/anthropic_readiness/resources").rglob("*"):
-            if not source.is_file():
+            if not source.is_file() or source.name == ".DS_Store":
                 continue
             name = (
                 "anthropic_readiness/"

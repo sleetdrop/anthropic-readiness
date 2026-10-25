@@ -1,5 +1,6 @@
 """Server-rendered local pages expose real scope and preserve safe source meaning."""
 
+import re
 from pathlib import Path
 
 import httpx
@@ -102,3 +103,18 @@ async def test_interrupted_checkpoint_is_recovered_as_browsable_evidence(
     assert any("ANT-TEXT-SSE-001" in path for path in paths)
     assert response.json()["report"]["summary"]["completed_cases"] == 2
     assert any("恢复" in note for note in response.json()["report"]["limitations"])
+
+
+async def test_ui_identity_binds_html_styles_and_health(client: httpx.AsyncClient) -> None:
+    page = await client.get("/new")
+    revision = re.search(r'<meta name="readiness-ui-revision" content="([a-f0-9]{64})"', page.text)
+    assert revision is not None
+    health = await client.get("/health")
+    assert health.json() == {"status": "ok"}
+    assert health.headers["x-readiness-ui-revision"] == revision.group(1)
+    styles = re.findall(r'href="(/assets/[^"?]+\.css\?v=[a-f0-9]{64})"', page.text)
+    assert len(styles) == 3
+    for url in styles:
+        response = await client.get(url)
+        assert response.status_code == 200
+        assert response.headers["cache-control"] == "no-store"

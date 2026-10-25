@@ -190,3 +190,26 @@ tabs, wrapping below them on narrow screens. This keeps the reference run/progre
 composition while retaining product controls absent from the bounded sample.
 No token or execution-state meaning changed. Full exported-report composition
 and a replacement for configuration/repair screens remain outside this refinement.
+
+
+### Cross-screen deployment and narrow-screen correction, 2026-10-25
+
+Owner requested a whole-application UI/deployment sweep within the accepted visual
+language. The issue heading, explanation, controls and table must remain vertically
+stacked on narrow screens; only the table itself may scroll horizontally. A legacy
+flex rule had escaped the earlier document-overflow checks. Ordinary Web tables
+share the established outer insets and primary/600 heading hierarchy; the compact
+event table retains its local denser cells. Production action buttons can share a
+row beneath tabs on narrow screens.
+
+A neutral, non-modal refresh notice may appear when the loaded interface cannot be
+safely combined with server-rendered content. It preserves the current form and
+reading context and explains that deliberate refresh discards unsaved input. Never
+automatically reload a running investigation or clear a form to load a deployment.
+No palette/state meaning, report composition or endpoint coverage changed.
+
+
+Actual in-app-browser verification also found a redundant vertical scrollbar on
+the horizontal tab strip. The strip clips vertical overflow, removes the inherited
+negative link margin and draws keyboard focus inside the tab, while retaining
+horizontal reachability. This corrects deployment rendering within the baseline.

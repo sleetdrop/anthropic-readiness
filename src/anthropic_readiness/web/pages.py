@@ -20,6 +20,7 @@ from anthropic_readiness.web.templating import page
 
 router = APIRouter(route_class=LocalRoute)
 ASSETS = {
+    "web/ui-update.js",
     "web/console.css",
     "web/evidence-view.js",
     "web/icons/moon.svg",

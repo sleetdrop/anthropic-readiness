@@ -1,6 +1,7 @@
 import { api, ready, csrfToken, showError, setupExports } from "./app.js";
 import { object, strings } from "./forms.js";
 import { mountWorkbench, patchElement } from "./workbench.js";
+import { acceptUIRevision, mountUIUpdates } from "./ui-update.js";
 import { mountEvidence } from "./evidence-view.js";
 /** @typedef {import("./contracts.js").JsonObject} JsonObject */
 
@@ -54,6 +55,7 @@ function buttonIfPresent(id, listener) {
 
 async function mount() {
   await ready;
+  mountUIUpdates();
   const bootstrap = object(JSON.parse(element("bootstrap").textContent ?? "{}"));
   const catalogs = object(bootstrap.catalogs);
   let presentation = object(bootstrap.presentation);
@@ -127,6 +129,13 @@ async function mount() {
           });
           if (!response.ok) throw new Error("invalid_document");
           const page = new DOMParser().parseFromString(await response.text(), "text/html");
+          if (
+            !acceptUIRevision(
+              page.querySelector('meta[name="readiness-ui-revision"]')?.getAttribute("content") ??
+                null,
+            )
+          )
+            return;
           const incoming = page.getElementById("main");
           if (ticket !== changeOrder) return;
           if (incoming) patchElement(element("main"), incoming, true);

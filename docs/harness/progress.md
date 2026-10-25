@@ -1920,3 +1920,23 @@ current in-app asset identity could not be directly inspected. Requested fresh
 in-app navigation to the same run and filters (queued). No new product-code fix,
 endpoint scenario/call, remote write or broad quality graph. Detailed evidence is
 ignored in artifacts/table-edge-20261025/ and the existing console ledger.
+
+
+## 2026-10-25: Whole UI and deployment sweep
+
+Owner authorized self-directed browser walkthrough and unified correction. See
+[the sweep ledger](ui-deployment-sweep-ledger.md). Fresh 32-screen capture found a
+real narrow layout regression missed by overflow-only checks: old `.issue-list`
+flex squeezed the entire section horizontally. Repaired stacking, ordinary table
+insets/headings and action wrapping. Added packaged UI identity, content-versioned
+CSS, safe manual update notice, page-cache resume and strict fragment compatibility
+checks; healthy/unknown network states do not imply an update. Existing API JSON,
+reports, endpoint verdicts and required-case accounting are unchanged.
+
+The in-app browser interface became available; directly inspected the owner's tab
+and followed issue/evidence/new/history/import routes. Mutating workflow checks use
+disposable synthetic fixtures. One independent review P2 (legacy HTML without meta)
+was reproduced and fixed, with static reviewer confirmation and focused GREEN.
+Detailed before/after captures and failed attempts are ignored in
+artifacts/ui-sweep-20261025/. Full frozen checks and installed acceptance follow.
+This is supporting-only work: no added endpoint scenarios or real endpoint calls.

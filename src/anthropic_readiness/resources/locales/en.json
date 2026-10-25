@@ -504,6 +504,8 @@
     "console.load_more": "Show more results",
     "console.empty_events": "No matching loaded events.",
     "console.switch_light": "Switch to light theme",
-    "console.switch_dark": "Switch to dark theme"
+    "console.switch_dark": "Switch to dark theme",
+    "shell.ui_updated": "Reload the interface to continue. Unsaved input will be cleared.",
+    "shell.reload": "Refresh page"
   }
 }

@@ -504,6 +504,8 @@
     "console.load_more": "显示更多结果",
     "console.empty_events": "没有匹配的已载入事件。",
     "console.switch_light": "切换为浅色主题",
-    "console.switch_dark": "切换为深色主题"
+    "console.switch_dark": "切换为深色主题",
+    "shell.ui_updated": "请刷新页面以重新加载界面。未提交的输入将被清除。",
+    "shell.reload": "刷新页面"
   }
 }
