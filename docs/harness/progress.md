@@ -1908,3 +1908,15 @@ unchanged, and actual installed light/dark measurements now show 600/primary/12p
 issue headers. The completed historical run remains neutral by design. Eleven
 backend page tests passed; detailed before/after screenshots and the numbered
 conformance audit are ignored locally. No added endpoint coverage or live calls.
+
+## 2026-10-25: Verify actual first/last-column table padding
+
+Owner's remaining screenshot still showed flush outer cells. Resumed with fresh
+read-only capture of the installed c4e3d5d service at five widths, including a
+803-CSS-pixel / DPR-2 match. All ten header/data rows retain 12px outer insets
+(8px on the 390px view); inspected the saved current table image. The older visual
+appearance in the supplied screenshot suggests a previously loaded document;
+current in-app asset identity could not be directly inspected. Requested fresh
+in-app navigation to the same run and filters (queued). No new product-code fix,
+endpoint scenario/call, remote write or broad quality graph. Detailed evidence is
+ignored in artifacts/table-edge-20261025/ and the existing console ledger.

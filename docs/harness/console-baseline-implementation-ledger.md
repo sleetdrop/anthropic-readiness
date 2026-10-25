@@ -170,3 +170,23 @@ Fresh screenshots in `after/` were inspected; running fill was visibly gray-blue
 in real synthetic 2/4-checkpoint captures. Eleven backend page tests and final
 document checks passed. No full graph or endpoint/remote acceptance is newly claimed.
 A numbered inline audit with current screenshots is retained in ignored `AUDIT.md`.
+
+## 2026-10-25: Verify the owner's remaining table-edge screenshot
+
+Resumed the owner's first/last-column padding report. The installed service is
+still correction c4e3d5d. Fresh, read-only browser measurements of that same stored
+run checked every header/data row at CSS widths 803 (DPR 2), 1280, 1606, 737 and 390.
+All ten measured rows passed: both outer paddings are 12px above 650px, and 8px at
+390px. Inspected the saved table screenshot at the close-match 803/DPR-2 size.
+The supplied screenshot has the old muted heading/zero-inset appearance; this
+suggests an already-loaded older document, not a newly reproduced cascade failure.
+This inference cannot establish the in-app tab's loaded asset identity, because
+its browser-control interface remains unavailable.
+
+Requested the same run in the built-in browser with equivalent reordered query
+parameters to cause fresh navigation without changing filters or results; the app
+returned queued. No additional product CSS change was needed. Evidence is ignored
+in artifacts/table-edge-20261025/ (verify.log, measurements.json and five current
+screenshots). No full/fast graph, endpoint call, data mutation or remote write was
+performed; this is supporting presentation verification only. Formal scenario
+coverage remains five. Do not count the measured rows as endpoint coverage.
