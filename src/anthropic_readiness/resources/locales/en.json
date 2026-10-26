@@ -506,6 +506,21 @@
     "console.switch_light": "Switch to light theme",
     "console.switch_dark": "Switch to dark theme",
     "shell.ui_updated": "Reload the interface to continue. Unsaved input will be cleared.",
-    "shell.reload": "Refresh page"
+    "shell.reload": "Refresh page",
+    "annotation.open": "Inspect issue details",
+    "annotation.show": "Show issue indicators",
+    "annotation.locate": "Locate target",
+    "annotation.fold": "Collapse {pointer}",
+    "annotation.expand": "Expand {pointer}",
+    "annotation.more": "Show more JSON rows (display limited)",
+    "annotation.separate": "Diagnostic note · not response content",
+    "annotation.related": "Related context",
+    "annotation.context_hint": "This event is related context, not a marked fault.",
+    "annotation.no_expected": "No expected text was recorded by this assertion; consult the issue description.",
+    "annotation.no_location": "No certain field location is available in this record; inspect the source.",
+    "annotation.first_event": "Inspect first start event #{event}",
+    "annotation.return_target": "Return to target event #{event}",
+    "annotation.window": "Reading window starts at displayed row {line}; inspect Source record for the full text.",
+    "annotation.depth_limit": "Deep content is folded at the display limit; inspect Source record."
   }
 }

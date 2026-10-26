@@ -1,3 +1,5 @@
+import { pointerValue, readingTarget, jsonRows } from "./evidence-json.js";
+export { locatePointer } from "./evidence-json.js";
 /** Reading projections only. These never validate or rescore protocol behavior. */
 /** @typedef {import("./contracts.js").JsonValue} JsonValue */
 /** @typedef {{event:number,label:string,raw:string,value:JsonValue,parsed:boolean}} EvidenceFrame */
@@ -55,32 +57,6 @@ export function contextFrames(frames, selected, query) {
   const anchor = frames.find((frame) => frame.label === "message_start");
   return frames.filter((frame) => frame === anchor || Math.abs(frame.event - selected) <= 2);
 }
-/** @param {JsonValue} value @param {string} pointer */
-export function locatePointer(value, pointer) {
-  let current = value;
-  let existing = "";
-  if (pointer && !pointer.startsWith("/")) return { pointer: "", missing: true };
-  for (const part of pointer ? pointer.slice(1).split("/") : []) {
-    const key = part.replace(/~1/gu, "/").replace(/~0/gu, "~");
-    if (current === null || typeof current !== "object" || !Object.hasOwn(current, key))
-      return { pointer: existing, missing: true };
-    current = /** @type {Record<string,JsonValue>} */ (current)[key] ?? null;
-    existing += "/" + part;
-  }
-  return { pointer: existing, missing: false };
-}
-/** @param {JsonValue} value @param {string} pointer @returns {JsonValue} */
-function pointerValue(value, pointer) {
-  let current = value;
-  for (const part of pointer ? pointer.slice(1).split("/") : []) {
-    if (!current || typeof current !== "object") return null;
-    current =
-      /** @type {Record<string,JsonValue>} */ (current)[
-        part.replace(/~1/gu, "/").replace(/~0/gu, "~")
-      ] ?? null;
-  }
-  return current;
-}
 /** @param {{read:(r:Response)=>Promise<{text:string,truncated:boolean}>,text:(key:string,params?:Record<string,string|number>)=>string,api:(path:string)=>Promise<unknown>}} ports */
 export function mountEvidence(ports) {
   const dialog = document.getElementById("evidence-dialog");
@@ -95,7 +71,9 @@ export function mountEvidence(ports) {
   const content = element("evidence-content");
   const search = /** @type {HTMLInputElement} */ (element("event-search"));
   const download = /** @type {HTMLAnchorElement} */ (element("evidence-download"));
-  /** @typedef {{selected:number,query:string,all:boolean,raw:boolean,scroll:number,eventScroll:number,dialogScroll:number,limit:number}} ReadingState */
+  const panel = element("evidence-annotation");
+  const notes = /** @type {HTMLInputElement} */ (element("evidence-annotations"));
+  /** @typedef {{selected:number,query:string,all:boolean,raw:boolean,scroll:number,left:number,eventScroll:number,dialogScroll:number,limit:number,notes:boolean,expanded:Record<string,string[]>,jsonLimit:number}} ReadingState */
   /** @type {Map<string,ReadingState>} */ const saved = new Map();
   /** @type {ReadingState} */ let state = {
     selected: 0,
@@ -103,9 +81,13 @@ export function mountEvidence(ports) {
     all: false,
     raw: false,
     scroll: 0,
+    left: 0,
     eventScroll: 0,
     dialogScroll: 0,
     limit: 100,
+    notes: true,
+    expanded: {},
+    jsonLimit: 500,
   };
   /** @type {EvidenceFrame[]} */ let frames = [];
   /** @type {HTMLElement|null} */ let opener = null;
@@ -120,12 +102,144 @@ export function mountEvidence(ports) {
     unavailable = false,
     visibleLimit = 100;
   let focusEvent = 0;
+  let pointerKnown = false,
+    eventKnown = false,
+    failed = false;
+  let reason = "",
+    expected = "",
+    actual = "",
+    check = "";
+  /** @type {import('./evidence-json.js').ReadingTarget|null} */ let location = null;
+  let related = false;
+  /** @param {string} tag @param {string} className @param {string} [value] */
+  function node(tag, className, value) {
+    const result = document.createElement(tag);
+    result.className = className;
+    if (value !== undefined) result.textContent = value;
+    return result;
+  }
+  /** @param {boolean} [restore] */
+  function closeNote(restore = false) {
+    if (!panel.matches(":popover-open")) return;
+    panel.hidePopover();
+    const marker = content.querySelector(".evidence-marker");
+    marker?.setAttribute("aria-expanded", "false");
+    if (restore && marker instanceof HTMLElement) marker.focus({ preventScroll: true });
+  }
+  /** @param {HTMLElement} marker */
+  function openNote(marker) {
+    panel.replaceChildren();
+    panel.classList.toggle("is-context", related);
+    const heading = node("div", "annotation-heading");
+    const title = node("strong", "", related ? text("annotation.related") : context);
+    title.id = "evidence-note-title";
+    const close = node("button", "annotation-close", text("action.close"));
+    close.setAttribute("type", "button");
+    close.id = "close-annotation";
+    heading.append(title, close);
+    panel.append(heading, node("p", "annotation-label", text("annotation.separate")));
+    const frame = frames.find((item) => item.event === state.selected);
+    if (related) panel.append(node("p", "", text("annotation.context_hint")));
+    else {
+      if (location?.missing)
+        panel.append(
+          node("p", "", text("console.missing_parent", { pointer: location.pointer || "$" })),
+        );
+      const columns = node("dl", "annotation-values");
+      for (const [label, value] of [
+        ["issue.expected", expected || text("annotation.no_expected")],
+        [
+          "issue.actual",
+          actual ||
+            (frame && location ? JSON.stringify(pointerValue(frame.value, location.pointer)) : ""),
+        ],
+      ]) {
+        const group = node("div", "");
+        group.append(node("dt", "", text(label)), node("dd", "", value.slice(0, 2000)));
+        columns.append(group);
+      }
+      panel.append(columns, node("code", "annotation-check", check + " · " + reason));
+    }
+    const first =
+      reason === "duplicate_message_start"
+        ? frames.find((item) => item.label === "message_start" && item.event < focusEvent)
+        : null;
+    if (first) {
+      const button = node(
+        "button",
+        "annotation-related",
+        text(related ? "annotation.return_target" : "annotation.first_event", {
+          event: related ? focusEvent : first.event,
+        }),
+      );
+      button.id = "annotation-related";
+      button.setAttribute("type", "button");
+      button.dataset.event = String(related ? focusEvent : first.event);
+      panel.append(button);
+    }
+    panel.showPopover();
+    marker.setAttribute("aria-expanded", "true");
+    const range = document.createRange();
+    range.selectNodeContents(marker.closest(".evidence-code") ?? marker);
+    const target = range.getBoundingClientRect(),
+      edge = 12,
+      gap = 10;
+    panel.style.maxHeight = Math.min(420, innerHeight - 24) + "px";
+    const width = panel.getBoundingClientRect().width;
+    let height = panel.getBoundingClientRect().height;
+    const right = Math.max(
+      ...Array.from(content.querySelectorAll(".evidence-code"), (code) => {
+        const r = document.createRange();
+        r.selectNodeContents(code);
+        return r.getBoundingClientRect().right;
+      }),
+    );
+    let left, top;
+    if (innerWidth > 650 && right + gap + width <= innerWidth - edge) {
+      left = right + gap;
+      top = Math.max(edge, Math.min(target.top, innerHeight - height - edge));
+    } else {
+      const below = innerHeight - target.bottom - gap - edge,
+        above = target.top - gap - edge;
+      const useBelow = below >= height || below >= above;
+      panel.style.maxHeight = Math.max(40, Math.min(420, useBelow ? below : above)) + "px";
+      height = panel.getBoundingClientRect().height;
+      left = Math.max(edge, Math.min(target.left, innerWidth - width - edge));
+      top = useBelow ? target.bottom + gap : target.top - height - gap;
+      if (innerWidth <= 650 && useBelow) top = innerHeight - edge - height;
+    }
+    panel.style.left = left + "px";
+    panel.style.top = top + "px";
+    close.focus({ preventScroll: true });
+  }
+  function locate() {
+    const frame = frames.find((item) => item.event === state.selected);
+    if (!frame || !location) return;
+    const expanded = new Set(state.expanded[String(frame.event)] ?? [""]);
+    expanded.add("");
+    let parent = "";
+    for (const part of location.pointer.slice(1).split("/").slice(0, -1)) {
+      parent += "/" + part;
+      expanded.add(parent);
+    }
+    state.expanded[String(frame.event)] = [...expanded];
+    state.raw = false;
+    renderPayload();
+    content.querySelector(".evidence-target")?.scrollIntoView({ block: "nearest" });
+  }
   /** @param {string} id @param {boolean} pressed */
   function pressed(id, pressed) {
     element(id).setAttribute("aria-pressed", String(pressed));
   }
   function renderPayload() {
+    closeNote();
+    const scroll = content.scrollTop,
+      left = content.scrollLeft;
     const frame = frames.find((item) => item.event === state.selected);
+    notes.checked = state.notes;
+    notes.disabled = state.raw || !failed || loading || unavailable;
+    location = null;
+    related = false;
     pressed("payload-parsed", !state.raw);
     pressed("payload-raw", state.raw);
     if (!frame) {
@@ -140,24 +254,127 @@ export function mountEvidence(ports) {
       content.textContent = state.raw ? frame.raw : text("console.no_parse");
       return;
     }
-    const location = locatePointer(frame.value, frame.event === focusEvent ? pointer : "");
+    const stream = path.endsWith("events.jsonl");
+    related =
+      failed &&
+      reason === "duplicate_message_start" &&
+      frame.event < focusEvent &&
+      frame === frames.find((item) => item.label === "message_start");
+    if (
+      failed &&
+      (!stream || eventKnown) &&
+      (!truncated || stream) &&
+      (frame.event === focusEvent || related)
+    )
+      location = readingTarget(frame.value, pointerKnown && !related ? pointer : null, reason);
     element("evidence-location").textContent =
-      text(location.missing ? "console.missing_parent" : "console.at_pointer", {
-        pointer: location.pointer || "$",
-      }) + (path.endsWith("events.jsonl") ? ` · #${frame.event}` : "");
-    content.textContent = state.raw
-      ? frame.raw
-      : frame.parsed
-        ? JSON.stringify(pointerValue(frame.value, location.pointer), null, 2)
-        : text("console.no_parse");
+      (location
+        ? text(location.missing ? "console.missing_parent" : "console.at_pointer", {
+            pointer: location.pointer || "$",
+          })
+        : text("annotation.no_location")) + (stream ? ` · #${frame.event}` : "");
+    if (related)
+      element("evidence-location").textContent = text("annotation.related") + ` · #${frame.event}`;
+    if (state.raw) {
+      content.textContent = frame.raw;
+      return;
+    }
+    const frameKey = String(frame.event);
+    if (!Object.hasOwn(state.expanded, frameKey)) {
+      const expanded = new Set([""]);
+      let parent = "";
+      for (const part of location?.pointer.slice(1).split("/").slice(0, -1) ?? []) {
+        parent += "/" + part;
+        expanded.add(parent);
+      }
+      state.expanded[frameKey] = [...expanded];
+    }
+    const projection = jsonRows(
+      frame.value,
+      new Set(state.expanded[frameKey]),
+      state.jsonLimit,
+      location?.pointer ?? null,
+    );
+    if (projection.start)
+      element("evidence-location").textContent +=
+        " · " + text("annotation.window", { line: projection.start + 1 });
+    if (projection.rows.some((row) => row.depthLimited))
+      element("evidence-location").textContent += " · " + text("annotation.depth_limit");
+    const focusPointer = document.activeElement?.getAttribute("data-json-fold");
+    content.replaceChildren();
+    for (const [index, row] of projection.rows.entries()) {
+      const item = node("div", "evidence-row");
+      item.dataset.pointer = row.pointer;
+      const target = !row.closing && location?.pointer === row.pointer;
+      item.classList.toggle("evidence-target", target);
+      item.append(node("span", "evidence-line", String(projection.start + index + 1)));
+      if (row.container) {
+        const fold = node("button", "evidence-fold");
+        fold.setAttribute("type", "button");
+        fold.dataset.jsonFold = row.pointer;
+        fold.setAttribute("aria-expanded", String(row.expanded));
+        fold.setAttribute(
+          "aria-label",
+          text(row.expanded ? "annotation.fold" : "annotation.expand", {
+            pointer: row.pointer || "$",
+          }),
+        );
+        const icon = node("span", "icon");
+        icon.setAttribute("aria-hidden", "true");
+        fold.append(icon);
+        item.append(fold);
+      } else item.append(node("span", ""));
+      const code = node("code", "evidence-code", row.text);
+      if (target && state.notes) {
+        const token = node(
+          "span",
+          "evidence-token",
+          row.text.slice(row.start, row.start + row.length),
+        );
+        const marker = node("button", "evidence-marker" + (related ? " is-context" : ""));
+        marker.setAttribute("type", "button");
+        marker.setAttribute("popovertarget", "evidence-annotation");
+        marker.setAttribute("aria-expanded", "false");
+        marker.setAttribute("aria-haspopup", "dialog");
+        marker.setAttribute("aria-controls", "evidence-annotation");
+        marker.setAttribute("aria-label", text(related ? "annotation.related" : "annotation.open"));
+        marker.title = marker.getAttribute("aria-label") ?? "";
+        marker.style.left = `calc(100% + ${row.text.length - row.start - row.length}ch + 6px)`;
+        const icon = node("span", "icon");
+        icon.setAttribute("aria-hidden", "true");
+        marker.append(icon);
+        token.append(marker);
+        code.replaceChildren(
+          document.createTextNode(row.text.slice(0, row.start)),
+          token,
+          document.createTextNode(row.text.slice(row.start + row.length)),
+        );
+      }
+      item.append(code);
+      content.append(item);
+    }
+    if (projection.limited) {
+      const more = node("button", "", text("annotation.more"));
+      more.id = "json-more";
+      more.setAttribute("type", "button");
+      content.append(more);
+    }
+    content.scrollTop = scroll;
+    content.scrollLeft = left;
+    if (focusPointer !== null && focusPointer !== undefined)
+      /** @type {HTMLElement|null} */ (
+        content.querySelector(`[data-json-fold="${CSS.escape(focusPointer)}"]`)
+      )?.focus({ preventScroll: true });
   }
   function render() {
+    closeNote();
     for (const id of [
       "payload-parsed",
       "payload-raw",
       "event-context",
       "event-all",
       "event-search",
+      "evidence-locate",
     ])
       /** @type {HTMLButtonElement|HTMLInputElement} */ (element(id)).disabled =
         loading || unavailable;
@@ -173,6 +390,7 @@ export function mountEvidence(ports) {
     pressed("event-context", !state.all);
     pressed("event-all", state.all);
     if (loading || unavailable) {
+      notes.disabled = true;
       content.textContent = text(loading ? "evidence.loading" : "evidence.unavailable");
       return;
     }
@@ -231,7 +449,14 @@ export function mountEvidence(ports) {
     path = link.dataset.evidencePath ?? "";
     context = link.dataset.evidenceContext ?? link.textContent ?? "";
     pointer = link.dataset.evidencePointer ?? "";
-    key = [link.dataset.evidenceId, link.dataset.evidenceEvent, pointer].join(":");
+    pointerKnown = link.dataset.evidencePointerKnown === "true";
+    eventKnown = link.dataset.evidenceEvent !== "" && link.dataset.evidenceEvent !== undefined;
+    failed = link.dataset.evidenceStatus === "FAIL";
+    reason = link.dataset.evidenceReason ?? "";
+    check = link.dataset.evidenceCheck ?? "";
+    expected = link.dataset.evidenceExpected ?? "";
+    actual = link.dataset.evidenceActual ?? "";
+    key = [link.dataset.evidenceId, link.dataset.evidenceEvent, pointer, check, reason].join(":");
     const target = Number(link.dataset.evidenceEvent || 0);
     focusEvent = target;
     state = saved.get(key) ?? {
@@ -240,9 +465,13 @@ export function mountEvidence(ports) {
       all: false,
       raw: false,
       scroll: 0,
+      left: 0,
       eventScroll: 0,
       dialogScroll: 0,
       limit: 100,
+      notes: true,
+      expanded: {},
+      jsonLimit: 500,
     };
     search.value = state.query;
     download.href = link.href;
@@ -276,9 +505,14 @@ export function mountEvidence(ports) {
       if (ticket !== order || !dialog.open) return;
       truncated = value.truncated;
       loading = false;
-      frames = evidenceFrames(value.text, path.endsWith("events.jsonl") ? "events" : false);
+      const raw =
+        truncated && path.endsWith("events.jsonl")
+          ? value.text.slice(0, value.text.lastIndexOf("\n") + 1)
+          : value.text;
+      frames = evidenceFrames(raw, path.endsWith("events.jsonl") ? "events" : false);
       render();
       content.scrollTop = state.scroll;
+      content.scrollLeft = state.left;
       element("event-rows").closest(".event-table")?.scrollTo({ top: state.eventScroll });
       dialog.scrollTop = state.dialogScroll;
     })().catch(() => {
@@ -298,6 +532,42 @@ export function mountEvidence(ports) {
     if (!(event.target instanceof Element)) return;
     const target = event.target.closest("button");
     if (!target) return;
+    if (target.classList.contains("evidence-marker")) {
+      event.preventDefault();
+      if (panel.matches(":popover-open")) closeNote(true);
+      else openNote(target);
+      return;
+    }
+    if (target.id === "close-annotation") {
+      closeNote(true);
+      return;
+    }
+    if (target.id === "annotation-related") {
+      state.selected = Number(target.dataset.event);
+      render();
+      const marker = content.querySelector(".evidence-marker");
+      if (marker instanceof HTMLElement) openNote(marker);
+      return;
+    }
+    if (target.dataset.jsonFold !== undefined) {
+      const expanded = new Set(state.expanded[String(state.selected)] ?? [""]);
+      if (expanded.has(target.dataset.jsonFold)) expanded.delete(target.dataset.jsonFold);
+      else expanded.add(target.dataset.jsonFold);
+      state.expanded[String(state.selected)] = [...expanded];
+      renderPayload();
+      return;
+    }
+    if (target.id === "json-more") {
+      state.jsonLimit += 500;
+      renderPayload();
+      return;
+    }
+    if (target.id === "evidence-locate") {
+      state.selected = focusEvent;
+      render();
+      locate();
+      return;
+    }
     if (target.dataset.event !== undefined) {
       state.selected = Number(target.dataset.event);
       render();
@@ -322,9 +592,11 @@ export function mountEvidence(ports) {
     }
   });
   dialog.addEventListener("close", () => {
+    closeNote();
     order++;
     request?.abort();
     state.scroll = content.scrollTop;
+    state.left = content.scrollLeft;
     state.eventScroll = element("event-rows").closest(".event-table")?.scrollTop ?? 0;
     state.dialogScroll = dialog.scrollTop;
     state.limit = visibleLimit;
@@ -334,6 +606,30 @@ export function mountEvidence(ports) {
     if (opener?.isConnected) opener.focus({ preventScroll: true });
     frames = [];
   });
+  notes.addEventListener("change", () => {
+    state.notes = notes.checked;
+    renderPayload();
+  });
+  panel.addEventListener("toggle", (event) => {
+    content
+      .querySelector(".evidence-marker")
+      ?.setAttribute("aria-expanded", String(event.newState === "open"));
+  });
+  dialog.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && panel.matches(":popover-open")) {
+      event.preventDefault();
+      event.stopPropagation();
+      closeNote(true);
+    }
+  });
+  window.addEventListener(
+    "scroll",
+    (event) => {
+      if (!(event.target instanceof Node) || !panel.contains(event.target)) closeNote();
+    },
+    true,
+  );
+  window.addEventListener("resize", () => closeNote());
   window.addEventListener("readiness:presentation", () => {
     if (dialog.open) render();
   });

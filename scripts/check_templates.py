@@ -14,6 +14,7 @@ def main() -> int:
         "run.html",
         "history.html",
         "workbench.html",
+        "evidence-attributes.html",
         "workbench-overview.html",
         "workbench-issues.html",
         "workbench-issue-list.html",

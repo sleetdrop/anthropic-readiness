@@ -737,3 +737,197 @@ th {
 .ui-update-notice button {
   margin-left: auto;
 }
+
+/* Evidence annotations are overlays; captured text retains its own geometry. */
+#evidence-content {
+  padding: 8px 0;
+  overflow: auto;
+  font:
+    12px/1.75 ui-monospace,
+    "SFMono-Regular",
+    Consolas,
+    monospace;
+  background: var(--code, var(--subtle));
+}
+#evidence-content:has(.evidence-row) {
+  white-space: normal;
+}
+.evidence-row {
+  display: grid;
+  grid-template-columns: 34px 18px minmax(max-content, 1fr);
+  align-items: center;
+  min-height: 25px;
+}
+.evidence-line {
+  font-size: 10px;
+  color: var(--muted);
+  text-align: right;
+  padding-right: 10px;
+  user-select: none;
+}
+.evidence-code {
+  color: var(--text);
+  white-space: pre;
+  padding-right: 40px;
+  font: inherit;
+  background: transparent;
+}
+.evidence-target {
+  background: var(--accent-soft);
+}
+.evidence-fold {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  width: 18px;
+  min-height: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.evidence-fold .icon {
+  --icon: url("icons/chevron-right.svg");
+  width: 12px;
+  height: 12px;
+}
+.evidence-fold[aria-expanded="true"] .icon {
+  transform: rotate(90deg);
+}
+.evidence-token {
+  position: relative;
+}
+.evidence-marker {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 24px;
+  height: 25px;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  color: var(--fail);
+  background: transparent;
+  font: inherit;
+}
+.evidence-marker .icon {
+  --icon: url("icons/exclamation-circle.svg");
+  width: 15px;
+  height: 15px;
+  color: inherit;
+}
+.evidence-marker.is-context {
+  color: var(--muted);
+}
+.evidence-marker.is-context .icon {
+  --icon: url("icons/information-circle.svg");
+}
+.evidence-marker[aria-expanded="true"] {
+  background: var(--accent-soft);
+}
+.annotation-choice {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--muted);
+  margin-left: 6px;
+}
+.annotation-choice input {
+  accent-color: var(--accent);
+}
+#evidence-annotation {
+  position: fixed;
+  inset: auto;
+  margin: 0;
+  box-sizing: border-box;
+  width: 360px;
+  max-width: calc(100vw - 24px);
+  max-height: min(420px, calc(100vh - 24px));
+  overflow: auto;
+  padding: 12px 14px;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--control);
+  border-radius: 4px;
+  box-shadow: 0 4px 16px rgb(0 0 0 / 12%);
+  font:
+    12px/1.55 -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    "Noto Sans CJK SC",
+    sans-serif;
+}
+.annotation-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+.annotation-heading strong {
+  color: var(--fail);
+  font-size: 12px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.is-context .annotation-heading strong {
+  color: var(--muted);
+}
+#evidence-annotation button {
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  padding: 0;
+  min-height: 26px;
+  font-size: 11px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  white-space: nowrap;
+}
+#evidence-annotation p {
+  font-size: 12px;
+  margin: 6px 0;
+}
+#evidence-annotation .annotation-label {
+  color: var(--muted);
+  font-size: 10px;
+}
+.annotation-values {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  margin: 10px 0;
+}
+.annotation-values dt {
+  color: var(--muted);
+  font-size: 10px;
+}
+.annotation-values dd {
+  margin: 2px 0 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.annotation-check {
+  color: var(--muted);
+  font-size: 10px;
+  overflow-wrap: anywhere;
+}
+.annotation-related {
+  display: block;
+  margin-top: 8px;
+}
+@media (max-width: 650px) {
+  .evidence-row {
+    grid-template-columns: 24px 14px minmax(max-content, 1fr);
+  }
+  .evidence-line {
+    padding-right: 5px;
+  }
+  .evidence-fold {
+    width: 14px;
+  }
+  #evidence-annotation {
+    width: calc(100vw - 24px);
+  }
+}

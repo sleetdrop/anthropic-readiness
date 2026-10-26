@@ -259,3 +259,20 @@ async def test_matrix_filter_is_closed_and_opens_only_matching_dimension_members
     ):
         response = await client.get(path, params={"view": "cases", "filter": invalid})
         assert response.status_code == 422
+
+
+async def test_evidence_annotation_metadata_uses_checked_assertions_and_packaged_assets(
+    client: httpx.AsyncClient, seeded_run: str
+) -> None:
+    response = await client.get("/runs/" + seeded_run, params={"view": "cases"})
+    assert response.status_code == 200
+    assert 'data-evidence-status="FAIL"' in response.text
+    assert 'data-evidence-reason="invalid_message_structure"' in response.text
+    assert 'id="evidence-annotation" popover="auto"' in response.text
+    assert 'id="evidence-annotations"' in response.text
+    for asset in (
+        "evidence-json.js",
+        "icons/exclamation-circle.svg",
+        "icons/information-circle.svg",
+    ):
+        assert (await client.get("/assets/web/" + asset)).status_code == 200

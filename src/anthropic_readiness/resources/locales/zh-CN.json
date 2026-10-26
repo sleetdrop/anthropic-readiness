@@ -506,6 +506,21 @@
     "console.switch_light": "切换为浅色主题",
     "console.switch_dark": "切换为深色主题",
     "shell.ui_updated": "请刷新页面以重新加载界面。未提交的输入将被清除。",
-    "shell.reload": "刷新页面"
+    "shell.reload": "刷新页面",
+    "annotation.open": "查看问题详情",
+    "annotation.show": "显示问题提示",
+    "annotation.locate": "回到定位",
+    "annotation.fold": "折叠 {pointer}",
+    "annotation.expand": "展开 {pointer}",
+    "annotation.more": "展开更多 JSON 行（显示受限）",
+    "annotation.separate": "诊断说明 · 不属于响应内容",
+    "annotation.related": "相关证据",
+    "annotation.context_hint": "此事件仅用于对照，未标为异常。",
+    "annotation.no_expected": "原始断言未记录期望文字，请结合问题页说明查看。",
+    "annotation.no_location": "当前记录未提供可确定的字段定位；请结合源记录查看。",
+    "annotation.first_event": "查看首次开始事件 #{event}",
+    "annotation.return_target": "回到问题事件 #{event}",
+    "annotation.window": "当前为第 {line} 行起的阅读片段；完整内容请查看源记录。",
+    "annotation.depth_limit": "深层内容已达到显示限制，请查看源记录。"
   }
 }
