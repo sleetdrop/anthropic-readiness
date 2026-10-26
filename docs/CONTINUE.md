@@ -1,6 +1,36 @@
 # Local delivery status
 
-## Evidence annotation design accepted; product integration next
+## Evidence-node annotations delivered in the actual local application
+
+Feature `6fcbe69` is installed at http://localhost:8765. Read
+[the integration ledger](harness/evidence-annotation-integration-ledger.md).
+Open an existing run -> Issues -> occurrence -> View evidence. Relevant failed
+findings now have a token-adjacent indicator and non-modal detail popover; absent
+fields locate a real parent. The full frame is foldable, original source/download
+remain available, related first SSE events are neutral, and known late targets
+are reachable in a bounded, explicitly labeled reading window. Unknown/unloaded/
+unparseable/truncated locations retain conservative reading limits.
+
+Final fast gates passed with unchanged source (498 Python unit/harness and 33
+frontend unit checks); 21 focused browser, 12 backend-page and five installed-package
+checks passed. One independent review finding was reproduced and fixed. No full
+graph, remote CI, new endpoint test or real model request was performed.
+
+Installed acceptance: all 169 package-file hashes match source and UI header/meta
+agree with packaged identity. Four previously inventoried runs / 154 files match
+the earlier verified manifest. One newer run / 44 files has no pre-update hash
+baseline: it remains readable, but is not claimed proven unchanged by deployment.
+All five runs / 198 files were unchanged during post-install browser acceptance.
+The immediate pre-install fingerprint attempt was empty and was not counted PASS.
+
+Four actual installed desktop/narrow light/dark views passed isolated-browser
+acceptance; inspected paired screenshots. Current IAB control was unavailable;
+requested the actual run in the in-app browser through Codex (queued). No everyday
+Chrome was used. Existing history, reports, CLI and five endpoint scenarios remain.
+Owner hands-on trial is next. Activity interaction details remain separately
+pending, without issue markers; broader protocol/client coverage gaps below remain.
+
+## Evidence annotation design acceptance (historical)
 
 The latest bounded increment is a standalone evidence-location sample at
 http://localhost:8768/evidence-annotation.html. Read
@@ -20,9 +50,9 @@ markers shown/hidden. Full product gates were not repeated.
 
 The owner accepted sample revision `446d695`; root design.md now records the
 token-marker/popover rules and two synthetic reference captures. The next bounded
-implementation task is integrating this behavior into actual evidence inspection.
-This acceptance-recording increment changed documentation only. The installed
-feature remains `3bfc375` at port 8765; no run data, report, CLI or endpoint verdict
+implementation task was integrating this behavior into actual evidence inspection,
+now delivered above. That acceptance-recording increment changed documentation only.
+At acceptance, the installed feature was `3bfc375` at port 8765; no run data, report, CLI or endpoint verdict
 changed. Five formal cases remain unchanged and no live calls occurred. Activity
 interaction details remain a separate pending increment, without issue annotations.
 

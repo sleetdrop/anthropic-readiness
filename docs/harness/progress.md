@@ -2033,3 +2033,30 @@ updated the sample status, handoff and ledger. Documentation checks passed.
 This is supporting-only documentation: no runtime, endpoint scenarios/faults,
 live calls or remote changes. Actual evidence-view integration is next; Activity
 interaction details remain separate and do not gain issue markers.
+
+## 2026-10-26: Evidence-node design integrated and installed
+
+User authorized actual integration. Feature 6fcbe69 is installed on 8765: verified
+failed references now open a bounded foldable full-frame projection with a small
+token-adjacent indicator and non-modal expected/observed popover. Missing fields
+locate real parents; first-start context is neutral. Unknown/unloaded/unparseable/
+truncated locations do not get guessed markers. Protocol results, raw downloads,
+reports, CLI and five endpoint scenarios are unchanged.
+
+One independent review found late known targets unreachable after the 500-row
+limit. Browser/unit REDs reproduced it; a labeled bounded target window corrected
+it. Final fast gates passed source-unchanged (498 Python and 33 frontend unit),
+21 focused browser and 17 backend/package checks passed. Prior failed template
+inventory, invocation mistakes and screenshot/transport-fixture mismatches remain
+retained with rulings in the integration ledger. No full graph or remote CI rerun.
+
+Cached offline image installed with rollback image retained. All 169 package-file
+hashes and UI version/header/meta agree. Immediate pre-update snapshot was invalid
+(empty stdin), not counted PASS. The earlier verified manifest proves four old
+runs / 154 files unchanged; a newer run / 44 files lacks older hash proof. All five
+runs / 198 files were unchanged during post-install acceptance. Four installed
+desktop/narrow light/dark browser checks passed and captures were inspected.
+IAB control unavailable this turn; Codex actual-run open request returned queued.
+No daily Chrome, model calls or remote writes. Historical diagnostic prose keeps
+its recorded language. See [the integration ledger](evidence-annotation-integration-ledger.md).
+Owner trial is next; Activity details and core protocol/client gaps remain.

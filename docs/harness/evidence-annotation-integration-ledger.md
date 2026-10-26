@@ -21,8 +21,10 @@ interaction details remain a separate increment with no annotations here.
    Inspected paired desktop/light and narrow/dark captures. One independent review
    found an unreachable late target; observed browser/unit REDs and corrected it
    with a bounded target window. No full graph/remote CI/live endpoint check ran.
-5. PENDING: scoped local commit, install verified local trial preserving existing
-   historical files, verify installed identity and leave actual evidence open.
+5. DONE: feature commit 6fcbe69; cached offline local trial build installed on
+   preserved 8765 volume. Installed identity and historical-manifest verification
+   passed with the pre-update snapshot limitation stated below. Actual-run browser
+   acceptance passed; in-app opening was requested through Codex (queued).
 
 No real endpoint calls, remote CI, registry publication or remote writes. Formal
 coverage remains five endpoint scenarios; this is supporting-only investigation
@@ -65,3 +67,44 @@ workflows. This increment handles one selected assertion reference at a time;
 unmapped compound errors and invalid/deep/partial content retain explicit reading
 limits. Activity interaction details are still pending separately. No endpoint
 internals or client readiness are inferred from this presentation work.
+
+## Installed acceptance and limits
+
+The final feature is 6fcbe69. Built the wheel and native local trial image entirely
+from cached images with network disabled; dependency consistency passed. Preserved
+old image tag anthropic-readiness-web:before-evidence-annotations for rollback;
+the current trial-ready image is the new feature. No clean networked/multiarch
+build, registry push or remote CI is claimed.
+
+All 169 installed package files match source hashes. Packaged UI identity,
+X-Readiness-UI-Revision and HTML metadata match. An initial probe used the wrong
+header name and was corrected; its null result did not establish a product defect.
+The checked app is healthy. Resource serving and actual evidence interaction were
+verified after installation, not inferred from container startup.
+
+Immediate pre-install snapshot attempt produced an empty file because stdin was
+not attached; this was noticed after recreation. It is retained as invalid, never
+PASS. Comparison instead uses the previous verified ui-sweep manifest: all four
+known runs / 154 files match. The fifth newer run adds 44 files without an older
+hash baseline, so deployment immutability for that record is not proven. It is
+readable, and all five runs / 198 files stayed identical across post-install
+read-only acceptance. No original run/attempt/report was removed or rewritten.
+
+Four fresh installed-browser captures cover desktop/narrow Chinese-light and
+English-dark. Checked actual missing-stop-field parent indication, popup geometry,
+Escape retaining the evidence dialog and original JSON source. No page errors.
+Inspected paired desktop/light and narrow/dark images. Controls are localized;
+quoted historical diagnostic prose retains its recorded language (including
+Chinese text in an English view). This is a remaining presentation limitation,
+not a change to the captured data or verdict.
+
+IAB runtime connection was unavailable after the tool update; did not debug the
+owner's browser or switch to daily Chrome. Used the already-authorized independent
+test browser, then requested the actual run in Codex's built-in browser. That tool
+returned queued, not visual-confirmation evidence. The static 8768 sample remains.
+
+Delivery is supporting-only: zero endpoint scenarios/detectable faults added, five
+formal endpoint cases unchanged, zero live calls or new client-readiness claims.
+Use the 8765 run's issue occurrence and View evidence to try the accepted design.
+Activity details, broader protocol coverage and actual SDK/Claude Code workflows
+remain separate unfinished product goals.
