@@ -15,6 +15,7 @@ import sys
 import time
 import xml.etree.ElementTree as ET
 from collections.abc import Sequence
+from contextlib import suppress
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from importlib.metadata import PackageNotFoundError, version
@@ -141,14 +142,17 @@ def _run_one(spec: CheckSpec, output_dir: Path) -> dict[str, object]:
             try:
                 code = process.wait(timeout=spec.timeout_s)
             except subprocess.TimeoutExpired:
-                # Linux is the standard harness environment. Signal only the
-                # session created above, with time for owned services to clean up.
+                # Signal only the session created above, with time for owned
+                # services to clean up. A group probe can transiently report
+                # EPERM while a terminated process is still being reaped.
                 try:
                     os.killpg(process.pid, signal.SIGTERM)
                     deadline = time.monotonic() + 6
                     while time.monotonic() < deadline:
                         process.poll()
-                        os.killpg(process.pid, 0)
+                        # Unknown is not evidence that the group has exited.
+                        with suppress(PermissionError):
+                            os.killpg(process.pid, 0)
                         time.sleep(0.05)
                     os.killpg(process.pid, signal.SIGKILL)
                 except ProcessLookupError:

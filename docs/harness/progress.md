@@ -2074,3 +2074,16 @@ detection were added. Synthetic CLI validation, dry-run and replay passed on Mac
 with zero actual dry-run/replay requests. An independent review found ambiguous
 Linux-check guidance, which was corrected. See [the ledger](local-development-ledger.md)
 for both failed fast attempts, source-identity limits and the restored lockfile.
+
+## 2026-10-31: macOS fast graph portability
+
+Owner selected the fast-graph portability follow-up. The final Mac fast graph
+passed eight gates on unchanged source: 503 Python unit/harness and 33 frontend
+unit checks. Process-group probing, fixture ownership verification, descendant
+cleanup testing and Linux-only integration-test type annotations now work with
+the macOS fast graph; no endpoint scenarios or faults were added. An independent
+review found and verified fixes for test-cleanup races. The local `.venv` was
+prepared from locked dependencies; synthetic fixture startup/shutdown passed.
+Linux verification, browser execution, image acceptance, remote CI and live
+endpoints were not run. See [the ledger](local-development-ledger.md) for retained
+failures, source fingerprint, tool versions and exact limits.

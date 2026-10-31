@@ -76,8 +76,8 @@ uv run --frozen anthropic-readiness replay --target examples/target.yaml \
   --case ANT-TEXT-SSE-001 --out artifacts/replay-example
 ```
 
-Run the required fast and full verification graphs on Linux, as described in
-[development](docs/development.md); the complete graph has known macOS gaps.
+Run the fast graph locally; run the full verification graph on Linux, as described
+in [development](docs/development.md). Full-graph macOS support is not established.
 
 Replay uses synthetic captures and makes no endpoint request. New CLI reports use
 presentation 3.0: `result.json` remains original, while `report.html`, `report.md`,

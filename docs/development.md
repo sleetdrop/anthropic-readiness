@@ -27,14 +27,12 @@ Dev Container config places its environment outside the mounted checkout. The
 Linux-specific CI preparation script downloads Linux binaries and is not the macOS
 setup path. Browser installation is only needed when running browser checks.
 
-**macOS validation limits:** the current fast graph includes harness tests that
-read Linux `/proc`, and its type check encounters Linux-only `pidfd` attributes;
-the browser fixture also uses `/proc` for process identity.
-Do not treat the complete fast or browser graph as supported on macOS yet. Run
-focused applicable Python tests and frontend static checks locally; run the
-required complete graph in Linux CI or the Dev Container. Record actual environment
-and missing checks, without skipping required tests to claim a full pass. See the
-[local-development ledger](harness/local-development-ledger.md) for observations.
+The fast graph is intended to run on macOS with the prepared locked tools. Full
+graph support on macOS is not established: in particular, Linux-specific integration
+tests remain. Run the required full graph in Linux CI or the Dev Container. Record
+actual environment and missing checks, without skipping required tests to claim a
+full pass. See the [local-development ledger](harness/local-development-ledger.md)
+for observed checks and limits.
 
 For example, after preparation, use focused checks while developing locally:
 
@@ -46,8 +44,9 @@ UV_OFFLINE=1 uv run --frozen python -m scripts.check_frontend --suite static --o
 Use a new output path for each frontend run. Focused checks do not replace the
 complete Linux graph or image acceptance.
 
-In the Dev Container or another prepared Linux environment, run the required
-checks; `serve` can also be used in a prepared host environment:
+Run the fast check on the host or in the Dev Container. Run the full check in the
+Dev Container or another prepared Linux environment. `serve` can also be used in
+a prepared host environment:
 
 ```sh
 UV_OFFLINE=1 uv run --frozen python scripts/check.py --suite fast

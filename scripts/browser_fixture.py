@@ -46,12 +46,17 @@ HOSTILE = '</script><img src="https://invalid.example/escape" onerror="window.in
 
 
 def verify_cleanup(root: Path) -> None:
-    """Verify the exact owned fixture process and both listeners have stopped."""
+    """Conservatively verify the fixture PID and both listeners have stopped."""
     record = json.loads((root / "process.json").read_text())
     if record["stopped"] is not True:
         raise ValueError("fixture_cleanup_incomplete")
-    stat = Path(f"/proc/{record['pid']}/stat")
-    if stat.exists() and stat.read_text().split()[21] == record["start_ticks"]:
+    try:
+        os.kill(record["pid"], 0)
+    except ProcessLookupError:
+        pass
+    except PermissionError as exc:
+        raise ValueError("fixture_owner_unverifiable") from exc
+    else:
         raise ValueError("fixture_owner_still_alive")
     for key in ("web_port", "peer_port"):
         with socket.socket() as probe:
@@ -339,7 +344,6 @@ def main() -> None:
     )
     identity = {
         "pid": os.getpid(),
-        "start_ticks": Path("/proc/self/stat").read_text().split()[21],
         "stopped": False,
         "peer_port": peer.server_port,
         "web_port": args.port,

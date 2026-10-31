@@ -56,3 +56,50 @@ guide placed full fast-check commands in a potentially misleading macOS context.
 Both now explicitly direct full checks to prepared Linux environments. The review
 also suggested exercising the local CLI; the three synthetic checks above passed.
 No re-review was requested.
+
+## macOS fast graph portability follow-up
+
+The owner selected a follow-up to make the complete fast graph usable on macOS.
+This is supporting-only work; it adds no endpoint scenarios or fault detection.
+The plan is to preserve timeout and fixture cleanup guarantees, verify the same
+required fast gates on macOS, and independently review the complete change.
+Full-graph macOS, container images and real endpoints remain separate scopes.
+
+Before implementation, two new regression cases failed: a transient permission
+error during a timed-out process-group probe prevented a result record, and a
+live fixture PID was not rejected on a host without `/proc`. The original macOS
+fast failures above remain part of the record. The implementation treats an
+indeterminate process-group probe conservatively, verifies any still-live fixture
+PID rather than claiming success on a reused PID, and checks descendant cleanup
+with an owned FIFO held open by the synthetic child. The Linux-only `pidfd` test
+keeps its runtime behavior while exposing typed function signatures to macOS mypy.
+
+The final Mac fast graph passed all eight required gates on unchanged source
+fingerprint `3c335b57b0703d7eb7de622d9b1b1dbcaeb02a8eaa511f86a95771cb148b00a8`:
+503 Python unit/harness cases and 33 frontend unit cases, with no failures or
+skips. Evidence: ignored `artifacts/checks/1793441737571281000/`. Python 3.12.15,
+uv 0.13.1, Node 24.22.0 and the project-local `.venv` were used with an explicitly
+selected project index and disposable uv cache. Documentation checks passed.
+
+An earlier fast run passed on unchanged source at
+`artifacts/checks/1793431620159143000/`, before the independent review correction.
+Two subsequent attempts had all gates pass but recorded a changing source tree;
+their overall result was failed, not a final pass. See
+`artifacts/checks/1793441343650485000/` and `1793441424782659000/`.
+
+A real synthetic Mac fixture lifecycle started, terminated and verified release of
+the owner PID and both listeners. Its first attempt failed because its output root
+already existed; a fresh child directory corrected that invocation. No browser was
+launched. One independent whole-stage review identified a test cleanup leak on
+early failure. A focused re-review found a further open-before-close race; the
+no-reader variant first timed out, then passed after nonblocking open. Both reader
+closure orderings and the still-open descendant check pass; the reviewer found no
+remaining actionable issue in that correction. The focused harness suite passed
+28 tests.
+
+Linux full/fast verification, browser tests, fresh Chromium installation, image
+acceptance, remote CI and real endpoint calls were not run. A sandboxed Docker
+status query could not access its socket; an elevated retry was interrupted after
+waiting and did not establish server availability. The fixture PID check is now
+deliberately conservative: a live reused PID blocks cleanup acceptance, and an
+inaccessible PID remains unverifiable rather than silently passing.

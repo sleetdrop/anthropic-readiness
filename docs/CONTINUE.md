@@ -1,5 +1,15 @@
 # Local delivery status
 
+## macOS fast developer checks
+
+The owner selected native macOS fast-check support. On the final unchanged source,
+all eight fast gates passed with 503 Python unit/harness and 33 frontend checks;
+the project-local Mac `.venv` is prepared. Full Linux, browser, image, remote CI
+and real endpoint verification were not run. An independent review identified
+test-cleanup races that were fixed and focused-reviewed. See the
+[local development ledger](harness/local-development-ledger.md). This is
+supporting-only work; endpoint scenarios and detectable faults are unchanged.
+
 ## Evidence-node annotations delivered in the actual local application
 
 Feature `6fcbe69` is installed at http://localhost:8765. Read
