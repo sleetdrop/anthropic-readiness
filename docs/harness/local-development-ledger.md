@@ -1,5 +1,10 @@
 # Local development policy and verification ledger
 
+The observations below through "macOS fast graph portability follow-up" were
+made on a different local development branch, not on this isolated PR branch.
+They retain their original source fingerprints and do not certify this branch.
+The isolated-branch result is recorded separately at the end.
+
 ## Scope and decision
 
 On 2026-10-31 the owner accepted host development with the Dev Container retained
@@ -103,3 +108,17 @@ status query could not access its socket; an elevated retry was interrupted afte
 waiting and did not establish server availability. The fixture PID check is now
 deliberately conservative: a live reused PID blocks cleanup acceptance, and an
 inaccessible PID remains unverifiable rather than silently passing.
+
+## Isolated PR verification
+
+The two changes were adapted onto GitHub main `10c7933` in an isolated checkout;
+other unpublished product, design and diagnostic changes remain outside this PR.
+The full Mac fast graph passed all eight gates with unchanged source fingerprint
+`ee0a1005c6cd15c3ef8c2fb6a33d1d46ecdd939bcbed819d7aca63c6d0613ac5`:
+500 Python unit/harness tests and 20 frontend unit tests, no failures or skips.
+Locked dependencies and Python 3.12.15, uv 0.13.1, Node 24.22.0 were used. Logs
+remain local under ignored `artifacts/checks/1793442347586418000/` in the isolated
+checkout. A first offline dependency preparation failed because build metadata was
+not cached; networked locked preparation then succeeded. Documentation checks and
+an independent review were completed. Linux full verification, remote CI, image
+acceptance and live endpoint checks are not established by the Mac result.

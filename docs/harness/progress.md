@@ -1374,3 +1374,14 @@ original attempts are retained in ignored artifacts/ci-startup-20261022/.
 Stop after the scoped local commit and container shutdown. No push, PR mutation,
 remote rerun, full image matrix, real model call or registry write occurred for this
 correction. PR 1 remains open with its original eb82885 failed remote result.
+
+## 2026-10-31: Isolated macOS development PR
+
+The owner authorized progressing the GitHub workflow for Mac development changes.
+The two local changes were adapted onto main `10c7933`; unrelated unpublished
+product and UI work remains on its original branch. The isolated Mac fast graph
+passed eight gates on unchanged source: 500 Python and 20 frontend unit tests.
+The independent review distinguished earlier original-branch evidence from the
+isolated run. No endpoint coverage changed. Linux full, image, remote CI and real
+endpoint outcomes are not established by the Mac run. See the
+[development ledger](local-development-ledger.md) for evidence and limitations.
