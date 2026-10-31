@@ -2087,3 +2087,25 @@ prepared from locked dependencies; synthetic fixture startup/shutdown passed.
 Linux verification, browser execution, image acceptance, remote CI and live
 endpoints were not run. See [the ledger](local-development-ledger.md) for retained
 failures, source fingerprint, tool versions and exact limits.
+
+## 2026-10-31: GitHub workflow for macOS development
+
+The owner authorized the GitHub workflow. Isolated the Mac development changes on
+main `10c7933` so prior unpublished product/UI work was not included. The isolated
+Mac fast graph passed 500 Python and 20 frontend unit tests. Independent review
+found evidence attribution and handoff omissions; both were corrected. Published
+PR 2, retaining its first Dev Container browser timing failure and trace. A single
+retry on unchanged head passed all five required PR jobs. Merged exact head
+`917e15d` as `f94ed1d17ff4132ffa3ab56a8138358f4249ef05`. Main CI 41195337568
+failed a worker-exit procfs read race; test-only PR 3 fixed that race and the
+repeated browser-test synchronization issue. Updated head `488a129` passed all
+five PR jobs and merged as `b6043c52ed67325d19c0f9631381c722270b90d2`.
+Post-merge main CI 41215465572 is running, not passed.
+No endpoint scenarios or live calls were added. Details are in
+[the ledger](local-development-ledger.md).
+
+The test corrections were also applied to this original local branch. Both
+affected browser cases passed with supplemental Chromium 143 and cleanup passed;
+the synthetic peer logged a connection reset. Final unchanged-source Mac fast
+checks passed 507 Python and 33 frontend unit tests. This is separate from the
+isolated PR's Linux CI and does not publish earlier product/UI work.

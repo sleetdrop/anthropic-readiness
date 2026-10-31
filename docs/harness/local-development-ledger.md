@@ -103,3 +103,54 @@ status query could not access its socket; an elevated retry was interrupted afte
 waiting and did not establish server availability. The fixture PID check is now
 deliberately conservative: a live reused PID blocks cleanup acceptance, and an
 inaccessible PID remains unverifiable rather than silently passing.
+
+## GitHub publication from an isolated branch
+
+The owner authorized the GitHub workflow. Previous product and UI changes had not
+been published, so the two macOS commits were adapted onto GitHub main `10c7933`
+in an isolated checkout without the unrelated changes. Its Mac fast graph passed
+500 Python and 20 frontend unit tests on unchanged fingerprint
+`ee0a1005c6cd15c3ef8c2fb6a33d1d46ecdd939bcbed819d7aca63c6d0613ac5`.
+An independent review identified missing evidence attribution and handoff notes;
+both were corrected before publication.
+
+[PR 2](https://github.com/sleetdrop/anthropic-readiness/pull/2) was opened at head
+`917e15d`. Its first [CI attempt](https://github.com/sleetdrop/anthropic-readiness/actions/runs/41192868578)
+passed both Linux Python full jobs and amd64 image smoke. Dev Container failed one
+of 78 browser cases while its other gates, including cleanup, passed; the aggregator
+failed. Its trace showed an intercepted snapshot in `running` state followed by a
+completed HTML render, so the test's synthetic failure was never injected. This
+supports a timing race in the unchanged test, without proving all possible causes.
+One failed-job retry on the same head passed all five required jobs. The skipped
+non-default-branch push workflow was not counted. Original failure and downloaded
+artifacts remain retained in the isolated checkout under ignored
+`artifacts/ci-41192868578-devcontainer/`.
+
+The PR was merged with an exact head guard as
+`f94ed1d17ff4132ffa3ab56a8138358f4249ef05`. Post-merge main CI
+`41195337568` failed Python 3.11 integration: a procfs read raised
+`ProcessLookupError` after the owned worker exited. Other jobs passed; its required
+aggregator failed. Original reports remain under ignored
+`artifacts/ci-41195337568-py311/` in the isolated checkout. A focused test-only
+fix with four synthetic controls, Mac fast checks and independent review is open
+as [PR 3](https://github.com/sleetdrop/anthropic-readiness/pull/3). Its first CI
+run passed both Linux Python jobs, including the worker test, but repeated the
+browser timing failure in Dev Container. The PR now also synchronizes that test
+without changing its failure/recovery assertions. Both affected browser cases
+passed twice on Mac with an older Chromium 143. Updated head `488a129` passed all
+five required PR jobs, including locked Linux Chromium, and merged as
+`b6043c52ed67325d19c0f9631381c722270b90d2`. Post-merge main CI 41215465572 was
+running at handoff, not passed. See the PR's test-only ledger for failed attempts
+and precise scope. No new endpoint scenario, actual target call, full native image-matrix
+run or registry publication was included. Earlier unpublished product and UI
+commits remain on the original local branch.
+
+The two test corrections were also applied to the original local branch, so its
+future work does not retain the same races. On that branch the two affected
+browser cases passed with supplemental Chromium 143, and fixture/listener cleanup
+passed; the synthetic peer logged a connection reset. All eight Mac fast gates
+passed on unchanged source fingerprint
+`539f6f876d26ba014861f756c8de560e479f260f2c52941567f2f1c22926419f`:
+507 Python unit/harness and 33 frontend unit tests. Evidence remains under ignored
+`artifacts/ci-followup-local/` and `artifacts/checks/1793449730629827000/`.
+This local-branch result is separate from PR 3's isolated Linux CI.

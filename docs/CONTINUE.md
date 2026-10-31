@@ -1,5 +1,21 @@
 # Local delivery status
 
+## macOS development GitHub workflow
+
+The owner authorized progressing the GitHub workflow for the Mac development
+changes. An isolated PR on main kept earlier unpublished product/UI work outside
+the publication scope. [PR 2](https://github.com/sleetdrop/anthropic-readiness/pull/2)
+was merged as `f94ed1d17ff4132ffa3ab56a8138358f4249ef05`. Its GitHub PR checks
+passed all five required jobs on a retry; the first attempt retained an existing
+browser timing failure. The [post-merge main CI](https://github.com/sleetdrop/anthropic-readiness/actions/runs/41195337568)
+failed a Python 3.11 integration test when an owned worker exited during a procfs
+read. Test-only [PR 3](https://github.com/sleetdrop/anthropic-readiness/pull/3)
+corrected that race and the repeated browser timing failure. Its updated head
+passed all five required PR jobs and merged as `b6043c52ed67325d19c0f9631381c722270b90d2`.
+Post-merge main CI 41215465572 is running; its outcome is not yet established. See the
+[local development ledger](harness/local-development-ledger.md) for scope and evidence.
+No endpoint scenarios or fault detection changed.
+
 ## macOS fast developer checks
 
 The owner selected native macOS fast-check support. On the final unchanged source,

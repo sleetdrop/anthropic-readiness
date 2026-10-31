@@ -416,6 +416,7 @@ test("approved active composition uses actual two-checkpoint and three-request e
   await preview(page, "synthetic-design");
   await start(page);
   await expect.poll(async () => (await count(request)).count).toBe(3);
+  await expect(page.locator("#job-state")).toHaveAttribute("data-lifecycle", "running");
   await expect(page.locator("#case-progress")).toHaveText("2 / 4");
   await expect(page.locator("#request-progress")).toHaveText("3 / 4");
   await expect(page.locator("#active-phase")).toHaveText("正在等待响应头");
@@ -657,19 +658,37 @@ test("terminal snapshot retries an unrendered generation after one HTML read fai
   request,
 }) => {
   await preview(page, "synthetic-hold");
-  await start(page);
-  await expect.poll(async () => (await count(request)).count).toBe(1);
-  await expect(page.locator("#job-state")).toHaveAttribute("data-lifecycle", "running");
-  const runPath = new URL(page.url()).pathname;
   let terminalSeen = false;
   let failedReads = 0;
   let recoveredReads = 0;
-  await page.route(`**/api/v1${runPath}/workbench*`, async (route) => {
-    const response = await route.fetch();
-    const snapshot = await response.json();
-    if (snapshot.job.state === "completed") terminalSeen = true;
-    await route.fulfill({ response });
+  await page.route("**/api/v1/runs/*/workbench*", async (route) => {
+    // A running snapshot can be followed by completed HTML before the next poll.
+    // Hold this read until the server itself returns the terminal generation so
+    // the test actually exercises its intended failure and recovery path.
+    /** @type {import('@playwright/test').APIResponse | undefined} */
+    let terminalResponse;
+    await expect
+      .poll(async () => {
+        const response = await route.fetch();
+        const snapshot = await response.json();
+        if (snapshot.job.state === "completed") terminalResponse = response;
+        return snapshot.job.state;
+      })
+      .toBe("completed");
+    if (!terminalResponse) throw new Error("terminal_snapshot_missing");
+    terminalSeen = true;
+    await route.fulfill({ response: terminalResponse });
   });
+  await start(page);
+  await expect.poll(async () => (await count(request)).count).toBe(1);
+  const runPath = new URL(page.url()).pathname;
+  await expect
+    .poll(async () => {
+      const response = await page.request.get(`/api/v1${runPath}/workbench`);
+      expect(response.ok()).toBeTruthy();
+      return (await response.json()).job.state;
+    })
+    .toBe("running");
   await page.route(
     (url) => url.pathname === runPath,
     async (route) => {
