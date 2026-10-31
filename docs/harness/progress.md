@@ -1385,3 +1385,14 @@ The independent review distinguished earlier original-branch evidence from the
 isolated run. No endpoint coverage changed. Linux full, image, remote CI and real
 endpoint outcomes are not established by the Mac run. See the
 [development ledger](local-development-ledger.md) for evidence and limitations.
+
+## 2026-10-31: Worker exit probe correction
+
+After PR 2 merged, main CI 41195337568 failed Python 3.11 integration because the
+owned worker exited during a procfs read. A focused test-only correction treats
+missing or disappearing procfs records as exit, without weakening the worker,
+request or cleanup assertions. Four synthetic controls passed on Mac after the
+original CI failure and the new test's initial missing-helper failure. The Mac fast
+graph passed 504 Python and 20 frontend tests on unchanged source; independent
+review found no material issue. Linux and new CI outcomes remain separate; see
+[the ledger](worker-exit-probe-ledger.md).

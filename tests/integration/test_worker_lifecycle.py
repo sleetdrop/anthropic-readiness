@@ -26,6 +26,14 @@ from tests.integration.test_job_manager import ROOT, SESSION, preview, wait_term
 from tests.recovery_assertions import assert_recovered_interfaces
 
 
+def _worker_has_exited(stat: Path) -> bool:
+    try:
+        return stat.read_text().split()[2] == "Z"
+    except (FileNotFoundError, ProcessLookupError):
+        # Linux may reap the process before or during the procfs read.
+        return True
+
+
 def test_force_stop_after_five_seconds_is_interrupted(
     server: SyntheticServer, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -120,7 +128,7 @@ def test_parent_loss_after_checkpoint_never_sends_next_request(
         deadline = time.monotonic() + 7
         while time.monotonic() < deadline:
             stat = Path(f"/proc/{worker_pid}/stat")
-            if not stat.exists() or stat.read_text().split()[2] == "Z":
+            if _worker_has_exited(stat):
                 break
             time.sleep(0.02)
         else:
