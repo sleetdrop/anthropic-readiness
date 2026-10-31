@@ -996,8 +996,9 @@ the owner's specific authorization. Keep private targets, credentials, original
 logs and the historical evaluation workspace outside source/build contexts.
 Local commits and synthetic checks remain authorized.
 
-Use the checked-in Linux/Python 3.12 Dev Container for development. The existing
-prepared Dev Container is retained; its identifier is an ephemeral local detail.
+The historical baseline used the checked-in Linux/Python 3.12 Dev Container.
+Current local-development guidance is in [development](development.md); the
+prepared Dev Container is retained and its identifier is an ephemeral local detail.
 The completed Stage A plan's scratch workspace is archived locally and removed; its
 permanent ledger is tracked under docs/harness.
 

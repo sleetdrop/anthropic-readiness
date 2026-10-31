@@ -8,11 +8,13 @@ For interface/report presentation, also read the owner-approved [design baseline
 
 ## Work and validate
 
-1. Open the Dev Container and prepare with `uv sync --locked`.
+1. Prepare the locked local environment or the optional Dev Container as described
+   in [development](docs/development.md).
 2. Reproduce behavioral defects with a meaningful failing synthetic test.
 3. Keep domain/framing/validators pure, I/O in adapters and typing strict.
 4. Run `UV_OFFLINE=1 uv run --frozen python scripts/check.py --suite fast`;
-   run `--suite full` before review. Container changes also require the documented
+   run `--suite full` in a supported Linux environment before review. Record the
+   known macOS limitations; container changes also require the documented
    two-architecture image checks. A missing check is blocked or not_run.
 5. Update packaged schemas, versioned contracts and evidence mappings when their
    semantics change. Never weaken a golden expectation merely to pass a gate.
@@ -40,12 +42,12 @@ the runnable maintenance command is deferred to Stage D.
 
 For the current workstream, read [CONTINUE](docs/CONTINUE.md), its approved specification/
 plan and [W2 ledger](docs/harness/diagnostic-workbench-ledger.md) before changing behavior.
-Human and Agent contributions use the same development container, source contracts
-and gates. Do not create one implementer Agent per plan task; the approved milestone
+Human and Agent contributions use the same source contracts and gates, whether
+developing locally or in the Dev Container. Do not create one implementer Agent per plan task; the approved milestone
 is sequential with one independent whole-stage review. Record meaningful decisions,
 failed attempts and missing acceptance honestly for the next person or Agent.
 
-Prepare Python/npm/Chromium through the Dev Container. Fast now requires frontend
+Prepare Python/npm/Chromium locally or through the Dev Container. Fast requires frontend
 static checks; full also requires actual browser cases and isolated CLI/Web installs.
 Use the [documented commands](docs/development.md), save large evidence under ignored
 `artifacts/`, and inspect rendered screenshots when UI/report output changes. Keep

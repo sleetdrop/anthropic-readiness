@@ -78,10 +78,11 @@ testing, model ranking, load testing and hosted multi-user collaboration are
 outside its current intent. Do not infer endpoint internals, certify untested
 features, or claim complete coverage of a changing protocol.
 
-Use the checked-in Dev Container, modern typed Python, appropriate GitHub CI,
-human/Agent-friendly contribution guidance and Docker delivery to support this
-purpose. Keep private targets, secrets and original service logs out of source
-and public artifacts. Preserve the repository's evidence and engineering rules.
+Use modern typed Python, appropriate GitHub CI, human/Agent-friendly contribution
+guidance and Docker delivery to support this purpose. Local development need not
+require Docker; retain the checked-in Dev Container for reproducible Linux checks.
+Keep private targets, secrets and original service logs out of source and public
+artifacts. Preserve the repository's evidence and engineering rules.
 
 This file records durable intent, not delivered status or a release checklist.
 The owner's current instructions govern changes in direction. Update this file

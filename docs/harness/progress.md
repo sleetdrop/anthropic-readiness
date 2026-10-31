@@ -2060,3 +2060,17 @@ IAB control unavailable this turn; Codex actual-run open request returned queued
 No daily Chrome, model calls or remote writes. Historical diagnostic prose keeps
 its recorded language. See [the integration ledger](evidence-annotation-integration-ledger.md).
 Owner trial is next; Activity details and core protocol/client gaps remain.
+
+## 2026-10-31: Optional Dev Container for local development
+
+Owner accepted host development and an optional reproducible Linux Dev Container.
+Guides now distinguish host checks from required Linux/CI and image evidence; CI
+requirements and product behavior are unchanged. On macOS, locked preparation
+worked after selecting the project index, and 410 focused Python unit tests and
+frontend static checks passed. The fast graph failed macOS type and harness gates;
+the browser fixture also assumes Linux `/proc`. Linux full, container acceptance,
+remote CI and real endpoint checks were not run. No endpoint scenarios or fault
+detection were added. Synthetic CLI validation, dry-run and replay passed on Mac
+with zero actual dry-run/replay requests. An independent review found ambiguous
+Linux-check guidance, which was corrected. See [the ledger](local-development-ledger.md)
+for both failed fast attempts, source-identity limits and the restored lockfile.

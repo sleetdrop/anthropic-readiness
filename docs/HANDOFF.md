@@ -9,7 +9,9 @@ explicit authorization for those operations.
 
 ## Reproduce offline
 
-Open the checked-in Dev Container, prepare once with `uv sync --locked`, then:
+For the historical Linux baseline, open the checked-in Dev Container and prepare
+once with `uv sync --locked`. Local development is also an option; see
+[development](development.md) for current preparation and macOS limitations. Then:
 
 ```sh
 UV_OFFLINE=1 uv run --frozen python scripts/check.py --suite fast
