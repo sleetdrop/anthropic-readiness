@@ -2,10 +2,10 @@
 
 import json
 import os
-import signal
 import subprocess
 import sys
 import time
+from contextlib import suppress
 from pathlib import Path
 
 import pytest
@@ -96,13 +96,39 @@ def test_browser_cleanup_rejects_unfinished_or_still_live_owner(
 ) -> None:
     record = {
         "pid": os.getpid(),
-        "start_ticks": Path("/proc/self/stat").read_text().split()[21],
         "stopped": stopped,
         "web_port": 18765,
         "peer_port": 18766,
     }
     (tmp_path / "process.json").write_text(json.dumps(record))
     with pytest.raises(ValueError, match=r"fixture_.*"):
+        verify_cleanup(tmp_path)
+
+
+def test_browser_cleanup_rejects_any_live_owner_without_proc(tmp_path: Path) -> None:
+    record = {
+        "pid": os.getpid(),
+        "stopped": True,
+        "web_port": 18765,
+        "peer_port": 18766,
+    }
+    (tmp_path / "process.json").write_text(json.dumps(record))
+    with pytest.raises(ValueError, match="fixture_owner_still_alive"):
+        verify_cleanup(tmp_path)
+
+
+def test_browser_cleanup_cannot_accept_unverifiable_owner(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    (tmp_path / "process.json").write_text(
+        json.dumps({"pid": 42, "stopped": True, "web_port": 18765, "peer_port": 18766})
+    )
+
+    def denied(pid: int, sig: int) -> None:
+        raise PermissionError("process identity unavailable")
+
+    monkeypatch.setattr(os, "kill", denied)
+    with pytest.raises(ValueError, match="fixture_owner_unverifiable"):
         verify_cleanup(tmp_path)
 
 
@@ -131,38 +157,92 @@ def test_actual_missing_browser_produces_schema_valid_blocked_record(tmp_path: P
     assert not (tmp_path / "gate/browser.xml").exists()
 
 
+def _descendant_code() -> str:
+    return (
+        "import errno,os,sys,time\n"
+        "try:\n"
+        " fd=os.open(sys.argv[1],os.O_WRONLY|os.O_NONBLOCK)\n"
+        "except OSError as exc:\n"
+        " if exc.errno == errno.ENXIO: sys.exit(0)\n"
+        " raise\n"
+        "try:\n"
+        " os.write(fd,b'ready')\n"
+        " while True:\n"
+        "  time.sleep(0.05)\n"
+        "  os.write(fd,b'x')\n"
+        "except BrokenPipeError:\n"
+        " pass\n"
+    )
+
+
+def test_descendant_fixture_exits_when_reader_is_closed(tmp_path: Path) -> None:
+    fifo = tmp_path / "child-open"
+    os.mkfifo(fifo)
+    reader = os.open(fifo, os.O_RDONLY | os.O_NONBLOCK)
+    child = subprocess.Popen([sys.executable, "-c", _descendant_code(), str(fifo)])
+    try:
+        deadline = time.monotonic() + 5
+        while time.monotonic() < deadline:
+            with suppress(BlockingIOError):
+                if os.read(reader, 5) == b"ready":
+                    break
+            time.sleep(0.02)
+        else:
+            pytest.fail("descendant did not start")
+        os.close(reader)
+        reader = -1
+        assert child.wait(timeout=5) == 0
+    finally:
+        if reader >= 0:
+            os.close(reader)
+        if child.poll() is None:
+            child.kill()
+            child.wait(timeout=5)
+
+
+def test_descendant_fixture_exits_if_reader_closes_before_open(tmp_path: Path) -> None:
+    fifo = tmp_path / "child-open"
+    os.mkfifo(fifo)
+    result = subprocess.run(
+        [sys.executable, "-c", _descendant_code(), str(fifo)],
+        capture_output=True,
+        text=True,
+        timeout=1,
+        check=False,
+    )
+    assert result.returncode == 0, result.stderr
+
+
 def test_gate_timeout_stops_owned_descendants(tmp_path: Path) -> None:
-    child_file = tmp_path / "child.json"
+    fifo = tmp_path / "child-open"
+    os.mkfifo(fifo)
+    reader = os.open(fifo, os.O_RDONLY | os.O_NONBLOCK)
     script = (
-        "import subprocess,sys,json,time; from pathlib import Path; "
-        "p=subprocess.Popen([sys.executable,'-c','import time; time.sleep(60)']); "
-        "stat=Path('/proc/'+str(p.pid)+'/stat').read_text().split(); "
-        "Path(sys.argv[1]).write_text(json.dumps({'pid':p.pid,'start':stat[21]})); "
+        "import subprocess,sys,time; "
+        f"subprocess.Popen([sys.executable,'-c',{_descendant_code()!r},sys.argv[1]]); "
         "time.sleep(60)"
     )
-    run_checks(
-        [CheckSpec("timeout", [sys.executable, "-c", script, str(child_file)], 0.3)],
-        tmp_path / "checks",
-        root=tmp_path,
-    )
-    child = json.loads(child_file.read_text())
-    stat = Path(f"/proc/{child['pid']}/stat")
-
-    def alive() -> bool:
-        try:
-            parts = stat.read_text().split()
-            return parts[21] == child["start"] and parts[2] != "Z"
-        except FileNotFoundError:
-            return False
-
     try:
+        run_checks(
+            [CheckSpec("timeout", [sys.executable, "-c", script, str(fifo)], 2)],
+            tmp_path / "checks",
+            root=tmp_path,
+        )
+        document = json.loads((tmp_path / "checks/check-result.json").read_text())
+        assert document["checks"][0]["reason"] == "timeout"
+        assert os.read(reader, 5) == b"ready", "descendant did not start"
         deadline = time.monotonic() + 2
-        while alive() and time.monotonic() < deadline:
+        while time.monotonic() < deadline:
+            try:
+                if os.read(reader, 4096) == b"":
+                    break
+            except BlockingIOError:
+                pass
             time.sleep(0.02)
-        assert not alive(), "check timeout left an owned child running"
+        else:
+            pytest.fail("check timeout left an owned child running")
     finally:
-        if alive():
-            os.kill(child["pid"], signal.SIGTERM)
+        os.close(reader)
 
 
 @pytest.mark.parametrize("kind", ["junit", "pytest"])
