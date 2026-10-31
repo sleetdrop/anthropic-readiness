@@ -1396,3 +1396,13 @@ original CI failure and the new test's initial missing-helper failure. The Mac f
 graph passed 504 Python and 20 frontend tests on unchanged source; independent
 review found no material issue. Linux and new CI outcomes remain separate; see
 [the ledger](worker-exit-probe-ledger.md).
+
+PR 3's initial GitHub run passed both Linux Python jobs, including the corrected
+worker case, but failed the same existing browser case as PR 2's first attempt.
+Two retained traces showed running snapshots before completed HTML. The test now
+waits for a terminal snapshot before injecting the failure, retains running UI
+coverage in the existing active-composition case, and preserves all recovery and
+request-count assertions. Independent review and two supplemental Mac runs per
+case using Chromium 143 passed; locked Linux Chromium CI remains pending. See the
+ledger for failed attempts and limitations. The combined final source also passed
+all eight Mac fast gates on unchanged source.
