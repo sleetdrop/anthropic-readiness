@@ -1,5 +1,17 @@
 # Local delivery status
 
+## Worker exit probe correction
+
+The post-merge main CI for PR 2 failed a Python 3.11 integration test because the
+owned worker disappeared while its Linux procfs status was being read. A focused
+test-only correction preserves the exit and no-extra-request assertions. See
+[the ledger](harness/worker-exit-probe-ledger.md) for the original failure, the
+synthetic controls and remaining Linux/remote verification. The first correction
+PR run passed both Linux Python jobs but exposed the same existing browser-test
+timing failure seen in PR 2. Its test synchronization is now corrected while
+retaining the UI and retry assertions; fresh remote verification is pending.
+This adds no endpoint scenario or product behavior.
+
 ## macOS development checks: isolated PR
 
 The local-development and Mac fast-check changes have been isolated on GitHub
