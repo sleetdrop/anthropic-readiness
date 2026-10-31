@@ -1,9 +1,14 @@
 """Check orchestration must not turn missing evidence into a green result."""
 
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
+
+import pytest
+
+from scripts.check import CheckSpec, run_checks
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -59,6 +64,32 @@ def test_missing_command_is_blocked(tmp_path: Path) -> None:
 def test_timeout_is_not_pass(tmp_path: Path) -> None:
     result = run_check(tmp_path, [sys.executable, "-c", "import time; time.sleep(5)"], timeout=0.05)
     assert result["status"] == "blocked"
+
+
+def test_timeout_tolerates_transient_permission_error_from_group_probe(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    original = os.killpg
+    attempts = 0
+
+    def probe(group: int, sig: int) -> None:
+        nonlocal attempts
+        if sig == 0 and attempts == 0:
+            attempts += 1
+            raise PermissionError("transient process group probe")
+        original(group, sig)
+
+    monkeypatch.setattr(os, "killpg", probe)
+    result = run_checks(
+        [CheckSpec("timeout", [sys.executable, "-c", "import time; time.sleep(5)"], 0.1)],
+        tmp_path / "checks",
+        root=tmp_path,
+    )
+    document = json.loads((tmp_path / "checks/check-result.json").read_text())
+    assert attempts == 1
+    assert result == 1
+    assert document["status"] == "blocked"
+    assert document["checks"][0]["reason"] == "timeout"
 
 
 def test_zero_collected_tests_is_not_pass(tmp_path: Path) -> None:

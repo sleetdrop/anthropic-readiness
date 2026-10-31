@@ -55,17 +55,21 @@ docker compose up -d             # reopen the same local workspace
 
 ## CLI without a real endpoint
 
-Use the checked-in [Dev Container](.devcontainer/devcontainer.json), then:
+Prepare Python and the locked dependencies locally or in the optional
+[Dev Container](.devcontainer/devcontainer.json); see
+[development](docs/development.md) for tool versions and macOS check limitations:
 
 ```sh
 uv sync --locked
-UV_OFFLINE=1 uv run --frozen python scripts/check.py --suite fast
 uv run --frozen anthropic-readiness validate --target examples/target.yaml
 uv run --frozen anthropic-readiness run --target examples/target.yaml --out artifacts/dry-plan --dry-run
 uv run --frozen anthropic-readiness replay --target examples/target.yaml \
   --capture tests/fixtures/captures/valid/evidence/ANT-TEXT-SSE-001/fixture-attempt/response.json \
   --case ANT-TEXT-SSE-001 --out artifacts/replay-example
 ```
+
+Run the fast graph locally; run the full verification graph on Linux, as described
+in [development](docs/development.md). Full-graph macOS support is not established.
 
 Replay uses synthetic captures and makes no endpoint request. New CLI reports use
 presentation 3.0: `result.json` remains original, while `report.html`, `report.md`,

@@ -6,9 +6,11 @@ import multiprocessing
 import os
 import signal
 import time
+from collections.abc import Callable
 from contextlib import suppress
 from dataclasses import replace
 from pathlib import Path
+from typing import cast
 
 import pytest
 
@@ -105,7 +107,9 @@ def test_parent_loss_after_checkpoint_never_sends_next_request(
         notice = json.loads(parent_end.recv_bytes())
         assert notice["checkpoint"] == "pending_ack"
         worker_pid = int(notice["worker_pid"])
-        worker_fd = os.pidfd_open(worker_pid)
+        # This integration test runs on Linux; mypy also checks it on macOS.
+        pidfd_open = cast(Callable[[int], int], getattr(os, "pidfd_open"))  # noqa: B009
+        worker_fd = pidfd_open(worker_pid)
         assert len(server.requests) == 1
         checkpoints = tmp_path / "runs" / run_id / "operations/checkpoints"
         assert len(list(checkpoints.glob("*.json"))) == 1
@@ -139,6 +143,10 @@ def test_parent_loss_after_checkpoint_never_sends_next_request(
             process.join(timeout=3)
         if worker_fd is not None:
             with suppress(ProcessLookupError):
-                signal.pidfd_send_signal(worker_fd, signal.SIGKILL)
+                send_pidfd_signal = cast(
+                    Callable[[int, int], None],
+                    getattr(signal, "pidfd_send_signal"),  # noqa: B009
+                )
+                send_pidfd_signal(worker_fd, signal.SIGKILL)
             os.close(worker_fd)
         process.close()

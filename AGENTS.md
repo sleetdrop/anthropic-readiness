@@ -6,7 +6,9 @@ Do not infer endpoint internals or mark untested capabilities as supported.
 
 ## Development
 
-- Use the checked-in Dev Container (Linux/Python 3.12), not host-specific Python.
+- Develop locally or in the checked-in Linux/Python 3.12 Dev Container. Follow
+  `docs/development.md` for locked tools, known macOS gaps and Linux/container
+  verification; do not treat a local run as evidence for another environment.
 - Preparation: `uv sync --locked`. Verification: set `UV_OFFLINE=1` and run
   `uv run --frozen python scripts/check.py --suite fast` or `--suite full`.
 - Source is in `src/anthropic_readiness`; tests use synthetic data in `tests`.

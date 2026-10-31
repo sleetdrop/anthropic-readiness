@@ -1,5 +1,16 @@
 # Local delivery status
 
+## macOS development checks: isolated PR
+
+The local-development and Mac fast-check changes have been isolated on GitHub
+main `10c7933`; prior unpublished product and UI work remains outside this branch.
+All eight Mac fast gates passed on unchanged isolated source: 500 Python and 20
+frontend unit tests. Linux full checks, image acceptance, remote CI and live
+endpoints have not yet been observed for this branch. No endpoint scenario or
+detectable fault was added. See [the development ledger](harness/local-development-ledger.md).
+The older status sections below are historical observations from main's previous
+handoff, including the then-open PR 1.
+
 ## Startup acceptance probe corrected locally; remote revalidation pending
 
 The owner authorized diagnosis and local correction of the failed PR CI. Follow
@@ -615,8 +626,9 @@ the owner's specific authorization. Keep private targets, credentials, original
 logs and the historical evaluation workspace outside source/build contexts.
 Local commits and synthetic checks remain authorized.
 
-Use the checked-in Linux/Python 3.12 Dev Container for development. The existing
-prepared Dev Container is retained; its identifier is an ephemeral local detail.
+The historical baseline used the checked-in Linux/Python 3.12 Dev Container.
+Current local-development guidance is in [development](development.md); the
+prepared Dev Container is retained and its identifier is an ephemeral local detail.
 The completed Stage A plan's scratch workspace is archived locally and removed; its
 permanent ledger is tracked under docs/harness.
 

@@ -1,10 +1,52 @@
 # Development
 
-Use the checked-in Linux/Python 3.12 Dev Container. It contains pinned uv and Node
-24, browser system libraries and CJK fonts. Reopening the container prepares
-`uv sync --locked`, `npm ci --ignore-scripts` and the npm-locked Playwright Chromium.
+Develop on the host or in the optional checked-in Linux/Python 3.12 Dev Container.
+The container supplies pinned uv and Node, browser system libraries and CJK fonts;
+its post-create step prepares Python, npm and Playwright Chromium. It remains the
+reproducible Linux baseline and does not need to run during ordinary host editing.
+
+For local macOS work, install `uv` 0.13.1, Python 3.12.15 (as selected by
+`.python-version`) and Node 24.22.0 with npm 11.19.1. The frontend prerequisite
+checks the exact Node version in [the toolchain record](harness/web-toolchain.json).
+Make that Node version first on `PATH`, then prepare the locked dependencies:
+
+```sh
+uv sync --locked
+npm ci --ignore-scripts
+npx --no-install playwright install chromium
+```
+
+If a global uv configuration selects a different default package index, the lock
+check can report that the lock needs updating even when package versions match.
+For this lock, set `UV_DEFAULT_INDEX=https://pypi.org/simple` for preparation and
+offline checks; do not change the lock to accommodate a machine-local mirror.
+
 Preparation may use the network; verification uses already prepared dependencies
-with `UV_OFFLINE=1`. Host-specific Python is not the development environment.
+with `UV_OFFLINE=1`. Keep host and container virtual environments separate: the
+Dev Container config places its environment outside the mounted checkout. The
+Linux-specific CI preparation script downloads Linux binaries and is not the macOS
+setup path. Browser installation is only needed when running browser checks.
+
+The fast graph is intended to run on macOS with the prepared locked tools. Full
+graph support on macOS is not established: in particular, Linux-specific integration
+tests remain. Run the required full graph in Linux CI or the Dev Container. Record
+actual environment and missing checks, without skipping required tests to claim a
+full pass. See the [local-development ledger](harness/local-development-ledger.md)
+for observed checks and limits.
+
+For example, after preparation, use focused checks while developing locally:
+
+```sh
+UV_OFFLINE=1 uv run --frozen python -m pytest -q tests/unit
+UV_OFFLINE=1 uv run --frozen python -m scripts.check_frontend --suite static --out artifacts/frontend-static-local
+```
+
+Use a new output path for each frontend run. Focused checks do not replace the
+complete Linux graph or image acceptance.
+
+Run the fast check on the host or in the Dev Container. Run the full check in the
+Dev Container or another prepared Linux environment. `serve` can also be used in
+a prepared host environment:
 
 ```sh
 UV_OFFLINE=1 uv run --frozen python scripts/check.py --suite fast
@@ -12,7 +54,7 @@ UV_OFFLINE=1 uv run --frozen python scripts/check.py --suite full
 uv run --frozen anthropic-readiness serve --data-dir artifacts/local-web --port 8765
 ```
 
-The port is forwarded by the Dev Container. The console starts no model request by
+The port is forwarded when using the Dev Container. The console starts no model request by
 itself. Test code uses synthetic fixtures and disposable local services. For direct
 pytest work use `uv run --frozen python -m pytest`; the module form keeps repository
 harness imports available. See [CONTINUE](CONTINUE.md) for the active W1 plan and
@@ -102,7 +144,7 @@ npm exec --yes --package @devcontainers/cli@0.89.0 -- devcontainer exec --worksp
 ```
 
 Image orchestration runs on the Docker host or independent runner using stdlib
-Python; product builds/tests stay in Linux containers. The default development and
+Python; image acceptance builds and tests the product in Linux containers. The default development and
 runtime configurations mount no Docker socket. See [container usage](container-usage.md)
 and [CONTRIBUTING](../CONTRIBUTING.md) for delivery checks and Agent handoff.
 
