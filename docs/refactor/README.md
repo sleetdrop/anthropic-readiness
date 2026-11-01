@@ -78,6 +78,9 @@ and coordinator-reviewed (189ff93, correction 2932a74). Its
 [task and exact owned paths](task-01-message-validation.md) remain a scope record,
 not a request to repeat the task. The coordinator also implemented the bounded raw
 HTTP adapter; SSE validation and CLI case execution remain next.
+The same implementation chat now owns [T2 SSE validation](task-02-sse-validation.md);
+the coordinator owns runner/CLI integration. No new chat or model change is needed
+for this continuation of the protocol direction.
 The coordinator integrates/reviews this direction; a second broad agent review of
 the same small change is unnecessary. Chats may communicate under the owner's
 explicit authorization, without repeatedly routing technical details through them.

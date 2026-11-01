@@ -18,6 +18,9 @@ and correction 2932a74. Its two-file ownership was respected during parallel wor
 The coordinator's bounded raw HTTP capture adapter is also implemented. Integrated
 strict types and 29 Node tests passed. Next: SSE validation and CLI execution of
 the selected cases; no complete TypeScript endpoint scenario is runnable yet.
+[T2 SSE validation](refactor/task-02-sse-validation.md) has been assigned to the
+same implementation chat, retaining its current model/settings and protocol file
+ownership. The coordinator owns runner/CLI work and will review/integrate T2.
 
 The active harness now uses Node checks/hooks/CI only. Old docs have explicit
 legacy entry points; scheduled image CI is outside .github/workflows. See

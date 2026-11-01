@@ -58,3 +58,12 @@ todos or failures: 12 T1, 10 transport and seven earlier core/harness controls.
 Evidence is ignored under artifacts/configuration-startup-20261101/ and
 next/artifacts/protocol-t1-20261101/. No new endpoint case execution, real model
 call, SDK workflow, SSE validator, CLI/Web flow or remote CI is established here.
+
+## 2026-11-01: T2 protocol direction continues in the existing chat
+
+Assigned bounded SSE framing/lifecycle/assembly work to the same implementation
+chat under docs/refactor/task-02-sse-validation.md, retaining its model and context.
+The coordinator owns runner/CLI paths; T2 owns only the listed pure protocol/test
+files. The public SSE result contract is specified before parallel integration.
+No new execution or acceptance is claimed by this task assignment; CLI integration
+and a usable first migrated endpoint run remain the next hands-on checkpoint.
