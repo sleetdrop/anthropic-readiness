@@ -2164,3 +2164,12 @@ five formal scenarios; at most six requests for all profiles), configuration/inp
 history, console/evidence flow and approved design guides. Publication itself adds
 no new endpoint calls, validation rules or client-readiness evidence. GitHub PR
 checks and actual merge remain pending. See [the publication ledger](product-publication-ledger.md).
+
+PR 4's first GitHub run 41267386643 failed web_page_scope: the image harness still
+expected four installed cases and the old preview caption. Corrected only the
+acceptance inventory to five exact IDs and the semantic submit control, retaining
+all four-case execution and request/verdict/export/restart/cancellation assertions.
+Original CI artifacts and REDs remain. The 38 focused image-harness tests and final
+unchanged-source Mac fast graph passed (517 Python, 33 frontend); bounded review
+found no issue. Fresh PR CI is pending. No new endpoint scenario, validation rule
+or real model request is added by this correction.

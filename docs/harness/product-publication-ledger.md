@@ -46,3 +46,29 @@ No registry publication, account changes or local trial reinstall is included.
 Detailed outputs stay ignored under artifacts/publication-20261101/. Original
 failures and records from PRs 2/3 remain retained. Remote writes are explicitly
 authorized by this request; never force-push or bypass checks to complete it.
+
+## PR 4 first CI and image-inventory correction
+
+PR 4 was opened on checked head 3aa3762. First CI 41267386643 failed the amd64
+Web image check with web_page_scope. Retained job logs/artifacts show the installed
+page was rejected by an outdated hard-coded four-case count and old preview label,
+while this publication deliberately ships five cases and a simplified entry page.
+This is an acceptance-harness mismatch, not a transient network failure or proof
+that the endpoint protocol is broken. No blind retry was used.
+
+The harness now checks all five exact case IDs, duplicates/missing/unexpected IDs,
+and exactly one enabled, non-hidden preview submit button, independently of its
+localized caption. A source-catalog alignment regression detects future drift.
+The existing four-case smoke conversation, request accounting, source/exports,
+restart and cancellation checks are unchanged. This intentionally updates the
+installed-page inventory expectation to the already-versioned fifth case; it does
+not weaken endpoint assertions or change golden results. The host image runner
+retains only standard-library dependencies.
+
+Seven initial controls were RED before implementation. Ten final controls plus
+existing image-harness tests passed (38 focused tests total). The final Mac fast
+graph passed all eight gates on unchanged source, 517 Python unit/harness and 33
+frontend unit checks. A bounded follow-up review found no issue; the earlier whole
+publication review was not repeated. Original failed logs, raw escaped job log,
+sanitized text and the runtime artifact remain ignored under the publication
+artifact directory. Fresh exact-head PR CI and merge remain pending.
