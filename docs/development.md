@@ -78,7 +78,10 @@ actual testcase counts. Owned fixture/listener cleanup and timeout process-group
 termination are checked. Bootstrap, fast and smoke are not whole-stage acceptance.
 
 Python test gates normally have a 300-second limit. The serial integration gate
-allows 600 seconds for complete evidence/import/export workflows. Exceeding a
+allows 600 seconds for complete evidence/import/export workflows. The serial
+browser suite allows 600 seconds, with a 720-second outer gate for reporting and
+owned-process cleanup. Its per-test and expectation deadlines remain unchanged;
+the suite window does not excuse an individual failure or incomplete run. Exceeding a
 limit remains BLOCKED and terminates the gate's owned process group; it never
 substitutes a partial test count for a completed report.
 

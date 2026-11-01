@@ -10,7 +10,11 @@ simplified configuration/input history, console navigation and evidence annotati
 Main b6043c5 is merged into the feature branch; its test-race corrections and
 [worker-exit ledger](harness/worker-exit-probe-ledger.md) are retained. Three conflicts
 were documentation-only; no production or test implementation conflict was resolved
-by replacing main. Fresh combined-source checks and PR CI are still pending.
+by replacing main. Combined-source Mac fast checks passed. PR 4 remains open:
+the image inventory was corrected to the shipped five-case catalog, and the
+expanded serial browser suite needs a bounded 600-second window (720 seconds
+including outer reporting/cleanup). Fresh exact-head Linux/container CI and merge
+remain pending; see the [publication ledger](harness/product-publication-ledger.md).
 Do not infer new endpoint/client verification from publication or CI alone.
 
 ## macOS development GitHub workflow

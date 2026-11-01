@@ -380,7 +380,7 @@ def build_checks(root: Path, output: Path, suite: str) -> list[CheckSpec]:
                         "--out",
                         str(output / "frontend-browser"),
                     ],
-                    420,
+                    720,
                     "junit",
                     junit_path=output / "frontend-browser/browser.xml",
                     cwd=root,

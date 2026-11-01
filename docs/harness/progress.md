@@ -2173,3 +2173,16 @@ Original CI artifacts and REDs remain. The 38 focused image-harness tests and fi
 unchanged-source Mac fast graph passed (517 Python, 33 frontend); bounded review
 found no issue. Fresh PR CI is pending. No new endpoint scenario, validation rule
 or real model request is added by this correction.
+
+The first PR 4 quality artifact confirmed browser prerequisites passed. Its expanded
+109-case serial suite reached the old 300-second total deadline after 64 passing
+cases (approximately 287 seconds in those cases), with no individual failures yet.
+Raised only the browser suite window to 600 seconds and outer reporting/cleanup
+window to 720 seconds; individual deadlines and verdict/cleanup requirements remain.
+A corrected regression reproduced the old outer/child deadline mismatch. Fresh
+full Linux/container CI is required; partial browser execution is not PASS.
+The 24 focused browser-gate checks passed. Mac fast first retained three denied
+loopback-bind failures, then passed unchanged with local-service permission:
+all eight gates, 518 Python and 33 frontend unit checks. Bounded independent review
+found no issue. Second pre-budget CI 41268709597 passed runtime-amd64; final
+exact-head full CI and merge remain to be observed in the PR 4 timeline.

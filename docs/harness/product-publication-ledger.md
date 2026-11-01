@@ -72,3 +72,32 @@ frontend unit checks. A bounded follow-up review found no issue; the earlier who
 publication review was not repeated. Original failed logs, raw escaped job log,
 sanitized text and the runtime artifact remain ignored under the publication
 artifact directory. Fresh exact-head PR CI and merge remain pending.
+
+## Browser suite envelope correction
+
+The first PR run also stopped both quality jobs in the browser stage. The retained
+Python 3.12 artifact proves prerequisites passed with the locked browser; the
+actual 109-case serial suite hit its 300-second total limit after 64 passing cases
+and no case failures. Those passing cases alone consumed approximately 287 seconds.
+This is an undersized suite envelope, not evidence of missing browser installation
+or a complete passing suite. Original failures and partial JUnit remain retained.
+
+The browser command now permits 600 seconds, and its outer gate permits 720 seconds
+for reporting and owned-process cleanup. Other frontend commands, individual
+Playwright test/expect deadlines, retries, assertion accounting and cleanup rules
+are unchanged. A new regression requires at least 120 seconds between child and
+outer deadlines. An initial test invocation used an incorrect helper name; the
+corrected RED demonstrated the actual 420 < 600 + 120 mismatch before changing
+the outer limit. Focused regression and final checks are recorded below when run.
+No endpoint behavior or diagnostic coverage changes in this correction.
+
+All 24 focused browser-gate tests passed, including timeout/owned-descendant cleanup.
+The first fast run retained three failures caused by denied loopback binds; an
+unchanged-source rerun with local-service permission passed all eight fast gates,
+518 Python unit/harness and 33 frontend unit checks. A bounded independent review
+found no specific regression. The second pre-budget CI run 41268709597 already
+passed runtime-amd64; quality/container graphs passed every stage except browser.
+The original failed runs remain evidence; the next exact-head full run must prove
+all 109 browser cases and required jobs completed successfully. Final PR checks,
+merge and post-merge status are recorded in the linked PR 4 timeline, so this
+pre-merge snapshot is not a later claim about remote state.
