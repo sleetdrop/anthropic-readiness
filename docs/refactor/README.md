@@ -62,11 +62,11 @@ then the small complete package check at delivery. Browser checks apply when Web
 behavior is implemented; their fixture must also run entirely on Node.
 
 No Docker, Compose, Dev Container, image architecture matrix or Python version
-matrix is part of this baseline. Legacy root workflow definitions are historical
-until replaced at runnable cutover; no remote change or CI result is claimed here.
-The intended replacement is one Node job for type checking/tests and one relevant
-browser run when applicable, with no duplicated container graph. Keep failed test
-records and no-empty/no-skipped acceptance; do not require a new status-only source
+matrix is part of this baseline. Legacy workflow definitions are archived outside
+the active workflow directory. The checked-in replacement is
+one Node job using the shared check entry point, with no duplicated graph. No remote
+change or CI result is claimed here. Add one relevant browser run when Web behavior
+exists. Keep failed test records and no-empty/no-skipped acceptance; do not require a new status-only source
 commit just to mirror Actions' final state.
 
 ## Coordination and current status

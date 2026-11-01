@@ -1,3 +1,7 @@
+> Historical Python delivery reference. Container tooling is deferred for the
+> TypeScript rewrite. These commands are not current development or acceptance
+> prerequisites; see [development](development.md).
+
 # Containers
 
 ## Personal local Web workspace

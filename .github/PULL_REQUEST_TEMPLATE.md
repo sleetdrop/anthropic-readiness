@@ -1,24 +1,19 @@
-## Problem and behavior
+## Outcome
 
-What triggers the problem, and what does the final change do?
+What concrete diagnostic capability or usability defect does this change address?
 
-## Scope and contracts
+## Validation
 
-Case/assertion IDs, schema or bundle versions affected; public source references.
+- TypeScript check entry point: command and actual outcome
+- Relevant fault/control tests: what they establish
+- Browser or real endpoint checks, when applicable: scope and outcome, or not_run
 
-## Evidence
+Keep endpoint scenarios, assertions and tool self-test counts separate. For
+supporting-only work, explicitly say endpoint coverage did not increase.
 
-- Fast/full checks: passed / failed / blocked / not_run (artifact or check ID)
-- Installed wheel and Python 3.11/3.12: outcome
-- Container architectures and native/emulated execution: outcome
-- Report visual review, when applicable: outcome
+## Limits and review focus
 
-## Limits and handoff
-
-Remaining checks, uncertainty, intentional contract changes and review focus.
-No credentials, private endpoint addresses, original service logs or private chats.
-
-For diagnostic/UI/report changes: original/retest scope and identity, source-byte
-preservation, evidence omissions, both locales/themes, offline/no-script/print
-behavior, and actual fresh-receiver import/retest/restart checks. Report new failures
-and gaps alongside recoveries; treat captured content as untrusted data.
+Remaining gaps, changed contracts and known failures. Use public IDs and synthetic
+reproduction only; never attach credentials, private endpoints or original logs.
+The active guide is AGENTS.md. Historical Python/container acceptance is not a
+rewrite prerequisite. No new stage plan or approval loop is needed for a small fix.

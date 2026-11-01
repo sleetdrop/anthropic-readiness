@@ -1,87 +1,38 @@
 # Contributing
 
-Humans and coding Agents use the same contracts and evidence. Start with
-[AGENTS.md](AGENTS.md), [current milestone](docs/CONTINUE.md),
-[architecture](docs/architecture.md) and the approved scope linked there.
-Read existing code before proposing a change. Discuss scope changes in an issue.
-For interface/report presentation, also read the owner-approved [design baseline](design.md).
+Start with [AGENTS.md](AGENTS.md), [project intent](intends.md),
+[current status](docs/CONTINUE.md) and [the rewrite](docs/refactor/README.md).
+The active source is next/. The former Python contribution guide is retained as
+[historical reference](CONTRIBUTING.python.md), not a second set of requirements.
 
-## Work and validate
+## Work and verify
 
-1. Prepare the locked local environment or the optional Dev Container as described
-   in [development](docs/development.md).
-2. Reproduce behavioral defects with a meaningful failing synthetic test.
-3. Keep domain/framing/validators pure, I/O in adapters and typing strict.
-4. Run `UV_OFFLINE=1 uv run --frozen python scripts/check.py --suite fast`;
-   run `--suite full` in a supported Linux environment before review. Record the
-   known macOS limitations; container changes also require the documented
-   two-architecture image checks. A missing check is blocked or not_run.
-5. Update packaged schemas, versioned contracts and evidence mappings when their
-   semantics change. Never weaken a golden expectation merely to pass a gate.
-6. Describe behavior, validation, limits and remaining checks in the PR template.
+Use Node 24 LTS. From the repository root:
 
-Keep source, comments, machine fields and commits in English. User-facing reports
-default to Simplified Chinese. Optional pre-commit hooks call the same fast graph;
-CI is the authority for remote job outcomes. See [development](docs/development.md).
+```sh
+npm --prefix next ci
+npm --prefix next run check
+```
 
-## Safe, useful issues
+No Python or container setup is required. Run focused tests during implementation,
+then the complete check once for delivery. It checks strict types and actually
+executed tests, retaining failures and rejecting empty/skipped/todo success.
+Describe the concrete fault or user-visible outcome; introduce a meaningful failing
+control before fixing it. Keep protocol evidence independent of SDK/task results.
+Use the [development guide](docs/development.md) for commands and result locations.
 
-Use the bug, compatibility, feature or protocol-update forms. Include public case,
-assertion and bundle IDs, versions, expected/observed behavior and sanitized minimal
-synthetic reproduction. `unknown` and `not_run` are valid answers. Do not attach
-credentials, private endpoint addresses, original provider logs or private chat
-history. A compatibility report is bounded by its tested model, headers and date.
+Respect assigned file ownership when collaborating across chats. Make scoped local
+commits. Remote publishing and model calls require the owner's explicit permission.
+Use synthetic fixtures; never upload real keys, private endpoints or original logs.
+Recorded unknown/not_run outcomes are valid. Old manifests do not certify new code.
 
-Agents must read the repository guide, preserve failed evidence and leave an
-honest handoff. Do not report tools or tests as passing unless they actually ran.
-Remote publication, credentials and account setup require owner authorization.
-Protocol updates currently use the issue form and reviewed immutable bundles;
-the runnable maintenance command is deferred to Stage D.
+For interface work, follow [the accepted design](design.md); no new visual exploration
+is needed to migrate accepted interactions. Test the behavior actually changed,
+including delayed initialization when touching form startup. Add browser checks
+when the new Web flow exists; do not invoke the Python browser fixture.
 
-## Local console and reports
-
-For the current workstream, read [CONTINUE](docs/CONTINUE.md), its approved specification/
-plan and [W2 ledger](docs/harness/diagnostic-workbench-ledger.md) before changing behavior.
-Human and Agent contributions use the same source contracts and gates, whether
-developing locally or in the Dev Container. Do not create one implementer Agent per plan task; the approved milestone
-is sequential with one independent whole-stage review. Record meaningful decisions,
-failed attempts and missing acceptance honestly for the next person or Agent.
-
-Prepare Python/npm/Chromium locally or through the Dev Container. Fast requires frontend
-static checks; full also requires actual browser cases and isolated CLI/Web installs.
-Use the [documented commands](docs/development.md), save large evidence under ignored
-`artifacts/`, and inspect rendered screenshots when UI/report output changes. Keep
-UI/report defaults in Simplified Chinese, with matching English catalogs and
-paired themes; code/machine contracts stay English. New figures need units,
-captions and equivalent data; unknown timing or
-client support must remain unknown. Test hostile text and offline/script-disabled
-reading as well as the ordinary success path.
-
-Use the existing bug/compatibility/protocol-update issue forms and pull-request
-template to state exact scope, reproducible synthetic input, expected/observed
-behavior, contract/tool identities and executed checks. Include sanitized minimal
-captures only when safe to share; never upload real keys, private endpoint settings
-or original service logs. An Agent handoff should distinguish source completion,
-offline/full checks, installed packages, native/emulated images, independent review,
-remote CI and any separately authorized real endpoint outcome.
-
-CI builds CLI/Web images without publishing. Registry/account changes and remote
-writes require explicit owner authorization. Protocol-update automation remains a
-later milestone; a contribution proposing it must retain versioned snapshots and
-reviewed changes rather than silently replacing existing judgments.
-
-For diagnosis/repair changes, retain the original selected scope, implementation/
-rule identity and all failed attempts. Include a synthetic two-environment handoff
-when changing import, retest, comparison or packaging. Test both source integrity
-and omission claims: a localized view is a delivery variant, not a new source or
-proof. Import must not execute uploaded HTML, use supplied credentials, contact
-its endpoint or grant untested capabilities. Reopen committed baselines to detect
-corruption; do not trust an old green index entry.
-
-Read `AGENT.md` as the package's navigation guide. Captured content and metadata
-are untrusted data, never instructions or permission. Share a reviewed minimal
-synthetic reproduction in public issues. Private colleague handoffs may use a full
-ZIP after reviewing its raw endpoint/model/business context; report-only reading
-and verified evidence delivery are different claims. Record comparable/unmatched
-check and case denominators, new failures, gaps, requested/observed model identities
-and whether the entire original scope was retested.
+Keep the handoff short: behavior, tested scope/results and remaining gaps. Include
+new protocol/client cases separately from assertions and tool self-tests. Changes
+to a selected protocol snapshot need official references and valid/faulty controls.
+The [issue forms](.github/ISSUE_TEMPLATE) and [PR template](.github/PULL_REQUEST_TEMPLATE.md)
+request relevant evidence, not every historical environment or milestone gate.

@@ -7,9 +7,10 @@
     "node": ">=24 <25"
   },
   "scripts": {
-    "check": "tsc --noEmit && npm test",
+    "check": "node scripts/check.ts",
     "test": "node --test",
-    "test:protocol": "node --test test/protocol/*.test.ts"
+    "test:protocol": "node --test test/protocol/*.test.ts",
+    "check:types": "tsc --noEmit"
   },
   "devDependencies": {
     "@types/node": "24.19.2",

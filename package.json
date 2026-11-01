@@ -11,7 +11,9 @@
     "check:lint": "eslint src/anthropic_readiness/resources tests/frontend tests/browser --no-error-on-unmatched-pattern",
     "check:format": "prettier --check package.json tsconfig.json '*.config.js' 'src/anthropic_readiness/resources/{web/**/*,report-v2,report-v3}.{html,css,js,ts}' 'src/anthropic_readiness/resources/themes.css' 'src/anthropic_readiness/resources/locales/*.json' 'tests/{frontend,browser}/**/*.js'",
     "test:unit": "node --test tests/frontend/*.test.js",
-    "test:browser": "playwright test"
+    "test:browser": "playwright test",
+    "check": "npm --prefix next run check",
+    "test": "npm --prefix next test"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.14.0",
