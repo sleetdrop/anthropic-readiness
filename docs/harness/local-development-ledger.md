@@ -154,3 +154,22 @@ passed on unchanged source fingerprint
 507 Python unit/harness and 33 frontend unit tests. Evidence remains under ignored
 `artifacts/ci-followup-local/` and `artifacts/checks/1793449730629827000/`.
 This local-branch result is separate from PR 3's isolated Linux CI.
+
+## Isolated PR 2 verification retained from main (historical)
+
+The following main-branch record describes the isolated PR 2 checkout, not the
+current publication. Its preceding observations were explicitly attributed to the
+other local development branch and did not certify that isolated source.
+
+
+The two changes were adapted onto GitHub main `10c7933` in an isolated checkout;
+other unpublished product, design and diagnostic changes remain outside this PR.
+The full Mac fast graph passed all eight gates with unchanged source fingerprint
+`ee0a1005c6cd15c3ef8c2fb6a33d1d46ecdd939bcbed819d7aca63c6d0613ac5`:
+500 Python unit/harness tests and 20 frontend unit tests, no failures or skips.
+Locked dependencies and Python 3.12.15, uv 0.13.1, Node 24.22.0 were used. Logs
+remain local under ignored `artifacts/checks/1793442347586418000/` in the isolated
+checkout. A first offline dependency preparation failed because build metadata was
+not cached; networked locked preparation then succeeded. Documentation checks and
+an independent review were completed. Linux full verification, remote CI, image
+acceptance and live endpoint checks are not established by the Mac result.

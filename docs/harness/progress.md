@@ -2109,3 +2109,58 @@ affected browser cases passed with supplemental Chromium 143 and cleanup passed;
 the synthetic peer logged a connection reset. Final unchanged-source Mac fast
 checks passed 507 Python and 33 frontend unit tests. This is separate from the
 isolated PR's Linux CI and does not publish earlier product/UI work.
+
+## Additional isolated-main records (historical)
+
+The following retained entries belong to PRs 2 and 3 on main; the original local
+product/UI work was outside those isolated revisions. Their pending statuses are
+historical; the current publication ledger records the fresh remote outcomes.
+
+## 2026-10-31: Isolated macOS development PR
+
+The owner authorized progressing the GitHub workflow for Mac development changes.
+The two local changes were adapted onto main `10c7933`; unrelated unpublished
+product and UI work remains on its original branch. The isolated Mac fast graph
+passed eight gates on unchanged source: 500 Python and 20 frontend unit tests.
+The independent review distinguished earlier original-branch evidence from the
+isolated run. No endpoint coverage changed. Linux full, image, remote CI and real
+endpoint outcomes are not established by the Mac run. See the
+[development ledger](local-development-ledger.md) for evidence and limitations.
+
+## 2026-10-31: Worker exit probe correction
+
+After PR 2 merged, main CI 41195337568 failed Python 3.11 integration because the
+owned worker exited during a procfs read. A focused test-only correction treats
+missing or disappearing procfs records as exit, without weakening the worker,
+request or cleanup assertions. Four synthetic controls passed on Mac after the
+original CI failure and the new test's initial missing-helper failure. The Mac fast
+graph passed 504 Python and 20 frontend tests on unchanged source; independent
+review found no material issue. Linux and new CI outcomes remain separate; see
+[the ledger](worker-exit-probe-ledger.md).
+
+PR 3's initial GitHub run passed both Linux Python jobs, including the corrected
+worker case, but failed the same existing browser case as PR 2's first attempt.
+Two retained traces showed running snapshots before completed HTML. The test now
+waits for a terminal snapshot before injecting the failure, retains running UI
+coverage in the existing active-composition case, and preserves all recovery and
+request-count assertions. Independent review and two supplemental Mac runs per
+case using Chromium 143 passed; locked Linux Chromium CI remains pending. See the
+ledger for failed attempts and limitations. The combined final source also passed
+all eight Mac fast gates on unchanged source.
+
+## 2026-11-01: Publish accumulated local product work
+
+Owner explicitly requested publishing and merging the remaining local work after
+referencing the optional-Dev-Container chat. Read that chat and refreshed GitHub
+state: main b6043c5's post-merge CI passed; no duplicate PR is open. Merge into the
+current branch had only three documentation conflicts, preserving both evidence
+histories and main's worker/browser test fixes. Mac fast passed unchanged-source
+checks (507 Python and 33 frontend unit); docs passed. One independent bounded
+publication review found no blocker. Privacy/artifact checks found no flagged
+credential patterns or tracked artifacts/private evaluation workspace.
+
+This publishes previously implemented non-stream tool-result diagnostics (four to
+five formal scenarios; at most six requests for all profiles), configuration/input
+history, console/evidence flow and approved design guides. Publication itself adds
+no new endpoint calls, validation rules or client-readiness evidence. GitHub PR
+checks and actual merge remain pending. See [the publication ledger](product-publication-ledger.md).

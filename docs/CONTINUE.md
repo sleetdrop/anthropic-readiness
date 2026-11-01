@@ -1,5 +1,18 @@
 # Local delivery status
 
+## Accumulated product publication in progress
+
+The owner authorized publishing and merging the remaining local work on 2026-11-01.
+The macOS development changes already reached main through PRs 2 and 3; their
+post-merge CI passed. The current publication also includes the previously local
+non-stream tool-result round trip (raising formal scenarios from four to five),
+simplified configuration/input history, console navigation and evidence annotations.
+Main b6043c5 is merged into the feature branch; its test-race corrections and
+[worker-exit ledger](harness/worker-exit-probe-ledger.md) are retained. Three conflicts
+were documentation-only; no production or test implementation conflict was resolved
+by replacing main. Fresh combined-source checks and PR CI are still pending.
+Do not infer new endpoint/client verification from publication or CI alone.
+
 ## macOS development GitHub workflow
 
 The owner authorized progressing the GitHub workflow for the Mac development
@@ -12,7 +25,7 @@ failed a Python 3.11 integration test when an owned worker exited during a procf
 read. Test-only [PR 3](https://github.com/sleetdrop/anthropic-readiness/pull/3)
 corrected that race and the repeated browser timing failure. Its updated head
 passed all five required PR jobs and merged as `b6043c52ed67325d19c0f9631381c722270b90d2`.
-Post-merge main CI 41215465572 is running; its outcome is not yet established. See the
+Post-merge main CI 41215465572 passed all required jobs, verified on 2026-11-01. See the
 [local development ledger](harness/local-development-ledger.md) for scope and evidence.
 No endpoint scenarios or fault detection changed.
 
