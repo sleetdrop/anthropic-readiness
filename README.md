@@ -1,5 +1,12 @@
 # Anthropic Readiness
 
+**Development stopped, 2026-11-01.** Existing alternatives now invalidate the
+reason to build a separate tool in this category. Start with
+[llm-comply](https://github.com/Oaklight/llm-comply); see
+[the research and decision](docs/reviews/2026-11-01-existing-tools.md).
+The implementation below is retained as-is, with its limitations, rather than
+presented as an actively progressing rewrite. No complete compatibility is claimed.
+
 A local assessment tool for self-hosted model APIs claiming Anthropic Messages
 compatibility. Evaluate the selected protocol scope, inspect concrete deviations
 and export what is compatible, unsupported, inconclusive or untested. Endpoint

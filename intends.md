@@ -1,5 +1,10 @@
 # Project intent
 
+Development disposition, 2026-11-01: implementation is stopped after research found
+existing tools in this category, under the owner's explicit conditional direction.
+The purpose below remains a record of the intended product, not an instruction to
+continue building it. See [the decision](docs/reviews/2026-11-01-existing-tools.md).
+
 ## Purpose and primary users
 
 Assess the actual Anthropic Messages compatibility of self-hosted model APIs that

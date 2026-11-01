@@ -1,5 +1,9 @@
 # Product coverage inventory
 
+Retained gap inventory: feature development stopped on 2026-11-01 after
+[existing-tool research](../reviews/2026-11-01-existing-tools.md).
+The proposed A-D work below is not assigned for execution.
+
 Reviewed 2026-11-01 against the active next/ source at a254a74 and the retained
 first real CLI trial. This is a gap inventory, not a completed conformance suite
 or a claim that all official fields/features have already been enumerated.

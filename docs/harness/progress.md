@@ -178,3 +178,19 @@ other protocol families. Accepted design and local-first Node constraints remain
 Documentation-only change: checked affected local links and diff whitespace;
 no scenarios, assertions or UI were added. Reused unchanged-source verification;
 no additional live calls, remote writes or CI result.
+
+## 2026-11-01: existing alternatives found; feature development stopped
+
+The owner requested fresh research and explicitly directed abandoning further
+development if this category already has tools. Primary repository/package/site
+inspection found direct matches: llm-comply (actual Anthropic test definitions,
+local CLI/Web and schema refresh) and ModelsExam (Web assessment/reporting).
+PyPI records llm-comply 0.5.0 on 2026-09-12; it predates this project's October
+development. The earlier lack-of-alternatives assumption was incomplete research.
+See docs/reviews/2026-11-01-existing-tools.md for sources and verification limits.
+
+Stopped feature development under that instruction and marked intent, entry guides,
+the retained route and coverage accordingly. No candidate installed or run; no
+private target/config/credential sent to any service. No data deletion, GitHub
+archival or remote push. This documentation-only disposition adds no scenarios;
+local link/whitespace checks suffice and unchanged tests were not rerun.

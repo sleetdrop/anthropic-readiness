@@ -1,6 +1,16 @@
 # Current work
 
-## Goal and delivery route
+## Development stopped: existing tools found
+
+2026-11-01: the owner instructed stopping development if this category of tool
+already exists. Research confirmed llm-comply (open-source, local CLI/Web,
+Anthropic checks, spec refresh) and other alternatives. Follow
+[the research and decision](reviews/2026-11-01-existing-tools.md). No further
+implementation is assigned. The route and evidence below are retained history,
+not instructions to resume A-D. No deletion or remote archival was performed.
+Candidate tools were not installed or run against the private endpoint.
+
+## Retained goal and former delivery route
 
 Build the focused Anthropic Messages assessment tool in [intends.md](../intends.md):
 assess self-hosted APIs claiming that protocol against an explicit version/feature
@@ -10,11 +20,9 @@ and repair verification are optional follow-up uses. Read
 [coverage inventory](refactor/coverage.md). They replace migration-first sequencing;
 completed T1/T2 files are historical task records, not the next product objective.
 
-The coordinator owns coherent delivery, not case-by-case requests for the owner to
-choose work. The next product checkpoint is route A: an operable Node Web/CLI
-application together with expanded core Messages scenarios and honest findings.
-Implement internally in small commits; do not call another validator or a five-case
-GUI the delivered product. Preserve the accepted design; no new visual exploration.
+Before stopping, route A proposed an operable Node Web/CLI application with broader
+Messages scenarios. It remains unimplemented and is not assigned work. The accepted
+design and coverage inventory are retained records, not a reason to continue.
 
 ## Implemented and verified
 
@@ -39,7 +47,7 @@ Official current docs now default to 2026-10-21. The previous manual latest-sour
 comparison is not a completed version-specific audit. Preserve previous results;
 bind applicable rules/sources before claiming reproducible version conformance.
 
-## Remaining work and verification boundaries
+## Undelivered scope and verification boundaries
 
 Route A covers working Web interaction, core thinking/tool/multi-turn execution,
 evidence and portable reports, plus source/manifest and verdict-policy corrections.

@@ -1,10 +1,15 @@
 # Product delivery route: local-first TypeScript rewrite
 
+**Retained route, not active work.** On 2026-11-01 existing alternatives were found
+and feature development stopped under the owner's conditional instruction. See
+[the decision](../reviews/2026-11-01-existing-tools.md) and
+[current disposition](../CONTINUE.md). Do not execute A-D without new authorization.
+
 Reviewed 2026-11-01 after the owner identified case-by-case drift. This replaces
 the earlier migration-first delivery order in this same file; T1/T2 remain completed
 implementation records. Read [intent](../../intends.md),
 [current state](../CONTINUE.md) and [coverage gaps](coverage.md). These are the
-active product route, not another sequence of plan-approval rituals.
+former product route. The stopped disposition above governs further work.
 
 ## Goal and current shortfall
 
