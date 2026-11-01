@@ -194,3 +194,30 @@ the retained route and coverage accordingly. No candidate installed or run; no
 private target/config/credential sent to any service. No data deletion, GitHub
 archival or remote push. This documentation-only disposition adds no scenarios;
 local link/whitespace checks suffice and unchanged tests were not rerun.
+
+## 2026-11-02: pinned candidate maturity assessment
+
+Reviewed llm-comply at 78421338385e69f6ae2b055074d03be2ff8739a4, its release
+metadata, actual definitions/runner/validators, CI and scheduled refresh logs.
+Alpha release 0.5.0 has nine Anthropic cases; head has 19 and is 109 commits ahead.
+Head CI passed. The latest inspected scheduled refresh failed on a Google schema
+count after download, blocking its PR; not an Anthropic network failure.
+
+With an in-memory synthetic transport, baseline stream passed and missing-stop
+control failed. Repeated message_start, unopened-index text delta, malformed
+event JSON, invalid streamed-usage type and invalid error envelope passed their
+selected head checks. Non-Claude thinking selection skipped. Additional semantic
+checks/serialization inspection exposed task-consumption and portable-evidence
+limits. Full non-streaming schemas/upstream suite/GUI were not run. No source rule
+was modified for these probes. Used existing local Python/jsonschema only as a
+research utility, adding no Python dependency to the Node project.
+
+The earlier existence research did not establish a mature full replacement;
+corrected that inference without automatically resuming independent development.
+Recommendation: retain stopped source/evidence and favor adoption/contribution or
+a narrow fork over restarting the whole product. See
+docs/reviews/2026-11-02-llm-comply-maturity.md and ignored
+artifacts/llm-comply-maturity-20261102/ for source, probes, output and metadata.
+No third-party installation, model requests, public issue, remote write or product
+implementation occurred. Local documentation links/whitespace checked; unchanged
+product tests were not rerun.

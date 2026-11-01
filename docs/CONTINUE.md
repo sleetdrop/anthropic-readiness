@@ -10,6 +10,13 @@ implementation is assigned. The route and evidence below are retained history,
 not instructions to resume A-D. No deletion or remote archival was performed.
 Candidate tools were not installed or run against the private endpoint.
 
+2026-11-02: [candidate maturity review](reviews/2026-11-02-llm-comply-maturity.md)
+found Alpha/release-head differences and reproduced missed SSE/error faults and
+non-Claude thinking skips at a pinned source revision. Category existence does
+not prove a mature replacement. Keep development stopped while the owner considers
+adoption/contribution or a narrow fork; no automatic rewrite restart. Offline
+synthetic probes only; no new real endpoint requests or candidate installation.
+
 ## Retained goal and former delivery route
 
 Build the focused Anthropic Messages assessment tool in [intends.md](../intends.md):

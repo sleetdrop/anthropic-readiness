@@ -1,5 +1,11 @@
 # Existing-tool research and development decision
 
+Follow-up 2026-11-02: [maturity assessment](2026-11-02-llm-comply-maturity.md)
+reproduced important candidate blind spots. This research established existence,
+not a mature complete replacement; that stronger inference is withdrawn. Independent
+development remains stopped, with adoption/forking recommended over an automatic
+full restart. Preserve the original research below as the decision history.
+
 Date: 2026-11-01 (Asia/Shanghai). The owner requested a fresh market search and
 explicitly directed stopping this project if tools in this category already exist.
 
