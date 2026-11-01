@@ -72,9 +72,12 @@ commit just to mirror Actions' final state.
 ## Coordination and current status
 
 Coordinator chat: local `01a1387c-a2d6-75b2-a769-9c147b6992bd`.
-Branch: `codex/typescript-refactor`. The owner will open the implementation chat;
-that chat must read the coordinator's recent decisions using read_thread.
-Task and exact owned paths: [T1 final-message validator](task-01-message-validation.md).
+Branch: `codex/typescript-refactor`. Implementation chat: local
+`01a1957d-20a0-7491-aefb-2a509bc9a836`. T1 final-message validation is implemented
+and coordinator-reviewed (189ff93, correction 2932a74). Its
+[task and exact owned paths](task-01-message-validation.md) remain a scope record,
+not a request to repeat the task. The coordinator also implemented the bounded raw
+HTTP adapter; SSE validation and CLI case execution remain next.
 The coordinator integrates/reviews this direction; a second broad agent review of
 the same small change is unnecessary. Chats may communicate under the owner's
 explicit authorization, without repeatedly routing technical details through them.

@@ -12,10 +12,12 @@ observations/evidence locations, a complete five-case/six-request migration inve
 and five core controls. No TypeScript endpoint runner, SDK check or Web flow is
 implemented yet; no added endpoint coverage is claimed by scaffolding/harness work.
 
-The owner will create an economical-model implementation chat for
-[T1 message validation](refactor/task-01-message-validation.md). It owns only its
-protocol implementation/test files; the coordinator owns interfaces, orchestration
-and integration review. Communicate directly under the owner's authorization.
+[T1 message validation](refactor/task-01-message-validation.md) is implemented by
+chat 01a1957d-20a0-7491-aefb-2a509bc9a836 and coordinator-reviewed: commits 189ff93
+and correction 2932a74. Its two-file ownership was respected during parallel work.
+The coordinator's bounded raw HTTP capture adapter is also implemented. Integrated
+strict types and 29 Node tests passed. Next: SSE validation and CLI execution of
+the selected cases; no complete TypeScript endpoint scenario is runnable yet.
 
 The active harness now uses Node checks/hooks/CI only. Old docs have explicit
 legacy entry points; scheduled image CI is outside .github/workflows. See

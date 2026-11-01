@@ -1,6 +1,8 @@
 # T1: pure final-message validator
 
-Ready for the owner-created economical-model chat. This is implementation, not a
+Completed and coordinator-reviewed: 189ff93, correction 2932a74 (2026-11-01).
+The instructions below record the delivered scope; do not restart T1 without a new request.
+This is implementation, not a
 new brainstorming/approval cycle. Read AGENTS.md, intends.md, this task,
 README.md in this directory, and next/src/domain.ts before editing. The latest
 owner instructions permit a TypeScript rewrite and defer all container tooling.

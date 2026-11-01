@@ -34,3 +34,27 @@ records/workflows were copied byte-for-byte before replacing active entry points
 This is supporting-only work: no additional endpoint scenario, protocol fault
 validator, SDK workflow or actual model call was implemented by the cleanup.
 No remote push, Actions execution, registry change or existing data migration.
+
+## 2026-11-01: T1 integration and bounded HTTP capture
+
+Owner-created chat 01a1957d-20a0-7491-aefb-2a509bc9a836 delivered T1 in 189ff93.
+One coordinator review reproduced an overly strong judgment for unknown stop
+reasons paired with string stop_sequence; correction 2932a74 keeps that relation
+inconclusive, retains proven type defects and improves whole-result valid controls.
+The root-shape observation no longer claims every message field is complete.
+T1 implemented JSON node/parent-missing locations without changing shared types.
+
+The coordinator independently implemented a one-attempt Node HTTP adapter with
+exact encoded application bytes, duplicate response headers, explicit Host,
+no redirect following/retry, bounded byte retention, connect/TLS/idle/absolute
+limits and cancellation. Safe error codes do not echo private request data.
+Initial raw-header requests lacked Host and yielded synthetic HTTP400; the
+correction passed the same controls. A separate RED reproduced missing-limit
+acceptance before explicitly validating every limit. Initial denied loopback
+binds remain recorded separately from permitted local-service verification.
+
+Final integrated strict types and 29 executed Node tests passed, with no skips,
+todos or failures: 12 T1, 10 transport and seven earlier core/harness controls.
+Evidence is ignored under artifacts/configuration-startup-20261101/ and
+next/artifacts/protocol-t1-20261101/. No new endpoint case execution, real model
+call, SDK workflow, SSE validator, CLI/Web flow or remote CI is established here.
