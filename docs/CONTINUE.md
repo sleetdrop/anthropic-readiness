@@ -1,21 +1,26 @@
 # Local delivery status
 
-## Accumulated product publication in progress
+## Active: local-first TypeScript rewrite
 
-The owner authorized publishing and merging the remaining local work on 2026-11-01.
-The macOS development changes already reached main through PRs 2 and 3; their
-post-merge CI passed. The current publication also includes the previously local
-non-stream tool-result round trip (raising formal scenarios from four to five),
-simplified configuration/input history, console navigation and evidence annotations.
-Main b6043c5 is merged into the feature branch; its test-race corrections and
-[worker-exit ledger](harness/worker-exit-probe-ledger.md) are retained. Three conflicts
-were documentation-only; no production or test implementation conflict was resolved
-by replacing main. Combined-source Mac fast checks passed. PR 4 remains open:
-the image inventory was corrected to the shipped five-case catalog, and the
-expanded serial browser suite needs a bounded 600-second window (720 seconds
-including outer reporting/cleanup). Fresh exact-head Linux/container CI and merge
-remain pending; see the [publication ledger](harness/product-publication-ledger.md).
-Do not infer new endpoint/client verification from publication or CI alone.
+The owner authorized a TypeScript/Node rewrite on 2026-11-01, with no initial
+Python, Docker, Compose or Dev Container dependency. Read
+[the active entry point](refactor/README.md) and
+[the bounded validator task](refactor/task-01-message-validation.md).
+`next/` currently contains checked core values/catalog scaffolding, not an endpoint
+runner. Existing Python work below is migration reference, not the new work plan.
+The owner will create an economical-model chat for T1; the coordinator integrates
+and reviews. Broader protocol/client coverage remains required by intends.md.
+
+PR 4 is merged as 4ed2bd5; local main was synchronized before creating the rewrite
+branch. Required PR CI passed. Post-merge main CI passed both Python jobs and
+runtime smoke but failed one container browser test (108 passed, one failed):
+late configuration initialization overwrote an early endpoint input. Preserve the
+original failure/trace; fix this behavior in the new initialization flow rather
+than introducing sleeps/retries. Source startup-regression draft is retained as an
+ignored patch, not claimed executed. See the
+[publication outcome](https://github.com/sleetdrop/anthropic-readiness/pull/4).
+The old milestones and acceptance records below are historical; none establishes
+TypeScript implementation, real client support or current endpoint compatibility.
 
 ## macOS development GitHub workflow
 

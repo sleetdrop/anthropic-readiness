@@ -28,7 +28,7 @@ remaining failures and missing coverage.
   and a repository Agent command for periodically reviewing protocol changes.
   Provide version comparisons and locking guidance only to the extent tested;
   an API date alone does not pin model behavior or guarantee workflow stability.
-- One execution engine usable through a local Docker Web application and CLI.
+- One execution engine usable through a local Web application and CLI.
   The Web view emphasizes global progress and actionable exceptions; details are
   available without turning the overview into a long report. CLI runs also write
   reports. Exported reports work independently of the running application.
@@ -78,9 +78,13 @@ testing, model ranking, load testing and hosted multi-user collaboration are
 outside its current intent. Do not infer endpoint internals, certify untested
 features, or claim complete coverage of a changing protocol.
 
-Use modern typed Python, appropriate GitHub CI, human/Agent-friendly contribution
-guidance and Docker delivery to support this purpose. Local development need not
-require Docker; retain the checked-in Dev Container for reproducible Linux checks.
+The owner authorized a TypeScript/Node rewrite on 2026-11-01. Use one Node LTS
+runtime and a shared CLI/Web engine with proportionate checks and contribution
+guidance. Initial development, use and CI must not require Python, Docker, Compose
+or Dev Container. Add container delivery only after the tool is useful and mature.
+The existing Python implementation is migration reference, not a requirement to
+port its architecture or maintain a permanent second stack. Preserve useful
+protocol rules, synthetic fault controls and accepted interaction design.
 Keep private targets, secrets and original service logs out of source and public
 artifacts. Preserve the repository's evidence and engineering rules.
 

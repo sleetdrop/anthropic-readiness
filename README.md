@@ -1,5 +1,11 @@
 # Anthropic Readiness
 
+The active work is a local-first TypeScript rewrite. Start with
+[the rewrite entry point](docs/refactor/README.md). Development and checks in
+`next/` require Node 24, not Python, Docker or Dev Container. The new package is
+currently supporting scaffolding, not yet a runnable endpoint diagnostic. The
+Python application and container instructions below describe the legacy version.
+
 A local diagnostic workbench and independent CLI for black-box checks of a scoped subset
 of Anthropic Messages. Preview a fixed plan, explicitly start it, observe real
 progress, and inspect or export the evidence-led report. Execution completion and

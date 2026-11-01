@@ -1,5 +1,9 @@
 # Development
 
+Current work uses the [TypeScript rewrite](refactor/README.md): Node 24, `next/`,
+`npm ci` and `npm run check`. Python and container preparation below is historical
+reference and is not required for rewrite work. Container delivery is deferred.
+
 Develop on the host or in the optional checked-in Linux/Python 3.12 Dev Container.
 The container supplies pinned uv and Node, browser system libraries and CJK fonts;
 its post-create step prepares Python, npm and Playwright Chromium. It remains the

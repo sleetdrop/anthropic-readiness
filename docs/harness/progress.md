@@ -2186,3 +2186,28 @@ loopback-bind failures, then passed unchanged with local-service permission:
 all eight gates, 518 Python and 33 frontend unit checks. Bounded independent review
 found no issue. Second pre-budget CI 41268709597 passed runtime-amd64; final
 exact-head full CI and merge remain to be observed in the PR 4 timeline.
+
+## 2026-11-01: owner-authorized local-first TypeScript rewrite start
+
+The owner approved replacing the Python stack with TypeScript/Node, deferring
+Docker/Compose/Dev Container until useful mature operation. Current entry point:
+docs/refactor/README.md; bounded economical-model task:
+docs/refactor/task-01-message-validation.md. Old CI/container requirements are
+historical, not prerequisites for the rewrite. Main PR 4 merged, with its later
+container startup/input race retained as an unresolved defect; see its timeline.
+
+Added next/ with Node 24, a locked two-tool TypeScript package, shared observations
+and evidence locations, complete five-case migration inventory and selection/
+uncertainty controls. Five new core tests first failed for absent implementation,
+then passed with strict type checking. An isolated copy outside this repository
+installed its own locked dependencies offline and passed the same checks, proving
+it does not depend on the root Python/npm project. An initial offline dependency
+preparation cache miss is retained separately from successful public installation.
+
+This is supporting-only scaffolding: zero new runnable TypeScript endpoint cases,
+no live calls, no SDK/CLI/Web implementation, no old-data migration, no remote CI
+or publishing. The earlier browser regression draft is preserved in ignored
+artifacts/configuration-startup-20261101/configure-draft.patch and is not called
+verified. Original failed CI logs/traces remain. A user-created implementation
+chat will own only the T1 protocol files; the coordinator handles integration and
+review. Do not repeat legacy full/container graphs for this independent package.

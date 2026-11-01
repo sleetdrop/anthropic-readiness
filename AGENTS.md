@@ -15,7 +15,28 @@ owner-approved baseline, reference images and scope. Preserve accepted patterns
 and semantic colors; record intentional refinements instead of following older
 visual experiments. Prototype acceptance is separate from product implementation.
 
-## Development
+## Active TypeScript rewrite
+
+The owner authorized replacing the Python implementation on 2026-11-01. Read
+`docs/refactor/README.md` for the bounded delivery sequence and task ownership.
+`next/` is the active implementation until cutover; do not grow a permanent dual
+stack. Python source and previous milestone documents are historical reference.
+Current owner instructions supersede their mandatory-container and multi-version
+acceptance requirements. Preserve observed failures and useful protocol controls.
+
+- Work locally with Node 24 LTS. In `next/`: `npm ci`, then `npm run check`.
+- New development and checks must not invoke Python, Docker, Compose or Dev
+  Container. Container packaging is deferred until actual use warrants it.
+- Keep CLI/Web on one execution engine; keep raw protocol and SDK outcomes separate.
+- A catalog or scaffolding test is not an implemented endpoint scenario.
+- The owner will create an economical-model chat for the bounded protocol task.
+  Use its documented file ownership; the coordinating chat integrates and reviews.
+  Do not create per-step agents or restart broad reviews for every small edit.
+- Root Python/npm/CI commands below belong to the legacy implementation. They are
+  not prerequisites for new TypeScript work. Replace old CI at runnable cutover;
+  do not report its container jobs as current rewrite acceptance.
+
+## Legacy development reference
 
 - Develop locally or in the checked-in Linux/Python 3.12 Dev Container. Follow
   `docs/development.md` for locked tools, known macOS gaps and Linux/container
