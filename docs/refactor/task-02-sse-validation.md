@@ -1,6 +1,13 @@
 # T2: bounded SSE validation and message assembly
 
-Ready for the existing T1 implementation chat. This continues the same protocol
+Delivered in da4c677 and corrected after review in 7fc630b (2026-11-01).
+Coordinator integration adds official-spec controls for repeated message_delta,
+intermediate null stop reasons and whitespace around JSON null payloads. This task
+is a scope record, not a request to restart implementation. Resource-policy limits
+are environment/BLOCKED, not protocol violations; a legal error stream need not
+complete the normal successful-message lifecycle.
+
+This continues the same protocol
 implementation direction; no new chat, model or planning/approval cycle is needed.
 Read this task and the current domain/message validator, not the entire old history.
 

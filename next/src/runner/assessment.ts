@@ -16,6 +16,9 @@ export interface PlanInput {
   runMs?: number;
   attemptMs?: number;
   maxBytes?: number;
+  maxTokens?: number;
+  readMs?: number;
+  connectMs?: number;
   aliases?: readonly string[];
   checkModelIdentity?: boolean;
 }
@@ -25,12 +28,13 @@ export interface RunPlan {
   readonly aliases: readonly string[];
   readonly checkModelIdentity: boolean;
   readonly apiVersion: "2023-06-01";
-  readonly contract: "anthropic-messages-2023-06-01-core/1.0.0";
+  readonly contract: "typescript-messages-2023-06-01-core/0.2.0-dev";
   readonly profiles: readonly string[];
   readonly cases: readonly CaseDefinition[];
   readonly plannedRequests: number;
   readonly maxRequests: number;
   readonly runMs: number;
+  readonly maxTokens: number;
   readonly limits: HttpLimits;
 }
 export interface CaptureRecord {
@@ -42,6 +46,8 @@ export interface CaptureRecord {
   receivedBytes: number;
   retainedBytes: number;
   bodyBase64: string;
+  requestBodyBase64: string;
+  requestSha256: string;
   sha256: string;
   elapsedMs: number;
   message?: unknown;
@@ -114,7 +120,11 @@ export function createPlan(input: PlanInput): RunPlan {
   const runMs = input.runMs ?? 300_000;
   const attemptMs = input.attemptMs ?? 30_000;
   const maxBytes = input.maxBytes ?? 2 * 1024 * 1024;
-  if (![maxRequests, runMs, attemptMs, maxBytes].every(positive)) throw new Error("invalid_limits");
+  const maxTokens = input.maxTokens ?? 2048;
+  const readMs = input.readMs ?? attemptMs;
+  const connectMs = input.connectMs ?? Math.min(attemptMs, 5000);
+  if (![maxRequests, runMs, attemptMs, maxBytes, maxTokens, readMs, connectMs].every(positive))
+    throw new Error("invalid_limits");
   if (maxRequests < plannedRequests) throw new Error("insufficient_request_budget");
   return {
     endpoint: url.href,
@@ -122,16 +132,17 @@ export function createPlan(input: PlanInput): RunPlan {
     aliases: [...(input.aliases ?? [])],
     checkModelIdentity: input.checkModelIdentity ?? true,
     apiVersion: "2023-06-01",
-    contract: "anthropic-messages-2023-06-01-core/1.0.0",
+    contract: "typescript-messages-2023-06-01-core/0.2.0-dev",
     profiles: [...new Set(input.profiles)],
     cases,
     plannedRequests,
     maxRequests,
     runMs,
+    maxTokens,
     limits: {
       attemptMs,
-      connectMs: Math.min(attemptMs, 5000),
-      readMs: Math.min(attemptMs, 10000),
+      connectMs,
+      readMs,
       maxBytes,
     },
   };
@@ -183,16 +194,26 @@ function weatherTool(message: unknown): ObjectValue | undefined {
       item.input.city === "Hanoi",
   );
 }
-function requestBody(item: CaseDefinition, model: string): ObjectValue {
+function exactReply(message: unknown, expected: string): Status {
+  if (text(message).trim() !== expected) return "FAIL";
+  const blocks = content(message);
+  if (blocks.some((block) => block.type === "tool_use")) return "FAIL";
+  return blocks.some(
+    (block) => !["text", "thinking", "redacted_thinking"].includes(String(block.type)),
+  )
+    ? "INDETERMINATE"
+    : "PASS";
+}
+function requestBody(item: CaseDefinition, model: string, maxTokens: number): ObjectValue {
   const tool = item.capabilities.includes("tools");
   const prompt = tool
     ? "Use get_weather to check the weather in Hanoi. After receiving a tool result, reply with only its verification_token."
     : item.id === "ANT-TEXT-SSE-002"
-      ? "Count from 1 to 5, using digits only."
-      : "Say hello in one short sentence.";
+      ? "Count from 1 to 5. Reply with exactly: 1 2 3 4 5"
+      : "Reply with exactly HELLO, without punctuation or explanation.";
   return {
     model,
-    max_tokens: 512,
+    max_tokens: maxTokens,
     stream: item.response === "sse",
     messages: [{ role: "user", content: prompt }],
     ...(tool
@@ -250,8 +271,9 @@ export async function executePlan(plan: RunPlan, options: ExecutionOptions): Pro
           ? ["authorization", `Bearer ${options.token}`]
           : ["x-api-key", options.token],
       );
+    const requestBytes = Buffer.from(JSON.stringify(body));
     const captured = await captureHttp(
-      { url: plan.endpoint, body: Buffer.from(JSON.stringify(body)), headers },
+      { url: plan.endpoint, body: requestBytes, headers },
       {
         ...plan.limits,
         attemptMs: Math.max(
@@ -270,6 +292,8 @@ export async function executePlan(plan: RunPlan, options: ExecutionOptions): Pro
       receivedBytes: captured.receivedBytes,
       retainedBytes: captured.body.length,
       bodyBase64: captured.body.toString("base64"),
+      requestBodyBase64: requestBytes.toString("base64"),
+      requestSha256: createHash("sha256").update(requestBytes).digest("hex"),
       sha256: createHash("sha256").update(captured.body).digest("hex"),
       elapsedMs: captured.elapsedMs,
     };
@@ -390,7 +414,7 @@ export async function executePlan(plan: RunPlan, options: ExecutionOptions): Pro
         results.push(finishCase(item.id, observations, captures));
         continue;
       }
-      const body = requestBody(item, plan.model);
+      const body = requestBody(item, plan.model, plan.maxTokens);
       let message = await exchange(body, item, observations, captures);
       if (item.id === "ANT-TOOL-LOOP-001") {
         const tool = weatherTool(message);
@@ -420,15 +444,17 @@ export async function executePlan(plan: RunPlan, options: ExecutionOptions): Pro
             ],
           };
           message = await exchange(followup, item, observations, captures);
-          const passed = text(message).trim() === nonce;
+          const taskStatus = exactReply(message, nonce);
           observations.push(
             observation(
               "TASK-TOOL-RESULT",
               "behavior",
-              message === null ? "INDETERMINATE" : passed ? "PASS" : "FAIL",
+              message === null || (taskStatus !== "PASS" && captures.some((c) => c.end !== "eof"))
+                ? "INDETERMINATE"
+                : taskStatus,
               "tool_result_consumption",
               "fresh tool result token",
-              passed ? "token consumed" : "token not observed",
+              taskStatus === "PASS" ? "only token returned" : "missing token or extra output",
             ),
           );
         } else
@@ -443,28 +469,28 @@ export async function executePlan(plan: RunPlan, options: ExecutionOptions): Pro
             ),
           );
       } else {
-        const passed =
+        const taskStatus: Status =
           item.id === "ANT-TOOL-FORCED-001"
-            ? !!weatherTool(message)
-            : item.id === "ANT-TEXT-SSE-002"
-              ? (text(message).match(/\d+/gu) ?? []).join(",") === "1,2,3,4,5"
-              : text(message).trim().length > 0;
+            ? weatherTool(message)
+              ? "PASS"
+              : "FAIL"
+            : exactReply(message, item.id === "ANT-TEXT-SSE-002" ? "1 2 3 4 5" : "HELLO");
         observations.push(
           observation(
             "TASK-COMPLETE",
             "behavior",
-            passed
+            taskStatus === "PASS"
               ? "PASS"
               : message === null || captures.some((c) => c.end !== "eof")
                 ? "INDETERMINATE"
-                : "FAIL",
+                : taskStatus,
             "selected_task_behavior",
             item.id === "ANT-TOOL-FORCED-001"
               ? "get_weather with city Hanoi"
               : item.id === "ANT-TEXT-SSE-002"
-                ? "digits 1 through 5"
-                : "nonempty greeting text",
-            passed ? "observed" : "not observed",
+                ? "exact text: 1 2 3 4 5"
+                : "exact text: HELLO",
+            taskStatus === "PASS" ? "observed" : text(message).slice(0, 160) || "not observed",
           ),
         );
       }

@@ -16,10 +16,18 @@ function escape(value: string): string {
 }
 export function markdown(report: RunResult, language: "zh" | "en"): string {
   const zh = language === "zh";
-  const rows = report.cases.map(
-    (item) =>
-      `| ${escape(item.id)} | ${item.protocolStatus} | ${item.behaviorStatus} | ${item.attemptsStarted} / ${report.plan.cases.find((c) => c.id === item.id)?.maxRequests ?? "?"} |`,
-  );
+  const rows = report.cases.map((item) => {
+    const models = item.captures.flatMap((capture) => {
+      const value = capture.message;
+      return value &&
+        typeof value === "object" &&
+        "model" in value &&
+        typeof value.model === "string"
+        ? [value.model]
+        : [];
+    });
+    return `| ${escape(item.id)} | ${item.protocolStatus} | ${item.behaviorStatus} | ${escape([...new Set(models)].join(", ") || "—")} | ${item.attemptsStarted} / ${report.plan.cases.find((c) => c.id === item.id)?.maxRequests ?? "?"} |`;
+  });
   const details = report.cases.flatMap((item) =>
     item.observations
       .filter((obs) => obs.status !== "PASS")
@@ -38,9 +46,9 @@ export function markdown(report: RunResult, language: "zh" | "en"): string {
     `${zh ? "SDK / Claude Code" : "SDK / Claude Code"}: ${zh ? "未实测" : "not tested"}`,
     "",
     zh
-      ? "| 场景 | 协议检查 | 任务行为 | 请求尝试 |"
-      : "| Scenario | Protocol checks | Task behavior | Request attempts |",
-    "| --- | --- | --- | --- |",
+      ? "| 场景 | 协议检查 | 任务行为 | 响应声明的模型 | 请求尝试 |"
+      : "| Scenario | Protocol checks | Task behavior | Reported model | Request attempts |",
+    "| --- | --- | --- | --- | --- |",
     ...rows,
     "",
     zh ? "## 需要查看的观测" : "## Observations to inspect",
@@ -77,6 +85,9 @@ export async function main(args: string[]): Promise<number> {
         "run-ms": { type: "string" },
         "attempt-ms": { type: "string" },
         "max-bytes": { type: "string" },
+        "max-tokens": { type: "string" },
+        "read-ms": { type: "string" },
+        "connect-ms": { type: "string" },
         "allow-live": { type: "boolean" },
         "auth-env": { type: "string" },
         "auth-mode": { type: "string" },
@@ -87,7 +98,7 @@ export async function main(args: string[]): Promise<number> {
     });
     if (values.help) {
       console.log(
-        "plan|run --endpoint MESSAGES_URL_OR_BASE --model MODEL [--profile ID ...] [--out NEW_DIR --allow-live] [--auth-env ENV_NAME --auth-mode api_key|bearer] [--language zh|en]",
+        "plan|run --endpoint MESSAGES_URL_OR_BASE --model MODEL [--profile ID ...] [--out NEW_DIR --allow-live] [--auth-env ENV_NAME --auth-mode api_key|bearer] [--language zh|en] [--max-requests N --max-tokens N --run-ms N --attempt-ms N --read-ms N --connect-ms N --max-bytes N]",
       );
       return 0;
     }
@@ -107,6 +118,9 @@ export async function main(args: string[]): Promise<number> {
       ...(values["run-ms"] !== undefined ? { runMs: Number(values["run-ms"]) } : {}),
       ...(values["attempt-ms"] !== undefined ? { attemptMs: Number(values["attempt-ms"]) } : {}),
       ...(values["max-bytes"] !== undefined ? { maxBytes: Number(values["max-bytes"]) } : {}),
+      ...(values["max-tokens"] !== undefined ? { maxTokens: Number(values["max-tokens"]) } : {}),
+      ...(values["read-ms"] !== undefined ? { readMs: Number(values["read-ms"]) } : {}),
+      ...(values["connect-ms"] !== undefined ? { connectMs: Number(values["connect-ms"]) } : {}),
     });
     if (command === "plan") {
       console.log(JSON.stringify(plan, null, 2));

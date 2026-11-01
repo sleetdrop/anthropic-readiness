@@ -67,3 +67,39 @@ The coordinator owns runner/CLI paths; T2 owns only the listed pure protocol/tes
 files. The public SSE result contract is specified before parallel integration.
 No new execution or acceptance is claimed by this task assignment; CLI integration
 and a usable first migrated endpoint run remain the next hands-on checkpoint.
+
+## 2026-11-01: reviewed five-scenario Node CLI trial
+
+T2 da4c677/7fc630b was integrated after limited review: preserve captured event
+objects during assembly, classify parser resource caps as environment limits,
+retain incomplete capture, keep valid empty tool input, avoid fabricated JSON
+locations and distinguish service-error termination from the successful lifecycle.
+Coordinator controls also corrected repeated message_delta/intermediate null stop
+reasons against official streaming/SDK sources, and a whitespace JSON-null bug.
+References: https://platform.claude.com/docs/en/build-with-claude/streaming and
+https://github.com/anthropics/anthropic-sdk-typescript/blob/main/src/resources/messages/messages.ts
+
+Baseline 1706639 introduced shared execution and the actual CLI. One independent
+limited review found three behavior false-passes; RED controls reproduced them.
+Plain/streamed text now asks for exact HELLO, counting exact 1 2 3 4 5, and tool
+result completion rejects extra tool calls. Relevant cases advance to revision 2;
+no old golden/capture was changed. Request bodies/hashes retain the nonce evidence,
+without request auth headers. Tokens and all time/capture bounds are configurable.
+The rewrite has its own development rule snapshot and typescript-run/1 result,
+not an assertion that the old bundle/readers have been ported unchanged.
+
+Final Node24 strict types and 60 executed tests passed, zero skips/todos/failures.
+A real CLI subprocess ran all five cases/six requests against synthetic services,
+wrote reports and pre-validation raw captures, excluded authentication values,
+refused directory reuse, and verified fresh nonces across repeated runs. Original
+REDs and denied loopback attempts remain in ignored artifacts. Test transcripts:
+artifacts/configuration-startup-20261101/cli-delivery-final-check.log and earlier
+review/negative-control logs; next/artifacts/protocol-t2-review-20261101/.
+
+This implements the five migrated endpoint scenarios in TypeScript, not broader
+live coverage: only synthetic services were tested. No actual model, SDK/Claude
+Code workflow, new Web UI, compressed-body decoder, duplicate-key parser, HTML/ZIP
+export or legacy archive reader is established. No remote push/CI or container run.
+See docs/refactor/cli-trial.md for preview/live opt-in and remaining scope. The
+implementation chat received final closure after a quota-blocked notification was
+successfully retried; no further broad review or new planning cycle was started.

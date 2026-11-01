@@ -6,10 +6,12 @@ run checks, inspect concrete evidence, share a diagnosis and verify a repair.
 
 ## Current status
 
-The active implementation is a TypeScript/Node rewrite in next/. It currently has
-shared contracts, a five-case/six-request migration inventory and core/harness
-controls. It does not yet execute endpoint requests or provide the new Web flow.
-A catalog or passing tool self-test is not implemented endpoint coverage.
+The TypeScript/Node implementation in next/ now has a runnable CLI for five migrated
+scenarios: plain/streamed controlled text, streamed counting, forced tool selection
+and a tool-result round trip. The complete scope reserves six request attempts.
+Read [the CLI trial guide](docs/refactor/cli-trial.md) for preview, explicit live
+admission, evidence and limits. It has been verified with synthetic services, not
+real models. The new Web UI, broader cases and SDK/client checks remain unfinished.
 
 The [rewrite entry point](docs/refactor/README.md) records the delivery sequence;
 [current status](docs/CONTINUE.md) stays concise. The previous Python application,

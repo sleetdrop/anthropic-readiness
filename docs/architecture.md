@@ -10,7 +10,9 @@ SDK/client results remain distinct. The accepted investigation/report presentati
 is governed by [design.md](../design.md). No container dependency or multi-provider
 framework is part of the initial implementation.
 
-The current next/ package contains shared contracts, selection controls and a small
-check harness. It is not yet a complete runner or Web product. The former Python
+The next/ package now runs the five migrated scenarios through shared raw HTTP,
+message/SSE validators and a CLI that writes evidence before parsing and final
+JSON/Markdown reports. See [the trial guide](refactor/cli-trial.md) for scope/gaps.
+It is not yet the new Web product or a real SDK/client test. The former Python
 architecture is retained as [reference](architecture-python-legacy.md); its worker,
 SQLite, export and compatibility-reader layers are not requirements to port.

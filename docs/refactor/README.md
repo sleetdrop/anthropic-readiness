@@ -28,13 +28,12 @@ plugin framework, generic multi-provider abstraction or distributed job system.
 
 ## Delivery order and hands-on checkpoints
 
-1. Current setup: independent Node package, core contracts and selection controls.
-   This is supporting-only work: no TypeScript endpoint runner exists yet.
-2. Complete final-message and SSE validators with valid/faulty synthetic controls.
-   In parallel by file ownership, integrate bounded raw capture and CLI execution.
-   Preserve all five existing scenarios and their six-request complete selection.
-   Allow an early CLI trial as soon as that path actually runs; do not wait for a
-   redesigned report, container build or all planned features to finish.
+1. Done: independent Node package, core contracts and selection controls.
+2. Done for the five-case migration: final-message/SSE validators and Node CLI,
+   verified with valid/faulty synthetic services. See [the trial guide](cli-trial.md).
+   Bounded raw capture and CLI execution are integrated, preserving all five
+   existing scenarios and their six-request complete selection. Trial this CLI
+   before extending presentation, container delivery or the remaining catalog.
 3. Add the next useful diagnostic scenarios: streamed tool-argument assembly and
    result round trip, multi-turn context, invalid-request/error handling, and an
    explicitly versioned SDK workflow. These are planned cases, not delivered
@@ -76,11 +75,11 @@ Branch: `codex/typescript-refactor`. Implementation chat: local
 `01a1957d-20a0-7491-aefb-2a509bc9a836`. T1 final-message validation is implemented
 and coordinator-reviewed (189ff93, correction 2932a74). Its
 [task and exact owned paths](task-01-message-validation.md) remain a scope record,
-not a request to repeat the task. The coordinator also implemented the bounded raw
-HTTP adapter; SSE validation and CLI case execution remain next.
-The same implementation chat now owns [T2 SSE validation](task-02-sse-validation.md);
-the coordinator owns runner/CLI integration. No new chat or model change is needed
-for this continuation of the protocol direction.
+not a request to repeat the task. [T2 SSE validation](task-02-sse-validation.md) was
+delivered in da4c677 and corrected in 7fc630b. The coordinator integrated the raw
+HTTP adapter, shared five-scenario engine and JSON/Markdown CLI; the implementation
+chat completed one limited integration review. Corrections and actual checks are
+recorded in docs/harness/progress.md. No new chat/model is needed merely to resume.
 The coordinator integrates/reviews this direction; a second broad agent review of
 the same small change is unnecessary. Chats may communicate under the owner's
 explicit authorization, without repeatedly routing technical details through them.

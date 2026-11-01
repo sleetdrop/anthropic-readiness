@@ -375,15 +375,11 @@ export function validateSse(
 
     if (event.event === "message_delta") {
       if (active !== null) failLifecycle(event, "message_delta_with_open_block", "all content blocks stopped before message_delta", "content block still open");
-      if (deltaSeen) {
-        failLifecycle(event, "duplicate_message_delta", "one message_delta", "duplicate message_delta");
-        return;
-      }
       deltaSeen = true;
       const deltaField = checkField(data, "delta", "", isObject, "JSON object", event.index, "SSE-MESSAGE-DELTA");
       if (!deltaField.valid || !isObject(deltaField.value)) return;
       const delta = deltaField.value;
-      const stopReason = checkField(delta, "stop_reason", "/delta", (value) => typeof value === "string" && value.length > 0, "nonempty string stop reason", event.index, "SSE-MESSAGE-DELTA");
+      const stopReason = checkField(delta, "stop_reason", "/delta", (value) => value === null || typeof value === "string" && value.length > 0, "string stop reason or intermediate null", event.index, "SSE-MESSAGE-DELTA");
       const stopSequence = checkField(delta, "stop_sequence", "/delta", (value) => value === null || typeof value === "string", "string or null", event.index, "SSE-MESSAGE-DELTA");
       if (assembled !== null) {
         if (stopReason.valid) assembled.stop_reason = stopReason.value;
@@ -472,9 +468,11 @@ export function validateSse(
     const index = dispatchedCount++;
     const data = dataLines.join("\n");
     let value: unknown = null;
+    let parsedJson = false;
     if (!invalidUtf8) {
       try {
         value = JSON.parse(data);
+        parsedJson = true;
       } catch {
         add("SSE-JSON", "FAIL", "event_json_invalid", "valid JSON data", "malformed JSON");
       }
@@ -483,7 +481,7 @@ export function validateSse(
     }
     const event: SseEvent = { index, event: eventName, data, value };
     events.push(event);
-    if (invalidUtf8 || (value === null && data !== "null")) {
+    if (invalidUtf8 || !parsedJson) {
       if (eventName === "error") {
         add("SSE-ERROR", "FAIL", "error_event_received", "successful message stream", "server error event received", undefined, "", undefined, "behavior");
       }

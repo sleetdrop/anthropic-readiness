@@ -7,20 +7,25 @@ Compose and Dev Container until useful mature operation. Read [AGENTS.md](../AGE
 and [the rewrite entry point](refactor/README.md); use [development](development.md)
 for the one Node check entry point. Historical milestone rules do not govern this work.
 
-Branch: codex/typescript-refactor. Baseline 7f836d1 introduced next/ with shared
-observations/evidence locations, a complete five-case/six-request migration inventory
-and five core controls. No TypeScript endpoint runner, SDK check or Web flow is
-implemented yet; no added endpoint coverage is claimed by scaffolding/harness work.
+Branch: codex/typescript-refactor. The Node CLI now executes the five migrated
+scenarios, reserving six request attempts for complete scope. It writes raw capture
+records before parsing, then result.json and Chinese/English report.md. See
+[the trial guide](refactor/cli-trial.md); preview makes no requests and execution
+requires explicit live admission. Synthetic service/CLI checks passed; no actual
+model outcome, new Web UI or SDK/client compatibility is claimed.
 
-[T1 message validation](refactor/task-01-message-validation.md) is implemented by
-chat 01a1957d-20a0-7491-aefb-2a509bc9a836 and coordinator-reviewed: commits 189ff93
-and correction 2932a74. Its two-file ownership was respected during parallel work.
-The coordinator's bounded raw HTTP capture adapter is also implemented. Integrated
-strict types and 29 Node tests passed. Next: SSE validation and CLI execution of
-the selected cases; no complete TypeScript endpoint scenario is runnable yet.
-[T2 SSE validation](refactor/task-02-sse-validation.md) has been assigned to the
-same implementation chat, retaining its current model/settings and protocol file
-ownership. The coordinator owns runner/CLI work and will review/integrate T2.
+T1/T2 were implemented in chat 01a1957d-20a0-7491-aefb-2a509bc9a836, with
+coordinator review/corrections. The coordinator implemented HTTP capture, shared
+execution and CLI; baseline 1706639 was independently reviewed in that chat.
+Task false-passes were reproduced and corrected using deterministic text, strict
+counting and nonce-only tool results. Related case revisions are now 2. The new
+rule snapshot is typescript-messages-2023-06-01-core/0.2.0-dev, not the old Python
+bundle identifier. Final strict types and 60 executed tests passed, no skips/todos.
+
+Next hands-on checkpoint: use the CLI with the owner's selected current endpoint,
+model and explicit request/time budget. Broader streamed-tool, multi-turn/error
+cases and SDK tests remain product priorities; five migrated cases are not the
+finished catalog. The new Web flow should reuse accepted design when implemented.
 
 The active harness now uses Node checks/hooks/CI only. Old docs have explicit
 legacy entry points; scheduled image CI is outside .github/workflows. See

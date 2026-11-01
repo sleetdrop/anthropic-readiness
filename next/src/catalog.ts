@@ -1,4 +1,4 @@
-/** Migration inventory only: a catalog entry does not establish an implemented runner. */
+/** Versioned selection inventory. Execution and endpoint outcomes are verified separately. */
 export interface CaseDefinition {
   readonly id: string;
   readonly revision: number;
@@ -11,7 +11,7 @@ export interface CaseDefinition {
 export const cases: readonly CaseDefinition[] = [
   {
     id: "ANT-MESSAGE-001",
-    revision: 1,
+    revision: 2,
     profile: "anthropic-basic",
     response: "json",
     maxRequests: 1,
@@ -19,7 +19,7 @@ export const cases: readonly CaseDefinition[] = [
   },
   {
     id: "ANT-TEXT-SSE-001",
-    revision: 1,
+    revision: 2,
     profile: "anthropic-basic",
     response: "sse",
     maxRequests: 1,
@@ -27,7 +27,7 @@ export const cases: readonly CaseDefinition[] = [
   },
   {
     id: "ANT-TEXT-SSE-002",
-    revision: 1,
+    revision: 2,
     profile: "anthropic-basic",
     response: "sse",
     maxRequests: 1,
@@ -43,7 +43,7 @@ export const cases: readonly CaseDefinition[] = [
   },
   {
     id: "ANT-TOOL-LOOP-001",
-    revision: 1,
+    revision: 2,
     profile: "anthropic-tool-loop",
     response: "json",
     maxRequests: 2,

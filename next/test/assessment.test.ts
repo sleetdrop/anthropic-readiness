@@ -16,6 +16,9 @@ test("plan reserves the full scope and rejects insufficient budgets or invalid c
   const plan = createPlan(input);
   assert.equal(plan.plannedRequests, 6);
   assert.equal(plan.cases.length, 5);
+  const configured = createPlan({ ...input, maxTokens: 8192, readMs: 60000, attemptMs: 90000 });
+  assert.equal(configured.maxTokens, 8192);
+  assert.equal(configured.limits.readMs, 60000);
   assert.throws(() => createPlan({ ...input, maxRequests: 5 }), /insufficient_request_budget/);
   assert.throws(() => createPlan({ ...input, model: "" }), /invalid_model/);
   assert.throws(() => createPlan({ ...input, runMs: 0 }), /invalid_limits/);
@@ -88,6 +91,21 @@ test("execution requires explicit live admission before any connection", async (
   );
 });
 
+test("cancellation retains every selected case without admitting any request", async () => {
+  const controller = new AbortController();
+  controller.abort();
+  const result = await executePlan(createPlan(input), {
+    allowLive: true,
+    signal: controller.signal,
+  });
+  assert.equal(result.attemptsStarted, 0);
+  assert.equal(result.cases.length, 5);
+  assert.equal(result.status, "INDETERMINATE");
+  assert.ok(
+    result.cases.every((item) => item.lifecycle === "not_run" && item.status === "INDETERMINATE"),
+  );
+});
+
 test("five selected scenarios run six requests and consume a fresh tool result", async (t) => {
   const requests: Record<string, unknown>[] = [];
   const server = createServer(async (req, res) => {
@@ -96,6 +114,7 @@ test("five selected scenarios run six requests and consume a fresh tool result",
     const body = JSON.parse(text) as Record<string, unknown>;
     requests.push(body);
     assert.equal(req.headers["anthropic-version"], "2023-06-01");
+    assert.equal(body.max_tokens, 2048);
     const messages = body.messages as { role: string; content: unknown }[];
     const last = messages.at(-1)?.content;
     const toolResult = Array.isArray(last) ? (last[0] as Record<string, unknown>) : null;
@@ -106,7 +125,7 @@ test("five selected scenarios run six requests and consume a fresh tool result",
     const count = JSON.stringify(messages).includes("1 to 5");
     const content = forced
       ? [{ type: "tool_use", id: "call-1", name: "get_weather", input: { city: "Hanoi" } }]
-      : [{ type: "text", text: token ?? (count ? "1 2 3 4 5" : "Hello.") }];
+      : [{ type: "text", text: token ?? (count ? "1 2 3 4 5" : "HELLO") }];
     const message = {
       id: "msg-fixture",
       type: "message",
@@ -220,4 +239,61 @@ test("five selected scenarios run six requests and consume a fresh tool result",
     /output_directory_must_be_new/u,
   );
   assert.equal(requests.length, count);
+});
+
+test("controlled tasks reject incidental digits, non-greetings and extra tool calls", async (t) => {
+  const server = createServer(async (req, res) => {
+    let raw = "";
+    for await (const chunk of req) raw += String(chunk);
+    const body = JSON.parse(raw);
+    const messages = body.messages;
+    const tail = messages.at(-1).content;
+    const followup = Array.isArray(tail) ? JSON.parse(tail[0].content) : null;
+    const forced = body.tool_choice?.type === "tool";
+    const bad = JSON.stringify(messages).includes("1 to 5")
+      ? "Answer: 1,2,3,4,5"
+      : "I cannot help with that.";
+    const tool = { type: "tool_use", id: "tool-1", name: "get_weather", input: { city: "Hanoi" } };
+    const content = forced
+      ? [tool]
+      : followup
+        ? [{ type: "text", text: followup.verification_token }, tool]
+        : [{ type: "text", text: bad }];
+    res.setHeader("content-type", body.stream ? "text/event-stream" : "application/json");
+    if (body.stream) {
+      const fixture = readFileSync(
+        new URL("../../tests/fixtures/contracts/core-1.0.0/stream-valid.sse", import.meta.url),
+        "utf8",
+      );
+      res.end(fixture.replaceAll("example-model", "synthetic").replaceAll("Hello.", bad));
+    } else
+      res.end(
+        JSON.stringify({
+          id: "msg",
+          type: "message",
+          role: "assistant",
+          model: "synthetic",
+          content,
+          stop_reason: forced || followup ? "tool_use" : "end_turn",
+          stop_sequence: null,
+          usage: { input_tokens: 1, output_tokens: 1 },
+        }),
+      );
+  });
+  await new Promise<void>((resolve, reject) => {
+    server.once("error", reject);
+    server.listen(0, "127.0.0.1", resolve);
+  });
+  t.after(async () => {
+    server.closeAllConnections();
+    await new Promise<void>((resolve) => server.close(() => resolve()));
+  });
+  const addr = server.address();
+  if (!addr || typeof addr === "string") throw new Error("fixture_address");
+  const report = await executePlan(
+    createPlan({ ...input, endpoint: `http://127.0.0.1:${addr.port}/v1/messages` }),
+    { allowLive: true },
+  );
+  for (const item of report.cases.filter((item) => item.id !== "ANT-TOOL-FORCED-001"))
+    assert.equal(item.behaviorStatus, "FAIL", item.id);
 });
