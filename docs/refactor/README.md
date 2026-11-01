@@ -8,11 +8,13 @@ active product route, not another sequence of plan-approval rituals.
 
 ## Goal and current shortfall
 
-Deliver a specialized Anthropic Messages compatibility assessment application for
-endpoint users and inference-stack maintainers. The complete user workflow is:
-configure a target and protocol scope, follow a run, investigate a precise finding,
-share reproducible evidence with a colleague/Agent, then verify a repair. Both Web
-and CLI use one engine. SDK/client outcomes are separate from wire/task results.
+Deliver an Anthropic Messages compatibility assessment application for consumers
+and providers of self-hosted model APIs claiming that protocol. Configure the
+target and declared version/features, follow a systematic run, inspect compatibility
+and deviations, and export reproducible coverage/results. Repeat assessment can
+compare implementation/model/version changes, with optional evidence sharing and
+repair verification.
+Both Web and CLI use one engine; optional client outcomes remain separate.
 
 The five-scenario CLI is a working migration checkpoint, not that product. Next/
 currently has only catalog/domain, message/SSE validators, HTTP execution and CLI.
@@ -51,11 +53,12 @@ catalog; do not defer its first working version until every protocol feature is 
 
 ### A. Usable diagnostic application with trustworthy core results
 
-Integrate a working local Web flow now and broaden the core as one delivery:
+Integrate a working local Web flow now and broaden core Messages coverage as one delivery:
 
 - One local Node start command; endpoint/model/auth setup with advanced settings
   secondary, endpoint/model history without stored secrets, explicit scope and
-  request/time bounds. Web and CLI submit the same plan and execute the same cases.
+  request/time bounds. Include the target's declared/required features separately
+  from observed support. Web and CLI submit the same plan and execute the same cases.
 - Real progress/cancel/history and exchange details; no fabricated progress. Reuse
   the approved issue -> occurrence -> evidence -> return flow, language/theme pair,
   and precise JSON/event markers without changing copied source data.
@@ -82,7 +85,7 @@ both languages/themes and no accidental connection to a real endpoint. This is a
 hands-on checkpoint, not a complete compatibility claim. Do not deliver only UI
 with five old cases or only more validators without an operable application.
 
-### B. Comprehensive selected Messages contract and repair workflow
+### B. Comprehensive selected Messages contract and repeat assessment
 
 Complete the selected snapshot's manifest across request/response fields,
 content/event variants, tool choices/parallelism/errors, multi-turn state,
@@ -98,8 +101,10 @@ rejection outcome; a network timeout proves no protocol violation. Injected
 server/network faults remain synthetic evidence, not claimed live-target behavior.
 Handle compression and a deliberate duplicate-key policy; retain all selected but
 unexecuted work under budget/cancellation limits. Support offline replay and
-repair reruns/comparison without overwriting original evidence or reusing a fixed
-challenge. Reports expose remaining coverage rather than silently hiding it.
+repeat-run comparison without overwriting original evidence or reusing a fixed
+challenge. Repair verification is one optional comparison use. Reports expose
+claimed/tested scope, confirmed deviations, unsupported capabilities, inconclusive
+observations and untested coverage; they do not presume a broken client incident.
 
 B acceptance: the selected manifest has no undisclosed/unowned gaps; applicable
 implemented entries have suitable valid/faulty controls and end-to-end scenarios.
@@ -107,11 +112,8 @@ Rows still unsupported/not run remain visible and prevent a full-coverage claim.
 An automated coverage check should catch missing mappings using that same manifest,
 not add a parallel manually maintained ledger or mandatory per-case paperwork.
 
-### C. Actual clients, maintained snapshots and Node cutover
+### C. Maintained snapshots, Node cutover and supplementary clients
 
-Run pinned SDK workflows and deterministic Claude Code coding/tool workflows,
-recording exact versions/platform/scope. A client can succeed despite a wire
-finding; report that distinction. Never infer Claude Code readiness from HTTP200.
 Add explicit API/beta/rules/suite selection and version comparisons. Review both
 the retained 2023-06-01 compatibility target and the now-documented 2026-10-21
 version against authoritative changes before selecting/claiming support for them.
@@ -121,14 +123,22 @@ changes, propose new snapshot/rules/cases with controls, preserve old snapshots 
 flag affected client workflows. Produce a reviewable update rather than silently
 rewriting installed rules or fetching an unpinned latest contract during a test.
 Locking recommendations require observed client evidence; API dates do not lock
-model behavior. Finish the portable colleague/Agent repair package and compatible
-run comparison. Cut over the root entry points to Node and archive obsolete
+model behavior. Finish portable human/Agent-readable assessment exports and
+compatible run comparison. Cut over the root entry points to Node and archive obsolete
 Python instructions/dependencies once corresponding delivery is real.
 
-C acceptance: the owner/colleague can assess a chosen supported snapshot, inspect
-wire/task/actual-client results, share evidence and verify a repair. All inventory
-rows have explicit dispositions; required unfinished rows remain blockers. This
-closes the local product baseline, not every possible future protocol/model state.
+Offer pinned SDK workflows and deterministic Claude Code coding/tool workflows as
+supplementary assessments, recording exact client versions/platform/scope. A client
+can succeed despite a wire finding; report that distinction. Never infer Claude
+Code readiness from HTTP200. These workflows do not define the core compatibility
+verdict or block delivery/use of the protocol tool when unavailable or unselected.
+
+C acceptance: endpoint consumers/providers can assess a supported protocol
+snapshot, inspect wire/task outcomes and coverage limits, export evidence and
+repeat/compare assessment. All inventory rows have explicit dispositions; required
+unfinished core rows remain blockers. Optional clients show their own tested or
+unrun scope. This closes the local product baseline, not every possible future
+protocol/model state.
 
 ### D. Distribution after mature local use
 

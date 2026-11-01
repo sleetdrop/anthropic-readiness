@@ -158,3 +158,23 @@ and report remain unchanged; future snapshots/replay must state exact applicabil
 
 Documentation-only validation: changed-file local links and git diff --check;
 unchanged 60-test source evidence reused, no new test/CI/live outcome claimed.
+
+## 2026-11-01: owner updates the product purpose
+
+The original private model incident has ceased to be the product driver. The owner
+defines the tool as a systematic assessment of the actual Anthropic Messages
+compatibility of self-hosted APIs claiming that protocol. Consumers and providers,
+selected version/features, actual behavior/deviations and explicit coverage limits
+now define the workflow. A particular colleague, model problem or Claude Code
+incident is not a prerequisite. Sharing and repair reruns remain optional uses.
+
+Updated intent, current guides, coverage inventory and existing delivery route.
+SDK/Claude Code assessments remain separate supplementary features; their absence
+does not block the core protocol tool or determine its overall verdict. Controlled
+tasks exercise protocol behavior rather than rank model quality. Generic across
+Anthropic-compatible implementations does not expand this project to OpenAI or
+other protocol families. Accepted design and local-first Node constraints remain.
+
+Documentation-only change: checked affected local links and diff whitespace;
+no scenarios, assertions or UI were added. Reused unchanged-source verification;
+no additional live calls, remote writes or CI result.

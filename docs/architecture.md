@@ -6,7 +6,9 @@ sequence and module boundaries; [project intent](../intends.md) owns product sco
 
 One execution engine supplies CLI and local Web adapters. Pure protocol validation
 receives captured data and produces located observations. Raw protocol, task and
-SDK/client results remain distinct. The accepted investigation/report presentation
+SDK/client results remain distinct. Assess selected protocol claims across
+self-hosted APIs; optional client tests do not define the protocol verdict.
+The accepted investigation/report presentation
 is governed by [design.md](../design.md). No container dependency or multi-provider
 framework is part of the initial implementation.
 

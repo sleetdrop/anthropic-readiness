@@ -2,15 +2,18 @@
 
 ## Purpose and primary users
 
-Help an endpoint user or inference-stack maintainer diagnose observable Anthropic
-Messages incompatibilities across inference servers, protocol translators and API
-gateways, particularly those that disrupt Claude Code. Self-hosted DeepSeek, GLM
-and other models exposed through this interface are valid targets.
+Assess the actual Anthropic Messages compatibility of self-hosted model APIs that
+claim to implement that protocol. Serve endpoint consumers evaluating an API and
+providers validating their implementation, independently of any particular model,
+organization, incident or coding client. Inference servers, translators and API
+gateways are valid endpoint implementations; do not infer their internal topology.
 
-The defining workflow is: a chain changes, an agent behaves unexpectedly, the
-user runs relevant checks, shares reproducible evidence with a colleague and their
-coding agent, and repeats the checks after a repair to distinguish recovery from
-remaining failures and missing coverage.
+The defining workflow is: select an endpoint/model and its declared protocol scope,
+run a systematic assessment, inspect compatible behavior and observed deviations,
+and export a reproducible account of supported, unsupported, inconclusive and
+untested scope. Compare later runs to assess implementation/model/version changes.
+Evidence sharing and repair verification are optional uses of the same assessment
+and comparison capabilities.
 
 ## What the product must deliver
 
@@ -21,8 +24,10 @@ remaining failures and missing coverage.
 - Checks that identify concrete faults. Every supported scenario has a documented
   expected outcome and suitable valid/faulty offline controls. A rejected invalid
   request can be a success; a timeout cannot establish a protocol violation.
-- Real client checks for SDK and Claude Code workflows, with exact tested client,
-  platform and task scope. API-only success does not establish client readiness.
+- Optional real-client assessments for SDK and Claude Code workflows, with exact
+  tested client, platform and task scope. They supplement protocol assessment;
+  neither Claude Code success nor failure is the overall protocol verdict. An
+  endpoint assessment must be useful without installing or running Claude Code.
 - Repeatable execution against an explicitly selected protocol snapshot: API
   headers, beta set, rules and suite revision. Maintain official source references
   and a repository Agent command for periodically reviewing protocol changes.
@@ -37,7 +42,8 @@ remaining failures and missing coverage.
 - Concise, professional Chinese/English reports and interfaces, useful charts and
   matrices, light/dark themes, structured Agent-readable facts, references,
   expected/actual differences and enough sanitized evidence to reproduce issues.
-  Handoff and repair verification preserve original results and expose omissions.
+  Exports, comparison and optional repair verification preserve original results
+  and expose omissions.
 - An independent, restrained engineering-tool identity. Supporting Anthropic's
   protocol does not imply adopting its website/application branding or palette.
   Ground interactions in comparable diagnostic/test tools and observed usage;
@@ -86,6 +92,14 @@ An inventory is not coverage. Unknown capabilities and unexecuted cases never
 become passing results. An API date alone is not a reproducible rules snapshot.
 Keep raw protocol, configured model-identity expectations, task behavior and actual
 client compatibility distinguishable.
+
+Judge a target against the selected version/beta/features and its explicit claims.
+Distinguish a confirmed deviation, an unsupported capability, an unrun probe and
+an inconclusive observation. A rejected required capability is not an optional
+pass; optional feature absence does not by itself invalidate unrelated core
+compatibility. Use controlled tasks to exercise protocol behavior, not to rank
+model intelligence. Cover the protocol systematically rather than selecting only
+scenarios likely to reproduce one historical incident.
 
 The [delivery route](docs/refactor/README.md) and its
 [coverage inventory](docs/refactor/coverage.md) connect this intent to current work.

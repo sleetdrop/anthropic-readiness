@@ -3,14 +3,16 @@
 ## Goal and delivery route
 
 Build the focused Anthropic Messages assessment tool in [intends.md](../intends.md):
-run an explicit protocol scope through Web or CLI, inspect/share reproducible
-findings, then verify a repair. Read [the delivery route](refactor/README.md) and
+assess self-hosted APIs claiming that protocol against an explicit version/feature
+scope through Web or CLI, inspect findings/coverage and export results. Comparison
+and repair verification are optional follow-up uses. Read
+[the delivery route](refactor/README.md) and
 [coverage inventory](refactor/coverage.md). They replace migration-first sequencing;
 completed T1/T2 files are historical task records, not the next product objective.
 
 The coordinator owns coherent delivery, not case-by-case requests for the owner to
 choose work. The next product checkpoint is route A: an operable Node Web/CLI
-application together with expanded core Agent conversations and honest findings.
+application together with expanded core Messages scenarios and honest findings.
 Implement internally in small commits; do not call another validator or a five-case
 GUI the delivered product. Preserve the accepted design; no new visual exploration.
 
@@ -41,8 +43,9 @@ bind applicable rules/sources before claiming reproducible version conformance.
 
 Route A covers working Web interaction, core thinking/tool/multi-turn execution,
 evidence and portable reports, plus source/manifest and verdict-policy corrections.
-B completes selected-contract coverage and repair replay/reruns. C completes real
-SDK/Claude Code, maintained/selectable snapshots, repair handoff and Node cutover.
+B completes selected-contract coverage and repeatable comparison. C completes
+maintained/selectable snapshots and Node cutover. SDK/Claude Code are separate
+optional assessments, not blockers for the core protocol tool or its verdict.
 D defers distribution until mature use. The inventory retains optional-feature,
 negative-request and supplemental API gaps; none are implicitly retired.
 

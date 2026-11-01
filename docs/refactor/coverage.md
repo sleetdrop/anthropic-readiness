@@ -25,7 +25,7 @@ remain gaps until code and suitable controls exist; per-target outcomes remain
 unrun until that particular target is exercised. A single passing sample cannot
 certify all models, versions or workflows.
 
-## Required core for ordinary coding-agent chains
+## Required core for Messages protocol assessment
 
 | Area | Current implementation | Missing diagnostic outcome | Route |
 | --- | --- | --- | --- |
@@ -69,13 +69,18 @@ extensive preset. Budget exhaustion leaves selected cases incomplete.
 | Outcome | Current state | Remaining delivery | Route |
 | --- | --- | --- | --- |
 | Official TypeScript SDK | Not implemented/tested | Pinned client, disabled retries, raw/SDK result separation; text, streaming and tools with valid/faulty controls | C |
-| Claude Code | Not implemented/tested in the rewrite | Exact client/platform/config, deterministic disposable coding/tool task, real end-to-end outcome | C |
-| Local Web + CLI | CLI only | Same catalog/plan/engine; simple setup, real progress, history/exchanges, issue-to-evidence flow, Chinese/English and paired themes | A |
-| Reports/Agent handoff | JSON + basic Markdown | Grouped meaningful findings, coverage matrix, useful progress/coverage visuals, offline HTML/JSON/ZIP, references and private-data review | A/C |
-| Repair verification | No replay/comparison | Re-run affected cases with fresh challenges; compare compatible versions/selections and retain originals and remaining gaps | B/C |
+| Claude Code (optional) | Not implemented/tested in the rewrite | Exact client/platform/config and end-to-end task outcome; no prerequisite for protocol assessment | C, optional |
+| Local Web + CLI | CLI only | Same catalog/plan/engine; selected claims/features, simple setup, real progress, history/exchanges, issue-to-evidence flow, Chinese/English and paired themes | A |
+| Reports/Agent-readable export | JSON + basic Markdown | Grouped meaningful findings, coverage matrix, useful progress/coverage visuals, offline HTML/JSON/ZIP, references and private-data review | A/C |
+| Repeat assessment/comparison | No replay/comparison | Compare implementation/model/version changes with compatible selections and fresh challenges; optional repair rerun retains originals | B/C |
 | Protocol versions/updates | Hard-coded header/rules label | Select API/beta/rules/suite snapshots, immutable official-source refs/hashes, update Agent command and explicit version-comparison outcomes | A/C |
 | Root cutover | Active next/, historical Python retained | Make Node the only product entry point; decide archive compatibility explicitly; do not overwrite existing private records | C |
 | Distribution | Deferred | Container/build publication only after usable mature local operation and separate remote authorization | D |
+
+Client workflow success/failure is supplementary evidence. The core assessment
+must operate without Claude Code. Declared protocol capabilities, actual observations,
+coverage gaps and verdict limitations are the primary report structure. Keep
+controlled-task failures distinct from protocol defects and model-quality rankings.
 
 ## Reference and version hygiene
 

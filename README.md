@@ -1,8 +1,9 @@
 # Anthropic Readiness
 
-A focused local tool for diagnosing Anthropic Messages incompatibilities across
-inference servers, protocol translators and gateways. The intended workflow is
-run checks, inspect concrete evidence, share a diagnosis and verify a repair.
+A local assessment tool for self-hosted model APIs claiming Anthropic Messages
+compatibility. Evaluate the selected protocol scope, inspect concrete deviations
+and export what is compatible, unsupported, inconclusive or untested. Endpoint
+consumers and providers can compare later runs as implementations/models change.
 
 ## Current status
 
@@ -37,8 +38,9 @@ Container delivery is deferred until the tool is useful and mature.
 
 The target remains one shared CLI/Web engine, raw protocol inspection and separate
 SDK/client results, clear Chinese/English evidence and portable reports. Preserve
-[the accepted visual baseline](design.md); broader protocol, tool, error and actual
-client coverage remain required by [project intent](intends.md).
+[the accepted visual baseline](design.md); broader protocol, tool and error coverage
+remain required by [project intent](intends.md). SDK/Claude Code assessments are
+optional supplements, not prerequisites for using the protocol assessment.
 
 Live endpoint calls require explicit operator opt-in and request/time bounds.
 Do not commit private endpoint configuration, credentials or original service logs.

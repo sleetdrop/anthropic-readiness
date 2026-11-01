@@ -1,7 +1,7 @@
 # Repository guide
 
-Build a useful Anthropic Messages diagnostic tool for endpoint users and inference
-stack maintainers. Read [intends.md](intends.md), [current status](docs/CONTINUE.md)
+Build an Anthropic Messages compatibility assessment tool for consumers and
+providers of self-hosted APIs claiming that protocol. Read [intends.md](intends.md), [current status](docs/CONTINUE.md)
 and [the rewrite entry point](docs/refactor/README.md). Read a task's owned paths
 before editing; read [design.md](design.md) for presentation changes.
 
@@ -47,6 +47,9 @@ before editing; read [design.md](design.md) for presentation changes.
   docs/refactor/coverage.md. Deliver coherent runnable workflows; the owner need
   not approve individual cases. Small commits are implementation units, not
   substitutes for the product checkpoint. Planning does not increase coverage.
+- Evaluate the selected protocol scope and declared capabilities systematically.
+  Client-specific workflows are optional supplementary assessments with separate
+  results; the core tool must operate independently of them.
 - Make scoped local commits. Remote writes, registry publication and account
   changes need explicit authorization. Do not claim local checks establish remote CI.
 
