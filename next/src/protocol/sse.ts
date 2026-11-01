@@ -82,6 +82,7 @@ export function validateSse(
   let started = false;
   let deltaSeen = false;
   let stopped = false;
+  let errorTerminated = false;
   let active: ActiveBlock | null = null;
   let nextBlockIndex = 0;
   let dispatchedCount = 0;
@@ -169,6 +170,14 @@ export function validateSse(
       failLifecycle(event, "event_after_message_stop", "no events after message_stop", event.event);
       return;
     }
+    if (errorTerminated) {
+      if (knownEvents.has(event.event)) {
+        failLifecycle(event, "event_after_error_termination", "no events after error termination", event.event);
+      } else {
+        add("SSE-EXTENSION", "INDETERMINATE", "unknown_event", "recognized SSE event", "unrecognized event", event.index);
+      }
+      return;
+    }
     if (!knownEvents.has(event.event)) {
       add("SSE-EXTENSION", "INDETERMINATE", "unknown_event", "recognized SSE event", "unrecognized event", event.index);
       return;
@@ -187,7 +196,11 @@ export function validateSse(
       const messageField = checkField(data, "message", "", isObject, "JSON object", event.index, "SSE-MESSAGE-START");
       if (!messageField.valid || !isObject(messageField.value)) return;
       const initial = messageField.value;
-      assembled = { ...initial, content: Array.isArray(initial.content) ? [...initial.content] : [] };
+      assembled = {
+        ...initial,
+        content: Array.isArray(initial.content) ? [...initial.content] : [],
+        ...(isObject(initial.usage) ? { usage: { ...initial.usage } } : {}),
+      };
       checkField(initial, "id", "/message", (value) => typeof value === "string" && value.length > 0, "nonempty string", event.index, "SSE-MESSAGE-START");
       checkField(initial, "type", "/message", (value) => value === "message", 'string "message"', event.index, "SSE-MESSAGE-START");
       checkField(initial, "role", "/message", (value) => value === "assistant", 'string "assistant"', event.index, "SSE-MESSAGE-START");
@@ -213,7 +226,10 @@ export function validateSse(
 
     if (event.event === "error") {
       const data = eventObject(event, "error");
-      if (data !== null) add("SSE-ERROR", "INDETERMINATE", "error_detail_not_validated", "service-specific error details", "error details retained without taxonomy", event.index);
+      if (data !== null) {
+        errorTerminated = true;
+        add("SSE-ERROR", "INDETERMINATE", "error_detail_not_validated", "service-specific error details", "error details retained without taxonomy", event.index);
+      }
       add("SSE-ERROR", "FAIL", "error_event_received", "successful message stream", "server error event received", event.index, "", undefined, "behavior");
       return;
     }
@@ -273,7 +289,11 @@ export function validateSse(
         kind = "unknown";
         add("SSE-EXTENSION", "INDETERMINATE", "unknown_block_type", "text or tool_use block", "unrecognized content block", event.index, "/content_block/type");
       }
-      if (blockIndex >= 0) active = { index: blockIndex, kind, value: { ...block }, text, partialJson: "" };
+      if (blockIndex >= 0) {
+        const blockValue = { ...block };
+        if (kind === "tool_use" && isObject(block.input)) blockValue.input = { ...block.input };
+        active = { index: blockIndex, kind, value: blockValue, text, partialJson: "" };
+      }
       return;
     }
 
@@ -335,15 +355,17 @@ export function validateSse(
       if (active.kind === "text") {
         active.value.text = active.text;
       } else if (active.kind === "tool_use") {
-        try {
-          const parsed: unknown = JSON.parse(active.partialJson);
-          if (!isObject(parsed)) {
-            add("SSE-TOOL-JSON", "FAIL", "tool_input_not_object", "JSON object", describe(parsed));
-          } else {
-            active.value.input = parsed;
+        if (active.partialJson.length > 0) {
+          try {
+            const parsed: unknown = JSON.parse(active.partialJson);
+            if (!isObject(parsed)) {
+              add("SSE-TOOL-JSON", "FAIL", "tool_input_not_object", "JSON object", describe(parsed));
+            } else {
+              active.value.input = parsed;
+            }
+          } catch {
+            add("SSE-TOOL-JSON", "FAIL", "tool_input_json_invalid", "complete JSON object", "invalid or incomplete JSON");
           }
-        } catch {
-          add("SSE-TOOL-JSON", "FAIL", "tool_input_json_invalid", "complete JSON object", "invalid or incomplete JSON");
         }
       }
       if (assembled !== null && Array.isArray(assembled.content)) assembled.content.push(active.value);
@@ -392,28 +414,30 @@ export function validateSse(
   if (!Number.isSafeInteger(options.maxEvents) || options.maxEvents < 1 ||
       !Number.isSafeInteger(options.maxEventBytes) || options.maxEventBytes < 1 ||
       typeof options.completeCapture !== "boolean" || !(body instanceof Uint8Array)) {
-    add("SSE-LIMIT", "FAIL", "invalid_sse_options", "positive safe integer limits and byte body", "invalid options or body", undefined);
+    add("SSE-LIMIT", "BLOCKED", "invalid_sse_options", "positive safe integer limits and byte body", "invalid options or body", undefined, "", undefined, "environment");
     return { events, observations, message: null };
   }
+
+  const hasInitialBom = body[0] === 0xef && body[1] === 0xbb && body[2] === 0xbf;
+  const input = hasInitialBom ? body.subarray(3) : body;
 
   let lines: Uint8Array[] = [];
   let line: number[] = [];
   let lineLength = 0;
-  let frameBytes = 0;
+  let frameBytes = hasInitialBom ? 3 : 0;
   let frameOverflow = false;
-  let sawFirstLine = false;
   let halted = false;
 
   const dispatchFrame = (): void => {
     if (frameOverflow) {
       if (dispatchedCount >= options.maxEvents) {
-        add("SSE-LIMIT", "FAIL", "event_count_limit_exceeded", `at most ${options.maxEvents} events`, "additional dispatched event", undefined);
+        add("SSE-LIMIT", "BLOCKED", "event_count_limit_exceeded", `at most ${options.maxEvents} events`, "additional dispatched event", undefined, "", undefined, "environment");
         halted = true;
         return;
       }
       const index = dispatchedCount++;
       // The frame's JSON cannot be retained within the configured bound, so its event location is unavailable.
-      add("SSE-LIMIT", "FAIL", "event_byte_limit_exceeded", `at most ${options.maxEventBytes} bytes per frame`, `oversized frame at dispatched index ${index} omitted from storage`);
+      add("SSE-LIMIT", "BLOCKED", "event_byte_limit_exceeded", `at most ${options.maxEventBytes} bytes per frame`, `oversized frame at dispatched index ${index} omitted from storage`, undefined, "", undefined, "environment");
       return;
     }
     if (lines.length === 0) return;
@@ -421,16 +445,11 @@ export function validateSse(
     const decodedLines: string[] = [];
     let invalidUtf8 = false;
     for (const bytes of rawLines) {
-      let content = bytes;
-      if (!sawFirstLine) {
-        sawFirstLine = true;
-        if (content[0] === 0xef && content[1] === 0xbb && content[2] === 0xbf) content = content.subarray(3);
-      }
       try {
-        decodedLines.push(new TextDecoder("utf-8", { fatal: true }).decode(content));
+        decodedLines.push(new TextDecoder("utf-8", { fatal: true, ignoreBOM: true }).decode(bytes));
       } catch {
         invalidUtf8 = true;
-        decodedLines.push(new TextDecoder("utf-8").decode(content));
+        decodedLines.push(new TextDecoder("utf-8", { ignoreBOM: true }).decode(bytes));
       }
     }
     let eventName = "message";
@@ -446,7 +465,7 @@ export function validateSse(
     }
     if (dataLines.length === 0) return;
     if (dispatchedCount >= options.maxEvents) {
-      add("SSE-LIMIT", "FAIL", "event_count_limit_exceeded", `at most ${options.maxEvents} events`, "additional dispatched event", undefined);
+      add("SSE-LIMIT", "BLOCKED", "event_count_limit_exceeded", `at most ${options.maxEvents} events`, "additional dispatched event", undefined, "", undefined, "environment");
       halted = true;
       return;
     }
@@ -457,16 +476,16 @@ export function validateSse(
       try {
         value = JSON.parse(data);
       } catch {
-        add("SSE-JSON", "FAIL", "event_json_invalid", "valid JSON data", "malformed JSON", index);
+        add("SSE-JSON", "FAIL", "event_json_invalid", "valid JSON data", "malformed JSON");
       }
     } else {
-      add("SSE-FRAMING", "FAIL", "invalid_utf8", "valid UTF-8 event fields", "malformed UTF-8 bytes", index);
+      add("SSE-FRAMING", "FAIL", "invalid_utf8", "valid UTF-8 event fields", "malformed UTF-8 bytes");
     }
     const event: SseEvent = { index, event: eventName, data, value };
     events.push(event);
-    if (!invalidUtf8 && value === null && data !== "null") {
+    if (invalidUtf8 || (value === null && data !== "null")) {
       if (eventName === "error") {
-        add("SSE-ERROR", "FAIL", "error_event_received", "successful message stream", "server error event received", index, "", undefined, "behavior");
+        add("SSE-ERROR", "FAIL", "error_event_received", "successful message stream", "server error event received", undefined, "", undefined, "behavior");
       }
       return;
     }
@@ -492,12 +511,12 @@ export function validateSse(
     }
   };
 
-  for (let offset = 0; offset < body.byteLength && !halted; offset += 1) {
-    const byte = body[offset]!;
+  for (let offset = 0; offset < input.byteLength && !halted; offset += 1) {
+    const byte = input[offset]!;
     if (byte === 0x0a) {
       finishLine(1);
     } else if (byte === 0x0d) {
-      const crlf = body[offset + 1] === 0x0a;
+      const crlf = input[offset + 1] === 0x0a;
       finishLine(crlf ? 2 : 1);
       if (crlf) offset += 1;
     } else {
@@ -514,7 +533,7 @@ export function validateSse(
   if (!halted && (lineLength > 0 || lines.length > 0 || frameOverflow)) {
     const invalidCompletedLine = lines.some((completedLine) => {
       try {
-        new TextDecoder("utf-8", { fatal: true }).decode(completedLine);
+        new TextDecoder("utf-8", { fatal: true, ignoreBOM: true }).decode(completedLine);
         return false;
       } catch {
         return true;
@@ -529,11 +548,14 @@ export function validateSse(
     add("SSE-FRAMING", options.completeCapture ? "FAIL" : "INDETERMINATE", "incomplete_trailing_frame", "blank-line event boundary", "unterminated event frame", undefined);
   }
 
-  if (!halted) {
+  if (!halted && !errorTerminated) {
     if (!started) add("SSE-LIFECYCLE", options.completeCapture ? "FAIL" : "INDETERMINATE", "message_start_missing", "message_start event", "not observed");
     if (!deltaSeen) add("SSE-LIFECYCLE", options.completeCapture ? "FAIL" : "INDETERMINATE", "message_delta_missing", "message_delta event", "not observed");
     if (!stopped) add("SSE-LIFECYCLE", options.completeCapture ? "FAIL" : "INDETERMINATE", "message_stop_missing", "message_stop event", "not observed");
     if (active !== null) add("SSE-LIFECYCLE", options.completeCapture ? "FAIL" : "INDETERMINATE", "content_block_unfinished", "content_block_stop event", "content block remains open");
+  }
+  if (!options.completeCapture) {
+    add("SSE-CAPTURE", "INDETERMINATE", "capture_incomplete", "complete capture", "capture may be partial", undefined, "", undefined, "environment");
   }
   return { events, observations, message: assembled };
 }

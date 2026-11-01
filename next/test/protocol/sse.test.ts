@@ -137,6 +137,23 @@ test("assembles fragmented tool JSON only at block completion", () => {
   assert.deepEqual(result.message?.content, [{ type: "tool_use", id: "tool-1", name: "lookup", input: { city: "Oslo" } }]);
 });
 
+test("keeps assembled usage separate from the captured message_start event", () => {
+  const body = textEvents("Hello.").replace('"output_tokens":1', '"output_tokens":17');
+  const result = run(body);
+  assert.equal(summarize(result.observations), "PASS");
+  assert.equal((result.events[0]?.value as { message: { usage: { output_tokens: number } } }).message.usage.output_tokens, 0);
+  assert.equal((result.message?.usage as { output_tokens: number }).output_tokens, 17);
+});
+
+test("an incomplete capture remains inconclusive even when message_stop was observed", () => {
+  const result = run(textEvents("Hello."), { completeCapture: false });
+  assert.equal(observation(result, "SSE-CAPTURE").status, "INDETERMINATE");
+  assert.equal(summarize(result.observations), "INDETERMINATE");
+
+  const knownFault = run(wireEvent("message_start", start()) + wireEvent("message_start", start()), { completeCapture: false });
+  assert.equal(summarize(knownFault.observations), "FAIL");
+});
+
 test("wrong envelope types and known delta kinds fail at event locations", () => {
   const wrongType = run(wireEvent("message_start", { ...start(), type: "ping" }));
   const mismatch = wrongType.observations.find((item) => item.reason === "event_data_type_mismatch");
@@ -145,7 +162,9 @@ test("wrong envelope types and known delta kinds fail at event locations", () =>
   assert.equal(mismatch?.location?.captureId, context.captureId);
 
   const nullEnvelope = run(wireEvent("ping", null));
-  assert.ok(nullEnvelope.observations.some((item) => item.reason === "event_data_not_object" && item.status === "FAIL"));
+  const nullObservation = nullEnvelope.observations.find((item) => item.reason === "event_data_not_object");
+  assert.equal(nullObservation?.status, "FAIL");
+  assert.equal(nullObservation?.location?.pointer, "");
 
   const wrongKind = run(wireEvent("message_start", start()) +
     wireEvent("content_block_start", {
@@ -229,11 +248,20 @@ test("supports BOM, comments, CR/CRLF and multiline data fields", () => {
   assert.equal(result.events[0]?.event, "message_start");
   assert.equal(result.events[0]?.data, message);
   assert.equal(observation(result, "SSE-LIFECYCLE").status, "INDETERMINATE");
+
+  const leadingBom = run(`\uFEFF${wireEvent("ping", { type: "ping" })}`, { completeCapture: false });
+  assert.equal(leadingBom.events[0]?.event, "ping");
+});
+
+test("only consumes a BOM at absolute input offset zero", () => {
+  const result = run(`\n\uFEFFevent: ping\ndata: {"type":"ping"}\n\n`, { completeCapture: false });
+  assert.ok(result.observations.some((item) => item.reason === "unknown_event" && item.status === "INDETERMINATE"));
 });
 
 test("rejects malformed JSON and invalid UTF-8 without producing a passing message", () => {
   const malformed = run("event: message_start\ndata: {bad json}\n\n");
   assert.equal(observation(malformed, "SSE-JSON").status, "FAIL");
+  assert.equal(observation(malformed, "SSE-JSON").location, undefined);
   assert.equal(malformed.events[0]?.value, null);
 
   const invalidPrefix = new Uint8Array([
@@ -241,7 +269,9 @@ test("rejects malformed JSON and invalid UTF-8 without producing a passing messa
     ...new TextEncoder().encode("\n\n"),
   ]);
   const invalid = run(invalidPrefix, { completeCapture: false });
-  assert.ok(invalid.observations.some((item) => item.reason === "invalid_utf8" && item.status === "FAIL"));
+  const invalidUtf8 = invalid.observations.find((item) => item.reason === "invalid_utf8");
+  assert.equal(invalidUtf8?.status, "FAIL");
+  assert.equal(invalidUtf8?.location, undefined);
 
   const incomplete = new Uint8Array([
     ...new TextEncoder().encode("event: message_start\ndata: {\"type\":\"message_start\",\"message\":\""), 0xe2,
@@ -259,15 +289,18 @@ test("rejects malformed JSON and invalid UTF-8 without producing a passing messa
 
 test("bounds event count and event bytes and validates option limits", () => {
   const invalidOptions = validateSse(new Uint8Array(), context, { completeCapture: true, maxEvents: 0, maxEventBytes: 100 });
-  assert.equal(summarize(invalidOptions.observations), "FAIL");
+  assert.equal(summarize(invalidOptions.observations), "BLOCKED");
+  assert.equal(observation(invalidOptions, "SSE-LIMIT").dimension, "environment");
 
   const overlong = run(wireEvent("ping", { type: "ping", padding: "x".repeat(100) }), { maxEventBytes: 32 });
-  assert.ok(overlong.observations.some((item) => item.reason === "event_byte_limit_exceeded" && item.status === "FAIL"));
+  assert.ok(overlong.observations.some((item) => item.reason === "event_byte_limit_exceeded" && item.status === "BLOCKED"));
+  assert.equal(observation(overlong, "SSE-LIMIT").dimension, "environment");
   assert.equal(overlong.events.length, 0);
 
   const tooMany = run(wireEvent("ping", { type: "ping" }) + wireEvent("ping", { type: "ping" }), { maxEvents: 1 });
-  assert.ok(tooMany.observations.some((item) => item.reason === "event_count_limit_exceeded" && item.status === "FAIL"));
+  assert.ok(tooMany.observations.some((item) => item.reason === "event_count_limit_exceeded" && item.status === "BLOCKED"));
   assert.equal(tooMany.events.length, 1);
+  assert.equal(summarize(tooMany.observations), "BLOCKED");
 });
 
 test("validates message_start shape and error events without fabricating a message", () => {
@@ -283,6 +316,41 @@ test("validates message_start shape and error events without fabricating a messa
 
   const malformedError = run("event: error\ndata: {not-json}\n\n", { completeCapture: false });
   assert.ok(malformedError.observations.some((item) => item.dimension === "behavior" && item.status === "FAIL"));
+});
+
+test("a valid error event terminates success-path expectations without a protocol failure", () => {
+  const beforeStart = run(wireEvent("error", { type: "error", error: { custom: "service detail" } }));
+  assert.equal(observation(beforeStart, "SSE-ERROR").status, "INDETERMINATE");
+  assert.ok(beforeStart.observations.some((item) => item.dimension === "behavior" && item.status === "FAIL"));
+  assert.ok(!beforeStart.observations.some((item) => item.dimension === "protocol" && item.status === "FAIL"));
+
+  const duringMessage = run(wireEvent("message_start", start()) +
+    wireEvent("content_block_start", {
+      type: "content_block_start", index: 0, content_block: { type: "text", text: "" },
+    }) + wireEvent("error", { type: "error", error: { custom: "service detail" } }));
+  assert.ok(duringMessage.observations.some((item) => item.dimension === "behavior" && item.status === "FAIL"));
+  assert.ok(!duringMessage.observations.some((item) => item.dimension === "protocol" && item.status === "FAIL"));
+
+  const contentAfterError = run(wireEvent("error", { type: "error", error: {} }) +
+    wireEvent("message_start", start()));
+  assert.ok(contentAfterError.observations.some((item) => item.reason === "event_after_error_termination" && item.status === "FAIL"));
+});
+
+test("empty tool JSON assembly preserves the initial object input", () => {
+  const body = wireEvent("message_start", start()) +
+    wireEvent("content_block_start", {
+      type: "content_block_start", index: 0,
+      content_block: { type: "tool_use", id: "tool-1", name: "lookup", input: {} },
+    }) +
+    wireEvent("content_block_stop", { type: "content_block_stop", index: 0 }) +
+    wireEvent("message_delta", {
+      type: "message_delta", delta: { stop_reason: "tool_use", stop_sequence: null },
+      usage: { output_tokens: 1 },
+    }) +
+    wireEvent("message_stop", { type: "message_stop" });
+  const result = run(body);
+  assert.equal(summarize(result.observations), "PASS");
+  assert.deepEqual(result.message?.content, [{ type: "tool_use", id: "tool-1", name: "lookup", input: {} }]);
 });
 
 test("unknown frame tail cannot erase an observed lifecycle fault", () => {
