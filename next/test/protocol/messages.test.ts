@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { validateMessage } from "../../src/protocol/messages.ts";
-import type { MessageValidationContext, Observation } from "../../src/domain.ts";
+import { summarize, type MessageValidationContext, type Observation } from "../../src/domain.ts";
 
 const context: MessageValidationContext = {
   captureId: "capture-1",
@@ -35,7 +35,9 @@ function byRule(
 
 test("accepts structurally valid text and tool-use messages", () => {
   const text = validateMessage(validTextMessage(), context);
+  assert.equal(summarize(text), "PASS");
   assert.equal(byRule(text, "MSG-CORE").status, "PASS");
+  assert.equal(byRule(text, "MSG-CORE").expected, "JSON object at message root");
   assert.equal(byRule(text, "MSG-STOP").status, "PASS");
   assert.equal(byRule(text, "MSG-STOP-SEQUENCE").status, "PASS");
   assert.equal(byRule(text, "MSG-MODEL").status, "PASS");
@@ -49,6 +51,7 @@ test("accepts structurally valid text and tool-use messages", () => {
   }];
   tool.stop_reason = "tool_use";
   const toolObservations = validateMessage(tool, context);
+  assert.equal(summarize(toolObservations), "PASS");
   assert.equal(byRule(toolObservations, "MSG-CORE").status, "PASS");
 });
 
@@ -203,6 +206,17 @@ test("unknown stop reasons and content blocks are inconclusive, not structural f
   assert.equal(byRule(observations, "MSG-STOP").status, "INDETERMINATE");
   assert.equal(byRule(observations, "MSG-CONTENT").status, "INDETERMINATE");
   assert.equal(byRule(observations, "MSG-CORE").status, "PASS");
+  assert.equal(summarize(observations), "INDETERMINATE");
+});
+
+test("unknown stop reasons do not make a valid string stop sequence fail", () => {
+  const message = validTextMessage();
+  message.stop_reason = "future_reason";
+  message.stop_sequence = "<CUSTOM-END>";
+  const observations = validateMessage(message, context);
+  assert.equal(byRule(observations, "MSG-STOP").status, "INDETERMINATE");
+  assert.equal(summarize(observations), "INDETERMINATE");
+  assert.equal(byRule(observations, "MSG-STOP-SEQUENCE").status, "INDETERMINATE");
 });
 
 test("reports malformed known blocks at exact nested and missing-member locations", () => {

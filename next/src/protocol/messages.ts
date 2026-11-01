@@ -99,7 +99,7 @@ export function validateMessage(
     field(usageField.value, "output_tokens", "/usage", "MSG-OUTPUT-TOKENS", (item) => typeof item === "number" && Number.isInteger(item) && item >= 0, "nonnegative integer");
   }
 
-  add("MSG-CORE", "PASS", "message_object", "complete message object", "object", "");
+  add("MSG-CORE", "PASS", "message_object", "JSON object at message root", "object", "");
 
   if (model.present && typeof model.value === "string" && model.value.length > 0) {
     if (!context.checkModelIdentity) {
@@ -120,15 +120,19 @@ export function validateMessage(
   }
 
   if (stopReasonPresent && stopSequence.present) {
+    const knownReason = typeof stopReasonValue === "string" && context.stopReasons.includes(stopReasonValue);
     const requiresString = stopReasonValue === "stop_sequence";
-    const valid = requiresString
+    const valid = knownReason && (requiresString
       ? typeof stopSequence.value === "string"
-      : stopSequence.value === null;
+      : stopSequence.value === null);
+    const status = !knownReason
+      ? "INDETERMINATE"
+      : valid ? "PASS" : "FAIL";
     add(
       "MSG-STOP-SEQUENCE",
-      valid ? "PASS" : "FAIL",
-      valid ? "stop_sequence_valid" : "unexpected_stop_sequence",
-      requiresString ? "string for stop_sequence reason" : "null unless reason is stop_sequence",
+      status,
+      !knownReason ? "stop_sequence_relation_unknown" : valid ? "stop_sequence_valid" : "unexpected_stop_sequence",
+      "string when reason is stop_sequence; otherwise null",
       describe(stopSequence.value),
       "/stop_sequence",
     );
