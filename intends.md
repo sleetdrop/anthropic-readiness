@@ -71,6 +71,29 @@ remaining failures and missing coverage.
    verified unchanged-source evidence where applicable, state its identity and
    limits, and retain failures. Broaden checks for concrete risks or release needs.
 
+## Product completion and delivery
+
+The delivery unit is a usable diagnostic workflow, not an individual validator,
+case or migration task. The owner does not need to select or approve each case.
+Implementation may proceed in small commits while product checkpoints combine
+coherent coverage, working CLI/Web interaction and understandable evidence.
+
+Comprehensive compatibility assessment means an explicit inventory of the selected
+Messages protocol snapshot: request/response fields, content/event variants,
+conversation workflows and applicable feature prerequisites. Each item maps to
+implemented cases/rules, executed controls and run outcomes, or an explicit gap.
+An inventory is not coverage. Unknown capabilities and unexecuted cases never
+become passing results. An API date alone is not a reproducible rules snapshot.
+Keep raw protocol, configured model-identity expectations, task behavior and actual
+client compatibility distinguishable.
+
+The [delivery route](docs/refactor/README.md) and its
+[coverage inventory](docs/refactor/coverage.md) connect this intent to current work.
+Neither a five-case migration nor a polished interface meets the product goal.
+The coordinator maintains the route and completes its work without requiring the
+owner to manage case-by-case implementation. Revisit product decisions for a real
+scope conflict or user feedback, not each routine implementation choice.
+
 ## Boundaries and maintenance
 
 This is a specialized compatibility diagnostic tool. General OpenAI-protocol

@@ -32,8 +32,8 @@ npm --prefix next test
 npm --prefix next run test:protocol
 ```
 
-The protocol command applies once T1 adds protocol tests; an absent suite is not
-PASS. Repeat the complete check after material changes, not after every note.
+The protocol command runs the implemented message/SSE controls; an absent suite
+is not PASS. Repeat the complete check after material changes, not after every note.
 The root's other npm scripts and Python tools are legacy; do not run them for new
 TypeScript work. Preserve failed evidence and state any unrun checks honestly.
 

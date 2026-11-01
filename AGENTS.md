@@ -43,6 +43,10 @@ before editing; read [design.md](design.md) for presentation changes.
 - Keep docs/CONTINUE.md concise and current. Record material outcomes in
   docs/harness/progress.md; large logs belong in ignored artifacts. Do not create a
   new plan/ledger/approval loop for every small edit or a status-only CI rerun.
+- Choose work from the delivery route in docs/refactor/README.md and the gaps in
+  docs/refactor/coverage.md. Deliver coherent runnable workflows; the owner need
+  not approve individual cases. Small commits are implementation units, not
+  substitutes for the product checkpoint. Planning does not increase coverage.
 - Make scoped local commits. Remote writes, registry publication and account
   changes need explicit authorization. Do not claim local checks establish remote CI.
 

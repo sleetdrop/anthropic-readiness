@@ -10,11 +10,14 @@ The TypeScript/Node implementation in next/ now has a runnable CLI for five migr
 scenarios: plain/streamed controlled text, streamed counting, forced tool selection
 and a tool-result round trip. The complete scope reserves six request attempts.
 Read [the CLI trial guide](docs/refactor/cli-trial.md) for preview, explicit live
-admission, evidence and limits. It has been verified with synthetic services, not
-real models. The new Web UI, broader cases and SDK/client checks remain unfinished.
+admission, evidence and limits. Synthetic checks passed, and one owner-selected
+real endpoint trial completed all five tasks; strict findings remain. This is
+sampled evidence, not broad compatibility. The new Web UI, broader cases and
+SDK/client checks remain unfinished.
 
-The [rewrite entry point](docs/refactor/README.md) records the delivery sequence;
-[current status](docs/CONTINUE.md) stays concise. The previous Python application,
+The [delivery route](docs/refactor/README.md) records coherent product checkpoints;
+[the coverage inventory](docs/refactor/coverage.md) makes remaining scope explicit.
+The [current status](docs/CONTINUE.md) records actual delivery. The previous Python application,
 its container instructions and historical outcomes are [reference only](README.python.md).
 Existing installed records and private captures must not be overwritten.
 

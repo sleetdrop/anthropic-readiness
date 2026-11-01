@@ -129,3 +129,32 @@ captures were added to tracked artifacts. SDK/Claude Code remain untested. This
 trial adds real sampled outcomes, not new scenarios or comprehensive compatibility.
 No source behavior changed, so the unchanged 60-test evidence was reused rather
 than rerunning offline checks. No remote write, container or remote CI run.
+
+## 2026-11-01: product direction audit and delivery correction
+
+The owner identified repeated reactive, case-by-case delivery and the absence of
+a visible rewritten application. Reviewed intends, active guides/source/catalog,
+design baseline and CI. Intent still includes broad Messages coverage, CLI/Web,
+real clients, version maintenance and colleague/Agent repair verification. Active
+source has only five scenarios/CLI; naming future goals had not constrained the
+migration-first delivery sequence. There is no new Node Web server/UI or client
+workflow. Offline test counts and one successful task sample do not close those gaps.
+
+Updated the existing route rather than adding another implementation-plan chain:
+A is a usable application with expanded core Agent workflows; B completes selected
+Messages contract coverage and repair replay/reruns; C closes actual-client,
+snapshot-maintenance/handoff and cutover; D defers distribution. Added a single
+product coverage/gap inventory, linked it from intent/entry guides, and made
+coherent checkpoints rather than individual-case approval the delivery unit.
+No protocol cases, UI, rules or source behavior were implemented by these notes.
+
+Official version history/reference reviewed on 2026-11-01 documents 2026-10-21:
+https://platform.claude.com/docs/en/api/versioning and
+https://platform.claude.com/docs/en/api/migration-2026-10-21.
+Current runner still sends 2023-06-01. Its hard-coded rules label is not an immutable
+source manifest. Earlier manual comparison to SDK main/latest docs supports a
+source comparison, not a completed version-specific audit. Original observed fields
+and report remain unchanged; future snapshots/replay must state exact applicability.
+
+Documentation-only validation: changed-file local links and git diff --check;
+unchanged 60-test source evidence reused, no new test/CI/live outcome claimed.
