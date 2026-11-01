@@ -23,6 +23,7 @@ _CATEGORIES: dict[str, Category] = {
     "MSG-TOOL-ID": "protocol",
     "MSG-TOOL-NAME": "behavior",
     "MSG-TOOL-INPUT": "behavior",
+    "LOOP-STEP": "behavior",
 }
 
 

@@ -1,29 +1,431 @@
 # Local delivery status
 
-## Worker exit probe correction
+## Accumulated product publication in progress
 
-The post-merge main CI for PR 2 failed a Python 3.11 integration test because the
-owned worker disappeared while its Linux procfs status was being read. A focused
-test-only correction preserves the exit and no-extra-request assertions. See
-[the ledger](harness/worker-exit-probe-ledger.md) for the original failure, the
-synthetic controls and remaining Linux/remote verification. The first correction
-PR run passed both Linux Python jobs but exposed the same existing browser-test
-timing failure seen in PR 2. Its test synchronization is now corrected while
-retaining the UI and retry assertions; fresh remote verification is pending.
-This adds no endpoint scenario or product behavior.
+The owner authorized publishing and merging the remaining local work on 2026-11-01.
+The macOS development changes already reached main through PRs 2 and 3; their
+post-merge CI passed. The current publication also includes the previously local
+non-stream tool-result round trip (raising formal scenarios from four to five),
+simplified configuration/input history, console navigation and evidence annotations.
+Main b6043c5 is merged into the feature branch; its test-race corrections and
+[worker-exit ledger](harness/worker-exit-probe-ledger.md) are retained. Three conflicts
+were documentation-only; no production or test implementation conflict was resolved
+by replacing main. Combined-source Mac fast checks passed. PR 4 remains open:
+the image inventory was corrected to the shipped five-case catalog, and the
+expanded serial browser suite needs a bounded 600-second window (720 seconds
+including outer reporting/cleanup). Fresh exact-head Linux/container CI and merge
+remain pending; see the [publication ledger](harness/product-publication-ledger.md).
+Do not infer new endpoint/client verification from publication or CI alone.
 
-## macOS development checks: isolated PR
+## macOS development GitHub workflow
 
-The local-development and Mac fast-check changes have been isolated on GitHub
-main `10c7933`; prior unpublished product and UI work remains outside this branch.
-All eight Mac fast gates passed on unchanged isolated source: 500 Python and 20
-frontend unit tests. Linux full checks, image acceptance, remote CI and live
-endpoints have not yet been observed for this branch. No endpoint scenario or
-detectable fault was added. See [the development ledger](harness/local-development-ledger.md).
-The older status sections below are historical observations from main's previous
-handoff, including the then-open PR 1.
+The owner authorized progressing the GitHub workflow for the Mac development
+changes. An isolated PR on main kept earlier unpublished product/UI work outside
+the publication scope. [PR 2](https://github.com/sleetdrop/anthropic-readiness/pull/2)
+was merged as `f94ed1d17ff4132ffa3ab56a8138358f4249ef05`. Its GitHub PR checks
+passed all five required jobs on a retry; the first attempt retained an existing
+browser timing failure. The [post-merge main CI](https://github.com/sleetdrop/anthropic-readiness/actions/runs/41195337568)
+failed a Python 3.11 integration test when an owned worker exited during a procfs
+read. Test-only [PR 3](https://github.com/sleetdrop/anthropic-readiness/pull/3)
+corrected that race and the repeated browser timing failure. Its updated head
+passed all five required PR jobs and merged as `b6043c52ed67325d19c0f9631381c722270b90d2`.
+Post-merge main CI 41215465572 passed all required jobs, verified on 2026-11-01. See the
+[local development ledger](harness/local-development-ledger.md) for scope and evidence.
+No endpoint scenarios or fault detection changed.
 
-## Startup acceptance probe corrected locally; remote revalidation pending
+## macOS fast developer checks
+
+The owner selected native macOS fast-check support. On the final unchanged source,
+all eight fast gates passed with 503 Python unit/harness and 33 frontend checks;
+the project-local Mac `.venv` is prepared. Full Linux, browser, image, remote CI
+and real endpoint verification were not run. An independent review identified
+test-cleanup races that were fixed and focused-reviewed. See the
+[local development ledger](harness/local-development-ledger.md). This is
+supporting-only work; endpoint scenarios and detectable faults are unchanged.
+
+## Evidence-node annotations delivered in the actual local application
+
+Feature `6fcbe69` is installed at http://localhost:8765. Read
+[the integration ledger](harness/evidence-annotation-integration-ledger.md).
+Open an existing run -> Issues -> occurrence -> View evidence. Relevant failed
+findings now have a token-adjacent indicator and non-modal detail popover; absent
+fields locate a real parent. The full frame is foldable, original source/download
+remain available, related first SSE events are neutral, and known late targets
+are reachable in a bounded, explicitly labeled reading window. Unknown/unloaded/
+unparseable/truncated locations retain conservative reading limits.
+
+Final fast gates passed with unchanged source (498 Python unit/harness and 33
+frontend unit checks); 21 focused browser, 12 backend-page and five installed-package
+checks passed. One independent review finding was reproduced and fixed. No full
+graph, remote CI, new endpoint test or real model request was performed.
+
+Installed acceptance: all 169 package-file hashes match source and UI header/meta
+agree with packaged identity. Four previously inventoried runs / 154 files match
+the earlier verified manifest. One newer run / 44 files has no pre-update hash
+baseline: it remains readable, but is not claimed proven unchanged by deployment.
+All five runs / 198 files were unchanged during post-install browser acceptance.
+The immediate pre-install fingerprint attempt was empty and was not counted PASS.
+
+Four actual installed desktop/narrow light/dark views passed isolated-browser
+acceptance; inspected paired screenshots. Current IAB control was unavailable;
+requested the actual run in the in-app browser through Codex (queued). No everyday
+Chrome was used. Existing history, reports, CLI and five endpoint scenarios remain.
+Owner hands-on trial is next. Activity interaction details remain separately
+pending, without issue markers; broader protocol/client coverage gaps below remain.
+
+## Evidence annotation design acceptance (historical)
+
+The latest bounded increment is a standalone evidence-location sample at
+http://localhost:8768/evidence-annotation.html. Read
+[the study ledger](harness/evidence-annotation-study-ledger.md) and
+[sample instructions](design/console-study/README.md#evidence-annotation-study-2026-10-25).
+Try missing-field parent location, wrong-type exact node and repeated SSE with
+neutral related context. Original data remains separate from diagnostic notes.
+Latest owner refinement places overlay markers beside the specific JSON value,
+or the observed parent opening brace for missing keys, rather than in a gutter.
+Click popovers preserve JSON geometry and clear punctuation/adjacent characters.
+Click the marker again/outside, Close or Escape
+to dismiss; desktop spare space and narrow placement avoid the target text.
+One independent static review found no clear regression in this token-placement
+refinement. Final targeted checks passed 36 width/theme/language/scenario samples,
+including near-token distance, character avoidance and unchanged geometry with
+markers shown/hidden. Full product gates were not repeated.
+
+The owner accepted sample revision `446d695`; root design.md now records the
+token-marker/popover rules and two synthetic reference captures. The next bounded
+implementation task was integrating this behavior into actual evidence inspection,
+now delivered above. That acceptance-recording increment changed documentation only.
+At acceptance, the installed feature was `3bfc375` at port 8765; no run data, report, CLI or endpoint verdict
+changed. Five formal cases remain unchanged and no live calls occurred. Activity
+interaction details remain a separate pending increment, without issue annotations.
+
+## Whole UI/deployment sweep delivered for owner trial
+
+Latest feature: `3bfc375`, installed on http://localhost:8765. Read the
+[UI/deployment sweep ledger](harness/ui-deployment-sweep-ledger.md).
+Direct IAB walkthrough and paired desktop/narrow captures found and fixed inherited
+narrow flex squeezing, ordinary table insets/headings, redundant vertical tab
+scrolling and stale-deployment handling. Styles have content versions; valid changed
+UI identity or incompatible HTML prompts deliberate reload without clearing the
+current form automatically. Page-cache return resumes checking. Reports, endpoint
+verdicts and five formal scenarios are unchanged.
+
+Final fast gates passed with source unchanged, five installed-package acceptance
+checks passed and 27 final browser executions passed. An earlier full frozen graph
+passed 103 browser / 281 integration / 84 acceptance checks but FAILED two packaging
+checks because Finder metadata was treated as a product resource. That failure is
+retained; only exact .DS_Store metadata is now excluded, with missing/changed real
+resource controls preserved. Do not describe this as a second all-green full graph.
+
+Installed acceptance: all 165 package files match source; four historical runs /
+154 run files retain their hashes; health, UI meta/header and three versioned style
+links agree. Captured 48 post-install screens, inspected paired views and directly
+confirmed 390px Chinese-light/English-dark in IAB. Restored the owner's default
+viewport and Chinese/light appearance; leave the verified overview open.
+No live endpoint calls, remote CI, registry publishing or remote writes occurred.
+This is supporting-only work. Await hands-on feedback; broader protocol and actual
+client coverage remain core unfinished goals below.
+
+## Previous console integration (historical)
+
+The accepted flow sample is now implemented in the actual local Web application.
+Read [the bounded ledger](harness/console-baseline-implementation-ledger.md).
+On http://localhost:8765, open an existing run and follow Issues -> occurrence ->
+View evidence -> Back to issues. Search/filter, selected occurrence and evidence
+reading context are retained; bilingual light/dark controls follow root design.md.
+Real persisted progress remains visible. Retest/export and CLI remain available.
+
+Latest owner-feedback correction: `c4e3d5d` is installed on 8765. Actual rendered
+issue headers now retain primary text / weight 600 / 12px insets; progress is
+straight and stays beside identity until 650px. Running is gray-blue; the opened
+historical run is completed and correctly neutral. Production actions sit beside
+view tabs. Fresh installed light/dark captures, 163 package-file hashes and all
+four runs / 154 run-file hashes passed verification. Eight fast gates, focused
+browser and 11 backend checks passed; no full graph/remote CI/live call was repeated.
+
+Original migration commit: `315f23f`. Its 13 frozen-source local gates passed, including 88
+browser and 280 integration tests. One independent review finding was fixed and
+verified. The cached local trial image is installed; all 163 packaged files match
+source. Four existing runs and all 154 run files retain their hashes. Static
+sample 8767 and the old image remain available. No agent real-endpoint calls,
+remote CI, registry publication or clean networked Docker acceptance occurred.
+
+This increment is supporting interface work: the five formal endpoint cases are
+unchanged. Core coverage gaps remain, including streaming tool flows, broader
+multi-turn/validation/error cases and actual SDK/Claude Code verification. Do not
+confuse offline test counts or UI completion with endpoint compatibility. Owner
+hands-on feedback is the next step; do not start a new long implementation stage
+without discussing the next concrete diagnostic outcome.
+
+## Approved presentation baseline recorded (historical)
+
+The owner accepted the current flow sample's style, with future details refined
+through use. [Root design.md](../design.md) is the current presentation authority:
+gray-blue running/interaction, paired light/dark tokens, technical-article table
+hierarchy, 24px status rules, restrained icons, aligned controls and context-preserving
+navigation. It includes four checked-in synthetic reference images. AGENTS.md and
+contributor/project entry points link to it; older QA/experiments are historical.
+
+Reference source is `bf98290` (CSS/JS equal `93220f5`); the latest teal trial remains
+rejected. Documentation/reference consistency checks passed. No product code,
+endpoint scope, service/container or remote state changed; this is not a migration
+of the standalone sample into the installed console. No next implementation stage
+is authorized by this documentation request. Preserve the trial and preview.
+
+## Earlier controls and color refinements (historical)
+
+Owner annotated the issue toolbar, ambiguous running/completed presentation and
+the demo dropdown mixed into run information. flow.html now uses inline text
+filters, an integrated labeled search field, and a persistent explicit run heading
+with native case progress and separate sent-request counts. The list heading
+distinguishes provisional findings from finished results; completion still exposes
+deviations/inconclusive cases. Manual prototype-state controls moved to the footer.
+Targeted isolated-browser checks passed all eight language/theme/state combinations
+at 736x769, keyboard filters/state switching, retained evidence/navigation context
+and 390px width. See the sample README and investigation-flow ledger. No actual
+execution/backend, product source or endpoint coverage changed. Await owner trial.
+The owner's next header annotation simplified theme switching to a day/night icon
+and language captions to EN/中, retaining localized hover/accessibility names.
+Targeted keyboard/theme/language/context checks passed; see the sample README.
+
+Owner clarified that the problem was palette coordination, not color itself.
+The latest sample uses restrained gray-blue for interaction and running, soft red
+for confirmed protocol deviations and neutral text/surfaces otherwise. Finished
+execution stays neutral, independent of passing results. Success green is reserved for
+verified passes; no new passing result was added to this issue-only sample.
+Ten targeted light/dark views passed contrast/context checks, minimum sampled text
+contrast 5.06:1. See the sample's current color section. Await owner feedback.
+The owner compared and rejected the teal-running trial, choosing the preceding
+gray-blue running presentation. CSS is restored exactly to `93220f5`; static and
+exact-restoration checks passed. Trial evidence remains historical in ignored
+artifacts/flow-running-teal-20261023/. No new browser or product check was needed.
+
+## Earlier information-organization exploration (historical)
+
+The owner clarified that Wireshark/Charles are references for organizing complex
+information, not a request to clone their style or layout. Earlier overview,
+palette and runner samples are unselected discussion material. Read the
+[investigation-flow exercise](design/console-study/investigation-flow.md) before
+further design work. It maps configuration, quiet progress, exception triage,
+linked evidence, colleague/Agent handoff and comparable repair verification using
+five fictional cases, six requests and a long stream. This is a design desk
+exercise grounded in existing contracts, not a browser/usability or endpoint test.
+The owner authorized one issue-to-evidence-and-back journey. The bounded sample
+is ready at http://127.0.0.1:8767/flow.html; see its
+[description and verification](design/console-study/README.md). It demonstrates
+affected-occurrence selection, linked long-stream context, whole-capture search
+and retained navigation/run context. Final isolated-browser checks passed; failed
+attempts remain in ignored artifacts/investigation-flow-20261023/. No visual/layout
+target is selected. Product source, trial and endpoint coverage are unchanged.
+Stop here for owner feedback on navigation before another increment.
+
+Owner subsequently accepted the overall sample direction and requested less color
+in backgrounds and text. flow.html now uses neutral light/dark reading/selection
+tones with muted protocol-status edges only. Targeted before/after browser checks
+passed; see README.md. Await feedback on this styling adjustment.
+
+The owner also requested restrained supporting icons. Back/search/evidence/theme
+actions now pair visible text with small neutral local Heroicons; targeted browser
+checks passed. See the sample README and artifact ledger. This remains design-only.
+The owner subsequently rejected the evidence-button icon as redundant; that button
+is now text-only. Back/search/theme icons remain. See the README for this correction.
+The owner's next annotation questioned status rules resembling table dividers.
+A compact status-label experiment passed targeted browser checks but was rejected:
+the owner prefers the preceding technical-article table character. CSS/JS are
+restored exactly to `852ef59`, keeping neutral text, limited icons and the text-only
+evidence button. No further embellishment or new design stage is selected.
+Owner then requested clearer header/body hierarchy and a refinement of the status
+line. Issue-table headers and primary names now share 12px, with stronger headers;
+status lines are 24px marks adjacent to text, not full-cell rules. The initial
+10px mark resembled a letter and was lengthened after owner feedback. Targeted browser
+checks passed. Existing neutral themes and navigation remain; await owner feedback.
+
+## Earlier unselected console samples
+
+An earlier iteration responded to report-like layout feedback with
+http://127.0.0.1:8767/runner.html, a bounded runner/
+evidence-inspector alternative. Read the
+[current sample description](design/console-study/README.md) for interactions and
+limits. It uses case navigation, linked events/captures/checks, adjustable panes,
+an activity log and fixed status/accounting. Final synthetic prototype browser
+checks passed; production source and trial remain unchanged. This structure was
+not selected. Overview and palette samples below are also preserved for comparison.
+
+The owner approved one representative overview/issue-detail sample following the
+external reference study. The standalone
+[prototype and limits](design/console-study/README.md) are ready at
+http://127.0.0.1:8767/ with bilingual light/dark, mixed outcomes, evidence drilldown,
+simulated running/stopped states and purpose-based export previews. Every result
+is synthetic. Production source, installed trial on 8765 and its data are unchanged.
+Final prototype browser checks passed at desktop/narrow widths; failed layout
+and theme-transition observations are retained in ignored artifacts.
+The owner rejected the initial generic blue-gray palette. The sample now offers
+Graphite, Slate and Ink alternatives with the original as a comparison; Graphite
+is the proposed default, pending selection. All eight palette/theme combinations
+were rendered in an isolated temporary browser, without the owner's Chrome profile.
+See the prototype README for sampled contrast/width checks and limits. Await owner
+feedback on palette and sample before selecting a production increment.
+
+## External interaction references and independent identity
+
+On 2026-10-23 the owner requested comparable-tool research before further UX work
+and rejected adopting Anthropic's branding/palette. This durable direction is now
+in intends.md. Read the
+[reference study](reviews/2026-10-23-engineering-console-reference-study.md) for
+official-source mechanisms, adaptations and limits. Explore an inline scope/budget
+summary instead of assuming a separate confirmation page is required; preserve
+admission/opt-in rules. Recommendations await visual validation, not a new long
+implementation stage. Product source, trial and endpoint coverage are unchanged.
+
+## Browser input history delivered; await owner feedback
+
+The owner requested endpoint/model autocomplete backed by localStorage. Only
+these two fields are remembered, with 20 recent values each, no automatic filling
+or requests, and a clear control that preserves server history/presets. API Keys
+remain excluded. This explicitly supersedes earlier zero-browser-storage
+expectations for endpoint/model strings only. Read the follow-up section in
+[the entry ledger](harness/simplified-entry-ledger.md).
+
+Final stable-source fast checks passed eight gates. Seven related browser checks
+passed, and the final history implementation passed two additional browser checks.
+One bounded independent read-only review found no material issue. No endpoint
+coverage, real endpoint request, new remote CI or remote write is included.
+Trial http://localhost:8765/new runs local feature commit `e8e270e`. All 157
+installed package files match source; health and input-history controls were
+checked and all three prior completed records remain. Keep the trial running;
+the development check container is stopped at handoff. This work is local only.
+Await owner feedback before selecting another increment.
+
+## Simplified entry delivered; await owner feedback
+
+The owner approved a bounded entry-flow improvement: endpoint and model are the
+only required visible fields; API Key is optional, scope and advanced controls
+are collapsed, and the name defaults to the model. Fresh forms keep all five
+cases/up to six requests. Existing checks and explicit review/start remain intact;
+no diagnostic scenario was added. Read [the ledger](harness/simplified-entry-ledger.md).
+
+Final-source fast checks passed all eight gates with unchanged source. Related
+browser checks passed 47 tests; Chinese/English light/dark screenshots and mobile
+layout were inspected. One bounded independent review found no material blocker.
+An additional imported original-scope retest/comparison check passed. The trial
+at http://localhost:8765/new now runs feature commit `decd559`; all 157 installed
+package files match source. Health/home checks passed and all three prior
+completed records remain. Keep the trial container running; development checks
+are complete and the development container is stopped at handoff. No remote
+push, new remote CI or genuine endpoint call is included in this iteration.
+Pause feature work here for owner feedback on the simplified entry.
+
+## Tool-result round trip delivered; await owner trial feedback
+
+The owner approved one small addition: `ANT-TOOL-LOOP-001` v1 in profile
+`anthropic-tool-loop`. Source and the running local Web trial now provide five
+formal scenarios. The new case reserves two sequential non-stream requests and
+checks consumption of a fresh tool-result token; it is one scenario, not two
+independent cases or retries. Existing two profiles retain their original scope.
+The default new Web form selects all three profiles with a six-request allowance;
+the owner can select only the round-trip profile to test it separately.
+
+Dedicated fault/timeout/cancellation/evidence checks passed, as did actual CLI,
+Web API and the new browser flow against synthetic endpoints. One independent
+review's extra-tool false PASS was reproduced and fixed. Final stable-source fast graph passed eight gates; 77 targeted
+checks, including 20 round-trip regressions, passed. New-case browser verification
+passed with verified evidence; corrected catalog/installed-package checks passed
+six tests, with five final installed-package checks reverified after the last
+code corrections. A first-step failure stays visible in repair comparison even if the
+second step passed. Exports retain both exchanges.
+The broader graph's old catalog/budget fixture failures were corrected and
+reverified separately; its failed/changed-source records remain intact. No single
+green final-source full graph or new remote CI is claimed.
+Read [the bounded ledger and usage](harness/tool-loop-ledger.md).
+
+Trial http://localhost:8765 has been updated with a cached-wheel/offline dependency
+reuse image. Existing persistent history is retained. Keep this trial running;
+stop only the development check container after its work finishes. No agent call
+to the owner's endpoint, remote push, image publication or full native matrix.
+Final trial revision is local feature commit `eb82c90`; all 157 installed package
+files match the source. Health/home checks passed and both prior completed runs
+remain present. Development checks are finished; keep the trial service running.
+Wait for owner feedback before choosing another feature. The feature is committed
+locally and has not been pushed; remote main still has four cases.
+Streaming/parallel tool loops, error-result recovery and real client workflows
+remain future work. Older four-case observations below are historical.
+
+## Product alignment and remaining coverage
+
+Read [project intent](../intends.md) before selecting further work. The owner
+identified that the formal catalog had only four cases despite extensive
+presentation and engineering work. Prioritize expanding dependable diagnostic
+coverage: expected-rejection scenarios, multi-step tool/result conversations,
+streamed tool arguments, multi-turn messages and request/error contracts, then
+the remaining protocol/client/version-maintenance goals in intends.md. Existing
+W1/W2 scope exclusions are historical milestone boundaries, not completion or
+removal of these goals. The first addition above brings the local catalog to five;
+the remaining goals are not yet delivered.
+
+The prior private 90-scenario assessment is reference material, not a shipped
+suite or 90 independent capabilities. Its script is absent from the inspected
+original temporary harness directory; do not promise a direct import without
+recovering and auditing actual source. Use retained method/rulings and verified
+official protocol sources to reconstruct generic checks where needed.
+
+## Historical four-case trial; superseded by the delivery above
+
+The owner prioritized hands-on use over another verification round. Current-source
+Web service is running at http://localhost:8765 in readiness-trial-readiness-1,
+with persistent volume readiness-trial_readiness-data. Keep this container
+running for the user. Health returned status ok and homepage returned HTTP 200.
+No real model request was sent. The installed scope remains four formal cases;
+do not describe this trial as comprehensive protocol/client certification.
+
+Current wheel was built using cached build stages and installed offline into the
+existing ARM64 Web environment; pyproject.toml, uv.lock and Dockerfile match its
+original revision e4e9de4. Package dependency checking passed. A normal Web build
+stalled downloading pydantic-core and was interrupted; its log is retained. The
+trial image is anthropic-readiness-web:trial-ready, revision a5b66e2; image-context
+label is explicitly unknown. This is local trial delivery, not fresh full image
+matrix acceptance or registry publication. No additional test graph was run.
+
+Run/stop configuration is ignored artifacts/ci-startup-20261022/trial-compose.yaml,
+used with compose.yaml and project readiness-trial. Preserve its data volume.
+The post-merge main CI 39758681663 was subsequently confirmed successful in all
+five jobs. The earlier running-CI observation below is historical.
+
+## PR 1 merged; main CI running
+
+The owner authorized merging PR 1. Rechecked its exact head `6dcd27a`, clean
+mergeability and all five successful PR CI jobs, then merged with a head-match
+guard. GitHub confirms MERGED at 2026-10-22T09:51:43Z into main, merge commit
+`10c7933e76258abd1c1a5f953954287d719a7850`.
+The [post-merge main CI](https://github.com/sleetdrop/anthropic-readiness/actions/runs/39758681663)
+was observed in progress, not yet passed. Prior successful PR CI remains distinct
+from this new run. No full native image matrix or registry publication started.
+
+Local branch and its unpublished observation commits are preserved; no branch
+deletion or extra push accompanies this merge. Merge metadata and initial main CI
+state are retained in ignored artifacts/ci-startup-20261022/. The earlier open-PR
+statements below describe their historical observation points.
+
+## Startup probe correction published; fresh PR CI passed
+
+The owner authorized pushing the correction to the existing feature branch and
+observing fresh CI. PR 1 head is `6dcd27a9ce5e68c2c408e5bd331f32e454cb7880`.
+The [new PR CI run](https://github.com/sleetdrop/anthropic-readiness/actions/runs/39737268733)
+passed all five jobs: quality (3.11), quality (3.12), actual Dev Container,
+native AMD64 runtime smoke and ci-required. Downloaded job logs confirm all
+thirteen gates passed in each of the three full-check environments, including
+acceptance. All four summary/upload pairs succeeded; artifact metadata confirms
+retention through 2026-11-05. Full remote JUnit archives were not downloaded or
+independently recounted, so the exact local counts below are not remote counts.
+The separate feature-branch push run was skipped, not passing verification.
+
+The earlier failed PR run remains historical evidence. The correction now has
+fresh remote verification; this does not recover discarded historical stderr.
+PR remains open and unmerged. Record this observation in a local-only docs commit
+to avoid triggering another unchanged-source CI run. Full native AMD64/ARM64 image
+acceptance, repository protection and registry publishing remain separate steps.
+New evidence is retained under ignored `artifacts/ci-startup-20261022/new-ci-*`.
+
+## Previous local startup acceptance probe correction
 
 The owner authorized diagnosis and local correction of the failed PR CI. Follow
 [the bounded correction plan](superpowers/plans/2026-10-22-ci-startup-probe.md).
@@ -47,10 +449,9 @@ record SHA-256 `5dd6dbabc83cff9a543d7346eca031db6892c74460da152051db775bc6036452
 Observed source was the patch on cd88f6d, not a clean future commit.
 
 Retain all evidence under ignored `artifacts/ci-startup-20261022/`, especially
-full-final/, observed-summary.json and comparison.json. Stop after local commit
-and container shutdown. PR 1 remains on eb82885 with its earlier failed CI; no
-push, merge, remote retry or full image matrix was performed for this correction.
-The next step requires owner-authorized publication and fresh remote validation.
+full-final/, observed-summary.json and comparison.json. That local operation
+stopped after commit and container shutdown, with PR 1 still on eb82885. The
+subsequent owner-authorized publication and successful CI are recorded above.
 
 ## PR 1 published: evidence upload verified, acceptance failures remain
 
@@ -81,7 +482,7 @@ logs and verified accounting remain in ignored
 `artifacts/ci-observability-20261022/`, especially `pr-observed-summary.json`.
 
 PR remains open and unmerged. The owner subsequently authorized the local probe
-diagnosis/correction recorded above; remote revalidation is still pending. Native
+correction and fresh remote verification recorded above. Native
 full container matrix, repository protection and registry publishing remain
 separate later steps. The earlier local acceptance below is not remote green CI.
 

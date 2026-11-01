@@ -15,6 +15,7 @@ def test_exact_case_set_and_profile_deduplication() -> None:
         "ANT-TEXT-SSE-001",
         "ANT-TEXT-SSE-002",
         "ANT-TOOL-FORCED-001",
+        "ANT-TOOL-LOOP-001",
     ]
     assert len(select_cases(["anthropic-basic"])) == 3
     assert len(select_cases(["anthropic-basic", "anthropic-tools-smoke", "anthropic-basic"])) == 4
@@ -45,6 +46,8 @@ def test_prompts_budget_and_exact_headers() -> None:
             "Say hello in one short sentence.",
             "Count from 1 to 5, using digits.",
             "Use get_weather to check the weather in Hanoi.",
+            "Use get_weather to check the weather in Hanoi. After receiving the tool "
+            "result, reply with only its verification_token, without formatting or explanation.",
         ]
     ]
     assert all(r.body["max_tokens"] == 21 for r in requests)
@@ -52,7 +55,7 @@ def test_prompts_budget_and_exact_headers() -> None:
     assert all(dict(r.headers)["anthropic-beta"] == "synthetic-a,synthetic-b" for r in requests)
     assert all("x-api-key" not in dict(r.headers) for r in requests)
     assert requests[-1].body["tool_choice"] == {"type": "tool", "name": "get_weather"}
-    assert [r.streaming for r in requests] == [False, True, True, False]
+    assert [r.streaming for r in requests] == [False, True, True, False, False]
 
 
 def test_selected_unsupported_capability_stays_in_plan() -> None:

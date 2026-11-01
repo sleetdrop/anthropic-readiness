@@ -30,3 +30,55 @@
 - Final full Linux ARM64/Python 3.12.15 graph: all thirteen gates passed, unchanged source. Actual JUnit: 495 unit/harness, 258 integration, 84 acceptance, 5 package (842 Python), 20 Node and 78 Chromium, zero failures/errors/skips. Browser gate 191.76 seconds, integration 230.37 seconds, acceptance 57.88 seconds. All original global deadlines remain intact.
 - Final evidence: full-final/check-result.json SHA-256 `5dd6dbabc83cff9a543d7346eca031db6892c74460da152051db775bc6036452`; source fingerprint `f88890a88a999e101ee4a23036db0a911beb3960b89ead4a1d92c76ed4ebed64`. The run tested the uncommitted patch on cd88f6d. Independent accounting verified all expected positive counts, zero defects/skips and matching current bytes. See ignored observed-summary.json and complete original/final logs.
 - Delivery boundary: local commit and stopped container only. PR code head/failed run are unchanged; do not claim remote repair or dispatch another job. Further remote publication requires the owner's authorization.
+
+## Subsequent owner-authorized publication and CI observation
+
+- [x] Recheck local source/evidence identity, push the existing correction normally to PR 1, and observe one fresh CI run at ten-minute polling intervals.
+- [x] Confirm all required jobs, inspect retained full-check logs and artifact metadata, update PR description and record the outcome locally. Leave PR open; do not merge or dispatch the full image matrix.
+
+The owner subsequently authorized this distinct publication step. Pushed correction
+head `6dcd27a9ce5e68c2c408e5bd331f32e454cb7880`; source fingerprint still matched
+`f88890a88a999e101ee4a23036db0a911beb3960b89ead4a1d92c76ed4ebed64` before push.
+[PR CI 39737268733](https://github.com/sleetdrop/anthropic-readiness/actions/runs/39737268733)
+passed quality (3.11), quality (3.12), devcontainer, runtime-amd64 and ci-required.
+All thirteen main gates passed in each full-check job's downloaded log. Both
+previously failing Python 3.12 environments now passed acceptance. All four
+summary/upload pairs succeeded; artifact metadata confirms expiration on
+2026-11-05. Remote JUnit archives were not downloaded/recounted; do not promote
+local case counts into remote accounting. Separate branch push run 39737266229
+was skipped by design, not passed.
+
+Watch completed with exit 0; raw outcomes, job logs and metadata are retained
+under ignored artifacts/ci-startup-20261022/new-ci-*. Original failed records
+remain intact. The observation closeout is a local-only docs commit; no second
+push, unchanged retry, merge, full native matrix or registry publication follows.
+
+## Subsequent owner-authorized PR merge
+
+- [x] Recheck exact PR head, latest PR CI and mergeability; merge PR 1 into main with a head-match guard.
+- [x] Verify GitHub MERGED state and record the distinct post-merge CI as pending.
+
+GitHub confirms merge commit `10c7933e76258abd1c1a5f953954287d719a7850`,
+2026-10-22T09:51:43Z. Automatic main push CI 39758681663 was observed running,
+not passed. Branches and local-only observation commits remain preserved. No
+full image matrix, extra push or registry publication is included in this step.
+
+## User trial handoff
+
+Owner prioritized immediate use and deferred the proposed full native image
+matrix. Main CI 39758681663 subsequently completed successfully in all five jobs.
+Current-source ARM64 Web trial is running at localhost:8765, using cached locked
+dependencies, an offline current-wheel install and an independent persistent
+data volume. Health and homepage returned success. Standard build's stalled
+download was interrupted and retained; trial image-context is unknown. No full
+test graph, new protocol coverage, real endpoint call or publication occurred.
+Leave readiness-trial-readiness-1 running; collect user feedback before proposing
+another implementation or verification round.
+
+## Subsequent product-intent alignment
+
+Owner requested a durable root intends.md. Added the intent and linked it from
+AGENTS.md and the current handoff, keeping missing endpoint coverage visible.
+This separate documentation task adds no endpoint scenarios or runtime behavior.
+Future work follows the owner's intent and current instructions; the completed
+startup-probe plan is historical evidence, not a mandate to extend CI work.

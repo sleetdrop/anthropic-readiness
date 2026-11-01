@@ -8,6 +8,7 @@ from urllib.parse import urlencode
 from fastapi import APIRouter, Request
 from starlette.responses import HTMLResponse, Response
 
+from anthropic_readiness.cases import list_cases
 from anthropic_readiness.config import Limits
 from anthropic_readiness.diagnostics.service import DiagnosticService
 from anthropic_readiness.models import JsonObject, JsonValue, object_value
@@ -19,6 +20,15 @@ from anthropic_readiness.web.templating import page
 
 router = APIRouter(route_class=LocalRoute)
 ASSETS = {
+    "web/ui-update.js",
+    "web/console.css",
+    "web/evidence-view.js",
+    "web/evidence-json.js",
+    "web/icons/exclamation-circle.svg",
+    "web/icons/information-circle.svg",
+    "web/icons/moon.svg",
+    "web/icons/sun.svg",
+    "web/icons/magnifying-glass.svg",
     "web/workbench-links.js",
     "web/workbench.js",
     "web/diagnostics.js",
@@ -70,7 +80,7 @@ def initial_target(catalog: JsonObject) -> JsonObject:
         },
         "response_model_policy": "request_or_alias",
         "response_model_aliases": [],
-        "limits": Limits().to_json(),
+        "limits": Limits(max_requests=sum(case.request_count for case in list_cases())).to_json(),
     }
 
 
@@ -120,6 +130,7 @@ def configure(
         "presets": list(manager.store.presets()),
         "baseline_id": retest_id,
         "reference": reference,
+        "request_counts": {case.id: case.request_count for case in list_cases()},
     }
     return page(
         "configure.html",
@@ -135,6 +146,14 @@ def configure(
             "limits": target["limits"],
             "reference": reference,
             "baseline_id": retest_id,
+            "scope_cases": sum(
+                1 for case in list_cases() if any(profile in profiles for profile in case.profiles)
+            ),
+            "scope_requests": sum(
+                case.request_count
+                for case in list_cases()
+                if any(profile in profiles for profile in case.profiles)
+            ),
         },
         request=request,
     )

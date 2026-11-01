@@ -63,6 +63,7 @@ def source_fingerprint(root: Path) -> str:
         for directory in ("src", "tests", "scripts", "examples", ".github", ".devcontainer")
         for p in (root / directory).rglob("*")
         if p.is_file()
+        and p.name != ".DS_Store"
         and not any(
             part in {"__pycache__", ".pytest_cache", ".mypy_cache", ".ruff_cache"}
             for part in p.parts
@@ -379,7 +380,7 @@ def build_checks(root: Path, output: Path, suite: str) -> list[CheckSpec]:
                         "--out",
                         str(output / "frontend-browser"),
                     ],
-                    420,
+                    720,
                     "junit",
                     junit_path=output / "frontend-browser/browser.xml",
                     cwd=root,

@@ -259,3 +259,25 @@ def test_selected_suite_with_any_unexpected_skip_is_not_green(tmp_path: Path, ki
     document = json.loads((output / "check-result.json").read_text())
     assert document["status"] == "failed"
     assert document["checks"][0]["reason"] == "unexpected_skipped_tests"
+
+
+def test_browser_wrapper_preserves_time_for_child_reporting_and_cleanup(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from scripts.check_frontend import checks
+
+    for key in (
+        "READINESS_BROWSER_ROOT",
+        "PLAYWRIGHT_JUNIT_OUTPUT_FILE",
+        "READINESS_BROWSER_ARTIFACTS",
+    ):
+        monkeypatch.setenv(key, os.environ.get(key, ""))
+    child = next(
+        item for item in checks("browser", tmp_path / "frontend") if item.check_id == "browser"
+    )
+    parent = next(
+        item
+        for item in build_checks(ROOT, tmp_path / "full", "full")
+        if item.check_id == "frontend-browser"
+    )
+    assert parent.timeout_s >= child.timeout_s + 120

@@ -5,10 +5,18 @@ of Anthropic Messages. Preview a fixed plan, explicitly start it, observe real
 progress, and inspect or export the evidence-led report. Execution completion and
 protocol compatibility are separate outcomes; untested capabilities stay untested.
 
-The installed scope is four versioned cases: non-stream text, a streamed greeting,
-a streamed count from 1 to 5, and a forced non-stream tool call. `anthropic-basic`
-runs three cases; `anthropic-tools-smoke` runs one. The sole bundled contract is
-Messages `2023-06-01`, revision `1.0.0`, without betas. Tool loops, version matrices,
+The owner-approved [design baseline](design.md) records the current presentation
+direction and reference prototype. Its acceptance is separate from migration to
+the installed console; see [current delivery status](docs/CONTINUE.md).
+
+The installed scope is five versioned cases: non-stream text, a streamed greeting,
+a streamed count from 1 to 5, a forced non-stream tool call, and a non-stream tool
+result round trip. `anthropic-basic` runs three cases; `anthropic-tools-smoke`
+runs one; `anthropic-tool-loop` runs one two-request conversation using a fresh
+verification token. All three profiles together reserve up to six requests.
+See [the round-trip scope and usage](docs/harness/tool-loop-ledger.md).
+The sole bundled contract is
+Messages `2023-06-01`, revision `1.0.0`, without betas. Streaming/parallel tool loops, version matrices,
 Claude Code workflows and protocol-update Agent commands belong to later stages.
 The API date alone does not prove client pinning semantics or workflow stability.
 

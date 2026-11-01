@@ -46,7 +46,8 @@ def server() -> Iterator[SyntheticServer]:
             self.send_response(503 if self.path == "/http-error" else 200)
             content_type = (
                 "application/json"
-                if self.path == "/cases" and not json.loads(request_body).get("stream")
+                if self.path in {"/cases", "/tool-loop", "/tool-loop-ignored"}
+                and not json.loads(request_body).get("stream")
                 else "text/event-stream"
             )
             self.send_header("Content-Type", content_type)
@@ -103,6 +104,34 @@ def server() -> Iterator[SyntheticServer]:
                         ).read_bytes()
                     )
                     data = json.dumps(message).encode()
+            if self.path in {"/tool-loop", "/tool-loop-ignored"}:
+                payload = json.loads(request_body)
+                message = json.loads(
+                    (
+                        Path(__file__).resolve().parent
+                        / "fixtures/contracts/core-1.0.0/message-valid.json"
+                    ).read_text()
+                )
+                if len(payload["messages"]) == 1:
+                    message["stop_reason"] = "tool_use"
+                    message["content"] = [
+                        {
+                            "type": "tool_use",
+                            "id": "toolu_synthetic_loop",
+                            "name": "get_weather",
+                            "input": {"location": "Hanoi"},
+                        }
+                    ]
+                else:
+                    result = payload["messages"][2]["content"][0]
+                    token = json.loads(result["content"])["verification_token"]
+                    message["content"] = [
+                        {
+                            "type": "text",
+                            "text": "ignored result" if self.path.endswith("ignored") else token,
+                        }
+                    ]
+                data = json.dumps(message).encode()
             self.send_header("Content-Length", str(len(data)))
             self.end_headers()
             self.wfile.write(data)

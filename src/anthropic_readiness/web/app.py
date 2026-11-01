@@ -28,11 +28,13 @@ from anthropic_readiness.web.security import (
     preferences_for,
 )
 from anthropic_readiness.web.settings import WebSettings
+from anthropic_readiness.web.ui_assets import load_ui_assets
 from anthropic_readiness.web.workbench import router as workbench_router
 
 
 def create_app(*, data_root: Path, settings: WebSettings) -> FastAPI:
     security = LocalSecurity(settings)
+    ui_assets = load_ui_assets()
 
     @asynccontextmanager
     async def lifespan(app: FastAPI) -> AsyncIterator[None]:
@@ -59,6 +61,7 @@ def create_app(*, data_root: Path, settings: WebSettings) -> FastAPI:
         redoc_url=None,
         openapi_url=None,
     )
+    app.state.ui_assets = ui_assets
     app.state.security = security
     app.state.settings = settings
     app.state.diagnostics = DiagnosticService(data_root)
@@ -79,7 +82,9 @@ def create_app(*, data_root: Path, settings: WebSettings) -> FastAPI:
 
     @app.get("/health", include_in_schema=False)
     def health() -> JSONResponse:
-        return api_response("health_response", {"status": "ok"})
+        response = api_response("health_response", {"status": "ok"})
+        response.headers["X-Readiness-UI-Revision"] = ui_assets.revision
+        return response
 
     @app.get("/api/v1/session")
     async def session(request: Request) -> JSONResponse:

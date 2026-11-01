@@ -10,6 +10,7 @@ CASE_NAMES = {
     "ANT-TEXT-SSE-001": "流式问候",
     "ANT-TEXT-SSE-002": "流式计数 1 至 5",
     "ANT-TOOL-FORCED-001": "强制工具调用（Hanoi 天气）",
+    "ANT-TOOL-LOOP-001": "工具结果完整往返（随机校验值）",
 }
 STATE_NAMES = {
     "PASS": "通过",
@@ -139,6 +140,12 @@ def finding_count(groups: Sequence[JsonObject]) -> str:
 
 
 def _explanation(key: str, reason: str) -> tuple[str, str, str]:
+    if key == "LOOP-STEP":
+        return (
+            "工具结果未完成往返" if reason == "tool_result_not_consumed" else "工具往返未完成",
+            "模型需要先发出有效工具调用，再在后续回答中原样使用工具结果中的随机校验值。",
+            "核对两步请求中的 assistant 工具调用、tool_use_id、tool_result 和最终文本；超时或前置失败应分别排查。",
+        )
     if key == "MSG-CORE":
         return (
             "消息结构不符合要求",

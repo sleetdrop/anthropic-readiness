@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Anthropic Readiness · Investigation flow</title>
+  <link rel="stylesheet" href="flow.css?v=13">
+  <script src="flow.js?v=11" defer></script>
+</head>
+<body>
+  <header><strong>Anthropic Readiness</strong><span data-text="prototype"></span><div class="appearance"><button type="button" id="language" aria-label="切换到英文（English）">EN</button><button type="button" id="theme"></button></div></header>
+  <section class="run-context" aria-label="Run context">
+    <div class="run-summary"><div class="run-heading"><strong id="run-status" role="status"></strong><code>run-demo-024</code></div><div class="run-hints"><span id="run-hint"></span><span data-text="client"></span></div></div>
+    <div class="run-progress"><div class="progress-heading"><span id="run-counts"></span><span id="request-counts"></span></div><progress id="run-progress" max="5" value="4"></progress></div>
+  </section>
+  <nav id="trail" aria-label="Investigation context"></nav>
+  <main id="main" tabindex="-1"></main>
+  <footer><span class="prototype-note" data-text="limits"></span><div class="demo-controls" role="group" aria-labelledby="demo-label"><span id="demo-label" data-text="demoState"></span><button type="button" data-run-state="running" data-text="running" aria-pressed="false"></button><button type="button" data-run-state="completed" data-text="completed" aria-pressed="false"></button></div></footer>
+  <div id="announcement" class="sr-only" aria-live="polite"></div>
+</body>
+</html>

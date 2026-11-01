@@ -14,10 +14,12 @@ from anthropic_readiness.diagnostics.core_contracts import validate_core
 from anthropic_readiness.diagnostics.identity import check_identity, installed_identity
 from anthropic_readiness.diagnostics.inventory import categorized_cases
 from anthropic_readiness.diagnostics.models import ImplementationIdentity, RetestRecipe
-from anthropic_readiness.evidence import safe_path
-from anthropic_readiness.models import JsonObject, JsonValue, object_value, strict_json
+from anthropic_readiness.evidence import load_capture, safe_path
+from anthropic_readiness.models import JsonObject, JsonValue, RequestSpec, object_value, strict_json
 from anthropic_readiness.operations.storage import MAX_DOCUMENT_BYTES
 from anthropic_readiness.runner import RunPlan, plan_run
+from anthropic_readiness.tool_loop import CASE_ID as TOOL_LOOP_CASE_ID
+from anthropic_readiness.tool_loop import followup_request, tool_message
 
 if TYPE_CHECKING:
     from anthropic_readiness.report_models import ReportSource
@@ -209,6 +211,12 @@ def validate_recipe_evidence(
     if set(references) != expected_paths:
         return ("diagnostic_request_capture_missing",)
     reasons: list[str] = []
+    loop_steps = {
+        str(attempt["id"]): attempt
+        for case in source.case_records
+        if case["id"] == TOOL_LOOP_CASE_ID
+        for attempt in _objects(case.get("attempts", []))
+    }
     for relative, ref in references.items():
         try:
             parts = relative.split("/")
@@ -237,8 +245,35 @@ def validate_recipe_evidence(
                 for key, value in requests[parts[1]].items()
                 if key not in {"case_id", "sha256"}
             }
+            if parts[1] == TOOL_LOOP_CASE_ID and loop_steps[parts[2]]["index"] == 2:
+                first = next(item for item in loop_steps.values() if item["index"] == 1)
+                first_path = (
+                    "evidence/" + TOOL_LOOP_CASE_ID + "/" + str(first["id"]) + "/response.json"
+                )
+                first_capture = load_capture(safe_path(root, first_path)).capture
+                message = tool_message(first_capture)
+                if message is None:
+                    raise ValueError("tool_loop_missing_predecessor")
+                body = object_value(capture["body"])
+                messages = _objects(body["messages"])
+                blocks = _objects(messages[2]["content"])
+                result = object_value(strict_json(str(blocks[0]["content"])))
+                token = result.get("verification_token")
+                if not isinstance(token, str):
+                    raise ValueError("tool_loop_invalid_token")
+                template = RequestSpec(
+                    str(capture["url"]),
+                    tuple(
+                        (key, str(value))
+                        for key, value in object_value(expected["headers"]).items()
+                    ),
+                    object_value(expected["body"]),
+                    False,
+                )
+                followup = followup_request(template, message, token)
+                expected = {**expected, "body": followup.body}
             if normalized != expected:
                 reasons.append("diagnostic_request_capture_mismatch")
-        except (OSError, ValueError, KeyError):
+        except (OSError, ValueError, KeyError, IndexError, StopIteration):
             reasons.append("diagnostic_request_capture_invalid")
     return tuple(dict.fromkeys(reasons))

@@ -1375,6 +1375,747 @@ Stop after the scoped local commit and container shutdown. No push, PR mutation,
 remote rerun, full image matrix, real model call or registry write occurred for this
 correction. PR 1 remains open with its original eb82885 failed remote result.
 
+## 2026-10-22: Published startup probe correction; fresh PR CI passed
+
+Owner separately authorized pushing the correction and trying fresh CI. Read-only
+source/JUnit accounting before push matched the accepted local full record and
+fingerprint f88890a8. Pushed cd88f6d and correction 6dcd27a normally to the existing
+feature branch/PR 1; no main update or force push. New PR CI run 39737268733 on
+6dcd27a9ce5e68c2c408e5bd331f32e454cb7880 completed successfully. Its five jobs
+passed: quality (3.11), quality (3.12), actual Dev Container, native AMD64 runtime
+smoke and ci-required. Downloaded logs confirm all thirteen main gates passed
+in each full-check environment, including the previously failing acceptance
+groups. Watch used a 600-second interval and terminated with exit 0.
+
+All four summary/upload pairs succeeded. Artifact metadata records four retained
+archives expiring 2026-11-05; their PR merge identity is 5fd3785. Full remote JUnit
+archives were not downloaded or independently recounted, so no exact remote case
+counts are claimed. Separate branch push run 39737266229 was skipped by design,
+not passed. The first failed PR run and diagnostic RED evidence remain intact;
+fresh success does not recover its discarded startup stderr.
+
+Outcome metadata, full-check job logs and terminal watch output are retained in
+ignored artifacts/ci-startup-20261022/new-ci-*. Update PR description to the new
+observed state and make a local-only documentation closeout commit. No second
+push/retry, merge, full native image matrix, real endpoint call, registry write or
+repository-protection change belongs to this operation.
+
+Closeout documentation/collaboration checks passed in the existing Linux
+development container; whitespace validation passed. The PR description was
+updated successfully with the new CI result and its limits. Source implementation
+was unchanged during publication/observation; no full local suite was repeated.
+
+## 2026-10-22: Owner-authorized merge of PR 1
+
+Rechecked GitHub: PR 1 OPEN, non-draft, mergeable/CLEAN, exact source head
+6dcd27a9ce5e68c2c408e5bd331f32e454cb7880 and five successful jobs in its latest
+PR CI. Unrelated skipped feature-branch push checks were not counted as passes.
+Merged with merge-commit strategy and an exact head-match guard. GitHub confirms
+MERGED at 2026-10-22T09:51:43Z into main with merge commit
+10c7933e76258abd1c1a5f953954287d719a7850. Post-merge main CI 39758681663 was
+observed in progress; its completion is not yet verified. Existing PR evidence
+does not establish this new run's result.
+
+Local feature branch and unpublished observation commit 4cdfe66 are preserved.
+This handoff update is also local-only. No source changes, branch deletion,
+additional push, manual matrix dispatch, registry write or real endpoint call.
+Ignored pr-merge-result.json and post-merge-runs.json retain the remote responses
+under artifacts/ci-startup-20261022/.
+
+## 2026-10-22: Deliver local hands-on trial before further release checks
+
+Owner objected to postponing actual use behind another container acceptance
+round. Deferred full native matrix; no new feature or test graph was added.
+Post-merge main CI 39758681663 was confirmed completed/success with all five
+jobs. Built current wheel from cached stages, then installed it offline into the
+existing ARM64 Web image with identical pyproject.toml/uv.lock/Dockerfile to
+its source revision e4e9de4. Dependency check passed. Standard Web build stalled
+on pydantic-core download; interrupted it (exit 130), retaining its original log.
+The local trial image has revision a5b66e2 and explicitly unknown image-context;
+do not claim new full image acceptance. No production source change or real
+endpoint request occurred.
+
+Started readiness-trial-readiness-1 using Compose project readiness-trial and
+independent persistent volume readiness-trial_readiness-data. Only host loopback
+8765 is published. Health returned status ok; homepage HTTP 200, 88386 bytes.
+Initial sandbox-local HTTP attempts could not connect; host-permitted reads
+succeeded. Leave service running for user access at http://localhost:8765.
+The four formal cases remain the installed scope. Local build/start logs and
+the Compose override are ignored under artifacts/ci-startup-20261022/.
+
+## 2026-10-22: Record durable product intent and coverage priority
+
+Owner requested intends.md to reduce project drift after identifying the mismatch
+between substantial presentation/infrastructure delivery and four formal cases.
+Added root intent covering diagnostic users, repair handoff, protocol/client
+coverage, version maintenance, CLI/Web use and truthful delivery accounting.
+AGENTS.md now directs contributors to read it first; current handoff prioritizes
+missing core coverage and distinguishes historical scope limits from product
+completion. This is documentation-only alignment; it adds zero endpoint cases,
+no runtime behavior and no claim that a document alone prevents drift. No product
+suite, live call, image rebuild, remote write or service restart is needed.
+
+## 2026-10-23: First incremental core-coverage addition available for trial
+
+Owner approved one tool-result round trip and requested usable intermediate
+checkpoints. New formal scenario ANT-TOOL-LOOP-001 v1/profile anthropic-tool-loop
+adds two sequential non-stream exchanges under one case. It verifies the model
+consumes a fresh 128-bit token, retaining separate captures and truthful request
+counts across failure, cancellation and deadline paths. Original profiles/case
+versions remain unchanged. New case is selectable in CLI/Web and represented in
+Chinese/English reports. Single-capture replay rejects an incomplete conversation.
+Same-scope recipes verify the dynamic continuation against its recorded predecessor.
+
+One bounded independent review's extra-tool false PASS was reproduced RED and
+fixed with a text-only final-response requirement. Seventeen dedicated regressions
+passed; actual synthetic CLI/Web checks and a new browser flow passed. Original
+browser tests now explicitly select their original four-case scope, preserving
+their assertions; the new test verifies three-profile/six-request defaults and a
+two-request standalone loop. Initial harness errors and interrupted whole-graph
+attempts are retained. Final strict typing passed; whole-graph closure pending.
+
+Delivered the verified feature to localhost:8765 before broader regression ended.
+Reused cached current-wheel build and unchanged locked ARM64 Web dependencies
+offline; the image explicitly labels a worktree revision/unknown image-context.
+The trial volume was preserved; only completed jobs were present before restart.
+Health and homepage returned success, and the new case appears. No owner's real
+endpoint was called. See tool-loop-ledger.md and ignored
+artifacts/ci-startup-20261022/tool-loop-* for exact scope, proof and limits.
+
+Final local code closure: stable-source fast graph passed all eight gates, and
+77 targeted checks passed, including 20 round-trip-specific regressions. The
+stable-source new browser flow passed and checks verified evidence; six targeted
+catalog/installed-package checks passed. Additional repair tests reproduced old
+duplicate-check rejection and request/body evidence typing assumptions. The new
+case now conservatively combines both exchange observations for comparisons and
+requires both request/body proof. Original results are not rewritten. Raw first
+step failures survive later success, and actual ZIP export is exercised.
+
+The broader completed graph failed three stale catalog/budget fixture expectations;
+each was corrected and reverified. The later 79-case browser run's tests passed,
+but its aggregate detected unrelated source edits, so it is not accepted as stable
+whole-graph evidence. Original interrupted/failed/collection-error records remain.
+No single all-green full graph for final source, new remote CI, full native image
+matrix or genuine endpoint assessment is claimed. Exact source and positive
+JUnit counts are in ignored tool-loop-observed-summary.json.
+
+Final trial handoff: local feature commit eb82c9076b431db8ad46fb0bc25b47cd30781931
+is installed at http://localhost:8765. All 157 installed package files match the
+final source; source fingerprint is
+794289ddf4f7f8bf1b0fe6dbfb16ed6735ed53fc2c1af9377c8ddafb7df98098.
+Five final installed-package checks passed after the last code corrections.
+Health and homepage checks passed; both prior completed run IDs remain present.
+The explicitly synthetic ignored-result report was regenerated with verified
+evidence at artifacts/ci-startup-20261022/tool-loop-synthetic-ignored-verified/.
+The trial container stays running for the owner. Development checks are finished;
+the development container is stopped at handoff. This is a local delivery only:
+no remote push, registry publication or real endpoint call. Await owner feedback
+before selecting another increment.
+
+Owner trial follow-up (2026-10-23): read and verified the owner's saved evidence,
+then sent two explicitly authorized independent raw requests, bounded to two
+calls/90 seconds with no retry. Both returned HTTP 200 and completed normally;
+nullable stop-field omissions reproduced. The fresh stream additionally had a
+duplicate message_start, absent from the two earlier stream samples. Treat this
+as one observed lifecycle deviation, not a measured rate or proof of a Claude
+Code failure. The owner reports working Claude Code usage; its installed client
+was not exercised. See tool-loop-ledger.md for the distinction between contract
+conformance, client tolerance and observed task completion. No product source
+change, further model call or remote write accompanies this diagnosis. Private
+raw evidence is retained only in ignored artifacts/live-kimi-field-check-20261023/.
+
+## 2026-10-23: Simplified entry source verified
+
+Owner approved the minimal new-test entry: two required fields, optional API Key,
+collapsed scope/advanced settings, automatic naming and inline plan confirmation.
+All five default cases/up to six requests and the existing identity/rule/evidence
+checks remain unchanged. No endpoint scenario or protocol assertion was added.
+Automatic URL handling and the browser entry test failed before implementation.
+An initial viewport failure was fixed through layout changes, not weaker checks.
+Final stable-source fast graph passed all eight gates. Related browser checks
+passed 47 tests, including accessibility at 390/1280px, key secrecy and preview
+invalidation, scope counting, existing workflows and tool round trips. Inspected
+both Chinese/English and light/dark screenshots; primary action fits the tested
+900px viewport. One independent bounded read-only review found no material issue.
+All requests were synthetic; the agent sent no owner endpoint request. Local
+trial update follows separately. The additional imported original-scope retest
+and comparison browser check passed; documentation checks passed. No full graph
+or new remote CI is claimed. See simplified-entry-ledger.md and ignored
+artifacts/simplified-entry-20261023/ for retained evidence and failed attempts.
+
+Final simplified-entry trial handoff: local feature commit
+decd559def0df18a7f6b32e5a96cc6d3dda7f2c8 is running at
+http://localhost:8765/new. All 157 installed package files match source; health
+and new-form checks passed. All three prior completed records remain, including
+the owner's latest assessment. No active/queued task was present before restart.
+The first no-network package build failed because that option missed the existing
+dependency cache; its premature intermediate image was not deployed. The normal
+cached package build and subsequent offline trial assembly succeeded. Final
+content hashes, not the image label alone, establish installed-source identity.
+Keep the trial service and persistent volume; the development container is stopped
+at handoff. No owner endpoint call, remote write, registry publication or full
+matrix acceptance accompanies this UI-only increment. Await owner feedback.
+
+## 2026-10-23: Browser endpoint/model input history
+
+Owner requested browser-local autocomplete memory. Only valid endpoint/model
+strings enter the versioned localStorage history, capped at 20 per field; API Keys
+and target objects remain excluded. Clearing removes only this history key.
+Selections do not start requests or replace the explicit preview/start sequence.
+Native suggestions survive refresh; corrupt/blocked/full storage degrades safely.
+The two earlier zero-storage browser assertions now check the exact allowlisted
+history plus absence of credentials, following this explicit requirement change.
+RED reproduced missing history. Four helper tests and seven related browser
+checks passed; one independent bounded read-only review found no material issue.
+First fast checks found two tooling issues (test typing and a disallowed regex),
+corrected without weakening checks. Final check/trial closure follows. No endpoint
+case, protocol rule or real endpoint request was added. Details and retained
+evidence: simplified-entry-ledger.md and ignored artifacts/input-history-20261023/.
+
+Final input-history source checks: stable-source fast graph passed eight gates.
+Both history browser checks passed again after the lint/type corrections; the
+seven earlier related browser checks remain separate evidence. Documentation
+checks and the cached package build passed. No full graph is claimed. Current
+trial refresh is the remaining delivery step; no further feature work is underway.
+
+Input-history handoff complete: feature commit
+e8e270e4ba10b7195a106fa9e9559c9eecfbb2c0 is installed at
+http://localhost:8765/new. All 157 installed package files match current source;
+health and history-control checks passed, and all three prior completed records
+remain. Final source fingerprint:
+09743636d859e95d704e97a9974bd556841de18fae0ec25b806d657e3f4339dc.
+The current wheel build and offline trial assembly passed. The trial remains
+running with its volume; the development container is stopped at handoff. No
+real endpoint call or remote publication was performed. Await owner feedback.
+
+## 2026-10-23: User-perspective walkthrough, no implementation
+
+Owner requested usage review. Captured and inspected nine current desktop steps:
+empty entry, filled form, plan, running, completed, issue inspector, export setup,
+export manifest preview and downloaded standalone HTML. Used six synthetic peer
+calls; no owner model call or trial data mutation. Entry/running overview are
+usable. Prioritize compact plan confirmation, concrete outcome/impact explanations,
+and purpose-based diagnostic export with collapsed file details. Independent test
+browser fallback was authorized after browser control timeouts. Synthetic hold/clock
+effects are excluded from production findings; no complete mobile/accessibility
+audit is claimed. Fixture cleanup verified. No source change or implementation
+started. See the entry ledger and ignored artifacts/ux-walkthrough-20261023/index.html.
+
+## 2026-10-23: External interaction research and independent visual identity
+
+Owner requested external grounding and rejected Anthropic brand imitation.
+Reviewed official Postman, Playwright, Allure, ReportPortal, Promptfoo and Primer
+documentation/examples. Recorded mechanisms separately from proposed adaptations
+in the engineering-console reference study; no competitor hands-on usability
+claim is made. Updated durable intent and reconsidered the earlier separate-plan
+confirmation recommendation. Existing admission, opt-in and evidence rules remain.
+This is documentation/research only: no new cases, product changes, model calls,
+container changes or remote writes. Product test suites were not rerun for prose.
+
+## 2026-10-23: One bounded console interaction prototype
+
+Owner approved one sample, not production implementation. Added dependency-free
+design HTML/CSS/JavaScript in docs/design/console-study with overview/issue details,
+separate task/protocol outcomes, grouped causes, affected-case evidence, bilingual
+themes, simulated run/stop and purpose-based export previews. Only synthetic JSON
+can be downloaded; no full report/bundle/client workflow is implemented here.
+No model call, product source change, new case, image build or trial-data mutation.
+
+The initial 1280x900 completed overview measured 925px and was compacted to fit.
+Visual review identified a background-only transition causing dark-theme button
+text to briefly appear on a light background; preserved failures, removed that
+transition and reverified a 13.21:1 text contrast. Final walkthrough covered filters,
+case/evidence tabs, languages/themes, run/stop/configuration and both export paths.
+390px overview/issue layouts have no document horizontal overflow. No console/page
+errors or external requests were observed in final verification. No full mobile,
+screen-reader or accessibility conformance claim is made. Existing browser fallback
+authorization was reused after Chrome control timeouts; no product test suite ran.
+Evidence: ignored artifacts/console-study-20261023/. Keep independent static preview
+8767 and actual trial 8765 available; await owner design feedback.
+
+## 2026-10-23: Restrained palette alternatives
+
+Owner rejected the generic blue-gray prototype appearance. Added Graphite, Slate
+and Ink palette alternatives on the same layout, with Original retained as a
+comparison and a bilingual URL-backed selector. Graphite is proposed, not approved.
+Carbon's neutral layering/semantic role guidance informed the alternatives without
+adopting its brand blue. This changes design assets only, with zero new cases.
+One isolated temporary browser rendered all eight palette/theme combinations;
+the owner's Chrome profile was not accessed. Final checks observed no console/page
+errors or external requests; sampled text contrast minimum 4.72:1, desktop overview
+fits 900px, and the 390px overview/issue views have no document horizontal overflow.
+Selector/theme/language/URL behavior was checked. No full accessibility, product
+suite, endpoint, container or remote validation is claimed. Captures and recorded
+checks remain ignored in artifacts/console-palettes-20261023/. Await owner choice.
+
+## 2026-10-23: Runner/inspector layout following owner correction
+
+Owner clarified that the report-like page structure was the problem beyond color.
+Added a separate runner.html sample: compact execution controls, grouped cases,
+linked event/payload views, current-check inspector, resizable panes and an activity
+log with fixed run status/accounting. Earlier overview/palette samples remain as
+comparisons. Updated durable intent to keep the interactive workspace distinct
+from exported report narrative. No production code or endpoint coverage changed.
+
+Final isolated-browser walkthrough passed after refining check-specific evidence
+navigation, JSON/framing explanations and deviation/timeout color roles. Exercised
+case/event/check/log selection, evidence tabs, tool round-trip steps, run/stop
+simulations, attention filters, scope-limited logs, keyboard/pointer splitters,
+bilingual light/dark, export/download and narrow pane navigation. Desktop and
+mobile document bounds matched 1280x900 and 390x844 with internal pane scrolling.
+No page/console errors or external requests observed. The owner's everyday Chrome
+was not accessed; no app-browser troubleshooting or plugin installation occurred.
+This is prototype verification only, not product/client/container/CI acceptance.
+Evidence is ignored in artifacts/runner-study-20261023/. Await owner design feedback.
+
+## 2026-10-23: Information organization clarified before more visual work
+
+Owner rejected repeated template-like designs and clarified that Wireshark/Charles
+are references for handling complex information, not a selected layout or palette.
+Recorded the investigation-flow desk exercise against the current case catalog,
+recipe/comparison/package contracts. Fictional accounting distinguishes five cases,
+six requests, two protocol observations across three cases and one inconclusive
+condition. A 206-event illustrative stream puts the duplicate start at event 58.
+These counts were calculated independently; no endpoint was called or UI usability
+or performance claim made. The flow defines progressive disclosure, preserved
+navigation context, grouped observable phenomena, complete prerequisite reruns and
+comparable before/after conclusions. Existing prototypes remain unselected.
+This is documentation only, with zero added endpoint cases or product changes;
+no browser, plugin installation, container, product suite or remote action occurred.
+
+## 2026-10-23: Bounded issue-to-evidence navigation sample
+
+Owner authorized one clickable journey. Added standalone flow.html/CSS/JS with
+synthetic affected-occurrence selection, missing-key parent-object inspection,
+206-event context/full-sequence views and parsed/raw evidence. Context-only search
+was reproduced before correction to whole-capture search. Final isolated Chromium
+checks passed filter/query/selection/tab and reading-position restoration,
+independent simulated progress, direct-link parent fallback and 1280x900/390x844
+document bounds. Actual list click position restored at 286px, main evidence at
+20px and event-table at 900px. Two test-fixture assumptions (fresh-document hash
+loading and automation pre-click scroll) were corrected; all attempts remain in
+ignored artifacts/investigation-flow-20261023/. Screenshots were inspected; no
+page/console errors or external requests observed. No personal Chrome access,
+model call, product source/coverage change, container action, product suite or
+remote CI/write. No visual/layout target is selected. The investigation-flow
+artifact ledger records scope. Keep preview 8767 and trial 8765 for owner feedback.
+
+## 2026-10-23: Neutral prototype text and diagnostic color
+
+Owner accepted the overall flow but rejected colored blocks and text, especially
+dark mode. Scoped the sample's own light/dark tokens, neutralized all reading/status
+text and selection fills, removed red/amber explanation fills, and retained muted
+protocol-status edges. Earlier prototypes/palettes and navigation are unchanged.
+Isolated before/after captures covered both themes and list/stream/timeout views;
+sampled text contrast minimum was 5.44:1. Neutral text, language/theme controls and
+390px dark width passed; no page/console errors or external requests observed.
+Screenshots were compared. Evidence: ignored artifacts/flow-tone-20261023/. No
+complete accessibility, product suite, endpoint, container or remote check/write.
+
+## 2026-10-23: Restrained action icons in the flow sample
+
+Owner requested simple supporting icons. Added local Heroicons 2.2.0 outline
+assets with provenance/MIT license for back, search, evidence and theme actions;
+14px neutral glyphs retain visible labels and are decorative to assistive tools.
+Targeted isolated-browser checks passed seven views, both themes, bilingual labels,
+search/evidence/back paths including clicks on icon areas, and 390px width. All
+five SVGs loaded locally; no page/console/resource errors or external requests.
+Screenshots were inspected. Evidence: ignored artifacts/flow-icons-20261023/.
+Initial asset download was blocked by sandbox proxy access; the authorized retry
+succeeded. No product source/coverage change, model call, container, product suite
+or remote write. Keep the sample and existing trial available for owner feedback.
+
+## 2026-10-23: Remove redundant evidence-button icon
+
+Owner annotated the evidence button as already clear from its text. Removed its
+document glyph, unused SVG/CSS and refreshed sample asset URLs. Back/search/theme
+icons remain; icons must add recognition/direction rather than decorate buttons.
+JavaScript syntax, whitespace and removal/reference checks passed. This reversible
+visual removal did not rerun browser/product suites or change product coverage.
+
+## 2026-10-23: Compact status labels replace ambiguous status rules
+
+Owner questioned the full-cell colored rule and welcomed a clearer visual cue.
+Replaced status edges with small neutral-text/fill labels: muted protocol outline,
+neutral dashed inconclusive outline. Applied consistently to list/detail/event
+observations; selected rows keep separate gray emphasis. Isolated browser checks
+passed both themes, list/stream/partial evidence, issue/evidence return navigation,
+bilingual controls and narrow width. Sampled text contrast minimum was 5.44:1;
+labels are non-interactive and full-cell status rules are absent. Screenshots were
+inspected; no page/console/external-request error observed. Evidence is ignored in
+artifacts/flow-status-labels-20261023/. No product source/coverage, endpoint call,
+container, product suite or remote action; final style awaits owner feedback.
+
+## 2026-10-23: Restore preceding table presentation
+
+Owner rejected boxed status labels and preferred the preceding technical-article
+table character. Restored sample CSS/JS exactly to `852ef59`, retaining neutral
+themes, limited icons and the text-only evidence button. Syntax, whitespace and
+exact-restoration checks passed. No fresh browser/product/endpoint/container check
+or remote action; rejected experiment and its observed checks remain preserved.
+
+## 2026-10-23: Balance table typography and shorten status rules
+
+Owner questioned weak headers versus larger/heavier first-column text and requested
+refinement of the status line. Changed sample CSS: equal 12px header/name size,
+600/500 weights and 10px status rules beside plain text in list/detail/event views.
+No boxes or new colored text. Isolated browser checks passed hierarchy/short-rule
+measurements, light/dark rendering, navigation, bilingual controls and narrow width;
+sampled text contrast minimum 5.44:1. Inspected the owner's 736x769 viewport and
+dark list. No page/console errors or external requests. Evidence is ignored in
+artifacts/flow-table-balance-20261023/. No product coverage, endpoint, container,
+product suite or remote changes. Await owner feedback on this bounded adjustment.
+
+## 2026-10-23: Lengthen letter-like status mark
+
+Owner found the 10px rule easy to mistake for a letter. Changed only its height
+to 24px and refreshed the CSS version. Six isolated light/dark list/detail/event
+checks at 736x769 passed: marker height exceeds text height and stays below its
+row/title region height. Screenshots inspected; no page/console errors. Evidence:
+ignored artifacts/flow-rule-height-20261023/. No product or endpoint change.
+
+## 2026-10-23: Align controls and distinguish run state in the sample
+
+Owner annotated toolbar label/input composition, weak running/finished distinction
+and demo controls mixed into run information. Added inline exclusive filter buttons
+and integrated labeled search fields; explicit persistent run heading/native case
+progress with separate request-sent accounting; footer-only prototype-state buttons.
+List headings now distinguish provisional findings from finished results. Finish
+does not imply all pass; issue/inconclusive and client-unverified notices remain.
+
+A pre-change browser assertion reproduced missing visible progress. Final isolated
+Chromium checks passed eight language/theme/state combinations at 736x769, aligned
+32px filter/search centers, keyboard actions, search/filter and empty-result paths,
+full-stream search, preserved evidence/tab/query across state changes and history
+returns, and 390px width. Screenshots inspected; no page/console/resource errors
+or external requests. Original failure and final captures/observations remain in
+ignored artifacts/flow-controls-20261023/. This is manually simulated design work;
+no backend/execution, product source/coverage, endpoint call, container, product
+suite, publication or remote CI change. Await owner feedback.
+
+## 2026-10-23: Simplify header theme and language controls
+
+Owner requested icon-only day/night switching and abbreviated language captions.
+Added EN/中 with full localized hover/accessibility names; theme keeps its decorative
+glyph and full accessible action name in a 32px button. Four targeted language/theme
+keyboard combinations passed at 737x694, preserving event query/raw tab/run state;
+390px width checked. Inspected settled icon captures; earlier captures are retained
+in ignored artifacts/flow-header-controls-20261023/. No product/endpoint change.
+
+## 2026-10-23: Restore restrained semantic color with coordinated palettes
+
+Owner clarified that the earlier palette was unsuitable, not that color must be
+eliminated. Updated durable intent and sample light/dark roles: muted gray-blue
+execution/interaction, soft-red confirmed deviation, neutral reading and unknown
+states. Completed execution uses neutral progress/status independent of success;
+green is reserved for verified passes without new passing UI or fabricated results.
+Existing table layout, 24px status marks, icon choices and navigation remain.
+
+Ten targeted isolated-browser light/dark views passed color-role/context checks,
+minimum sampled text contrast 5.06:1 and focus contrast at least 3:1. Exercised
+filter/search/evidence navigation and state changes with query/raw-tab retention;
+bilingual narrow width checked. Compared screenshots with the preceding palette.
+No page/console/resource errors or external requests. Evidence is ignored in
+artifacts/flow-semantic-colors-20261023/. No model call, product source/coverage,
+container, product suite, remote CI or publication change. Await owner feedback.
+
+## 2026-10-23: Trial teal running state
+
+Owner authorized a green-family running trial. Added a distinct teal running token
+for the heading/progress in both themes; interaction stays gray-blue, completion
+neutral, and success green reserved for verified passes. The same ten-view browser
+contrast/context checks passed, minimum sampled text contrast 5.06:1. Compared
+screenshots with the preceding header and inspected both themes. Evidence is
+ignored in artifacts/flow-running-teal-20261023/. No product or endpoint change.
+
+## 2026-10-23: Restore owner-selected gray-blue running presentation
+
+Owner compared and rejected teal, choosing the preceding blue running state.
+Restored sample CSS exactly to `93220f5` and refreshed its cache version. Static
+and exact-restoration checks passed. Retained teal trial history/evidence; no
+fresh browser/product/endpoint/container check or remote action.
+
+## 2026-10-23: Record the owner-approved design baseline
+
+Owner accepted the current flow style and requested root design.md to prevent
+iteration drift. Recorded the bounded source `bf98290`, equivalent CSS/JS
+`93220f5`, typography/geometry, paired semantic tokens, controls/icons, lifecycle
+meaning and navigation preservation. Added four checked-in synthetic reference
+images from the equivalent verified sample. Linked Agent/project/contributor
+entry points and clarified historical QA/experimentation authority. Existing
+protocol/evidence/product contracts remain; no whole-application layout, migration
+or next implementation stage is newly approved.
+
+Documentation checks verified local links, exact color-token values against CSS,
+PNG dimensions/provenance and source equality; whitespace passed. No runtime code,
+new tests, product coverage, actual endpoint, container/service, browser rerun,
+remote CI or publication change. Existing trial/preview remain available.
+
+## 2026-10-23: Implement the approved console baseline
+
+Owner authorized migrating the accepted flow sample into the actual local Web
+application. Implemented real persisted progress, independent searchable issue
+list, selected occurrence and bounded verified-evidence reading, with retained
+history/search/reading context. Bilingual controls and paired web-only tokens follow
+root design.md. The exported report and CLI retain their existing contracts.
+This is supporting interface work: zero endpoint scenarios added; the formal
+catalog remains five cases, and Claude Code readiness is not newly assessed.
+
+See [the implementation ledger](console-baseline-implementation-ledger.md) for
+RED/GREEN attempts, intentional HTML presentation version 2.0, a related input
+history blur/click repair and the one independent whole-increment review. The
+review's unloaded-event substitution finding was reproduced and fixed; bounded
+reading now identifies an unavailable referenced event without inventing a field
+verdict. Nine focused browser checks passed, including that regression, keyboard
+focus, narrow-screen accessibility and no-script reading. Earlier failing attempts
+remain in ignored artifacts/console-baseline/; final frozen verification and
+installed trial acceptance are recorded in the ledger when complete.
+
+Final frozen-source full verification passed all 13 gates with source unchanged:
+495 unit/harness, 29 frontend unit, 88 browser, 280 integration, 84 acceptance and
+five installed-package tests, without failures/skips. A standard offline Docker
+build lacked an uncached dependency; a cached local wheel/trial build passed.
+This is not clean networked Docker or remote-CI acceptance. Feature `315f23f` is
+installed on 8765; all 163 installed package files match source, and four runs /
+154 historical run files retain identical hashes. Retained the original volume,
+old image and 8767 reference. Requested the run's issue page in Codex's built-in
+browser (queued); owner trial remains separate from automated verification.
+No agent real-endpoint requests, remote writes or added endpoint scenarios.
+
+
+## 2026-10-23: Correct installed presentation against the approved reference
+
+Owner feedback exposed legacy cascade overrides missed by token-only checks:
+issue-table headers were muted/450 instead of primary/600, outer cell insets were
+zero and native progress retained old roundness. Restored the reference typography,
+insets and straight 4px progress. Progress stays beside run identity down to 650px;
+production actions moved alongside tabs. Completion was correctly neutral in the
+opened historical run; real synthetic running/queued semantics remain gray-blue.
+Root design.md records the refinement without changing palette/state meanings.
+
+User approved the isolated test browser after in-app control was unavailable.
+Fresh captures and rendered-style RED/GREEN checks, paired languages/themes,
+nonzero persisted running progress, completed transition, geometry/reflow, contrast
+and investigation paths passed. Final fast graph passed unchanged-source checks;
+10 + 18 focused browser executions passed (four overlap). One independent bounded
+static follow-up found no concrete regression. Detailed failures/evidence remain
+ignored in artifacts/presentation-audit-20261023/. This is supporting-only UI work:
+zero endpoint scenarios added; no real endpoint, remote CI or publishing action.
+
+Correction `c4e3d5d` is installed on the preserved 8765 service. Read-only acceptance:
+health OK, 163 application files match source, four historical runs / 154 run files
+unchanged, and actual installed light/dark measurements now show 600/primary/12px
+issue headers. The completed historical run remains neutral by design. Eleven
+backend page tests passed; detailed before/after screenshots and the numbered
+conformance audit are ignored locally. No added endpoint coverage or live calls.
+
+## 2026-10-25: Verify actual first/last-column table padding
+
+Owner's remaining screenshot still showed flush outer cells. Resumed with fresh
+read-only capture of the installed c4e3d5d service at five widths, including a
+803-CSS-pixel / DPR-2 match. All ten header/data rows retain 12px outer insets
+(8px on the 390px view); inspected the saved current table image. The older visual
+appearance in the supplied screenshot suggests a previously loaded document;
+current in-app asset identity could not be directly inspected. Requested fresh
+in-app navigation to the same run and filters (queued). No new product-code fix,
+endpoint scenario/call, remote write or broad quality graph. Detailed evidence is
+ignored in artifacts/table-edge-20261025/ and the existing console ledger.
+
+
+## 2026-10-25: Whole UI and deployment sweep
+
+Owner authorized self-directed browser walkthrough and unified correction. See
+[the sweep ledger](ui-deployment-sweep-ledger.md). Fresh 32-screen capture found a
+real narrow layout regression missed by overflow-only checks: old `.issue-list`
+flex squeezed the entire section horizontally. Repaired stacking, ordinary table
+insets/headings and action wrapping. Added packaged UI identity, content-versioned
+CSS, safe manual update notice, page-cache resume and strict fragment compatibility
+checks; healthy/unknown network states do not imply an update. Existing API JSON,
+reports, endpoint verdicts and required-case accounting are unchanged.
+
+The in-app browser interface became available; directly inspected the owner's tab
+and followed issue/evidence/new/history/import routes. Mutating workflow checks use
+disposable synthetic fixtures. One independent review P2 (legacy HTML without meta)
+was reproduced and fixed, with static reviewer confirmation and focused GREEN.
+Detailed before/after captures and failed attempts are ignored in
+artifacts/ui-sweep-20261025/. Full frozen checks and installed acceptance follow.
+This is supporting-only work: no added endpoint scenarios or real endpoint calls.
+
+
+Sweep feature `3bfc375` is installed on the preserved trial volume. Final fast gates
+passed (498 unit/harness and 30 frontend unit), five package checks and 27 browser
+executions passed. The first frozen full graph passed 103 browser / 281 integration /
+84 acceptance tests but remains FAILED on Finder-metadata inventory; exact .DS_Store
+exclusion and real-resource failure controls were verified separately. Do not
+relabel that graph. Native tab-scroller refinement was tested after it.
+
+Installed read-only acceptance passed: 165 package-file hashes match, four runs /
+154 historical files unchanged, matching UI meta/header and three versioned styles.
+Inspected 48 deployed screenshots and native IAB 390px Chinese-light/English-dark;
+restored normal viewport and Chinese/light. No console errors in the final native
+check. Source, synthetic checks, installed acceptance and actual endpoint outcomes
+remain separate: zero new endpoint cases, zero agent real calls and no remote writes.
+
+## 2026-10-25: Evidence annotation interaction sample
+
+Owner clarified annotations belong only in evidence inspection; Activity should
+later expose interaction details without issue markers. Built a separate synthetic
+sample at port 8768 extending the accepted design language. Missing keys locate
+their observed parent, wrong types locate a concrete JSON Pointer, and repeated
+SSE event #5 links to neutral first-event #0 context. Diagnostic notes are separate
+from copied/downloaded source. Folding, detail disclosure, location recovery,
+theme/language controls and issue/evidence return are interactive.
+
+Initial absent-file RED and review-driven keyboard-focus RED were observed and
+retained. Final bounded Chromium check passed with 18 screenshot samples at
+1280/737/390px in both themes, plus English reflow, copy fidelity, full sample
+download and return-state checks. Direct IAB inspection included desktop light,
+desktop dark and narrow dark. One independent static review completed; its focus
+finding was corrected. Syntax/format/docs checks passed; full product graph was
+not repeated. See [the study ledger](evidence-annotation-study-ledger.md).
+
+Supporting-only prototype, pending owner trial: no new endpoint scenarios or
+detectable endpoint faults, no real calls, production updates, data-volume changes,
+remote CI or publishing. Installed feature remains 3bfc375 at port 8765. Activity
+details and conservative production annotation binding remain future increments.
+
+## 2026-10-25: Preserve JSON layout with marker-triggered details
+
+Owner preferred an on-demand bubble to diagnostic rows inserted into JSON. Updated
+only the standalone 8768 sample: permanent gutter markers open native non-modal
+popovers; original JSON geometry stays unchanged. Missing keys still target the
+observed parent, exact type faults target their node and related first SSE stays
+neutral. Close/Escape restore marker focus; repeated click/outside dismissal work.
+Desktop placement uses spare space beside visible JSON; narrow placement avoids
+the target. Navigation/external scroll/resize close transient details.
+
+Observed REDs: absent marker, nearby data unnecessarily obscured, and repeated
+click closing then reopening. One independent static review found inherited muted
+icon color and suggested the repeated-click check; corrected both. Final targeted
+Dev Container browser check passed 36 width/theme/language/scenario combinations,
+with stable text-row geometry before/during/after visibility, viewport fit, target
+avoidance, source-copy/download fidelity and no page errors or model/API requests.
+Direct IAB desktop light/narrow dark and full/focused before/after comparisons were
+inspected. Syntax/format/docs checks passed; full product checks were not repeated.
+See [the ledger](evidence-annotation-study-ledger.md) and
+[visual QA](../design/console-study/design-qa.md). Detailed attempts are ignored in
+`artifacts/evidence-bubble-20261025/`.
+
+Supporting-only prototype, awaiting owner visual trial: no formal endpoint cases or
+detectable faults added, no real calls, report/CLI/engine changes, product update or
+remote write. Five endpoint cases and installed 3bfc375 at 8765 remain unchanged.
+Activity details are still pending separately, without issue annotations.
+
+## 2026-10-25: Attach the indicator to the actual JSON token
+
+Owner clarified that the prompt should sit beside the relevant key/value rather
+than the line's gutter. The synthetic sample now positions an absolute indicator
+after the exact value token, clearing punctuation; absent keys target the observed
+parent opening brace. Restored the original line-number/fold/text columns. JSON
+characters, indentation and folding remain unchanged when markers or popovers
+toggle. Existing click/keyboard/source controls are retained.
+
+Observed missing-token-target RED before implementation, then 36 final browser
+width/theme/language/scenario samples passed, with exact proximity and character
+avoidance checks. Direct IAB desktop/light and 390px/dark inspected; full/focused
+paired screenshots compared. One independent static review found no clear
+regression. Syntax/format/docs checks passed, no full product graph repeated.
+Evidence: ignored `artifacts/evidence-token-marker-20261025/` and existing study
+ledger/visual QA. Supporting-only prototype, pending owner trial: zero endpoint
+scenarios/faults added, zero real calls, no installed application or remote changes.
+
+## 2026-10-25: Owner accepted token-adjacent evidence annotation
+
+Owner accepted `446d695`. Recorded the indicator placement, non-shifting JSON,
+popover dismissal/focus, semantic colors and evidence-only boundary in root
+design.md. Added two previously verified synthetic light/dark reference images;
+updated the sample status, handoff and ledger. Documentation checks passed.
+This is supporting-only documentation: no runtime, endpoint scenarios/faults,
+live calls or remote changes. Actual evidence-view integration is next; Activity
+interaction details remain separate and do not gain issue markers.
+
+## 2026-10-26: Evidence-node design integrated and installed
+
+User authorized actual integration. Feature 6fcbe69 is installed on 8765: verified
+failed references now open a bounded foldable full-frame projection with a small
+token-adjacent indicator and non-modal expected/observed popover. Missing fields
+locate real parents; first-start context is neutral. Unknown/unloaded/unparseable/
+truncated locations do not get guessed markers. Protocol results, raw downloads,
+reports, CLI and five endpoint scenarios are unchanged.
+
+One independent review found late known targets unreachable after the 500-row
+limit. Browser/unit REDs reproduced it; a labeled bounded target window corrected
+it. Final fast gates passed source-unchanged (498 Python and 33 frontend unit),
+21 focused browser and 17 backend/package checks passed. Prior failed template
+inventory, invocation mistakes and screenshot/transport-fixture mismatches remain
+retained with rulings in the integration ledger. No full graph or remote CI rerun.
+
+Cached offline image installed with rollback image retained. All 169 package-file
+hashes and UI version/header/meta agree. Immediate pre-update snapshot was invalid
+(empty stdin), not counted PASS. The earlier verified manifest proves four old
+runs / 154 files unchanged; a newer run / 44 files lacks older hash proof. All five
+runs / 198 files were unchanged during post-install acceptance. Four installed
+desktop/narrow light/dark browser checks passed and captures were inspected.
+IAB control unavailable this turn; Codex actual-run open request returned queued.
+No daily Chrome, model calls or remote writes. Historical diagnostic prose keeps
+its recorded language. See [the integration ledger](evidence-annotation-integration-ledger.md).
+Owner trial is next; Activity details and core protocol/client gaps remain.
+
+## 2026-10-31: Optional Dev Container for local development
+
+Owner accepted host development and an optional reproducible Linux Dev Container.
+Guides now distinguish host checks from required Linux/CI and image evidence; CI
+requirements and product behavior are unchanged. On macOS, locked preparation
+worked after selecting the project index, and 410 focused Python unit tests and
+frontend static checks passed. The fast graph failed macOS type and harness gates;
+the browser fixture also assumes Linux `/proc`. Linux full, container acceptance,
+remote CI and real endpoint checks were not run. No endpoint scenarios or fault
+detection were added. Synthetic CLI validation, dry-run and replay passed on Mac
+with zero actual dry-run/replay requests. An independent review found ambiguous
+Linux-check guidance, which was corrected. See [the ledger](local-development-ledger.md)
+for both failed fast attempts, source-identity limits and the restored lockfile.
+
+## 2026-10-31: macOS fast graph portability
+
+Owner selected the fast-graph portability follow-up. The final Mac fast graph
+passed eight gates on unchanged source: 503 Python unit/harness and 33 frontend
+unit checks. Process-group probing, fixture ownership verification, descendant
+cleanup testing and Linux-only integration-test type annotations now work with
+the macOS fast graph; no endpoint scenarios or faults were added. An independent
+review found and verified fixes for test-cleanup races. The local `.venv` was
+prepared from locked dependencies; synthetic fixture startup/shutdown passed.
+Linux verification, browser execution, image acceptance, remote CI and live
+endpoints were not run. See [the ledger](local-development-ledger.md) for retained
+failures, source fingerprint, tool versions and exact limits.
+
+## 2026-10-31: GitHub workflow for macOS development
+
+The owner authorized the GitHub workflow. Isolated the Mac development changes on
+main `10c7933` so prior unpublished product/UI work was not included. The isolated
+Mac fast graph passed 500 Python and 20 frontend unit tests. Independent review
+found evidence attribution and handoff omissions; both were corrected. Published
+PR 2, retaining its first Dev Container browser timing failure and trace. A single
+retry on unchanged head passed all five required PR jobs. Merged exact head
+`917e15d` as `f94ed1d17ff4132ffa3ab56a8138358f4249ef05`. Main CI 41195337568
+failed a worker-exit procfs read race; test-only PR 3 fixed that race and the
+repeated browser-test synchronization issue. Updated head `488a129` passed all
+five PR jobs and merged as `b6043c52ed67325d19c0f9631381c722270b90d2`.
+Post-merge main CI 41215465572 is running, not passed.
+No endpoint scenarios or live calls were added. Details are in
+[the ledger](local-development-ledger.md).
+
+The test corrections were also applied to this original local branch. Both
+affected browser cases passed with supplemental Chromium 143 and cleanup passed;
+the synthetic peer logged a connection reset. Final unchanged-source Mac fast
+checks passed 507 Python and 33 frontend unit tests. This is separate from the
+isolated PR's Linux CI and does not publish earlier product/UI work.
+
+## Additional isolated-main records (historical)
+
+The following retained entries belong to PRs 2 and 3 on main; the original local
+product/UI work was outside those isolated revisions. Their pending statuses are
+historical; the current publication ledger records the fresh remote outcomes.
+
 ## 2026-10-31: Isolated macOS development PR
 
 The owner authorized progressing the GitHub workflow for Mac development changes.
@@ -1406,3 +2147,42 @@ request-count assertions. Independent review and two supplemental Mac runs per
 case using Chromium 143 passed; locked Linux Chromium CI remains pending. See the
 ledger for failed attempts and limitations. The combined final source also passed
 all eight Mac fast gates on unchanged source.
+
+## 2026-11-01: Publish accumulated local product work
+
+Owner explicitly requested publishing and merging the remaining local work after
+referencing the optional-Dev-Container chat. Read that chat and refreshed GitHub
+state: main b6043c5's post-merge CI passed; no duplicate PR is open. Merge into the
+current branch had only three documentation conflicts, preserving both evidence
+histories and main's worker/browser test fixes. Mac fast passed unchanged-source
+checks (507 Python and 33 frontend unit); docs passed. One independent bounded
+publication review found no blocker. Privacy/artifact checks found no flagged
+credential patterns or tracked artifacts/private evaluation workspace.
+
+This publishes previously implemented non-stream tool-result diagnostics (four to
+five formal scenarios; at most six requests for all profiles), configuration/input
+history, console/evidence flow and approved design guides. Publication itself adds
+no new endpoint calls, validation rules or client-readiness evidence. GitHub PR
+checks and actual merge remain pending. See [the publication ledger](product-publication-ledger.md).
+
+PR 4's first GitHub run 41267386643 failed web_page_scope: the image harness still
+expected four installed cases and the old preview caption. Corrected only the
+acceptance inventory to five exact IDs and the semantic submit control, retaining
+all four-case execution and request/verdict/export/restart/cancellation assertions.
+Original CI artifacts and REDs remain. The 38 focused image-harness tests and final
+unchanged-source Mac fast graph passed (517 Python, 33 frontend); bounded review
+found no issue. Fresh PR CI is pending. No new endpoint scenario, validation rule
+or real model request is added by this correction.
+
+The first PR 4 quality artifact confirmed browser prerequisites passed. Its expanded
+109-case serial suite reached the old 300-second total deadline after 64 passing
+cases (approximately 287 seconds in those cases), with no individual failures yet.
+Raised only the browser suite window to 600 seconds and outer reporting/cleanup
+window to 720 seconds; individual deadlines and verdict/cleanup requirements remain.
+A corrected regression reproduced the old outer/child deadline mismatch. Fresh
+full Linux/container CI is required; partial browser execution is not PASS.
+The 24 focused browser-gate checks passed. Mac fast first retained three denied
+loopback-bind failures, then passed unchanged with local-service permission:
+all eight gates, 518 Python and 33 frontend unit checks. Bounded independent review
+found no issue. Second pre-budget CI 41268709597 passed runtime-amd64; final
+exact-head full CI and merge remain to be observed in the PR 4 timeline.

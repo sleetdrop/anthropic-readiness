@@ -1,4 +1,4 @@
-"""Four fixed requests; selection never removes unsupported required cases."""
+"""Versioned scenarios; selection never removes unsupported required cases."""
 
 from __future__ import annotations
 
@@ -21,6 +21,10 @@ class CaseDefinition:
     profiles: tuple[str, ...]
     capabilities: tuple[str, ...] = ()
     version: int = 1
+
+    @property
+    def request_count(self) -> int:
+        return 2 if self.behavior == "tool_loop" else 1
 
     @property
     def contract(self) -> CaseContract:
@@ -71,6 +75,15 @@ _CASES = (
         ("anthropic-tools-smoke",),
         ("tools",),
     ),
+    CaseDefinition(
+        "ANT-TOOL-LOOP-001",
+        False,
+        "tool_loop",
+        "Use get_weather to check the weather in Hanoi. After receiving the tool "
+        "result, reply with only its verification_token, without formatting or explanation.",
+        ("anthropic-tool-loop",),
+        ("tools",),
+    ),
 )
 
 
@@ -100,7 +113,7 @@ def build_request(case: CaseDefinition, target: TargetConfig) -> RequestSpec:
         "stream": case.streaming,
         "messages": [{"role": "user", "content": case.prompt}],
     }
-    if case.behavior == "tool":
+    if case.behavior in {"tool", "tool_loop"}:
         body["tools"] = [
             {"name": case.contract.tool_name, "input_schema": case.contract.input_schema}
         ]

@@ -90,3 +90,35 @@ def test_all_skipped_or_failed_junit_is_not_green(tmp_path: Path) -> None:
             check=False,
         )
         assert completed.returncode != 0
+
+
+def test_resource_inventory_ignores_only_finder_metadata(tmp_path: Path) -> None:
+    resources = tmp_path / "src/anthropic_readiness/resources"
+    resources.mkdir(parents=True)
+    (resources / ".DS_Store").write_bytes(b"finder metadata")
+    (resources / ".required.json").write_text("{}")
+    wheel = tmp_path / "resources.whl"
+    with zipfile.ZipFile(wheel, "w"):
+        pass
+    assert verify_wheel_resources(wheel, tmp_path) == [
+        "missing_resource:anthropic_readiness/resources/.required.json"
+    ]
+    with zipfile.ZipFile(wheel, "w") as archive:
+        archive.writestr("anthropic_readiness/resources/.required.json", "[]")
+    assert verify_wheel_resources(wheel, tmp_path) == [
+        "resource_content_mismatch:anthropic_readiness/resources/.required.json"
+    ]
+
+
+def test_source_identity_ignores_finder_metadata_but_tracks_resources(tmp_path: Path) -> None:
+    from scripts.check import source_fingerprint
+
+    resources = tmp_path / "src/anthropic_readiness/resources"
+    resources.mkdir(parents=True)
+    resource = resources / "required.json"
+    resource.write_text("{}")
+    before = source_fingerprint(tmp_path)
+    (resources / ".DS_Store").write_bytes(b"finder metadata")
+    assert source_fingerprint(tmp_path) == before
+    resource.write_text("[]")
+    assert source_fingerprint(tmp_path) != before

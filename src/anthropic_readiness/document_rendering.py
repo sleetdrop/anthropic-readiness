@@ -31,6 +31,7 @@ CASE_KEYS = {
     "ANT-TEXT-SSE-001": "case.sse_greeting",
     "ANT-TEXT-SSE-002": "case.sse_count",
     "ANT-TOOL-FORCED-001": "case.forced_tool",
+    "ANT-TOOL-LOOP-001": "case.tool_loop",
 }
 STATE_KEYS = {
     "PASS": "check.pass",

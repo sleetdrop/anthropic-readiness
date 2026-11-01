@@ -43,6 +43,7 @@ for (const width of [390, 1280]) {
         ),
       });
       if (path.startsWith("/runs/") && !path.includes("?")) {
+        await page.locator("#group-details > summary").click();
         await page.locator("#capabilities").scrollIntoViewIfNeeded();
         await page.screenshot({ path: info.outputPath(`matrix-${width}.png`) });
         await page.locator('.view-tabs a[href*="view=activity"]').click();

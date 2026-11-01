@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light" data-palette="graphite">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Anthropic Readiness · Runner study</title>
+  <link rel="stylesheet" href="runner.css?v=1">
+  <link rel="stylesheet" href="palettes.css?v=1">
+  <script src="runner.js?v=1" defer></script>
+</head>
+<body data-mobile="evidence">
+  <a class="skip" href="#evidence" data-text="skip"></a>
+  <header class="menubar">
+    <strong class="brand">Anthropic Readiness</strong>
+    <span class="session">run-demo-024</span>
+    <span class="prototype" data-text="prototype"></span>
+    <div class="appearance">
+      <select id="palette" aria-label="Palette"><option value="graphite" data-text="graphite"></option><option value="slate" data-text="slate"></option><option value="ink" data-text="ink"></option></select>
+      <button id="language" type="button" aria-label="Switch language">English</button>
+      <button id="theme" type="button"></button>
+    </div>
+  </header>
+  <div class="toolbar">
+    <button id="target" class="target" type="button"><strong>diagnostic-model</strong><span>inference.example.test:3456</span></button>
+    <button id="scope" type="button" data-text="scope"></button>
+    <div class="run-controls"><select id="scenario" aria-label="Demo state"><option value="completed" data-text="completed"></option><option value="running" data-text="running"></option><option value="stopped" data-text="stopped"></option></select><button id="rerun" class="primary" type="button" data-text="rerun"></button><button id="stop" type="button" data-text="stop"></button><button id="export" type="button" data-text="export"></button></div>
+  </div>
+  <div class="mobile-tools"><button type="button" id="show-cases" data-text="cases"></button><button type="button" id="show-evidence" data-text="evidence"></button><button type="button" id="show-checks" data-text="checks"></button></div>
+  <div class="desk">
+    <nav class="case-pane" aria-label="Test cases"><div class="pane-heading"><strong data-text="cases"></strong><span>5</span></div><div class="case-filter"><label for="filter" data-text="show"></label><select id="filter"><option value="all" data-text="all"></option><option value="attention" data-text="attention"></option></select></div><div id="case-tree"></div><div class="case-pane-note" id="run-note"></div></nav>
+    <div class="splitter" id="left-splitter" role="separator" aria-label="Resize cases pane" aria-orientation="vertical" tabindex="0"></div>
+    <main class="evidence-pane" id="evidence"><div class="case-heading" id="case-heading"></div><div id="exchange-selector"></div><nav class="evidence-tabs" id="evidence-tabs" aria-label="Evidence views"></nav><div class="evidence-body" id="evidence-body"></div></main>
+    <div class="splitter" id="right-splitter" role="separator" aria-label="Resize checks pane" aria-orientation="vertical" tabindex="0"></div>
+    <aside class="checks-pane" id="checks-pane"><div class="pane-heading"><strong data-text="checks"></strong><span id="check-count"></span></div><div id="check-list"></div><div id="check-detail"></div></aside>
+  </div>
+  <section class="activity-pane"><div class="activity-heading"><button id="activity-toggle" type="button" aria-expanded="true" data-text="activity"></button><label><input id="current-only" type="checkbox"><span data-text="currentOnly"></span></label><span class="activity-note" data-text="synthetic"></span></div><div id="activity-body"></div></section>
+  <footer class="statusbar" id="statusbar"></footer>
+  <dialog id="dialog"><form method="dialog"><button class="dialog-close" value="close" data-text="close"></button></form><div id="dialog-content"></div></dialog>
+  <div id="announcement" class="sr-only" aria-live="polite"></div>
+</body>
+</html>

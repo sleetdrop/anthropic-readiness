@@ -286,10 +286,12 @@ def catalog_document(manager: JobManager) -> JsonObject:
         "ANT-TEXT-SSE-001": "流式消息",
         "ANT-TEXT-SSE-002": "流式任务完成",
         "ANT-TOOL-FORCED-001": "强制工具调用",
+        "ANT-TOOL-LOOP-001": "工具结果完整往返",
     }
     profile_titles = {
         "anthropic-basic": "基础消息与流式输出",
         "anthropic-tools-smoke": "强制工具调用",
+        "anthropic-tool-loop": "工具结果完整往返（最多两次请求）",
     }
     cases = list_cases()
     return {

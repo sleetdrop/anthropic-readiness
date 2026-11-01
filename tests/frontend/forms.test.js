@@ -65,3 +65,22 @@ test("alias set equivalence preserves preview without changing other array seman
     null,
   );
 });
+
+test("automatic address mode accepts known bases and explicit message paths only", () => {
+  for (const [value, expected] of [
+    ["http://localhost:34567", "http://localhost:34567/v1/messages"],
+    ["https://example.test/v1/", "https://example.test/v1/messages"],
+    ["https://example.test/v1/messages", "https://example.test/v1/messages"],
+    ["https://example.test/proxy/v1/messages", "https://example.test/proxy/v1/messages"],
+  ]) {
+    assert.equal(resolveEndpoint(value, "auto"), expected);
+  }
+  for (const value of [
+    "https://example.test/proxy",
+    "https://key:secret@example.test/v1/messages",
+    "https://example.test/v1/messages?key=secret",
+    "https://example.test/v1/messages#fragment",
+  ]) {
+    assert.throws(() => resolveEndpoint(value, "auto"), /invalid_url|ambiguous_base_url/);
+  }
+});

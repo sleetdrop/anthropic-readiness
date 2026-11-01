@@ -8,6 +8,9 @@ test("late credentials and equivalent alias order preserve the reviewed plan", a
   request,
 }) => {
   await page.goto("/new");
+  await page.locator("#scope-settings > summary").click();
+  await page.locator("#advanced-settings > summary").click();
+  await page.locator('input[value="anthropic-tool-loop"]').uncheck();
   await page.locator("#model").fill("synthetic-pass");
   await page.locator("#endpoint").fill(fixture().peer_url + "/v1/messages");
   await page.locator("#aliases").fill("later-alias, earlier-alias, later-alias");
@@ -77,7 +80,18 @@ test("test_start_clears_submitted_secret", async ({ page, request }) => {
       return field instanceof HTMLInputElement ? field.value : "missing";
     }),
   ).toBe("");
-  expect(await page.evaluate(() => sessionStorage.length + localStorage.length)).toBe(0);
+  const storage = await page.evaluate(() => ({
+    local: { ...localStorage },
+    session: { ...sessionStorage },
+  }));
+  expect(storage.session).toEqual({});
+  expect(Object.keys(storage.local)).toEqual(["anthropic-readiness.input-history.v1"]);
+  expect(JSON.parse(storage.local["anthropic-readiness.input-history.v1"])).toEqual({
+    version: 1,
+    endpoints: [fixture().peer_url + "/v1/messages"],
+    models: ["synthetic-hold"],
+  });
+  expect(JSON.stringify(storage)).not.toContain(key);
   expect(JSON.stringify(run)).not.toContain(key);
   await page.unrouteAll({ behavior: "wait" });
   await page.goto("/runs/" + run.id);
@@ -183,6 +197,7 @@ test("coverage counts, checked field observations and evidence dialog preserve s
   await expect(filter).toBeFocused();
   await expect(filter).toHaveValue("FAIL");
   await page.locator('.view-tabs a[href*="view=issues"]').click();
+  await page.locator("a[data-issue-key]").first().click();
   await expect(page.locator("#issue-inspector")).toContainText("stop_sequence");
   const opener = page.locator("a[data-evidence-id]").first();
   await opener.focus();

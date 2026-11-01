@@ -12,6 +12,7 @@ import urllib.parse
 import urllib.request
 import zipfile
 from collections.abc import Callable
+from html.parser import HTMLParser
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
@@ -20,6 +21,41 @@ if TYPE_CHECKING:
 
 ROOT = Path(__file__).resolve().parents[1]
 TERMINAL = {"completed", "cancelled", "interrupted", "error"}
+EXPECTED_WEB_CASE_IDS = (
+    "ANT-MESSAGE-001",
+    "ANT-TEXT-SSE-001",
+    "ANT-TEXT-SSE-002",
+    "ANT-TOOL-FORCED-001",
+    "ANT-TOOL-LOOP-001",
+)
+
+
+def verify_web_page(page: str, expected_case_ids: tuple[str, ...]) -> None:
+    """Check the installed inventory separately from the four-case smoke execution."""
+
+    class Inventory(HTMLParser):
+        def __init__(self) -> None:
+            super().__init__()
+            self.cases: list[str] = []
+            self.preview: list[bool] = []
+
+        def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+            fields = dict(attrs)
+            if "data-case-id" in fields:
+                self.cases.append(fields["data-case-id"] or "")
+            if fields.get("id") == "preview-button":
+                self.preview.append(
+                    tag == "button"
+                    and fields.get("type") == "submit"
+                    and "disabled" not in fields
+                    and "hidden" not in fields
+                )
+
+    inventory = Inventory()
+    inventory.feed(page)
+    inventory.close()
+    if sorted(inventory.cases) != sorted(expected_case_ids) or inventory.preview != [True]:
+        raise RuntimeError("web_page_scope")
 
 
 class WebClient:
@@ -343,12 +379,11 @@ def run_web_checks(a: Acceptance, host_url: str) -> None:
 
     name, client = start("first")
     page = client.request("/new").decode()
-    if page.count("data-case-id=") != 4 or "预览计划" not in page:
-        raise RuntimeError("web_page_scope")
+    verify_web_page(page, EXPECTED_WEB_CASE_IDS)
     for asset in ("web/app.js", "web/app.css", "report-v2.js", "report-v2.css"):
         if len(client.request("/assets/" + asset)) < 100:
             raise RuntimeError("web_asset_missing")
-    passed("web-pages", {"cases": 4, "installed_assets": True})
+    passed("web-pages", {"cases": len(EXPECTED_WEB_CASE_IDS), "installed_assets": True})
     before = request_count(a)
     run_id = client.start("http://synthetic-peer:8080/cases")
     record = client.wait(run_id)

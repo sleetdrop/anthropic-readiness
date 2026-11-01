@@ -15,6 +15,7 @@ GROUPS = (
     ("message", "基础消息", ("ANT-MESSAGE-001",)),
     ("streaming", "流式消息", ("ANT-TEXT-SSE-001", "ANT-TEXT-SSE-002")),
     ("forced_tool", "强制工具选择（非完整工具闭环）", ("ANT-TOOL-FORCED-001",)),
+    ("tool_loop", "工具结果完整往返", ("ANT-TOOL-LOOP-001",)),
 )
 
 

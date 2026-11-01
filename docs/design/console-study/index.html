@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light" data-palette="graphite">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Anthropic Readiness · Console study</title>
+  <link rel="stylesheet" href="style.css?v=3">
+  <link rel="stylesheet" href="palettes.css?v=1">
+  <script src="app.js?v=3" defer></script>
+</head>
+<body>
+  <a class="skip" href="#main" data-text="skip"></a>
+  <header class="app-header">
+    <div class="brand">Anthropic Readiness<span class="brand-divider"></span><span class="workspace" data-text="workspace"></span></div>
+    <div class="utilities">
+      <span class="prototype-label" data-text="prototype"></span>
+      <button id="language" class="quiet" type="button" aria-label="Switch language">English</button>
+      <button id="theme" class="quiet" type="button"></button>
+    </div>
+  </header>
+  <main id="main">
+    <div class="breadcrumb"><span data-text="records"></span><span>/</span><span>run-demo-024</span></div>
+    <div class="run-heading">
+      <div><div class="eyebrow" data-text="assessment"></div><h1>diagnostic-model <span class="run-status" id="run-status"></span></h1><p class="target">http://inference.example.test:3456 <span class="target-separator">/</span> Messages API</p></div>
+      <div class="run-actions"><button type="button" class="button" id="export" data-text="export"></button><button type="button" class="button primary" id="retest" data-text="retest"></button></div>
+    </div>
+    <div class="run-meta">
+      <span>API 2023-06-01</span><span data-text="scope"></span><button type="button" class="text-button" id="configuration" data-text="configuration"></button>
+      <div class="palette-control"><label for="palette" data-text="palette"></label><select id="palette"><option value="graphite" data-text="graphite"></option><option value="slate" data-text="slate"></option><option value="ink" data-text="ink"></option><option value="original" data-text="original"></option></select></div>
+      <div class="scenario-control"><label for="scenario" data-text="scenario"></label><select id="scenario"><option value="completed" data-text="completed"></option><option value="running" data-text="running"></option><option value="stopped" data-text="stopped"></option></select></div>
+    </div>
+    <nav class="view-tabs" aria-label="Views"><button type="button" data-view="overview" data-text="overview"></button><button type="button" data-view="issues"><span data-text="issues"></span><span class="count" id="issue-count">3</span></button></nav>
+    <div id="view-root"></div>
+    <footer><span data-text="disclaimer"></span><span data-text="coverageNote"></span></footer>
+  </main>
+  <dialog id="dialog"><form method="dialog"><button class="close button" aria-label="Close" value="close" data-text="close"></button></form><div id="dialog-content"></div></dialog>
+  <div id="announcement" class="sr-only" aria-live="polite"></div>
+</body>
+</html>

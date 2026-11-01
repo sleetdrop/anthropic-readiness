@@ -1,5 +1,7 @@
 """Escaped request-local templates over shared presentation choices and catalogs."""
 
+from typing import cast
+
 from fastapi import Request
 from jinja2 import Environment, PackageLoader, select_autoescape
 from starlette.responses import HTMLResponse
@@ -8,6 +10,7 @@ from anthropic_readiness.localization import load_catalog, translate
 from anthropic_readiness.models import JsonObject, object_value
 from anthropic_readiness.presentation import LOCALES
 from anthropic_readiness.web.security import preferences_for
+from anthropic_readiness.web.ui_assets import UIAssets
 
 ENVIRONMENT = Environment(
     loader=PackageLoader("anthropic_readiness", "resources/web"),
@@ -35,10 +38,12 @@ CASE_KEYS = {
     "ANT-TEXT-SSE-001": "case.sse_greeting",
     "ANT-TEXT-SSE-002": "case.sse_count",
     "ANT-TOOL-FORCED-001": "case.forced_tool",
+    "ANT-TOOL-LOOP-001": "case.tool_loop",
 }
 
 
 def page(name: str, context: dict[str, object], *, request: Request) -> HTMLResponse:
+    ui_assets = cast(UIAssets, request.app.state.ui_assets)
     options = preferences_for(request)
     catalog = load_catalog(options.locale)
 
@@ -49,9 +54,11 @@ def page(name: str, context: dict[str, object], *, request: Request) -> HTMLResp
         return text(CASE_KEYS[identifier]) if identifier in CASE_KEYS else identifier
 
     def profile_name(identifier: str) -> str:
-        key = {"anthropic-basic": "profile.basic", "anthropic-tools-smoke": "profile.tools"}.get(
-            identifier
-        )
+        key = {
+            "anthropic-basic": "profile.basic",
+            "anthropic-tools-smoke": "profile.tools",
+            "anthropic-tool-loop": "profile.tool_loop",
+        }.get(identifier)
         return text(key) if key else identifier
 
     def phase_name(phase: str) -> str:
@@ -64,10 +71,14 @@ def page(name: str, context: dict[str, object], *, request: Request) -> HTMLResp
         messages.update(load_catalog(locale))
         catalogs[locale] = messages
     bootstrap = object_value(context.get("bootstrap", {}))
-    bootstrap.update(presentation=options.to_json(), catalogs=catalogs)
+    bootstrap.update(
+        presentation=options.to_json(), catalogs=catalogs, ui_revision=ui_assets.revision
+    )
     values = {
         **context,
         "bootstrap": bootstrap,
+        "ui_revision": ui_assets.revision,
+        "asset_url": ui_assets.url,
         "presentation": options.to_json(),
         "catalogs": catalogs,
         "t": text,

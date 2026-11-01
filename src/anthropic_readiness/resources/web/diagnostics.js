@@ -1,6 +1,8 @@
 import { api, ready, csrfToken, showError, setupExports } from "./app.js";
 import { object, strings } from "./forms.js";
 import { mountWorkbench, patchElement } from "./workbench.js";
+import { acceptUIRevision, mountUIUpdates } from "./ui-update.js";
+import { mountEvidence } from "./evidence-view.js";
 /** @typedef {import("./contracts.js").JsonObject} JsonObject */
 
 /** Read only the display budget; original bytes remain available by download.
@@ -46,11 +48,21 @@ function button(id) {
   return /** @type {HTMLButtonElement} */ (element(id));
 }
 
+/** @param {string} id @param {()=>void} listener */
+function buttonIfPresent(id, listener) {
+  document.getElementById(id)?.addEventListener("click", listener);
+}
+
 async function mount() {
   await ready;
+  mountUIUpdates();
   const bootstrap = object(JSON.parse(element("bootstrap").textContent ?? "{}"));
   const catalogs = object(bootstrap.catalogs);
   let presentation = object(bootstrap.presentation);
+  let desiredPresentation = {
+    locale: String(presentation.locale),
+    theme: String(presentation.theme),
+  };
   /** @param {string} key @param {Record<string,string|number>} [params] */
   function text(key, params = {}) {
     const messages = object(catalogs[String(presentation.locale)]);
@@ -73,41 +85,94 @@ async function mount() {
   let changeOrder = 0;
   // Serialize cookie writes so a slower response cannot restore an older choice.
   let saving = Promise.resolve();
-  for (const id of ["locale-choice", "theme-choice"])
-    select(id).addEventListener("change", () => {
-      const ticket = ++changeOrder;
-      const requested = {
+  function syncAppearance() {
+    const language = document.getElementById("language-toggle");
+    const theme = document.getElementById("theme-toggle");
+    if (language) {
+      language.textContent = presentation.locale === "en" ? "中" : "EN";
+      language.title = text(
+        presentation.locale === "en" ? "console.switch_zh" : "console.switch_en",
+      );
+      language.setAttribute("aria-label", language.textContent + " · " + language.title);
+    }
+    if (theme) {
+      const dark =
+        presentation.theme === "dark" ||
+        (presentation.theme === "system" && matchMedia("(prefers-color-scheme: dark)").matches);
+      theme.title = text(dark ? "console.switch_light" : "console.switch_dark");
+      theme.setAttribute("aria-label", theme.title);
+    }
+  }
+  syncAppearance();
+  matchMedia("(prefers-color-scheme: dark)").addEventListener("change", syncAppearance);
+  /** @param {{locale:string,theme:string}} requested */
+  function savePresentation(requested) {
+    desiredPresentation = requested;
+    const ticket = ++changeOrder;
+    saving = saving
+      .then(async () => {
+        const saved = await api("/api/v1/preferences", { method: "POST", body: requested });
+        if (ticket !== changeOrder) return;
+        presentation = saved;
+        document.documentElement.lang = String(saved.locale);
+        document.documentElement.dataset.theme = String(saved.theme);
+        labels();
+        syncAppearance();
+        const exportForm = document.getElementById("export-form");
+        exportForm?.dispatchEvent(new Event("change"));
+        if (bootstrap.page === "workbench")
+          window.dispatchEvent(new Event("readiness:presentation"));
+        else {
+          const response = await fetch(location.href, {
+            credentials: "same-origin",
+            cache: "no-store",
+          });
+          if (!response.ok) throw new Error("invalid_document");
+          const page = new DOMParser().parseFromString(await response.text(), "text/html");
+          if (
+            !acceptUIRevision(
+              page.querySelector('meta[name="readiness-ui-revision"]')?.getAttribute("content") ??
+                null,
+            )
+          )
+            return;
+          const incoming = page.getElementById("main");
+          if (ticket !== changeOrder) return;
+          if (incoming) patchElement(element("main"), incoming, true);
+          document.title = page.title;
+          labels();
+        }
+      })
+      .catch((error) => {
+        if (ticket === changeOrder)
+          desiredPresentation = {
+            locale: String(presentation.locale),
+            theme: String(presentation.theme),
+          };
+        showError(error);
+      });
+  }
+  for (const id of ["locale-choice", "theme-choice"]) {
+    document.getElementById(id)?.addEventListener("change", () =>
+      savePresentation({
         locale: select("locale-choice").value,
         theme: select("theme-choice").value,
-      };
-      saving = saving
-        .then(async () => {
-          const saved = await api("/api/v1/preferences", { method: "POST", body: requested });
-          if (ticket !== changeOrder) return;
-          presentation = saved;
-          document.documentElement.lang = String(saved.locale);
-          document.documentElement.dataset.theme = String(saved.theme);
-          labels();
-          const exportForm = document.getElementById("export-form");
-          exportForm?.dispatchEvent(new Event("change"));
-          if (bootstrap.page === "workbench")
-            window.dispatchEvent(new Event("readiness:presentation"));
-          else {
-            const response = await fetch(location.href, {
-              credentials: "same-origin",
-              cache: "no-store",
-            });
-            if (!response.ok) throw new Error("invalid_document");
-            const page = new DOMParser().parseFromString(await response.text(), "text/html");
-            const incoming = page.getElementById("main");
-            if (ticket !== changeOrder) return;
-            if (incoming) patchElement(element("main"), incoming, true);
-            document.title = page.title;
-            labels();
-          }
-        })
-        .catch(showError);
-    });
+      }),
+    );
+  }
+  buttonIfPresent("language-toggle", () =>
+    savePresentation({
+      locale: desiredPresentation.locale === "en" ? "zh-CN" : "en",
+      theme: desiredPresentation.theme,
+    }),
+  );
+  buttonIfPresent("theme-toggle", () => {
+    const dark =
+      desiredPresentation.theme === "dark" ||
+      (desiredPresentation.theme === "system" &&
+        matchMedia("(prefers-color-scheme: dark)").matches);
+    savePresentation({ locale: desiredPresentation.locale, theme: dark ? "light" : "dark" });
+  });
 
   if (bootstrap.page === "workbench") {
     mountWorkbench(bootstrap, { api, error: showError, text });
@@ -123,57 +188,9 @@ async function mount() {
         if (event.target.closest("#close-export")) exportDialog.close();
       });
     }
-    const evidenceDialog = element("evidence-dialog");
-    if (evidenceDialog instanceof HTMLDialogElement) {
-      /** @type {HTMLElement|null} */ let opener = null;
-      let evidenceOrder = 0;
-      /** @type {AbortController|null} */ let evidenceRequest = null;
-      document.addEventListener("click", (event) => {
-        if (!(event.target instanceof Element)) return;
-        const link = event.target.closest("a[data-evidence-id]");
-        if (link instanceof HTMLAnchorElement) {
-          event.preventDefault();
-          opener = link;
-          const ticket = ++evidenceOrder;
-          evidenceRequest?.abort();
-          evidenceRequest = new AbortController();
-          const signal = AbortSignal.any([evidenceRequest.signal, AbortSignal.timeout(15000)]);
-          element("evidence-content").textContent = text("evidence.loading");
-          evidenceDialog.showModal();
-          void (async () => {
-            let response = await fetch(link.href, {
-              credentials: "same-origin",
-              cache: "no-store",
-              signal,
-            });
-            if (response.status === 401) {
-              // Recover a local read session once; never replay import/start mutations.
-              await api("/api/v1/catalog");
-              response = await fetch(link.href, {
-                credentials: "same-origin",
-                cache: "no-store",
-                signal,
-              });
-            }
-            if (!response.ok) throw new Error("evidence_unavailable");
-            const value = await readEvidence(response);
-            if (ticket === evidenceOrder && evidenceDialog.open)
-              element("evidence-content").textContent =
-                value.text + (value.truncated ? "\n" + text("evidence.truncated") : "");
-          })().catch(() => {
-            if (ticket === evidenceOrder && evidenceDialog.open)
-              element("evidence-content").textContent = text("evidence.unavailable");
-          });
-        }
-        if (event.target.closest("#close-evidence")) evidenceDialog.close();
-      });
-      evidenceDialog.addEventListener("close", () => {
-        evidenceOrder++;
-        evidenceRequest?.abort();
-        opener?.focus({ preventScroll: true });
-      });
-    }
+    mountEvidence({ read: readEvidence, text, api });
   }
+
   if (bootstrap.page === "import") {
     /** @type {string|null} */ let previewId = null;
     let inFlight = false;

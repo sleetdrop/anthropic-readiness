@@ -42,6 +42,37 @@ async def preview(client: httpx.AsyncClient, headers: dict[str, str], url: str) 
     return object_value(response.json())
 
 
+async def test_tool_loop_preview_execution_and_report(
+    client: httpx.AsyncClient, server: SyntheticServer
+) -> None:
+    headers = await csrf_headers(client)
+    target = replace(
+        load_target(ROOT / "examples/target.yaml"), messages_url=server.url + "/tool-loop"
+    )
+    response = await client.post(
+        "/api/v1/plans",
+        json={"target": target.to_json(), "profiles": ["anthropic-tool-loop"]},
+        headers=headers,
+    )
+    assert response.status_code == 201
+    plan = object_value(response.json())
+    assert object_value(plan["plan"])["planned_requests"] == 2
+    assert not server.requests
+    started = await client.post(
+        "/api/v1/runs", json=start_body(plan, "tool-loop-start"), headers=headers
+    )
+    assert started.status_code == 202
+    run_id = started.json()["id"]
+    completed = await wait_run(client, run_id)
+    assert object_value(completed["job"])["state"] == "completed"
+    assert len(server.requests) == 2
+    report = object_value(completed["report"])
+    assert report["status"] == "complete"
+    assert object_value(report["summary"])["actual_requests"] == 2
+    assert object_value(report["evidence_verification"])["status"] == "verified"
+    assert "ANT-TOOL-LOOP-001" in (await client.get("/runs/" + run_id)).text
+
+
 def start_body(plan: JsonObject, operation: str) -> JsonObject:
     return {"plan_id": plan["id"], "live_consent": True, "idempotency_key": operation}
 
@@ -52,7 +83,7 @@ async def test_preview_and_duplicate_start_request_counts(
     headers = await csrf_headers(client)
     catalog = await client.get("/api/v1/catalog")
     assert catalog.status_code == 200
-    assert len(catalog.json()["cases"]) == 4
+    assert len(catalog.json()["cases"]) == 5
     plan = await preview(client, headers, server.url + "/cases")
     manager = cast(JobManager, web_app.state.manager)
     context = manager.store.get_plan_context(str(plan["id"]))

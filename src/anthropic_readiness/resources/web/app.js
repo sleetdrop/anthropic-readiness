@@ -1,4 +1,14 @@
-import { object, objects, strings, resolveEndpoint, resolvePreviewState } from "./forms.js";
+import {
+  object,
+  objects,
+  strings,
+  resolveEndpoint,
+  resolvePreviewState,
+  INPUT_HISTORY_KEY,
+  readInputHistory,
+  rememberInput,
+  clearInputHistory,
+} from "./forms.js";
 import { parseExecution, reduceSnapshot } from "./progress.js";
 import { mountReport, setupDrawer } from "./report.js";
 /** @typedef {import("./forms.js").JsonObject} JsonObject */
@@ -169,6 +179,48 @@ function configure(bootstrap) {
   let presets = objects(bootstrap.presets);
   /** @type {string|null} */
   let selectedPreset = null;
+  /** @type {Storage|null} */
+  let historyStorage = null;
+  let pendingHistoryDisplay = false;
+  try {
+    historyStorage = window.localStorage;
+  } catch {
+    // Browsers may deny storage without preventing an assessment.
+  }
+  function renderInputHistory() {
+    const history = readInputHistory(historyStorage);
+    element("endpoint-history").replaceChildren(
+      ...history.endpoints.map((value) => new Option(value, value)),
+    );
+    element("model-history").replaceChildren(
+      ...history.models.map((value) => new Option(value, value)),
+    );
+    element("input-history-controls").hidden =
+      !pendingHistoryDisplay && !history.endpoints.length && !history.models.length;
+  }
+  function rememberCurrentInputs() {
+    rememberInput(historyStorage, "endpoints", input("endpoint").value);
+    rememberInput(historyStorage, "models", input("model").value);
+    renderInputHistory();
+  }
+  button("clear-input-history").addEventListener("click", () => {
+    if (!clearInputHistory(historyStorage)) {
+      showError(new Error(message("form.history_clear_failed")));
+      return;
+    }
+    pendingHistoryDisplay = false;
+    renderInputHistory();
+    input("endpoint").focus();
+  });
+  window.addEventListener("storage", (event) => {
+    if (event.key === INPUT_HISTORY_KEY || event.key === null) renderInputHistory();
+  });
+  renderInputHistory();
+
+  function usesApiKey() {
+    const mode = select("auth-mode").value;
+    return mode === "api_key" || (mode === "auto" && Boolean(input("credential").value.trim()));
+  }
 
   /** @returns {JsonObject} */
   function target() {
@@ -191,20 +243,21 @@ function configure(bootstrap) {
     }
     return {
       ...baseTarget,
-      name: input("target-name").value,
+      name: input("target-name").value.trim() || input("model").value.trim(),
       model: input("model").value,
       messages_url: resolveEndpoint(input("endpoint").value, select("endpoint-mode").value),
       api_version: contract.api_version,
       beta_headers: contract.beta_headers,
       protocol_contract: { id: contract.id, revision: contract.revision },
-      auth:
-        select("auth-mode").value === "api_key"
-          ? {
-              mode: "api_key",
-              credential_env:
-                credentialSource === "browser" ? "BROWSER_AUTH_TOKEN" : credentialSource,
-            }
-          : { mode: "none" },
+      auth: usesApiKey()
+        ? {
+            mode: "api_key",
+            credential_env:
+              select("auth-mode").value === "auto" || credentialSource === "browser"
+                ? "BROWSER_AUTH_TOKEN"
+                : credentialSource,
+          }
+        : { mode: "none" },
       capabilities: {
         ...object(baseTarget.capabilities),
         streaming: input("supports-streaming").checked,
@@ -219,39 +272,67 @@ function configure(bootstrap) {
     };
   }
   function authVisibility() {
-    const enabled = select("auth-mode").value === "api_key";
+    const mode = select("auth-mode").value;
+    const enabled = mode === "api_key";
     element("credential-source-field").hidden = !enabled;
     element("credential-field").hidden =
-      !enabled || select("credential-source").value !== "browser";
-    if (!enabled) input("credential").value = "";
+      mode === "none" || (enabled && select("credential-source").value !== "browser");
+    if (element("credential-field").hidden) input("credential").value = "";
+  }
+  function scopeSummary() {
+    const profiles = checked(form, "profile");
+    const ids = new Set(
+      objects(catalog.profiles)
+        .filter((profile) => profiles.includes(String(profile.id)))
+        .flatMap((profile) => strings(profile.cases)),
+    );
+    const counts = object(bootstrap.request_counts);
+    setMessage(element("scope-summary"), "form.scope_summary", {
+      cases: ids.size,
+      requests: [...ids].reduce((sum, id) => sum + Number(counts[id]), 0),
+    });
   }
   function invalidate() {
     try {
       const current = target();
       state = resolvePreviewState(state, current);
       element("effective-url").textContent = String(current.messages_url);
+      element("effective-address").hidden = false;
       if (JSON.stringify(checked(form, "profile")) !== reviewedProfiles) state.previewId = null;
     } catch {
       state.previewId = null;
-      element("effective-url").textContent = "输入有效地址后显示";
+      setMessage(element("effective-url"), "form.unresolved");
+      element("effective-address").hidden = true;
     }
     if (!state.previewId) {
       button("start-button").disabled = true;
-      element("preview-state").textContent = "配置或范围已变化，请重新预览。";
+      setMessage(element("preview-state"), "form.review_again");
     }
+    try {
+      const host = new URL(input("endpoint").value).hostname;
+      element("container-hint").hidden = ![
+        "localhost",
+        "127.0.0.1",
+        "[::1]",
+        "host.docker.internal",
+      ].includes(host);
+    } catch {
+      element("container-hint").hidden = true;
+    }
+    scopeSummary();
     authVisibility();
   }
-  /** @param {JsonObject} value */
-  function fill(value) {
+  /** @param {JsonObject} value @param {boolean} [fresh] */
+  function fill(value, fresh = false) {
     baseTarget = structuredClone(value);
-    input("target-name").value = String(value.name);
+    input("target-name").value = fresh ? "" : String(value.name);
     input("model").value = String(value.model);
     input("endpoint").value = String(value.messages_url);
-    select("endpoint-mode").value = "messages";
+    select("endpoint-mode").value = fresh ? "auto" : "messages";
     select("model-policy").value = String(value.response_model_policy);
     input("aliases").value = strings(value.response_model_aliases).join(", ");
     const auth = object(value.auth);
-    select("auth-mode").value = String(auth.mode);
+    select("auth-mode").value = auth.mode === "none" ? "auto" : String(auth.mode);
     const reference = String(auth.credential_env ?? "browser");
     select("credential-source").value = strings(catalog.credential_refs).includes(reference)
       ? reference
@@ -281,14 +362,29 @@ function configure(bootstrap) {
       picker.add(new Option(`${value.name} · ${value.model}`, String(preset.id)));
     }
     picker.value = selectedPreset ?? "";
+    if (picker.parentElement) picker.parentElement.hidden = presets.length === 0;
     button("update-preset").hidden = !selectedPreset;
   }
-  fill(base);
+  fill(base, !bootstrap.copied && !bootstrap.reference);
   presetOptions();
   form.addEventListener("input", (event) => {
-    if (event.target !== input("credential")) invalidate();
+    // Reveal history controls before blur can save the entry and shift a clicked button.
+    if (historyStorage && (event.target === input("endpoint") || event.target === input("model")))
+      if (input("endpoint").value || input("model").value) {
+        pendingHistoryDisplay = true;
+        element("input-history-controls").hidden = false;
+      }
+    if (event.target !== input("credential") || select("auth-mode").value === "auto") invalidate();
   });
   form.addEventListener("change", invalidate);
+  form.addEventListener("change", (event) => {
+    if (event.target === input("endpoint"))
+      rememberInput(historyStorage, "endpoints", input("endpoint").value);
+    else if (event.target === input("model"))
+      rememberInput(historyStorage, "models", input("model").value);
+    else return;
+    renderInputHistory();
+  });
   select("preset").addEventListener("change", () => {
     selectedPreset = select("preset").value || null;
     const saved = presets.find((item) => item.id === selectedPreset);
@@ -340,6 +436,7 @@ function configure(bootstrap) {
         throw new Error(message("preview.changed"));
       }
       state = { target: object(frozen.target), previewId: String(frozen.id) };
+      rememberCurrentInputs();
       operation = crypto.randomUUID();
       reviewedProfiles = JSON.stringify(profiles);
       const plan = object(frozen.plan);
@@ -409,6 +506,8 @@ function configure(bootstrap) {
         revision: String(object(resolved.protocol_contract).revision),
       });
       button("start-button").disabled = false;
+      element("preview-panel").hidden = false;
+      element("preview-panel").scrollIntoView({ block: "nearest" });
     })()
       .catch(showError)
       .finally(() => {
@@ -424,8 +523,9 @@ function configure(bootstrap) {
     void (async () => {
       /** @type {JsonObject} */
       const body = { plan_id: planId, live_consent: true, idempotency_key: operation };
-      if (select("auth-mode").value === "api_key") {
-        const source = select("credential-source").value;
+      if (usesApiKey()) {
+        const source =
+          select("auth-mode").value === "auto" ? "browser" : select("credential-source").value;
         if (source !== "browser") body.credential_ref = source;
         else {
           const credential = input("credential").value;

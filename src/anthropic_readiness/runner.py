@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import platform
+import secrets as random_secrets
 import signal
 import subprocess
 import threading
@@ -42,6 +43,8 @@ from anthropic_readiness.models import (
     EvidenceRef,
     JsonDepthError,
     JsonObject,
+    JsonValue,
+    RequestSpec,
     RunResult,
     Status,
     ValidationResult,
@@ -67,6 +70,7 @@ from anthropic_readiness.schema import (
     validate_document,
     validate_result_semantics,
 )
+from anthropic_readiness.tool_loop import followup_request, tool_message, validate_step
 from anthropic_readiness.validation.messages import validate_message
 from anthropic_readiness.validation.stream import StreamValidator
 
@@ -78,6 +82,10 @@ class RunPlan:
     profiles: tuple[str, ...]
     cases: tuple[CaseDefinition, ...]
     mode: Literal["live", "replay"] = "live"
+
+    @property
+    def planned_requests(self) -> int:
+        return sum(case.request_count for case in self.cases) if self.mode == "live" else 0
 
     def to_json(self, actual_requests: int = 0) -> JsonObject:
         return {
@@ -101,7 +109,7 @@ class RunPlan:
                 for p in self.profiles
             ],
             "actual_requests": actual_requests,
-            "planned_requests": len(self.cases) if self.mode == "live" else 0,
+            "planned_requests": self.planned_requests,
             "limits": self.target.limits.to_json(),
             "repeat": 1,
             "retry": 0,
@@ -118,7 +126,7 @@ class RunPlan:
 def plan_run(target: TargetConfig, bundle: ContractBundle, profiles: Sequence[str]) -> RunPlan:
     validate_target_contract(target, bundle)
     cases = select_cases(profiles)
-    if len(cases) > target.limits.max_requests:
+    if sum(case.request_count for case in cases) > target.limits.max_requests:
         raise ValueError("request_budget_insufficient")
     return RunPlan(target, bundle, tuple(dict.fromkeys(profiles)), cases)
 
@@ -257,9 +265,15 @@ def _bind(assertions: Sequence[AssertionResult], refs: CaptureRefs) -> tuple[Ass
     for item in assertions:
         suffix = assertion_evidence_file(item.id, item.event)
         reference = next(r for r in refs.refs if r.path.endswith("/" + suffix))
+        extra = (
+            tuple(r for r in refs.refs if r.path.endswith("/request.json"))
+            if item.id == "LOOP-STEP"
+            else ()
+        )
         bound.append(
             replace(
-                item, evidence_refs=(replace(reference, event=item.event, pointer=item.pointer),)
+                item,
+                evidence_refs=(replace(reference, event=item.event, pointer=item.pointer), *extra),
             )
         )
     return tuple(bound)
@@ -325,6 +339,8 @@ def execute_run(
         raise TypeError("invalid_transport")
     if (plan.mode == "replay") != (replay is not None):
         raise ValueError("run_mode_capture_mismatch")
+    if replay is not None and any(case.request_count > 1 for case in plan.cases):
+        raise ValueError("tool_loop_requires_complete_conversation")
     run_id = str(uuid.uuid4()) if run_id is None else str(uuid.UUID(run_id))
     create_run_directory(output_dir)
     started = _utc()
@@ -436,137 +452,190 @@ def execute_run(
                 cases.append(_precondition(case, Status.BLOCKED, credential_error))
                 commit_case(cases[-1])
                 continue
-            attempt_id = str(uuid.uuid4())
-            actual_requests = 0
+            case_attempts: list[JsonValue] = []
+            case_assertions: list[AssertionResult] = []
             case_refs: tuple[EvidenceRef, ...] = ()
-            transport.bind_execution(
-                case.id, attempt_id, observer=observer, control=control, elapsed_ms=elapsed_ms
-            )
+            pending_request: RequestSpec | None = None
+            token: str | None = None
+            for step in range(1, case.request_count + 1):
+                if step > 1 and (control.requested or clock() >= deadline):
+                    reason = "cancelled" if control.requested else "run_deadline_exceeded"
+                    if control.requested and state.signum is None:
+                        state.signum = signal.SIGINT
+                    assertion = AssertionResult(
+                        "EXECUTION-COMPLETE", "environment", Status.INDETERMINATE, reason
+                    )
+                    case_attempts.append(
+                        {
+                            "id": str(uuid.uuid4()),
+                            "index": step,
+                            "status": Status.INDETERMINATE.value,
+                            "actual_requests": 0,
+                            "termination": {"capture_end": reason},
+                            "duration_ms": 0,
+                            "observations": {"tool_loop_step": step},
+                            "assertions": [assertion.to_json()],
+                        }
+                    )
+                    case_assertions.append(assertion)
+                    break
+                attempt_id = str(uuid.uuid4())
+                actual_requests = 0
+                transport.bind_execution(
+                    case.id, attempt_id, observer=observer, control=control, elapsed_ms=elapsed_ms
+                )
 
-            def phase(name: str, case_id: str = case.id, attempt: str = attempt_id) -> None:
-                emit("transport_phase", {"case_id": case_id, "attempt_id": attempt, "phase": name})
-
-            try:
-                if replay is not None:
-                    capture = replay.capture
-                    sanitized = replay
-                else:
-                    request = build_request(case, plan.target)
-                    if secret:
-                        request = replace(
-                            request, headers=(*request.headers, ("x-api-key", secret))
-                        )
-                    requests += 1
-                    actual_requests = 1
+                def phase(name: str, case_id: str = case.id, attempt: str = attempt_id) -> None:
                     emit(
-                        "request_started",
-                        {"case_id": case.id, "attempt_id": attempt_id, "request_index": requests},
+                        "transport_phase",
+                        {"case_id": case_id, "attempt_id": attempt, "phase": name},
                     )
-                    capture = transport.send(request, plan.target.limits, deadline)
-                    sanitized = sanitize_capture(capture, secrets)
-                phase("saving")
-                persisted = persist_capture(output_dir, case.id, attempt_id, sanitized)
-                case_refs = persisted.refs
-                refs.extend(persisted.refs)
-                phase("validating")
-                validated = _validate(capture, case, plan)
-                if replay is not None and replay.transformed:
-                    validated = replace(
-                        validated,
-                        assertions=tuple(
-                            replace(
-                                a, status=Status.INDETERMINATE, reason_code="transformed_capture"
+
+                try:
+                    if replay is not None:
+                        capture = replay.capture
+                        sanitized = replay
+                    else:
+                        request = build_request(case, plan.target) if step == 1 else pending_request
+                        if request is None:
+                            raise ValueError("tool_loop_missing_continuation")
+                        if secret and not any(
+                            key.lower() == "x-api-key" for key, _ in request.headers
+                        ):
+                            request = replace(
+                                request, headers=(*request.headers, ("x-api-key", secret))
                             )
-                            if a.id
-                            not in (
-                                {"HTTP-STATUS", "CAPTURE-COMPLETE"}
-                                | (
-                                    {
-                                        "STR-START",
-                                        "STR-DELTA",
-                                        "STR-STOP",
-                                        "STR-TYPE",
-                                        "STR-LIFECYCLE",
-                                    }
-                                    if replay.structural_sha256 is not None
-                                    else set()
+                        requests += 1
+                        actual_requests = 1
+                        emit(
+                            "request_started",
+                            {
+                                "case_id": case.id,
+                                "attempt_id": attempt_id,
+                                "request_index": requests,
+                            },
+                        )
+                        capture = transport.send(request, plan.target.limits, deadline)
+                        sanitized = sanitize_capture(capture, secrets)
+                    phase("saving")
+                    persisted = persist_capture(output_dir, case.id, attempt_id, sanitized)
+                    case_refs += persisted.refs
+                    refs.extend(persisted.refs)
+                    phase("validating")
+                    effective = (
+                        replace(case, behavior="tool" if step == 1 else "greeting")
+                        if case.behavior == "tool_loop"
+                        else case
+                    )
+                    validated = _validate(capture, effective, plan)
+                    if case.behavior == "tool_loop":
+                        validated = validate_step(capture, validated, step, token)
+                        if step == 1:
+                            message = tool_message(capture)
+                            if message is not None:
+                                token = random_secrets.token_hex(16)
+                                assert request is not None
+                                pending_request = followup_request(request, message, token)
+
+                    if replay is not None and replay.transformed:
+                        validated = replace(
+                            validated,
+                            assertions=tuple(
+                                replace(
+                                    a,
+                                    status=Status.INDETERMINATE,
+                                    reason_code="transformed_capture",
                                 )
-                            )
-                            else a
-                            for a in validated.assertions
-                        ),
+                                if a.id
+                                not in (
+                                    {"HTTP-STATUS", "CAPTURE-COMPLETE"}
+                                    | (
+                                        {
+                                            "STR-START",
+                                            "STR-DELTA",
+                                            "STR-STOP",
+                                            "STR-TYPE",
+                                            "STR-LIFECYCLE",
+                                        }
+                                        if replay.structural_sha256 is not None
+                                        else set()
+                                    )
+                                )
+                                else a
+                                for a in validated.assertions
+                            ),
+                        )
+                    assertions = _bind(validated.assertions, persisted)
+                    assertion_refs.extend(
+                        ref for assertion in assertions for ref in assertion.evidence_refs
                     )
-                assertions = _bind(validated.assertions, persisted)
-                assertion_refs.extend(
-                    ref for assertion in assertions for ref in assertion.evidence_refs
-                )
-                attempt_status = aggregate_required([a.status for a in assertions if a.required])
-                observations = object_value(sanitize_json(validated.observations, secrets))
-                attempt: JsonObject = {
-                    "id": attempt_id,
-                    "index": 1,
-                    "status": attempt_status.value,
-                    "actual_requests": actual_requests,
-                    "termination": {
-                        "protocol_end": capture.protocol_end,
-                        "capture_end": capture.capture_end,
-                        "error": sanitized.capture.error,
-                    },
-                    "duration_ms": capture.duration_ms,
-                    "observations": observations,
-                    "assertions": [a.to_json() for a in assertions],
-                }
-                cases.append(
-                    {
-                        "id": case.id,
-                        "version": case.version,
-                        "required": True,
+                    attempt_status = aggregate_required(
+                        [a.status for a in assertions if a.required]
+                    )
+                    observations = object_value(sanitize_json(validated.observations, secrets))
+                    attempt: JsonObject = {
+                        "id": attempt_id,
+                        "index": step,
                         "status": attempt_status.value,
-                        "preconditions": [],
-                        "attempts": [attempt],
-                        "dimensions": _dimensions(assertions),
+                        "actual_requests": actual_requests,
+                        "termination": {
+                            "protocol_end": capture.protocol_end,
+                            "capture_end": capture.capture_end,
+                            "error": sanitized.capture.error,
+                        },
+                        "duration_ms": capture.duration_ms,
+                        "observations": observations,
+                        "assertions": [a.to_json() for a in assertions],
                     }
-                )
-                if capture.capture_end == "cancelled" and state.signum is None:
-                    state.signum = signal.SIGINT
-                    control.cancel("transport_cancelled")
-            except (KeyboardInterrupt, Exception) as exc:
-                if isinstance(exc, (OSError, ObservationError)):
-                    raise
-                if isinstance(exc, KeyboardInterrupt):
-                    state.signum = signal.SIGINT
-                    control.cancel("keyboard_cancelled")
-                else:
-                    internal_error = str(sanitize_json(f"{type(exc).__name__}:{exc}", secrets))
-                assertion = AssertionResult(
-                    "EXECUTION-COMPLETE",
-                    "environment",
-                    Status.INDETERMINATE,
-                    "cancelled" if state.signum else "internal_error",
-                )
-                attempt = {
-                    "id": attempt_id,
-                    "index": 1,
-                    "status": Status.INDETERMINATE.value,
-                    "actual_requests": actual_requests,
-                    "termination": {
-                        "capture_end": "cancelled" if state.signum else "internal_error"
-                    },
-                    "duration_ms": 0,
-                    "observations": {},
-                    "assertions": [assertion.to_json()],
-                }
-                cases.append(
-                    {
-                        "id": case.id,
-                        "version": case.version,
-                        "required": True,
+                    case_attempts.append(attempt)
+                    case_assertions.extend(assertions)
+                    if capture.capture_end == "cancelled" and state.signum is None:
+                        state.signum = signal.SIGINT
+                        control.cancel("transport_cancelled")
+                except (KeyboardInterrupt, Exception) as exc:
+                    if isinstance(exc, (OSError, ObservationError)):
+                        raise
+                    if isinstance(exc, KeyboardInterrupt):
+                        state.signum = signal.SIGINT
+                        control.cancel("keyboard_cancelled")
+                    else:
+                        internal_error = str(sanitize_json(f"{type(exc).__name__}:{exc}", secrets))
+                    assertion = AssertionResult(
+                        "EXECUTION-COMPLETE",
+                        "environment",
+                        Status.INDETERMINATE,
+                        "cancelled" if state.signum else "internal_error",
+                    )
+                    attempt = {
+                        "id": attempt_id,
+                        "index": step,
                         "status": Status.INDETERMINATE.value,
-                        "preconditions": [],
-                        "attempts": [attempt],
-                        "dimensions": _dimensions([assertion]),
+                        "actual_requests": actual_requests,
+                        "termination": {
+                            "capture_end": "cancelled" if state.signum else "internal_error"
+                        },
+                        "duration_ms": 0,
+                        "observations": {},
+                        "assertions": [assertion.to_json()],
                     }
-                )
+                    case_attempts.append(attempt)
+                    case_assertions.append(assertion)
+                    break
+                if case.behavior == "tool_loop" and step == 1 and pending_request is None:
+                    break
+            cases.append(
+                {
+                    "id": case.id,
+                    "version": case.version,
+                    "required": True,
+                    "status": aggregate_required(
+                        [Status(str(object_value(item)["status"])) for item in case_attempts]
+                    ).value,
+                    "preconditions": [],
+                    "attempts": case_attempts,
+                    "dimensions": _dimensions(case_assertions),
+                }
+            )
             phase("saving")
             commit_case(cases[-1], case_refs)
     profiles: list[JsonObject] = []

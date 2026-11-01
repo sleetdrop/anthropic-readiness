@@ -6,6 +6,7 @@ SUPPORTED = (("anthropic-messages-2023-06-01-core", "1.0.0"),)
 PROFILE_CASES = {
     "anthropic-basic": ("ANT-MESSAGE-001", "ANT-TEXT-SSE-001", "ANT-TEXT-SSE-002"),
     "anthropic-tools-smoke": ("ANT-TOOL-FORCED-001",),
+    "anthropic-tool-loop": ("ANT-TOOL-LOOP-001",),
 }
 CASE_IDS = frozenset(case for cases in PROFILE_CASES.values() for case in cases)
 
@@ -38,6 +39,8 @@ def assertion_plan(case_id: str, model_required: bool) -> list[JsonValue]:
     )
     if case_id == "ANT-TOOL-FORCED-001":
         ids.extend(["MSG-TOOL-CALLS", "MSG-TOOL-ID", "MSG-TOOL-NAME", "MSG-TOOL-INPUT"])
+    if case_id == "ANT-TOOL-LOOP-001":
+        ids.append("LOOP-STEP")
     return [
         {"id": key, "version": 1, "required": key != "MSG-MODEL" or model_required} for key in ids
     ]

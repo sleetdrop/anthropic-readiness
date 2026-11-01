@@ -1,3 +1,4 @@
+import { acceptUIRevision } from "./ui-update.js";
 import { object, objects } from "./forms.js";
 /** @typedef {import("./contracts.js").ActivityView} ActivityView */
 /** @typedef {import("./contracts.js").WorkbenchState} WorkbenchState */
@@ -161,7 +162,7 @@ export function mountWorkbench(bootstrap, ports) {
     const observation = root.querySelector("[data-observation-case][aria-current]");
     if (observation instanceof HTMLElement)
       url.searchParams.set("case", observation.dataset.observationCase ?? "");
-    if (url.href !== location.href) history.replaceState({}, "", url);
+    if (url.href !== location.href) history.replaceState(history.state, "", url);
     state = reduceWorkbench(state, {
       type: "selection",
       issue: url.searchParams.get("issue"),
@@ -179,6 +180,8 @@ export function mountWorkbench(bootstrap, ports) {
   /** @type {number|undefined} */ let timer;
   /** @type {number|undefined} */ let retryTimer;
   let navigation = 0;
+  /** @type {Map<string, number[]>} */ const positions = new Map();
+  let renderedLocation = location.href;
   /** @type {number|undefined} */ let activityTimer;
   const terminal = () =>
     !state.snapshot?.job || TERMINAL.has(String(object(state.snapshot.job).state));
@@ -224,11 +227,18 @@ export function mountWorkbench(bootstrap, ports) {
   async function renderPage(url, push = false, restoreControls = false) {
     const ticket = ++navigation;
     const order = ++readOrder;
-    if (push) history.pushState({}, "", url);
+    positions.set(renderedLocation, [window.scrollX, window.scrollY]);
+    if (positions.size > 40) positions.delete(positions.keys().next().value ?? "");
     const response = await fetch(url, { credentials: "same-origin", cache: "no-store" });
     if (!response.ok) throw new Error("workbench_unavailable");
     const page = new DOMParser().parseFromString(await response.text(), "text/html");
     if (ticket !== navigation || closed) return;
+    if (
+      !acceptUIRevision(
+        page.querySelector('meta[name="readiness-ui-revision"]')?.getAttribute("content") ?? null,
+      )
+    )
+      return;
     const incoming = page.getElementById("workbench");
     if (!incoming || !root) throw new Error("invalid_document");
     const data = object(JSON.parse(page.getElementById("bootstrap")?.textContent ?? "{}"));
@@ -239,16 +249,23 @@ export function mountWorkbench(bootstrap, ports) {
     });
     if (accepted === state) return;
     state = accepted;
-    const scrolling = [window.scrollX, window.scrollY];
+    const scrolling =
+      push || restoreControls ? (positions.get(url) ?? [0, 0]) : [window.scrollX, window.scrollY];
+    if (push) history.pushState({}, "", url);
     patchElement(root, incoming);
     if (push || restoreControls) {
       for (const source of incoming.querySelectorAll("select")) {
         const existing = document.getElementById(source.id);
         if (existing instanceof HTMLSelectElement) existing.value = source.value;
       }
+      const search = document.getElementById("issue-search");
+      const incomingSearch = incoming.querySelector("#issue-search");
+      if (search instanceof HTMLInputElement && incomingSearch instanceof HTMLInputElement)
+        search.value = incomingSearch.value;
     }
     document.title = page.title;
     pinSelection();
+    renderedLocation = location.href;
     window.scrollTo({ left: scrolling[0], top: scrolling[1], behavior: "instant" });
     renderObservation();
     renderedGeneration = state.snapshot?.generation;
@@ -318,6 +335,19 @@ export function mountWorkbench(bootstrap, ports) {
     const target = event.target;
     if (!(target instanceof Element)) return;
     const anchor = target.closest("a");
+    if (anchor?.hasAttribute("data-evidence-id") && anchor.dataset.evidenceCase) {
+      const url = new URL(location.href);
+      if (
+        url.searchParams.get("case") !== anchor.dataset.evidenceCase &&
+        !event.ctrlKey &&
+        !event.metaKey &&
+        !event.shiftKey &&
+        event.button === 0
+      ) {
+        url.searchParams.set("case", anchor.dataset.evidenceCase);
+        void renderPage(url.href, true).catch(ports.error);
+      }
+    }
     if (
       anchor &&
       anchor.pathname === location.pathname &&

@@ -14,11 +14,13 @@ from scripts.check import ROOT, CheckSpec, run_checks
 
 
 def checks(suite: str, out: Path) -> list[CheckSpec]:
-    def command(name: str, argv: list[str], *, junit: Path | None = None) -> CheckSpec:
+    def command(
+        name: str, argv: list[str], *, junit: Path | None = None, timeout: int = 300
+    ) -> CheckSpec:
         return CheckSpec(
             name,
             argv,
-            300,
+            timeout,
             "junit" if junit else "command",
             junit_path=junit,
             cwd=ROOT,
@@ -36,6 +38,7 @@ def checks(suite: str, out: Path) -> list[CheckSpec]:
                 "browser",
                 ["node", "node_modules/@playwright/test/cli.js", "test"],
                 junit=out / "browser.xml",
+                timeout=600,
             ),
             command(
                 "cleanup",

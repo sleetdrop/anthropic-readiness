@@ -1,5 +1,6 @@
 """Server-rendered local pages expose real scope and preserve safe source meaning."""
 
+import re
 from pathlib import Path
 
 import httpx
@@ -33,15 +34,18 @@ async def test_page_renders_only_installed_capabilities(
         "ANT-TEXT-SSE-001",
         "ANT-TEXT-SSE-002",
         "ANT-TOOL-FORCED-001",
+        "ANT-TOOL-LOOP-001",
     ):
         assert f'data-case-id="{identifier}"' in html
-    assert html.count("data-case-id=") == 4
+    assert html.count("data-case-id=") == 5
     assert "开始测试" in html
-    assert "预览计划" in html
+    assert 'data-i18n="form.preview"' in html
+    assert "查看测试计划" in html
     assert 'type="password"' in html
     assert 'autocomplete="off"' in html
     assert "host.docker.internal" in html
-    assert "完整工具闭环" in html
+    assert "工具结果完整往返" in html
+    assert "未覆盖流式工具" in html
     assert not server.requests
     assert (await client.get("/history")).status_code == 200
     assert (await client.get("/assets/web/app.js")).status_code == 200
@@ -99,3 +103,18 @@ async def test_interrupted_checkpoint_is_recovered_as_browsable_evidence(
     assert any("ANT-TEXT-SSE-001" in path for path in paths)
     assert response.json()["report"]["summary"]["completed_cases"] == 2
     assert any("恢复" in note for note in response.json()["report"]["limitations"])
+
+
+async def test_ui_identity_binds_html_styles_and_health(client: httpx.AsyncClient) -> None:
+    page = await client.get("/new")
+    revision = re.search(r'<meta name="readiness-ui-revision" content="([a-f0-9]{64})"', page.text)
+    assert revision is not None
+    health = await client.get("/health")
+    assert health.json() == {"status": "ok"}
+    assert health.headers["x-readiness-ui-revision"] == revision.group(1)
+    styles = re.findall(r'href="(/assets/[^"?]+\.css\?v=[a-f0-9]{64})"', page.text)
+    assert len(styles) == 3
+    for url in styles:
+        response = await client.get(url)
+        assert response.status_code == 200
+        assert response.headers["cache-control"] == "no-store"

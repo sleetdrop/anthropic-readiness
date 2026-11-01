@@ -43,6 +43,7 @@
     "runner.py",
     "schema.py",
     "sse.py",
+    "tool_loop.py",
     "transport.py",
     "validation/__init__.py",
     "validation/messages.py",
