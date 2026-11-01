@@ -103,3 +103,29 @@ export or legacy archive reader is established. No remote push/CI or container r
 See docs/refactor/cli-trial.md for preview/live opt-in and remaining scope. The
 implementation chat received final closure after a quota-blocked notification was
 successfully retried; no further broad review or new planning cycle was started.
+
+## 2026-11-01: first real Node CLI trial
+
+With owner authorization, revision 058cec9 ran all five migrated scenarios against
+the selected private local endpoint, without authentication, capped at six
+attempts/five minutes (30 seconds per attempt). All six responses were HTTP200,
+complete, and finished in about 8.6 seconds. All five task outcomes passed,
+including nonce-only tool-result consumption. No retries or additional calls.
+
+Raw inspection confirmed omitted stop_sequence fields in all six final messages;
+both stream starts also omitted stop_reason/stop_sequence, and their message_delta
+omitted stop_sequence. Requested and reported model names differed; the default
+identity rule failed, but this alone cannot establish wrong routing. A maintainer
+can confirm an explicit alias in a future run. Thinking/delta inconclusive results
+are an unsupported validator scope, not confirmed endpoint defects; the derived
+message does not assemble thinking fragments, while original event data survives.
+Manual source comparison used the official SDK Message/RawMessageDeltaEvent,
+ThinkingBlock and SignatureDelta definitions; it did not update the rule snapshot.
+
+Private original evidence and a Chinese interpretation are retained outside source
+at /private/tmp/readiness-live-20261101-01/. All six request/response body hashes
+were independently recomputed and matched. No target names, credentials or original
+captures were added to tracked artifacts. SDK/Claude Code remain untested. This
+trial adds real sampled outcomes, not new scenarios or comprehensive compatibility.
+No source behavior changed, so the unchanged 60-test evidence was reused rather
+than rerunning offline checks. No remote write, container or remote CI run.

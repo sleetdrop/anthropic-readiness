@@ -11,8 +11,9 @@ Branch: codex/typescript-refactor. The Node CLI now executes the five migrated
 scenarios, reserving six request attempts for complete scope. It writes raw capture
 records before parsing, then result.json and Chinese/English report.md. See
 [the trial guide](refactor/cli-trial.md); preview makes no requests and execution
-requires explicit live admission. Synthetic service/CLI checks passed; no actual
-model outcome, new Web UI or SDK/client compatibility is claimed.
+requires explicit live admission. Synthetic service/CLI checks passed. One
+owner-authorized real endpoint trial is now complete; no new Web UI or SDK/client
+compatibility is claimed.
 
 T1/T2 were implemented in chat 01a1957d-20a0-7491-aefb-2a509bc9a836, with
 coordinator review/corrections. The coordinator implemented HTTP capture, shared
@@ -22,8 +23,13 @@ counting and nonce-only tool results. Related case revisions are now 2. The new
 rule snapshot is typescript-messages-2023-06-01-core/0.2.0-dev, not the old Python
 bundle identifier. Final strict types and 60 executed tests passed, no skips/todos.
 
-Next hands-on checkpoint: use the CLI with the owner's selected current endpoint,
-model and explicit request/time budget. Broader streamed-tool, multi-turn/error
+The first real CLI trial completed five scenarios/six requests within the agreed
+budget: all task behaviors passed, while strict checks found omitted stop fields
+and a request/response model-name difference. Model-name differences require
+alias confirmation, not an inference of wrong routing. Thinking/delta support is
+a known validator/assembly gap; its inconclusive observations are not endpoint
+faults. Raw requests/responses and private interpretation remain outside tracked
+source. See progress for the evidence boundary. Broader streamed-tool, multi-turn/error
 cases and SDK tests remain product priorities; five migrated cases are not the
 finished catalog. The new Web flow should reuse accepted design when implemented.
 
