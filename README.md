@@ -7,6 +7,10 @@ reason to build a separate tool in this category. Start with
 The implementation below is retained as-is, with its limitations, rather than
 presented as an actively progressing rewrite. No complete compatibility is claimed.
 
+For incident-driven use, the repository now includes a small
+[diagnosis Skill prototype](skills/anthropic-incident-diagnosis/SKILL.md) and an
+offline JSON/SSE inspector. The standalone assessment route remains stopped.
+
 A local assessment tool for self-hosted model APIs claiming Anthropic Messages
 compatibility. Evaluate the selected protocol scope, inspect concrete deviations
 and export what is compatible, unsupported, inconclusive or untested. Endpoint

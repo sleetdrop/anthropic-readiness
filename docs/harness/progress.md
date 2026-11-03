@@ -221,3 +221,22 @@ artifacts/llm-comply-maturity-20261102/ for source, probes, output and metadata.
 No third-party installation, model requests, public issue, remote write or product
 implementation occurred. Local documentation links/whitespace checked; unchanged
 product tests were not rerun.
+
+## 2026-11-04: incident diagnosis Skill prototype
+
+The owner authorized an incident-first prototype after discussing Skill, MCP and
+plugin roles. Added a repository-scoped Skill, offline exercise and read-only Node
+inspector for successful Messages JSON/SSE bodies. It reuses existing validators,
+returns located findings plus evidence hashes, and keeps incomplete capture and
+unchecked identity explicit. Fresh probes refer to the existing CLI and require
+their own authorization and bounds. No new live endpoint scenario was added.
+
+Three focused checks initially failed because the inspector did not exist; all
+passed once implemented. The first full check found a readonly return mismatch;
+the diagnostic is retained in ignored artifacts/incident-skill-20261104/. After
+correction, Node 24.22.0 strict types and all 63 tests passed, no skips or failures.
+Skill metadata validation passed. A local walkthrough located the duplicate
+message_start at zero-based event index 1; the valid and faulty fixtures differ
+only by that event. The partial stream remained inconclusive. This was not an
+independent Agent run, live model/client test or installation. Standalone
+development remains stopped; no remote operation was performed.

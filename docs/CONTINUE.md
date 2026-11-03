@@ -1,5 +1,19 @@
 # Current work
 
+## Incident diagnosis Skill prototype
+
+2026-11-04: owner authorized a repository-scoped, incident-first Skill prototype.
+Use [the Skill](../skills/anthropic-incident-diagnosis/SKILL.md) with a saved
+successful Messages response body or [the synthetic exercise](../skills/anthropic-incident-diagnosis/references/offline-exercise.md).
+The Node helper inspects JSON/SSE offline; the existing CLI remains available for
+separately authorized preset probes. This scope does not resume A-D, add a server,
+or expand live endpoint coverage. The Skill is not installed globally.
+
+Verified the duplicate-start location and single-event difference against a
+normal capture; partial evidence remained inconclusive. Skill metadata validated;
+strict types and 63 Node tests passed. This was a local walkthrough and executable
+control check, not a fresh Agent evaluation, real endpoint run or client test.
+
 ## Development stopped: existing tools found
 
 2026-11-01: the owner instructed stopping development if this category of tool

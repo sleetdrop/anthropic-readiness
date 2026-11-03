@@ -8,6 +8,9 @@ development is stopped; preserve current code/evidence. Do not resume the retain
 rewrite route without a new owner instruction. See docs/CONTINUE.md and
 docs/reviews/2026-11-01-existing-tools.md. No remote archival or deletion is implied.
 
+On 2026-11-04 the owner authorized the incident-diagnosis Skill prototype described
+in docs/CONTINUE.md. This scoped work does not resume the standalone assessment route.
+
 Build an Anthropic Messages compatibility assessment tool for consumers and
 providers of self-hosted APIs claiming that protocol. Read [intends.md](intends.md), [current status](docs/CONTINUE.md)
 and [the rewrite entry point](docs/refactor/README.md). Read a task's owned paths
