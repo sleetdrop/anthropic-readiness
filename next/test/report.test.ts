@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { createHash } from "node:crypto";
 import { renderReport } from "../src/cli/report.ts";
 import { renderJsonView } from "../src/cli/json-view.ts";
 import type { Observation } from "../src/domain.ts";
@@ -84,7 +85,13 @@ test("report groups repeated faults, keeps evidence navigable and separates task
   assert.match(en, /href="response-capture-1\.json\.html"/u);
   assert.match(en, /href="result\.json\.html"/u);
   assert.match(en, /example &lt;script&gt;unsafe&lt;\/script&gt;/u);
-  assert.doesNotMatch(en, /<script|private\.invalid|untrusted response text/u);
+  const scripts = [...en.matchAll(/<script>([\s\S]*?)<\/script>/gu)];
+  assert.equal(scripts.length, 1);
+  const script = scripts[0]?.[1] ?? "";
+  const digest = createHash("sha256").update(script).digest("base64");
+  assert.ok(en.includes(`script-src 'sha256-${digest}'`));
+  assert.match(en, /id="report-top"/u);
+  assert.doesNotMatch(en, /<script>unsafe|private\.invalid|untrusted response text/u);
   assert.match(renderReport(result, "zh"), /2 个用例发现协议偏差/u);
 });
 

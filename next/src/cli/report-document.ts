@@ -1,3 +1,5 @@
+import { reportNavigation } from "./report-navigation.ts";
+
 export type ReportLanguage = "zh" | "en";
 
 export function escapeHtml(value: string): string {
@@ -17,18 +19,23 @@ export function reportContents(
   const links = sections
     .map(([id, name]) => `<li><a href="#${escapeHtml(id)}">${escapeHtml(name)}</a></li>`)
     .join("");
-  return `<nav class="report-contents" aria-label="${label}"><strong>${label}</strong><ul>${links}</ul></nav>`;
+  return `<nav class="report-contents" aria-label="${label}" data-top-label="${language === "zh" ? "回到顶部" : "Back to top"}"><strong>${label}</strong><ul>${links}</ul></nav>`;
 }
 
 /** The caller supplies trusted markup with dynamic text already escaped. */
-export function reportDocument(title: string, language: ReportLanguage, body: string): string {
+export function reportDocument(
+  title: string,
+  language: ReportLanguage,
+  body: string,
+  { interactiveContents = false } = {},
+): string {
   return `<!doctype html>
 <html lang="${language === "zh" ? "zh-CN" : "en"}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="referrer" content="no-referrer">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'${interactiveContents ? reportNavigation.policy : ""}">
 <title>${escapeHtml(title)}</title>
 <style>
 :root{color-scheme:light dark;--surface:#fcfcfc;--subtle:#f2f2f2;--text:#262626;--muted:#626262;--line:#d7d7d7;--rule:#a4a4a4;--accent:#416b7b;--fail:#984c57;--pass:#397052}
@@ -63,6 +70,15 @@ nav a{display:inline-block;padding:.2rem 0}
 .report-contents strong{color:var(--muted);font-size:.81rem;font-weight:600}
 .report-contents ul{margin:.2rem 0 0;padding:0;list-style:none}
 .report-contents a{padding:.15rem 0}
+.report-contents a[aria-current],.report-jump a[aria-current]{font-weight:650}
+.report-jump{position:fixed;z-index:1;inset:auto max(1rem,env(safe-area-inset-right)) max(1rem,env(safe-area-inset-bottom)) auto;margin:0;max-width:calc(100vw - 2rem)}
+.report-jump[hidden]{display:none}
+.report-jump summary,.report-jump nav{background:var(--surface);border:1px solid var(--rule);border-radius:3px}
+.report-jump summary{padding:.4rem .7rem;font-size:.86rem}
+.report-jump nav{display:block;position:absolute;right:0;bottom:calc(100% + .35rem);width:max-content;min-width:100%;max-width:calc(100vw - 2rem);margin:0;padding:.35rem .75rem}
+.report-jump ul{margin:0;padding:0;list-style:none}
+.report-jump a{padding:.25rem 0}
+.report-jump li:last-child{border-top:1px solid var(--line);margin-top:.2rem;padding-top:.2rem}
 @media(max-width:46rem){
  .report-overview{grid-template-columns:1fr}
  .report-contents{margin:0;padding:.65rem 0 0;border-left:0;border-top:1px solid var(--line)}
@@ -99,6 +115,7 @@ details{margin:.6rem 0}
 .occurrences li{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.65fr) max-content;gap:.25rem 1rem;padding:.45rem .1rem;border-top:1px solid var(--line)}
 .occurrences li > span:last-child{text-align:right}
 :target{scroll-margin-top:1rem}
+#report-top{scroll-margin-top:6rem}
 article:target{border-top-color:var(--accent)}
 @media(max-width:34rem){
  .comparison{grid-template-columns:1fr}th,td{padding:.45rem .4rem}
@@ -118,12 +135,13 @@ article:target{border-top-color:var(--accent)}
  .matrix{min-width:0}
  .json-source{white-space:pre-wrap;overflow-wrap:anywhere}
  .json-number,.json-literal{color:inherit}
- nav,.report-contents{display:none}
+ nav,.report-contents,.report-jump{display:none}
 }
 </style>
 </head>
 <body>
 ${body}
+${interactiveContents ? reportNavigation.markup : ""}
 </body>
 </html>
 `;

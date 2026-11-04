@@ -208,7 +208,7 @@ ${capture ? `<p class="meta">${zh ? "代表性捕获" : "Example response"} · <
     language,
     `<header class="report-header">
 <p class="report-type">${title}</p>
-<h1>${escape(report.plan.model)}</h1>
+<h1 id="report-top">${escape(report.plan.model)}</h1>
 <dl class="report-meta">
 <div><dt>${zh ? "结果" : "Result"}</dt><dd>${status(report.status)}</dd></div>
 <div><dt>${zh ? "请求 API 版本" : "API version sent"}</dt><dd><code>${escape(report.plan.apiVersion)}</code></dd></div>
@@ -263,5 +263,6 @@ ${report.limitations.map((item) => `<li>${escape(item)}</li>`).join("")}</ul>
 <p><a href="https://platform.claude.com/docs/en/api/messages/create">Messages API</a> · <a href="https://platform.claude.com/docs/en/build-with-claude/streaming">Streaming</a></p>
 </section>
 </main>`,
+    { interactiveContents: true },
   );
 }

@@ -125,3 +125,12 @@ findings separate the case, evidence location, and response link. The GLM
 report was checked at desktop width in light mode and at 390 pixels in dark
 mode. Local evidence links resolved, keyboard expansion worked, and all 71
 Node tests passed.
+
+## 2026-11-04 — Navigation on long reports
+
+An offline script adds a contents control after the inline contents scrolls
+out of view. It marks the current section and provides a return to the top.
+The report permits only the bundled script by content hash. Inline links
+still work without JavaScript. The JSON viewer remains script-free.
+Browser checks covered desktop, a 390-pixel viewport, keyboard focus,
+printing, and the no-script fallback. All 71 Node tests passed.

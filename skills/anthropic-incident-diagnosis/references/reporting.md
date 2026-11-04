@@ -34,8 +34,10 @@ capability table and evidence excerpts in the document as semantic HTML. Keep a 
 supplementary evidence.
 Keep the reading order useful without CSS or interaction. Use restrained status
 colors with visible text labels. Link JSON as evidence attachments. Keep
-scripts, remote assets, private URLs, credentials and unnecessary raw text out
-of a shared report.
+remote assets, private URLs, credentials and unnecessary raw text out
+of a shared report. A small local navigation script can show the current section
+and offer a return to the top. Keep the document and its section links usable
+without it.
 
 
 ## Writing style
@@ -64,4 +66,4 @@ and keep missing or blocked data distinct from zero.
 
 For an offline figure, use semantic HTML with an inline SVG if needed, a visible
 caption, and the key values or a linked data table. Give the SVG an accessible
-name and use labels or shapes alongside color. Avoid scripts and external assets.
+name and use labels or shapes alongside color. Figures require no scripts or external assets.
