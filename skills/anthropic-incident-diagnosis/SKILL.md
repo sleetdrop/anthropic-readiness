@@ -59,7 +59,10 @@ When the user asks for broad compatibility coverage, preview `anthropic-core`
 and add only the explicitly in-scope capability profiles. Record the API version
 and distinguish untested capabilities from failures.
 
-Return the observed evidence and scope, the smallest reproduction available,
-and one discriminating next check if the cause remains uncertain. Keep original
-evidence local and review any excerpt before sharing. For an offline walkthrough,
-use [the synthetic exercise](references/offline-exercise.md).
+For a single symptom, return the observed evidence and scope, the smallest
+reproduction available, and one discriminating next check if the cause remains
+uncertain. For an assessment or a report to share, use the
+[report guide](references/reporting.md) to synthesize the results before attaching
+the generated check record. Keep original evidence local and review any excerpt
+before sharing. For an offline walkthrough, use
+[the synthetic exercise](references/offline-exercise.md).

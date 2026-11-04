@@ -63,3 +63,24 @@ preset in 41 exchanges, with separate controls for malformed error envelopes,
 incorrect token-count types, unsigned thinking streams, and request-specific
 wire constraints. The complete Node check passed with 69 executed tests.
 No live model was contacted during this expansion.
+
+## 2026-11-04 — Assessment report readability
+
+The Skill now separates a short evidence-backed synthesis from the generated
+check record. The record groups repeated observations, retains independent
+protocol and task outcomes, and links representative evidence before the full
+case matrix. It does not include free-form response text. The JSON records
+and diagnostic rules retain their existing contracts.
+
+The presentation uses the historical baseline at `8048934:design.md` for
+table hierarchy, neutral surfaces and evidence navigation. External references
+were [llm-comply](https://pypi.org/project/llm-comply/) for summary versus raw
+output, [Schemathesis](https://schemathesis.readthedocs.io/en/stable/guides/html-report/)
+for failure evidence and execution warnings, and
+[Allure](https://allurereport.org/docs/assertion-diff/) for expected versus
+observed evidence.
+
+The report regression failed before the presentation change and passed after
+it. The complete Node gate passed 70 tests. A private three-batch synthesis
+was rendered offline from existing captures and reviewed in a standalone
+browser at desktop light and narrow dark widths. Its nine local links resolved.

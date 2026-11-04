@@ -6,71 +6,11 @@ import { pathToFileURL } from "node:url";
 import { apiVersions } from "../catalog.ts";
 import { createPlan, executePlan, type RunResult } from "../runner/assessment.ts";
 
+import { markdown } from "./report.ts";
+
+export { markdown } from "./report.ts";
+
 const defaultProfiles = ["anthropic-core"];
-function escape(value: string): string {
-  return value
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replace(/[\\`*_\[\]|]/gu, "\\$&")
-    .replace(/[\r\n]+/gu, " ");
-}
-export function markdown(report: RunResult, language: "zh" | "en"): string {
-  const zh = language === "zh";
-  const rows = report.cases.map((item) => {
-    const models = item.captures.flatMap((capture) => {
-      const value = capture.message;
-      return value &&
-        typeof value === "object" &&
-        "model" in value &&
-        typeof value.model === "string"
-        ? [value.model]
-        : [];
-    });
-    return `| ${escape(item.id)} | ${item.protocolStatus} | ${item.behaviorStatus} | ${escape([...new Set(models)].join(", ") || "—")} | ${item.attemptsStarted} / ${report.plan.cases.find((c) => c.id === item.id)?.maxRequests ?? "?"} |`;
-  });
-  const details = report.cases.flatMap((item) =>
-    item.observations
-      .filter((obs) => obs.status !== "PASS")
-      .map(
-        (obs) =>
-          `- ${escape(item.id)} / ${escape(obs.ruleId)}: ${obs.status} — ${escape(obs.reason)}; ${escape(obs.expected)} → ${escape(obs.actual)}.`,
-      ),
-  );
-  return [
-    zh ? "# Anthropic 端点诊断" : "# Anthropic endpoint diagnosis",
-    "",
-    `${zh ? "所选检查结果" : "Selected-check outcome"}: **${report.status}**`,
-    `${zh ? "请求模型" : "Requested model"}: ${escape(report.plan.model)}`,
-    `${zh ? "发起的请求尝试 / 计划上限" : "Started request attempts / planned allowance"}: ${report.attemptsStarted} / ${report.plan.plannedRequests}`,
-    `${zh ? "API / 规则快照" : "API / rule snapshot"}: ${report.plan.apiVersion} / ${report.plan.contract}`,
-    `${zh ? "SDK / Claude Code" : "SDK / Claude Code"}: ${zh ? "未实测" : "not tested"}`,
-    "",
-    zh
-      ? "| 场景 | 协议检查 | 任务行为 | 响应声明的模型 | 请求尝试 |"
-      : "| Scenario | Protocol checks | Task behavior | Reported model | Request attempts |",
-    "| --- | --- | --- | --- | --- |",
-    ...rows,
-    "",
-    zh ? "## 需要查看的观测" : "## Observations to inspect",
-    "",
-    ...(details.length
-      ? details
-      : [
-          zh ? "所选检查中没有非通过观测。" : "No non-passing observations in the selected checks.",
-        ]),
-    "",
-    zh ? "## 范围与证据" : "## Scope and evidence",
-    "",
-    zh
-      ? "结果仅适用于本次选择与捕获，不是完整兼容性认证。result.json 保留响应字节、SHA-256、事件和派生消息；派生消息不是原始 SSE 节点。分享前审阅端点、模型和捕获内容。"
-      : "Results apply only to this selection and capture, not complete compatibility certification. result.json retains response bytes, SHA-256, events and derived messages. Derived messages are not original SSE nodes. Review endpoint/model/capture content before sharing.",
-    ...report.limitations.map((item) => `- ${escape(item)}`),
-    "",
-    "[Messages API](https://platform.claude.com/docs/en/api/messages/create) · [Streaming](https://platform.claude.com/docs/en/build-with-claude/streaming)",
-    "",
-  ].join("\n");
-}
 export async function main(args: string[]): Promise<number> {
   try {
     const { values, positionals } = parseArgs({

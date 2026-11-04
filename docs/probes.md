@@ -87,8 +87,10 @@ Use `--model-alias` for a known alias, or `--structure-only` when model identity
 is outside the investigation. A deadline or failed prerequisite can prevent a
 follow-up. Inspect attempts started and case outcomes before interpreting coverage.
 
-The output contains a structured result, Markdown summary, and the request and
-response bytes per exchange. Preset probes generate diagnostic requests and
+The output contains `result.json`, a grouped Markdown check record, and the
+request and response bytes per exchange. For a human-facing assessment across
+one or more runs, use the [Skill report guide](../skills/anthropic-incident-diagnosis/references/reporting.md)
+to write a synthesis above those records. Preset probes generate diagnostic requests and
 cannot reproduce an original incident byte for byte. Share evidence only after
 reviewing it for sensitive content.
 
