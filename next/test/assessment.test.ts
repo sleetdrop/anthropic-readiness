@@ -227,9 +227,14 @@ test("five selected scenarios run six requests and consume a fresh tool result",
       const raw = JSON.parse(readFileSync(join(output, `response-${capture.id}.json`), "utf8"));
       assert.equal(raw.sha256, capture.sha256);
       assert.equal(raw.message, undefined);
+      const view = readFileSync(join(output, `response-${capture.id}.json.html`), "utf8");
+      assert.match(view, /class="json-key">[^<]*statusCode/u);
+      assert.match(view, /href="response-[^"]+\.json"/u);
       assert.equal(raw.bodyBase64, capture.bodyBase64);
     }
   assert.ok(!serialized.includes("synthetic-key"));
+  const resultView = readFileSync(join(output, "result.json.html"), "utf8");
+  assert.match(resultView, /href="result\.json"/u);
   const html = readFileSync(join(output, "report.html"), "utf8");
   assert.match(html, /^<!doctype html>/u);
   assert.match(html, /ANT-TOOL-LOOP-001/u);

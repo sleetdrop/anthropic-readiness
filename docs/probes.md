@@ -88,7 +88,8 @@ is outside the investigation. A deadline or failed prerequisite can prevent a
 follow-up. Inspect attempts started and case outcomes before interpreting coverage.
 
 The output contains `result.json`, a self-contained HTML check record (`report.html`), and the
-request and response bytes per exchange. For a human-facing assessment across
+request and response bytes per exchange. Report links open offline syntax-highlighted
+JSON views with a link to open the original attachment. For a human-facing assessment across
 one or more runs, use the [Skill report guide](../skills/anthropic-incident-diagnosis/references/reporting.md)
 to write a synthesis above those records. Preset probes generate diagnostic requests and
 cannot reproduce an original incident byte for byte. Share evidence only after

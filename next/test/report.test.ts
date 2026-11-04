@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { renderReport } from "../src/cli/report.ts";
+import { renderJsonView } from "../src/cli/json-view.ts";
 import type { Observation } from "../src/domain.ts";
 import { createPlan, type RunResult } from "../src/runner/assessment.ts";
 
@@ -73,10 +74,31 @@ test("report groups repeated faults, keeps evidence navigable and separates task
   assert.match(en, /2 cases · 2 observations/u);
   assert.match(en, /href="#f01"/u);
   assert.match(en, /<details>/u);
-  assert.match(en, /href="response-capture-0\.json"/u);
-  assert.match(en, /href="response-capture-1\.json"/u);
-  assert.match(en, /href="result\.json"/u);
+  assert.match(en, /href="response-capture-0\.json\.html"/u);
+  assert.match(en, /href="response-capture-1\.json\.html"/u);
+  assert.match(en, /href="result\.json\.html"/u);
   assert.match(en, /example &lt;script&gt;unsafe&lt;\/script&gt;/u);
   assert.doesNotMatch(en, /<script|private\.invalid|untrusted response text/u);
   assert.match(renderReport(result, "zh"), /2 个用例发现协议偏差/u);
+});
+
+test("JSON viewer highlights tokens while keeping untrusted values inert", () => {
+  const json =
+    JSON.stringify(
+      {
+        tag: "</code><script>unsafe</script>",
+        number: -2.5,
+        list: [true, false, null],
+        quoted: 'Escaped "quote": value',
+      },
+      null,
+      2,
+    ) + "\n";
+  const html = renderJsonView(json, "result.json", "zh");
+  assert.match(html, /class="json-key">&quot;tag&quot;<\/span>:/u);
+  assert.match(html, /class="json-string">&quot;&lt;\/code&gt;&lt;script&gt;/u);
+  assert.match(html, /class="json-number">-2\.5<\/span>/u);
+  assert.match(html, /class="json-literal">null<\/span>/u);
+  assert.match(html, /href="result\.json"/u);
+  assert.doesNotMatch(html, /<script/u);
 });

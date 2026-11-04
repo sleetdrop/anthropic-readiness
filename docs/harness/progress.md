@@ -98,3 +98,14 @@ inconclusive. The original protocol failure remains visible. A synthetic peer
 covers the distinction, and the CLI test checks that a fresh output contains
 HTML and no Markdown report. The existing GLM captures were used to preview
 a new synthesis and the underlying reports without contacting the endpoint.
+
+## 2026-11-04 — Offline JSON evidence viewer
+
+Report links open static syntax-highlighted HTML companions for the retained
+JSON files. The viewer has a direct link to the original and keeps the entire
+JSON text selectable. It embeds no scripts and uses the shared color schemes.
+The original capture is still persisted before evaluation.
+
+The Node gate passed 71 tests. Local-browser checks followed the real GLM
+report links in both themes, verified the original JSON and return navigation,
+and compared the largest viewer's DOM text against the source in chunks.

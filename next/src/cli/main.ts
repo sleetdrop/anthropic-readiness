@@ -1,11 +1,12 @@
 /** Local CLI adapter; execution and judgments belong to the shared engine. */
 import { parseArgs } from "node:util";
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { apiVersions } from "../catalog.ts";
 import { createPlan, executePlan, type RunResult } from "../runner/assessment.ts";
 
+import { renderJsonView } from "./json-view.ts";
 import { renderReport } from "./report.ts";
 
 const defaultProfiles = ["anthropic-core"];
@@ -108,10 +109,23 @@ export async function main(args: string[]): Promise<number> {
       process.removeListener("SIGINT", cancel);
       process.removeListener("SIGTERM", cancel);
     }
-    await writeFile(resolve(out, "result.json"), JSON.stringify(report, null, 2) + "\n", {
+    const resultJson = JSON.stringify(report, null, 2) + "\n";
+    const writeJsonView = (name: string, json: string) =>
+      writeFile(resolve(out, `${name}.html`), renderJsonView(json, name, language), {
+        flag: "wx",
+        mode: 0o600,
+      });
+    await writeFile(resolve(out, "result.json"), resultJson, {
       flag: "wx",
       mode: 0o600,
     });
+    await writeJsonView("result.json", resultJson);
+    for (const item of report.cases) {
+      for (const capture of item.captures) {
+        const name = `response-${capture.id}.json`;
+        await writeJsonView(name, await readFile(resolve(out, name), "utf8"));
+      }
+    }
     await writeFile(resolve(out, "report.html"), renderReport(report, language), {
       flag: "wx",
       mode: 0o600,

@@ -69,7 +69,7 @@ function evidenceLink(capture: CaptureRecord, zh: boolean): string {
   const name = `response-${encodeURIComponent(capture.id)}.json`;
   const label =
     capture.statusCode === null ? (zh ? "捕获记录" : "Capture") : `HTTP ${capture.statusCode}`;
-  return `<a href="${escape(name)}">${label}</a>`;
+  return `<a href="${escape(name)}.html">${label}</a>`;
 }
 
 export function renderReport(report: RunResult, language: ReportLanguage): string {
@@ -241,7 +241,7 @@ ${articles.join("\n") || `<p>${zh ? "没有需要汇总的异常观测。" : "No
 </table></div></section>
 <section aria-labelledby="scope"><h2 id="scope">${titles.scope}</h2>
 <ul><li>${zh ? "规则快照" : "Rule snapshot"} <code>${escape(report.plan.contract)}</code></li>
-<li><a href="result.json">result.json</a> · ${zh ? "逐用例判断及原始证据。SSE 事件从 0 编号。分享附件前请审阅。" : "Per-case judgments and original evidence. SSE indices start at zero. Review attachments before sharing."}</li>
+<li><a href="result.json.html">result.json</a> · ${zh ? "逐用例判断及原始证据。SSE 事件从 0 编号。分享附件前请审阅。" : "Per-case judgments and original evidence. SSE indices start at zero. Review attachments before sharing."}</li>
 ${report.limitations.map((item) => `<li>${escape(item)}</li>`).join("")}</ul>
 <p><a href="https://platform.claude.com/docs/en/api/messages/create">Messages API</a> · <a href="https://platform.claude.com/docs/en/build-with-claude/streaming">Streaming</a></p>
 </section>
