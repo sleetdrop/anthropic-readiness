@@ -67,6 +67,12 @@ test("report groups repeated faults, keeps evidence navigable and separates task
   const en = renderReport(result, "en");
   assert.match(en, /^<!doctype html>/u);
   assert.match(en, /<html lang="en">/u);
+  assert.doesNotMatch(en.match(/<header[^>]*>([\s\S]*?)<\/header>/u)?.[1] ?? "", /<nav/u);
+  const contents = en.match(/<nav class="report-contents"[^>]*>([\s\S]*?)<\/nav>/u)?.[1] ?? "";
+  assert.match(contents, /href="#findings"/u);
+  assert.match(contents, /href="#cases"/u);
+  assert.match(contents, /href="#scope"/u);
+  assert.doesNotMatch(contents, /href="#overview"/u);
   assert.match(en, /2 cases with protocol deviations/u);
   assert.match(en, /2 tasks passed/u);
   assert.match(en, /1 case not started/u);

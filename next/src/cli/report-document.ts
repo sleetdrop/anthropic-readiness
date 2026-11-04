@@ -9,6 +9,17 @@ export function escapeHtml(value: string): string {
     .replaceAll("'", "&#39;");
 }
 
+export function reportContents(
+  sections: ReadonlyArray<readonly [string, string]>,
+  language: ReportLanguage,
+): string {
+  const label = language === "zh" ? "目录" : "Contents";
+  const links = sections
+    .map(([id, name]) => `<li><a href="#${escapeHtml(id)}">${escapeHtml(name)}</a></li>`)
+    .join("");
+  return `<nav class="report-contents" aria-label="${label}"><strong>${label}</strong><ul>${links}</ul></nav>`;
+}
+
 /** The caller supplies trusted markup with dynamic text already escaped. */
 export function reportDocument(title: string, language: ReportLanguage, body: string): string {
   return `<!doctype html>
@@ -47,6 +58,16 @@ a{color:var(--accent);text-underline-offset:.2em}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 nav{display:flex;flex-wrap:wrap;gap:.25rem 1.2rem;margin-top:.9rem;font-size:.88rem}
 nav a{display:inline-block;padding:.2rem 0}
+.report-overview{display:grid;grid-template-columns:minmax(0,1fr) minmax(11rem,14rem);align-items:start;gap:1rem 2rem}
+.report-contents{display:block;margin:.1rem 0 0;padding-left:1rem;border-left:1px solid var(--line)}
+.report-contents strong{color:var(--muted);font-size:.81rem;font-weight:600}
+.report-contents ul{margin:.2rem 0 0;padding:0;list-style:none}
+.report-contents a{padding:.15rem 0}
+@media(max-width:46rem){
+ .report-overview{grid-template-columns:1fr}
+ .report-contents{margin:0;padding:.65rem 0 0;border-left:0;border-top:1px solid var(--line)}
+ .report-contents ul{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.15rem 1rem}
+}
 .muted,.finding-id,.meta{color:var(--muted)}
 .meta{font-size:.89rem}
 .status-fail{color:var(--fail)}
@@ -90,13 +111,14 @@ article:target{border-top-color:var(--accent)}
 @media print{
  :root{color-scheme:light;--surface:#fff;--text:#222;--muted:#555;--subtle:#f4f4f4;--line:#ccc;--rule:#777;--accent:#222;--fail:#222;--pass:#222}
  body{max-width:none;padding:0}
+ .report-overview{display:block}
  h2,h3{break-after:avoid}
  tr{break-inside:avoid}
  .table-scroll{overflow:visible}
  .matrix{min-width:0}
  .json-source{white-space:pre-wrap;overflow-wrap:anywhere}
  .json-number,.json-literal{color:inherit}
- nav{display:none}
+ nav,.report-contents{display:none}
 }
 </style>
 </head>

@@ -30,8 +30,8 @@ support that finding. If a follow-up never ran, report the completed step and th
 missing step independently of its aggregate status.
 
 Write the synthesis directly as one offline HTML document. Keep the conclusion,
-capability table and evidence excerpts in the document as semantic HTML. Use
-section links for navigation and native details for supplementary evidence.
+capability table and evidence excerpts in the document as semantic HTML. Keep a short contents list beside or below the summary. Use native details for
+supplementary evidence.
 Keep the reading order useful without CSS or interaction. Use restrained status
 colors with visible text labels. Link JSON as evidence attachments. Keep
 scripts, remote assets, private URLs, credentials and unnecessary raw text out

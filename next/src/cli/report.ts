@@ -1,7 +1,12 @@
 import type { Observation, Status } from "../domain.ts";
 import type { CaptureRecord, CaseResult, RunResult } from "../runner/assessment.ts";
 
-import { escapeHtml as escape, reportDocument, type ReportLanguage } from "./report-document.ts";
+import {
+  escapeHtml as escape,
+  reportContents,
+  reportDocument,
+  type ReportLanguage,
+} from "./report-document.ts";
 interface Finding {
   readonly label: string;
   readonly entries: { item: CaseResult; observation: Observation }[];
@@ -209,12 +214,10 @@ ${capture ? `<p class="meta">${zh ? "代表性捕获" : "Example response"} · <
 <div><dt>${zh ? "请求 API 版本" : "API version sent"}</dt><dd><code>${escape(report.plan.apiVersion)}</code></dd></div>
 <div><dt>${zh ? "用例 · 已发请求" : "Cases · Requests sent"}</dt><dd>${report.cases.length} · ${report.attemptsStarted}</dd></div>
 </dl>
-<nav aria-label="${zh ? "报告目录" : "Report sections"}">${Object.entries(titles)
-      .map(([id, label]) => `<a href="#${id}">${label}</a>`)
-      .join("")}</nav>
 </header>
 <main>
-<section aria-labelledby="overview"><h2 id="overview">${titles.overview}</h2>
+<section class="report-overview" aria-labelledby="overview">
+<div><h2 id="overview">${titles.overview}</h2>
 <p>${
       zh
         ? `${deviations} 个用例发现协议偏差。任务行为通过 ${tasksPassed} 项、未通过 ${tasksFailed} 项。受阻 ${blocked} 项、未开始 ${notStarted} 项。`
@@ -237,6 +240,11 @@ ${
         .join("")}</ul>`
     : ""
 }
+</div>
+${reportContents(
+  Object.entries(titles).filter(([id]) => id !== "overview"),
+  language,
+)}
 </section>
 <section aria-labelledby="findings"><h2 id="findings">${titles.findings}</h2>
 <p class="muted">${zh ? "按现象归并。观测可来自原始事件及其派生消息，用例数已去重。" : "Each finding lists the number of distinct cases. The observation count may include both raw SSE events and the assembled message."}</p>
