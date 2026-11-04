@@ -12,6 +12,9 @@ const script = `(() => {
   const button = document.createElement("summary");
   const label = contents.getAttribute("aria-label");
   button.textContent = label;
+  const current = document.createElement("span");
+  current.className = "jump-current";
+  button.append(current);
   const menu = document.createElement("nav");
   menu.setAttribute("aria-label", label);
   const list = contents.querySelector("ul").cloneNode(true);
@@ -51,7 +54,7 @@ const script = `(() => {
         else item.removeAttribute("aria-current");
       }
     });
-    button.textContent = active < 0 ? label : label + " · " + original[active].textContent;
+    current.textContent = active < 0 ? "" : " · " + original[active].textContent;
   }
 
   function schedule() {

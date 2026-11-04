@@ -91,6 +91,11 @@ test("report groups repeated faults, keeps evidence navigable and separates task
   const digest = createHash("sha256").update(script).digest("base64");
   assert.ok(en.includes(`script-src 'sha256-${digest}'`));
   assert.match(en, /id="report-top"/u);
+  assert.match(
+    en,
+    /<h2 class="section-heading" id="findings"><span aria-hidden="true">02<\/span> Findings and evidence<\/h2>/u,
+  );
+  assert.match(en, /<body class="technical-report">/u);
   assert.doesNotMatch(en, /<script>unsafe|private\.invalid|untrusted response text/u);
   assert.match(renderReport(result, "zh"), /2 个用例发现协议偏差/u);
 });

@@ -134,3 +134,19 @@ The report permits only the bundled script by content hash. Inline links
 still work without JavaScript. The JSON viewer remains script-free.
 Browser checks covered desktop, a 390-pixel viewport, keyboard focus,
 printing, and the no-script fallback. All 71 Node tests passed.
+
+## 2026-11-04 — Report hierarchy and narrow-screen results
+
+The GLM report now leads with the verified output-limit failure, uses numbered
+sections and finding references, and presents the requested and reported token
+counts in a two-row evidence table. The shared report style uses system type,
+neutral rules, and a reserved palette for links and status. The capability
+table retains its row and column roles while giving observations the full row
+width on narrow screens. The compact contents control uses a shorter label.
+
+References were the [W3C evaluation report template](https://www.w3.org/WAI/test-evaluate/report-template/),
+[RFC 9110](https://www.rfc-editor.org/rfc/rfc9110.html), and
+[Schemathesis HTML reporting](https://schemathesis.readthedocs.io/en/stable/guides/html-report/).
+Browser checks passed at 1150, 390, and 320 pixels, including keyboard navigation,
+print, the no-script fallback, and local evidence links. All 71 Node tests
+passed. No endpoint requests were needed.

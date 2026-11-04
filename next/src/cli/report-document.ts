@@ -22,6 +22,10 @@ export function reportContents(
   return `<nav class="report-contents" aria-label="${label}" data-top-label="${language === "zh" ? "回到顶部" : "Back to top"}"><strong>${label}</strong><ul>${links}</ul></nav>`;
 }
 
+export function reportHeading(id: string, label: string, number: number): string {
+  return `<h2 class="section-heading" id="${escapeHtml(id)}"><span aria-hidden="true">${String(number).padStart(2, "0")}</span> ${escapeHtml(label)}</h2>`;
+}
+
 /** The caller supplies trusted markup with dynamic text already escaped. */
 export function reportDocument(
   title: string,
@@ -38,22 +42,27 @@ export function reportDocument(
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'${interactiveContents ? reportNavigation.policy : ""}">
 <title>${escapeHtml(title)}</title>
 <style>
-:root{color-scheme:light dark;--surface:#fcfcfc;--subtle:#f2f2f2;--text:#262626;--muted:#626262;--line:#d7d7d7;--rule:#a4a4a4;--accent:#416b7b;--fail:#984c57;--pass:#397052}
-@media(prefers-color-scheme:dark){:root{--surface:#1c1c1c;--subtle:#242424;--text:#dedede;--muted:#a8a8a8;--line:#3b3b3b;--rule:#747474;--accent:#93b6c5;--fail:#d1949e;--pass:#9bbda9}}
+:root{color-scheme:light dark;--surface:#fdfdfc;--subtle:#f2f3f2;--text:#24282b;--muted:#565d62;--line:#d7dbde;--rule:#939ca3;--accent:#2b5870;--fail:#8a414b;--pass:#38644e}
+@media(prefers-color-scheme:dark){:root{--surface:#1b1e21;--subtle:#24282b;--text:#e3e6e8;--muted:#aeb5ba;--line:#3c454d;--rule:#717d86;--accent:#a2c4d6;--fail:#dfa1a9;--pass:#a2c2ae}}
 *{box-sizing:border-box}
 html{background:var(--surface);color:var(--text)}
 body{max-width:65rem;margin:auto;padding:2rem clamp(.85rem,4vw,2.25rem) 3rem;font:15px/1.65 system-ui,-apple-system,"PingFang SC",sans-serif;overflow-wrap:anywhere}
 h1,h2,h3{line-height:1.3;margin:0 0 .55rem;font-weight:650}
 h1{font-size:clamp(1.75rem,4vw,2.35rem);line-height:1.16}
-html[lang="en"] .report-header h1{font-family:Georgia,serif;font-weight:600}
-.report-header{border-top:2px solid var(--accent);padding-top:.85rem}
-.report-type{margin:0 0 .45rem;color:var(--muted);font-size:.85rem}
+.technical-report{max-width:66rem;font-size:16px;line-height:1.62}
+.report-header{border-top:1px solid var(--rule);padding-top:1rem}
+.report-header h1{font:650 clamp(1.9rem,4vw,2.6rem)/1.12 system-ui,sans-serif;letter-spacing:-.025em;font-variant-numeric:lining-nums}
+.report-type{margin:0 0 .4rem;color:var(--muted);font-size:.84rem}
 .report-meta{display:flex;flex-wrap:wrap;gap:.4rem 2rem;margin:.8rem 0 0}
 .report-meta dt{font-size:.77rem;font-weight:500;color:var(--muted)}
 .report-meta dd{margin:0;font-size:.91rem;font-variant-numeric:tabular-nums}
 h2{font-size:1.27rem}
-h3{font-size:1.05rem}
+h3{font-size:1.06rem}
 section{margin-top:1.7rem;padding-top:.9rem;border-top:1px solid var(--line)}
+.section-heading{font-size:1.28rem;letter-spacing:-.013em}
+.section-heading span{display:inline-block;margin-right:.35rem;color:var(--muted);font:500 .8rem ui-monospace,monospace;letter-spacing:0}
+.report-lead{font-weight:600}
+.scope-note{color:var(--muted);font-size:.9rem}
 article{padding:1rem 0;border-top:1px solid var(--line)}
 article h3 .finding-id{display:inline-block;min-width:2.4em;font:500 .83rem ui-monospace,monospace}
 p,ol,ul,dl{margin:.55rem 0}
@@ -62,6 +71,8 @@ figure{margin:1rem 0;break-inside:avoid}
 figure svg{max-inline-size:100%;height:auto}
 figcaption{margin-top:.4rem;color:var(--muted);font-size:.89rem}
 a{color:var(--accent);text-underline-offset:.2em}
+.technical-report a{text-decoration-thickness:1px}
+.finding-ref{font-size:.86em;white-space:nowrap}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 nav{display:flex;flex-wrap:wrap;gap:.25rem 1.2rem;margin-top:.9rem;font-size:.88rem}
 nav a{display:inline-block;padding:.2rem 0}
@@ -79,7 +90,7 @@ nav a{display:inline-block;padding:.2rem 0}
 .report-jump ul{margin:0;padding:0;list-style:none}
 .report-jump a{padding:.25rem 0}
 .report-jump li:last-child{border-top:1px solid var(--line);margin-top:.2rem;padding-top:.2rem}
-@media(max-width:46rem){
+@media screen and (max-width:46rem){
  .report-overview{grid-template-columns:1fr}
  .report-contents{margin:0;padding:.65rem 0 0;border-left:0;border-top:1px solid var(--line)}
  .report-contents ul{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.15rem 1rem}
@@ -105,7 +116,10 @@ caption{text-align:left;color:var(--muted);padding:.25rem 0}
 th,td{border-bottom:1px solid var(--line);padding:.5rem .65rem;text-align:left;vertical-align:top}
 thead th{font-size:.83rem;border-bottom-color:var(--rule)}
 .capability-table th:first-child{width:17%}
-.capability-table th:nth-child(2){width:16%}
+.capability-table th:nth-child(2){width:19%}
+.capability-table td:nth-child(2){font-weight:550}
+.finding-table{width:auto;min-width:min(100%,36rem)}
+.finding-table caption{padding-bottom:.45rem}
 tbody th{font-weight:550}
 .number{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
 .matrix{min-width:39rem}
@@ -117,11 +131,18 @@ details{margin:.6rem 0}
 :target{scroll-margin-top:1rem}
 #report-top{scroll-margin-top:6rem}
 article:target{border-top-color:var(--accent)}
-@media(max-width:34rem){
+@media screen and (max-width:34rem){
  .comparison{grid-template-columns:1fr}th,td{padding:.45rem .4rem}
  .report-meta{gap:.4rem 1rem}
- .capability-table th:first-child,.capability-table th:nth-child(2){width:25%}
- .capability-table thead th{white-space:nowrap}
+ .technical-report{padding-bottom:4rem}
+ .report-jump .jump-current{display:none}
+ .capability-table{display:block}
+ .capability-table thead{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+ .capability-table tbody{display:block}
+ .capability-table tbody tr{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:.65rem;padding:.65rem 0;border-bottom:1px solid var(--line)}
+ .capability-table tbody th:first-child,.capability-table tbody td{width:auto;padding:0;border:0}
+ .capability-table td:nth-child(2){text-align:right}
+ .capability-table td:last-child{grid-column:1/-1;padding-top:.25rem}
  .occurrences li{grid-template-columns:minmax(0,1fr) max-content}
  .occurrence-location{grid-column:1/-1;grid-row:2}
 }
@@ -139,7 +160,7 @@ article:target{border-top-color:var(--accent)}
 }
 </style>
 </head>
-<body>
+<body${interactiveContents ? ' class="technical-report"' : ""}>
 ${body}
 ${interactiveContents ? reportNavigation.markup : ""}
 </body>

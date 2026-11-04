@@ -5,6 +5,7 @@ import {
   escapeHtml as escape,
   reportContents,
   reportDocument,
+  reportHeading,
   type ReportLanguage,
 } from "./report-document.ts";
 interface Finding {
@@ -217,8 +218,8 @@ ${capture ? `<p class="meta">${zh ? "代表性捕获" : "Example response"} · <
 </header>
 <main>
 <section class="report-overview" aria-labelledby="overview">
-<div><h2 id="overview">${titles.overview}</h2>
-<p>${
+<div>${reportHeading("overview", titles.overview, 1)}
+<p class="report-lead">${
       zh
         ? `${deviations} 个用例发现协议偏差。任务行为通过 ${tasksPassed} 项、未通过 ${tasksFailed} 项。受阻 ${blocked} 项、未开始 ${notStarted} 项。`
         : `${deviations} cases with protocol deviations. ${tasksPassed} tasks passed and ${tasksFailed} failed. ${blocked} blocked, ${caseCount(notStarted)} not started.`
@@ -246,17 +247,17 @@ ${reportContents(
   language,
 )}
 </section>
-<section aria-labelledby="findings"><h2 id="findings">${titles.findings}</h2>
+<section aria-labelledby="findings">${reportHeading("findings", titles.findings, 2)}
 <p class="muted">${zh ? "按现象归并。观测可来自原始事件及其派生消息，用例数已去重。" : "Each finding lists the number of distinct cases. The observation count may include both raw SSE events and the assembled message."}</p>
 ${articles.join("\n") || `<p>${zh ? "没有需要汇总的异常观测。" : "No findings in the selected checks."}</p>`}
 </section>
-<section aria-labelledby="cases"><h2 id="cases">${titles.cases}</h2>
+<section aria-labelledby="cases">${reportHeading("cases", titles.cases, 3)}
 <div class="table-scroll" tabindex="0" role="region" aria-labelledby="cases"><table class="matrix">
 <caption>${zh ? "请求列显示已发起次数与计划上限。「—」表示无需推理任务。" : "Requests are shown as started / planned. A dash means the case has no inference task."}</caption>
 <thead><tr>${(zh ? ["用例", "综合状态", "协议", "任务", "请求", "发现"] : ["Case", "Outcome", "Protocol", "Task", "Requests", "Findings"]).map((label) => `<th scope="col">${label}</th>`).join("")}</tr></thead>
 <tbody>${rows.join("\n")}</tbody>
 </table></div></section>
-<section aria-labelledby="scope"><h2 id="scope">${titles.scope}</h2>
+<section aria-labelledby="scope">${reportHeading("scope", titles.scope, 4)}
 <ul><li>${zh ? "规则快照" : "Rule snapshot"} <code>${escape(report.plan.contract)}</code></li>
 <li><a href="result.json.html">result.json</a> · ${zh ? "逐用例判断及原始证据。SSE 事件从 0 编号。分享附件前请审阅。" : "Case results and captured data. SSE event indices start at zero. Review attachments before sharing."}</li>
 ${report.limitations.map((item) => `<li>${escape(item)}</li>`).join("")}</ul>
