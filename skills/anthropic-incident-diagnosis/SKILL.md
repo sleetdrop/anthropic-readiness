@@ -50,7 +50,7 @@ for version-sensitive interpretations; do not infer the request version from the
 If a fresh request is necessary, establish explicit permission for the target,
 a request cap and a time bound first. Keep credentials in the local environment,
 and never put them in transcripts or shared reproductions. Use the
-[existing CLI trial guide](../../docs/refactor/cli-trial.md) for targeted preset
+[preset probe guide](../../docs/probes.md) for targeted preset
 probes only if its request shape and API version are relevant. Preview the selected
 profile before running it; label a preset a probe, not an exact replay. If no
 authorized, suitable probe exists, return an offline finding or a proposed

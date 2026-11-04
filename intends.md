@@ -1,136 +1,17 @@
 # Project intent
 
-Development disposition, 2026-11-01: implementation is stopped after research found
-existing tools in this category, under the owner's explicit conditional direction.
-The purpose below remains a record of the intended product, not an instruction to
-continue building it. See [the decision](docs/reviews/2026-11-01-existing-tools.md).
+Help an agent investigate a concrete failure on an Anthropic
+Messages-compatible endpoint. Start from the user's symptom and existing
+evidence. Prefer the smallest comparison that can distinguish the suspected
+fault from other explanations.
 
-## Purpose and primary users
+Deterministic helpers capture or inspect evidence and report rule findings.
+The agent chooses relevant evidence and probes, explains what they establish,
+and identifies the next discriminating check when the cause remains uncertain.
+A report should point to the observed event or field and separate protocol,
+task, and client outcomes.
 
-Assess the actual Anthropic Messages compatibility of self-hosted model APIs that
-claim to implement that protocol. Serve endpoint consumers evaluating an API and
-providers validating their implementation, independently of any particular model,
-organization, incident or coding client. Inference servers, translators and API
-gateways are valid endpoint implementations; do not infer their internal topology.
-
-The defining workflow is: select an endpoint/model and its declared protocol scope,
-run a systematic assessment, inspect compatible behavior and observed deviations,
-and export a reproducible account of supported, unsupported, inconclusive and
-untested scope. Compare later runs to assess implementation/model/version changes.
-Evidence sharing and repair verification are optional uses of the same assessment
-and comparison capabilities.
-
-## What the product must deliver
-
-- A substantial, explicit, versioned catalog covering ordinary messages, streaming
-  lifecycle and content assembly, tool arguments and complete result round trips,
-  multi-turn state, request validation and error responses. Test optional features
-  separately and expose their prerequisites and coverage limits.
-- Checks that identify concrete faults. Every supported scenario has a documented
-  expected outcome and suitable valid/faulty offline controls. A rejected invalid
-  request can be a success; a timeout cannot establish a protocol violation.
-- Optional real-client assessments for SDK and Claude Code workflows, with exact
-  tested client, platform and task scope. They supplement protocol assessment;
-  neither Claude Code success nor failure is the overall protocol verdict. An
-  endpoint assessment must be useful without installing or running Claude Code.
-- Repeatable execution against an explicitly selected protocol snapshot: API
-  headers, beta set, rules and suite revision. Maintain official source references
-  and a repository Agent command for periodically reviewing protocol changes.
-  Provide version comparisons and locking guidance only to the extent tested;
-  an API date alone does not pin model behavior or guarantee workflow stability.
-- One execution engine usable through a local Web application and CLI.
-  The Web view emphasizes global progress and actionable exceptions; details are
-  available without turning the overview into a long report. CLI runs also write
-  reports. Exported reports work independently of the running application.
-  The interactive workspace prioritizes running tests and inspecting selected
-  evidence; do not use a report narrative as its primary interaction structure.
-- Concise, professional Chinese/English reports and interfaces, useful charts and
-  matrices, light/dark themes, structured Agent-readable facts, references,
-  expected/actual differences and enough sanitized evidence to reproduce issues.
-  Exports, comparison and optional repair verification preserve original results
-  and expose omissions.
-- An independent, restrained engineering-tool identity. Supporting Anthropic's
-  protocol does not imply adopting its website/application branding or palette.
-  Ground interactions in comparable diagnostic/test tools and observed usage;
-  use deliberate information hierarchy in both light/dark themes.
-  Use coordinated, restrained semantic colors for interaction/execution, confirmed
-  deviations and verified passes. Keep untested/inconclusive states neutral;
-  restrained color does not require an entirely grayscale interface.
-  Learn from how tools such as Wireshark and Charles organize complex information;
-  this does not prescribe copying their visual style or fixed window layout.
-  Reveal detail according to the user's task and preserve investigation context.
-  Follow the accepted [design baseline](design.md) and update it deliberately
-  when the owner refines the presentation; historical prototypes are not defaults.
-
-## How to choose and finish work
-
-1. Start with the user-visible diagnostic capability being added or the concrete
-   defect blocking use. Explain supporting infrastructure work in those terms.
-2. Prioritize reliable fault detection and hands-on use. Deep testing is the
-   owner's priority; optional budgets must not silently reduce selected coverage.
-   Real calls still require explicit opt-in and recorded request/time limits.
-3. Each delivery states the formal endpoint scenarios added or changed, faults
-   they can detect, how the user can run them, and important remaining gaps. For
-   supporting-only work, say explicitly that endpoint coverage did not increase.
-4. Keep remaining core coverage visible in [the current handoff](docs/CONTINUE.md).
-   A narrow milestone limits that task; it does not remove the unfinished product
-   goals here. Do not repeatedly defer them behind presentation or release work.
-5. Count endpoint scenarios, assertions, tool self-tests, sampled repetitions and
-   client workflows separately. Large self-test counts and green CI are evidence
-   of implementation quality, not comprehensive endpoint compatibility.
-6. Use checks appropriate to changed behavior and meaningful regressions. Reuse
-   verified unchanged-source evidence where applicable, state its identity and
-   limits, and retain failures. Broaden checks for concrete risks or release needs.
-
-## Product completion and delivery
-
-The delivery unit is a usable diagnostic workflow, not an individual validator,
-case or migration task. The owner does not need to select or approve each case.
-Implementation may proceed in small commits while product checkpoints combine
-coherent coverage, working CLI/Web interaction and understandable evidence.
-
-Comprehensive compatibility assessment means an explicit inventory of the selected
-Messages protocol snapshot: request/response fields, content/event variants,
-conversation workflows and applicable feature prerequisites. Each item maps to
-implemented cases/rules, executed controls and run outcomes, or an explicit gap.
-An inventory is not coverage. Unknown capabilities and unexecuted cases never
-become passing results. An API date alone is not a reproducible rules snapshot.
-Keep raw protocol, configured model-identity expectations, task behavior and actual
-client compatibility distinguishable.
-
-Judge a target against the selected version/beta/features and its explicit claims.
-Distinguish a confirmed deviation, an unsupported capability, an unrun probe and
-an inconclusive observation. A rejected required capability is not an optional
-pass; optional feature absence does not by itself invalidate unrelated core
-compatibility. Use controlled tasks to exercise protocol behavior, not to rank
-model intelligence. Cover the protocol systematically rather than selecting only
-scenarios likely to reproduce one historical incident.
-
-The [delivery route](docs/refactor/README.md) and its
-[coverage inventory](docs/refactor/coverage.md) connect this intent to current work.
-Neither a five-case migration nor a polished interface meets the product goal.
-The coordinator maintains the route and completes its work without requiring the
-owner to manage case-by-case implementation. Revisit product decisions for a real
-scope conflict or user feedback, not each routine implementation choice.
-
-## Boundaries and maintenance
-
-This is a specialized compatibility diagnostic tool. General OpenAI-protocol
-testing, model ranking, load testing and hosted multi-user collaboration are
-outside its current intent. Do not infer endpoint internals, certify untested
-features, or claim complete coverage of a changing protocol.
-
-The owner authorized a TypeScript/Node rewrite on 2026-11-01. Use one Node LTS
-runtime and a shared CLI/Web engine with proportionate checks and contribution
-guidance. Initial development, use and CI must not require Python, Docker, Compose
-or Dev Container. Add container delivery only after the tool is useful and mature.
-The existing Python implementation is migration reference, not a requirement to
-port its architecture or maintain a permanent second stack. Preserve useful
-protocol rules, synthetic fault controls and accepted interaction design.
-Keep private targets, secrets and original service logs out of source and public
-artifacts. Preserve the repository's evidence and engineering rules.
-
-This file records durable intent, not delivered status or a release checklist.
-The owner's current instructions govern changes in direction. Update this file
-when that intent changes; do not rewrite it to justify an implementation after
-the fact. Resolve conflicting milestone assumptions explicitly and record gaps.
+The deliverable is the repository-scoped
+[diagnosis Skill](skills/anthropic-incident-diagnosis/SKILL.md), its Node
+helpers, and synthetic examples. The investigation requires explicit opt-in
+and request/time bounds before making live endpoint calls.

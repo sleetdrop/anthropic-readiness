@@ -8,7 +8,7 @@ body:
     id: context
     attributes:
       label: Context and outcome
-      description: "Public case/assertion IDs, model alias, API/beta/bundle version and observation date; private addresses must be omitted"
+      description: "User symptom, expected and observed behavior, model alias, request API version, betas and capture completeness"
     validations:
       required: true
   - type: textarea
@@ -19,16 +19,16 @@ body:
     validations:
       required: true
   - type: textarea
-    id: source_identity
+    id: location
     attributes:
-      label: Source identity and delivered evidence
-      description: "Public run/result/recipe/implementation digests or unknown; report language/theme, partial/complete, evidence delivered/omitted. A report alias does not anonymize the full ZIP. Review archives before privately sharing; do not upload an unreviewed archive here."
+      label: Evidence location
+      description: "Relevant event index or JSON field, applicable rule ID, and a synthetic excerpt that reproduces the finding"
     validations:
       required: true
   - type: textarea
     id: repair_comparison
     attributes:
       label: Repair verification, when applicable
-      description: "Original and retest scope; recovered/persistent/new-failure/gap counts and unmatched checks; semantic/context changes. State not_run if no complete original-scope retest. Finding labels such as F01 are display labels, not cross-run identities."
+      description: "Compare the same request and relevant observation before and after the change"
     validations:
       required: false
