@@ -234,9 +234,11 @@ test("five selected scenarios run six requests and consume a fresh tool result",
     }
   assert.ok(!serialized.includes("synthetic-key"));
   const resultView = readFileSync(join(output, "result.json.html"), "utf8");
+  assert.match(resultView, /<html lang="en">/u);
   assert.match(resultView, /href="result\.json"/u);
   const html = readFileSync(join(output, "report.html"), "utf8");
   assert.match(html, /^<!doctype html>/u);
+  assert.match(html, /<html lang="en">/u);
   assert.match(html, /ANT-TOOL-LOOP-001/u);
   assert.equal(existsSync(join(output, "report.md")), false);
   const count = requests.length;

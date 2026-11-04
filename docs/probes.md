@@ -87,8 +87,9 @@ Use `--model-alias` for a known alias, or `--structure-only` when model identity
 is outside the investigation. A deadline or failed prerequisite can prevent a
 follow-up. Inspect attempts started and case outcomes before interpreting coverage.
 
-The output contains `result.json`, a self-contained HTML check record (`report.html`), and the
-request and response bytes per exchange. Report links open offline syntax-highlighted
+The output contains `result.json`, an HTML check record (`report.html`), and the
+request and response bytes per exchange. Reports and JSON viewer labels default
+to English. Use `--language zh` for Chinese. Report links open offline syntax-highlighted
 JSON views with a link to open the original attachment. For a human-facing assessment across
 one or more runs, use the [Skill report guide](../skills/anthropic-incident-diagnosis/references/reporting.md)
 to write a synthesis above those records. Preset probes generate diagnostic requests and

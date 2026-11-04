@@ -39,7 +39,7 @@ export async function main(args: string[]): Promise<number> {
     });
     if (values.help) {
       console.log(
-        "plan|run --endpoint MESSAGES_URL_OR_BASE --model MODEL [--profile ID ...] [--api-version 2023-06-01|2026-10-21] [--out NEW_DIR --allow-live] [--auth-env ENV_NAME --auth-mode api_key|bearer] [--language zh|en] [--max-requests N --max-tokens N --run-ms N --attempt-ms N --read-ms N --connect-ms N --max-bytes N]",
+        "plan|run --endpoint MESSAGES_URL_OR_BASE --model MODEL [--profile ID ...] [--api-version 2023-06-01|2026-10-21] [--out NEW_DIR --allow-live] [--auth-env ENV_NAME --auth-mode api_key|bearer] [--language en|zh (default: en)] [--max-requests N --max-tokens N --run-ms N --attempt-ms N --read-ms N --connect-ms N --max-bytes N]",
       );
       return 0;
     }
@@ -74,7 +74,7 @@ export async function main(args: string[]): Promise<number> {
     }
     if (values["allow-live"] !== true) throw new Error("live_opt_in_required");
     if (!values.out) throw new Error("new_output_directory_required");
-    const language = values.language ?? "zh";
+    const language = values.language ?? "en";
     if (language !== "zh" && language !== "en") throw new Error("invalid_language");
     const authMode = values["auth-mode"] ?? "api_key";
     if (authMode !== "api_key" && authMode !== "bearer") throw new Error("invalid_auth_mode");

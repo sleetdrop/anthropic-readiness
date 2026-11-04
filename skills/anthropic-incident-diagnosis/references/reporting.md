@@ -1,7 +1,7 @@
 # Write a compatibility report
 
 The generated `report.html` is a check record. For a shared report, write a short
-synthesis in the user's language from the check record, `result.json`, and the
+synthesis in English from the check record, `result.json`, and the
 relevant request/response bytes. Reconcile contradictory observations before
 summarizing. Cross-run comparisons must name the API header and keep overlapping
 case counts separate from request counts.
@@ -37,6 +37,14 @@ colors with visible text labels. Link JSON as evidence attachments. Keep
 scripts, remote assets, private URLs, credentials and unnecessary raw text out
 of a shared report.
 
+
+## Writing style
+
+Use the wording of an engineering test report. Put the subject and result first.
+State which request was sent, what came back, and how it compares with the
+documented requirement. Use established protocol terms and exact field names.
+Avoid coined terms, promotional language, filler, and repeated conclusions.
+Where evidence stops, state which test or exchange was not run.
 
 ## Figures and presentation
 

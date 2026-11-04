@@ -109,3 +109,10 @@ The original capture is still persisted before evaluation.
 The Node gate passed 71 tests. Local-browser checks followed the real GLM
 report links in both themes, verified the original JSON and return navigation,
 and compared the largest viewer's DOM text against the source in chunks.
+
+## 2026-11-04 — English report default
+
+Reports and evidence viewer labels default to English. The report guide calls
+for concise engineering prose tied to the observed response and applicable
+requirement. The existing GLM report was rewritten in English from retained
+captures. All local report links resolved, and the Node gate passed 71 tests.

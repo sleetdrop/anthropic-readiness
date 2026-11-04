@@ -43,13 +43,13 @@ function findingLabel(observation: Observation, zh: boolean): string {
         ? "未取得预期的 HTTP 响应"
         : "Expected HTTP response was unavailable";
   if (reason === "model_identity_mismatch")
-    return zh ? "响应声明的模型名与配置不符" : "Reported model differs from configured identity";
+    return zh ? "响应声明的模型名与配置不符" : "Response model name differs from the configured name";
   if (reason === "cache_effect_not_observed")
     return zh ? "未观察到缓存写入后命中" : "Cache write followed by a hit was not observed";
   if (reason === "request_constraint_violated" && ruleId === "STRUCTURED-SCHEMA")
     return zh ? "输出不符合所请求的 JSON 结构" : "Output violates the requested JSON shape";
   if (reason === "tool_followup_not_sent")
-    return zh ? "已观察到工具调用，后续请求未发出" : "Tool call observed; follow-up was not sent";
+    return zh ? "已观察到工具调用，后续请求未发出" : "Tool call received. Follow-up request was not sent";
   if (reason === "not_run") return zh ? "用例未开始" : "Case did not start";
   if (observation.dimension === "behavior")
     return zh ? `任务检查 · ${expected}` : `Task check · ${expected}`;
@@ -160,9 +160,9 @@ export function renderReport(report: RunResult, language: ReportLanguage): strin
     } else if (observation.reason === "tool_followup_not_sent") {
       observed = zh
         ? "首轮调用已观察到，后续请求未发送"
-        : "First call observed; follow-up not sent";
+        : "The endpoint returned a tool call. The runner did not send a tool result.";
     } else {
-      observed = zh ? "详见捕获或原始检查记录" : "See the capture or original check record";
+      observed = zh ? "详见捕获或原始检查记录" : "See the captured response or the JSON record.";
     }
     const evidence = new Set(
       entries.map(({ item, observation }) => {
@@ -188,9 +188,9 @@ export function renderReport(report: RunResult, language: ReportLanguage): strin
     return `<article id="${finding.id.toLowerCase()}">
 <h3><span class="finding-id">${finding.id}</span> ${escape(finding.label)}</h3>
 <p class="meta">${dimensions[observation.dimension]} · ${status(observation.status)} · ${caseCount(affected(finding))} · ${observationCount(entries.length)}</p>
-<dl class="comparison"><div><dt>${zh ? "预期" : "Expected"}</dt><dd>${escape(observation.expected)}</dd></div><div><dt>${zh ? "代表性观测" : "Representative observation"}</dt><dd>${observed}</dd></div></dl>
-${capture ? `<p class="meta">${zh ? "代表性捕获" : "Representative capture"} · <code>${escape(entries[0]!.item.id)}</code> · ${evidenceLink(capture, zh)}</p>` : ""}
-<details><summary>${zh ? "全部证据位置" : "All evidence locations"}</summary><ul>${[...evidence].join("\n")}</ul></details>
+<dl class="comparison"><div><dt>${zh ? "预期" : "Expected"}</dt><dd>${escape(observation.expected)}</dd></div><div><dt>${zh ? "代表性观测" : "Observed"}</dt><dd>${observed}</dd></div></dl>
+${capture ? `<p class="meta">${zh ? "代表性捕获" : "Example response"} · <code>${escape(entries[0]!.item.id)}</code> · ${evidenceLink(capture, zh)}</p>` : ""}
+<details><summary>${zh ? "全部证据位置" : "All occurrences"}</summary><ul>${[...evidence].join("\n")}</ul></details>
 </article>`;
   });
 
@@ -230,18 +230,18 @@ ${
 }
 </section>
 <section aria-labelledby="findings"><h2 id="findings">${titles.findings}</h2>
-<p class="muted">${zh ? "按现象归并。观测可来自原始事件及其派生消息，用例数已去重。" : "Grouped by observation. Counts may include original events and derived messages. Case counts are distinct."}</p>
-${articles.join("\n") || `<p>${zh ? "没有需要汇总的异常观测。" : "No exception observations to summarize."}</p>`}
+<p class="muted">${zh ? "按现象归并。观测可来自原始事件及其派生消息，用例数已去重。" : "Each finding lists the number of distinct cases. The observation count may include both raw SSE events and the assembled message."}</p>
+${articles.join("\n") || `<p>${zh ? "没有需要汇总的异常观测。" : "No findings in the selected checks."}</p>`}
 </section>
 <section aria-labelledby="cases"><h2 id="cases">${titles.cases}</h2>
 <div class="table-scroll" tabindex="0" role="region" aria-labelledby="cases"><table class="matrix">
-<caption>${zh ? "请求列显示已发起次数与计划上限。「—」表示无需推理任务。" : "Requests show started and planned exchanges. A dash indicates no inference task."}</caption>
+<caption>${zh ? "请求列显示已发起次数与计划上限。「—」表示无需推理任务。" : "Requests are shown as started / planned. A dash means the case has no inference task."}</caption>
 <thead><tr>${(zh ? ["用例", "综合状态", "协议", "任务", "请求", "发现"] : ["Case", "Outcome", "Protocol", "Task", "Requests", "Findings"]).map((label) => `<th scope="col">${label}</th>`).join("")}</tr></thead>
 <tbody>${rows.join("\n")}</tbody>
 </table></div></section>
 <section aria-labelledby="scope"><h2 id="scope">${titles.scope}</h2>
 <ul><li>${zh ? "规则快照" : "Rule snapshot"} <code>${escape(report.plan.contract)}</code></li>
-<li><a href="result.json.html">result.json</a> · ${zh ? "逐用例判断及原始证据。SSE 事件从 0 编号。分享附件前请审阅。" : "Per-case judgments and original evidence. SSE indices start at zero. Review attachments before sharing."}</li>
+<li><a href="result.json.html">result.json</a> · ${zh ? "逐用例判断及原始证据。SSE 事件从 0 编号。分享附件前请审阅。" : "Case results and captured data. SSE event indices start at zero. Review attachments before sharing."}</li>
 ${report.limitations.map((item) => `<li>${escape(item)}</li>`).join("")}</ul>
 <p><a href="https://platform.claude.com/docs/en/api/messages/create">Messages API</a> · <a href="https://platform.claude.com/docs/en/build-with-claude/streaming">Streaming</a></p>
 </section>
