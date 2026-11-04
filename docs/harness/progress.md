@@ -29,3 +29,23 @@ same stop-field omissions. The declared label is evidence for checking the
 routing configuration. It does not establish the backend model identity.
 Private captures and report outputs are stored outside the repository. This
 walkthrough exercised existing scenarios and added no endpoint coverage.
+
+## 2026-11-04: Independent offline diagnosis
+
+A fresh agent received the Skill, three anonymously named SSE bodies, and
+the known capture completeness. It received neither expected findings nor
+previous reports. One body came from the authorized local trial and the
+other two were synthetic controls.
+
+The agent matched all three reference outcomes. It located the missing
+stop fields at event indexes 0 and 40 in the complete saved response. It
+kept thinking extensions outside the tested rules and identified the
+properly framed terminal event. The partial control was inconclusive.
+Its terminal event text was present and its bytes matched the passing
+control apart from the final two LF bytes. The passing control established
+only that the inspected rules passed.
+
+The agent kept protocol findings separate from client behavior and suggested
+comparing captures before and after serialization to locate where the
+fields disappear. The exercise made zero endpoint requests and added no
+endpoint cases. The Skill and inspector code were unchanged.

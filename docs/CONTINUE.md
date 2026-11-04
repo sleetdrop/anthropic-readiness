@@ -6,6 +6,10 @@ Start with its offline inspector and a saved response. Use
 [the exercise](../skills/anthropic-incident-diagnosis/references/offline-exercise.md)
 to verify the workflow on synthetic evidence.
 
+An independent offline walkthrough passed on a saved real SSE response and
+two controls. See [the verification record](harness/progress.md) for the
+scope and observations.
+
 The initial Skill prototype is at `8048934`. That commit also contains the
 former standalone application, design records, and the comparison with
 llm-comply. Read a particular historical reference with Git when it helps
