@@ -49,3 +49,17 @@ The agent kept protocol findings separate from client behavior and suggested
 comparing captures before and after serialization to locate where the
 fields disappear. The exercise made zero endpoint requests and added no
 endpoint cases. The Skill and inspector code were unchanged.
+
+## 2026-11-04 — Documented Messages probe expansion
+
+Expanded the preset catalog from 5 to 35 cases. The 22-case core group reserves
+27 requests. The remaining cases cover version migration and opt-in model
+capabilities. Selection sends either `2023-06-01` or `2026-10-21`, without betas.
+See [the coverage and usage guide](../probes.md) for the case groups and exclusions.
+
+The new synthetic checks first reproduced the missing core profile and the
+missing SSE thinking assembly. The full synthetic endpoint then exercised every
+preset in 41 exchanges, with separate controls for malformed error envelopes,
+incorrect token-count types, unsigned thinking streams, and request-specific
+wire constraints. The complete Node check passed with 69 executed tests.
+No live model was contacted during this expansion.

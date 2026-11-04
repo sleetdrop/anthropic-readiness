@@ -161,6 +161,11 @@ export function validateMessage(
         field(block, "id", blockPointer, "MSG-TOOL-ID", (item) => typeof item === "string" && item.length > 0, "nonempty string");
         field(block, "name", blockPointer, "MSG-TOOL-NAME", (item) => typeof item === "string" && item.length > 0, "nonempty string");
         field(block, "input", blockPointer, "MSG-TOOL-INPUT", isObject, "JSON object");
+      } else if (block.type === "thinking") {
+        field(block, "thinking", blockPointer, "MSG-THINKING", (item) => typeof item === "string", "string");
+        field(block, "signature", blockPointer, "MSG-THINKING-SIGNATURE", (item) => typeof item === "string" && item.length > 0, "nonempty string");
+      } else if (block.type === "redacted_thinking") {
+        field(block, "data", blockPointer, "MSG-REDACTED-THINKING", (item) => typeof item === "string" && item.length > 0, "nonempty string");
       } else {
         add("MSG-CONTENT", "INDETERMINATE", "unknown_content_type", "recognized content block type", "unrecognized content block type", `${blockPointer}/type`);
       }

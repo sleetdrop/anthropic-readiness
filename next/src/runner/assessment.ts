@@ -1,16 +1,31 @@
-/** Shared execution engine. CLI/Web adapters own presentation and persistence. */
+/** Bounded execution and evidence capture for endpoint probes. */
 import { createHash, randomUUID } from "node:crypto";
 import { performance } from "node:perf_hooks";
-import { selectCases, type CaseDefinition } from "../catalog.ts";
+import { apiVersions, selectCases, type ApiVersion, type CaseDefinition } from "../catalog.ts";
 import { summarize, type Observation, type Status } from "../domain.ts";
+import { validateAuxiliary } from "../protocol/auxiliary.ts";
 import { validateMessage } from "../protocol/messages.ts";
 import { validateSse } from "../protocol/sse.ts";
 import { captureHttp, type HttpCapture, type HttpLimits } from "./http.ts";
 
-type ObjectValue = Record<string, unknown>;
+import {
+  checkResponseContract,
+  checkTask,
+  exactReply,
+  historyFollowup,
+  object,
+  parallelFollowup,
+  requestBody,
+  text,
+  weatherFollowup,
+  weatherTool,
+  type ObjectValue,
+  type TaskCheck,
+} from "./probes.ts";
 export interface PlanInput {
   endpoint: string;
   model: string;
+  apiVersion?: ApiVersion;
   profiles: readonly string[];
   maxRequests?: number;
   runMs?: number;
@@ -27,8 +42,8 @@ export interface RunPlan {
   readonly model: string;
   readonly aliases: readonly string[];
   readonly checkModelIdentity: boolean;
-  readonly apiVersion: "2023-06-01";
-  readonly contract: "typescript-messages-2023-06-01-core/0.2.0-dev";
+  readonly apiVersion: ApiVersion;
+  readonly contract: "typescript-messages-probes/0.3.0-dev";
   readonly profiles: readonly string[];
   readonly cases: readonly CaseDefinition[];
   readonly plannedRequests: number;
@@ -40,6 +55,7 @@ export interface RunPlan {
 export interface CaptureRecord {
   id: string;
   statusCode: number | null;
+  route?: "count_tokens";
   headers: HttpCapture["headers"];
   end: HttpCapture["end"];
   errorCode: string | null;
@@ -92,8 +108,6 @@ const stopReasons = [
   "refusal",
   "model_context_window_exceeded",
 ];
-const object = (value: unknown): value is ObjectValue =>
-  typeof value === "object" && value !== null && !Array.isArray(value);
 const positive = (value: number) => Number.isSafeInteger(value) && value > 0;
 
 export function createPlan(input: PlanInput): RunPlan {
@@ -114,7 +128,14 @@ export function createPlan(input: PlanInput): RunPlan {
   if (url.pathname === "/") url.pathname = "/v1/messages";
   else if (url.pathname.replace(/\/$/u, "") === "/v1") url.pathname = "/v1/messages";
   if (typeof input.model !== "string" || !input.model.trim()) throw new Error("invalid_model");
+  const apiVersion = input.apiVersion ?? "2023-06-01";
+  if (!apiVersions.includes(apiVersion)) throw new Error("invalid_api_version");
   const cases = selectCases(input.profiles);
+  if (
+    apiVersion !== "2026-10-21" &&
+    cases.some((item) => item.profile === "anthropic-version-2026")
+  )
+    throw new Error("profile_requires_api_version");
   const plannedRequests = cases.reduce((sum, item) => sum + item.maxRequests, 0);
   const maxRequests = input.maxRequests ?? plannedRequests;
   const runMs = input.runMs ?? 300_000;
@@ -131,8 +152,8 @@ export function createPlan(input: PlanInput): RunPlan {
     model: input.model,
     aliases: [...(input.aliases ?? [])],
     checkModelIdentity: input.checkModelIdentity ?? true,
-    apiVersion: "2023-06-01",
-    contract: "typescript-messages-2023-06-01-core/0.2.0-dev",
+    apiVersion,
+    contract: "typescript-messages-probes/0.3.0-dev",
     profiles: [...new Set(input.profiles)],
     cases,
     plannedRequests,
@@ -156,84 +177,36 @@ function observation(
   expected: string,
   actual: string,
 ): Observation {
-  return { ruleId, ruleVersion: 1, dimension, status, required: true, reason, expected, actual };
+  return {
+    ruleId,
+    ruleVersion: 1,
+    dimension,
+    status,
+    required: true,
+    reason,
+    expected,
+    actual,
+  };
 }
 function finishCase(
-  id: string,
+  item: CaseDefinition,
   observations: readonly Observation[],
   captures: readonly CaptureRecord[],
 ): CaseResult {
   return {
-    id,
+    id: item.id,
     lifecycle: captures.length ? "finished" : "not_run",
     status: summarize(observations),
     protocolStatus: summarize(observations.filter((item) => item.dimension === "protocol")),
-    behaviorStatus: summarize(observations.filter((item) => item.dimension === "behavior")),
+    behaviorStatus:
+      item.expectedStatus || item.route
+        ? "SKIP"
+        : summarize(observations.filter((observation) => observation.dimension === "behavior")),
     attemptsStarted: captures.length,
     observations,
     captures,
   };
 }
-function content(message: unknown): ObjectValue[] {
-  return object(message) && Array.isArray(message.content) ? message.content.filter(object) : [];
-}
-function text(message: unknown): string {
-  return content(message)
-    .filter((item) => item.type === "text" && typeof item.text === "string")
-    .map((item) => String(item.text))
-    .join("");
-}
-function weatherTool(message: unknown): ObjectValue | undefined {
-  return content(message).find(
-    (item) =>
-      item.type === "tool_use" &&
-      item.name === "get_weather" &&
-      typeof item.id === "string" &&
-      item.id.length > 0 &&
-      object(item.input) &&
-      item.input.city === "Hanoi",
-  );
-}
-function exactReply(message: unknown, expected: string): Status {
-  if (text(message).trim() !== expected) return "FAIL";
-  const blocks = content(message);
-  if (blocks.some((block) => block.type === "tool_use")) return "FAIL";
-  return blocks.some(
-    (block) => !["text", "thinking", "redacted_thinking"].includes(String(block.type)),
-  )
-    ? "INDETERMINATE"
-    : "PASS";
-}
-function requestBody(item: CaseDefinition, model: string, maxTokens: number): ObjectValue {
-  const tool = item.capabilities.includes("tools");
-  const prompt = tool
-    ? "Use get_weather to check the weather in Hanoi. After receiving a tool result, reply with only its verification_token."
-    : item.id === "ANT-TEXT-SSE-002"
-      ? "Count from 1 to 5. Reply with exactly: 1 2 3 4 5"
-      : "Reply with exactly HELLO, without punctuation or explanation.";
-  return {
-    model,
-    max_tokens: maxTokens,
-    stream: item.response === "sse",
-    messages: [{ role: "user", content: prompt }],
-    ...(tool
-      ? {
-          tools: [
-            {
-              name: "get_weather",
-              input_schema: {
-                type: "object",
-                properties: { city: { type: "string", const: "Hanoi" } },
-                required: ["city"],
-              },
-            },
-          ],
-          tool_choice: { type: "tool", name: "get_weather" },
-        }
-      : {}),
-  };
-}
-
 export async function executePlan(plan: RunPlan, options: ExecutionOptions): Promise<RunResult> {
   if (options.allowLive !== true) throw new Error("live_opt_in_required");
   const started = performance.now();
@@ -243,6 +216,8 @@ export async function executePlan(plan: RunPlan, options: ExecutionOptions): Pro
   options.signal?.addEventListener("abort", stop, { once: true });
   const deadline = setTimeout(stop, plan.runMs);
   const results: CaseResult[] = [];
+  const countUrl = new URL(plan.endpoint);
+  countUrl.pathname = countUrl.pathname.replace(/\/$/u, "") + "/count_tokens";
   let attemptsStarted = 0;
   const context = (captureId: string) => ({
     captureId,
@@ -273,7 +248,11 @@ export async function executePlan(plan: RunPlan, options: ExecutionOptions): Pro
       );
     const requestBytes = Buffer.from(JSON.stringify(body));
     const captured = await captureHttp(
-      { url: plan.endpoint, body: requestBytes, headers },
+      {
+        url: item.route === "count_tokens" ? countUrl.href : plan.endpoint,
+        body: requestBytes,
+        headers,
+      },
       {
         ...plan.limits,
         attemptMs: Math.max(
@@ -286,6 +265,7 @@ export async function executePlan(plan: RunPlan, options: ExecutionOptions): Pro
     const record: CaptureRecord = {
       id,
       statusCode: captured.statusCode,
+      ...(item.route ? { route: item.route } : {}),
       headers: captured.headers,
       end: captured.end,
       errorCode: captured.errorCode,
@@ -310,14 +290,20 @@ export async function executePlan(plan: RunPlan, options: ExecutionOptions): Pro
           captured.end,
         ),
       );
-    if (captured.statusCode !== 200) {
+    const expectedStatus = item.expectedStatus ?? 200;
+    if (captured.statusCode !== expectedStatus) {
+      const invalidAccepted =
+        item.expectedStatus === 400 &&
+        captured.statusCode !== null &&
+        captured.statusCode >= 200 &&
+        captured.statusCode < 300;
       observations.push(
         observation(
           "HTTP-STATUS",
-          "environment",
-          "BLOCKED",
-          "unexpected_http_status",
-          "HTTP 200",
+          invalidAccepted ? "protocol" : "environment",
+          invalidAccepted ? "FAIL" : "BLOCKED",
+          invalidAccepted ? "invalid_request_accepted" : "unexpected_http_status",
+          `HTTP ${expectedStatus}`,
           String(captured.statusCode ?? captured.errorCode ?? captured.end),
         ),
       );
@@ -354,6 +340,20 @@ export async function executePlan(plan: RunPlan, options: ExecutionOptions): Pro
         mime ?? "missing",
       ),
     );
+    const auxiliary = item.expectedStatus === 400 ? "invalid_request" : item.route;
+    if (auxiliary && captured.end !== "eof") {
+      observations.push(
+        observation(
+          "AUX-JSON",
+          "protocol",
+          "INDETERMINATE",
+          "incomplete_capture",
+          "complete UTF-8 JSON response",
+          captured.end,
+        ),
+      );
+      return null;
+    }
     let message: unknown;
     if (item.response === "sse") {
       const parsed = validateSse(captured.body, context(id), {
@@ -379,11 +379,15 @@ export async function executePlan(plan: RunPlan, options: ExecutionOptions): Pro
         message = JSON.parse(new TextDecoder("utf-8", { fatal: true }).decode(captured.body));
         record.message = message;
         record.messageComplete = captured.end === "eof";
-        observations.push(...validateMessage(message, context(id)));
+        observations.push(
+          ...(auxiliary
+            ? validateAuxiliary(message, id, auxiliary)
+            : validateMessage(message, context(id))),
+        );
       } catch {
         observations.push(
           observation(
-            "MESSAGE-JSON",
+            auxiliary ? "AUX-JSON" : "MESSAGE-JSON",
             "protocol",
             captured.end === "eof" ? "FAIL" : "INDETERMINATE",
             "invalid_or_incomplete_json",
@@ -394,6 +398,8 @@ export async function executePlan(plan: RunPlan, options: ExecutionOptions): Pro
         return null;
       }
     }
+    if (!auxiliary && record.messageComplete && captured.end === "eof")
+      observations.push(...checkResponseContract(item.id, message, record.derivedMessageId ?? id));
     return message;
   }
   try {
@@ -411,90 +417,183 @@ export async function executePlan(plan: RunPlan, options: ExecutionOptions): Pro
             "cancelled or run deadline reached",
           ),
         );
-        results.push(finishCase(item.id, observations, captures));
+        results.push(finishCase(item, observations, captures));
         continue;
       }
-      const body = requestBody(item, plan.model, plan.maxTokens);
-      let message = await exchange(body, item, observations, captures);
-      if (item.id === "ANT-TOOL-LOOP-001") {
-        const tool = weatherTool(message);
-        if (tool) {
-          const nonce = randomUUID();
-          const messages = body.messages as unknown[];
-          const followup = {
-            ...body,
-            tool_choice: { type: "auto" },
-            messages: [
-              ...messages,
-              { role: "assistant", content: object(message) ? message.content : [] },
-              {
-                role: "user",
-                content: [
-                  {
-                    type: "tool_result",
-                    tool_use_id: tool.id,
-                    content: JSON.stringify({
-                      temperature_c: 20,
-                      condition: "clear",
-                      verification_token: nonce,
-                    }),
-                  },
-                ],
-              },
-            ],
-          };
-          message = await exchange(followup, item, observations, captures);
-          const taskStatus = exactReply(message, nonce);
-          observations.push(
-            observation(
-              "TASK-TOOL-RESULT",
-              "behavior",
-              message === null || (taskStatus !== "PASS" && captures.some((c) => c.end !== "eof"))
-                ? "INDETERMINATE"
-                : taskStatus,
-              "tool_result_consumption",
-              "fresh tool result token",
-              taskStatus === "PASS" ? "only token returned" : "missing token or extra output",
-            ),
-          );
-        } else
-          observations.push(
-            observation(
-              "TASK-TOOL-CALL",
-              "behavior",
-              message === null || captures.some((c) => c.end !== "eof") ? "INDETERMINATE" : "FAIL",
-              "expected_tool_missing",
-              "get_weather with city Hanoi",
-              "expected call not observed",
-            ),
-          );
-      } else {
-        const taskStatus: Status =
-          item.id === "ANT-TOOL-FORCED-001"
-            ? weatherTool(message)
-              ? "PASS"
-              : "FAIL"
-            : exactReply(message, item.id === "ANT-TEXT-SSE-002" ? "1 2 3 4 5" : "HELLO");
+      const nonce = randomUUID();
+      const body = requestBody(item, plan.model, plan.maxTokens, nonce);
+      const message = await exchange(body, item, observations, captures);
+      const addTask = (rule: string, task: TaskCheck, reply: unknown) => {
         observations.push(
           observation(
-            "TASK-COMPLETE",
+            rule,
             "behavior",
-            taskStatus === "PASS"
+            task.status === "PASS"
               ? "PASS"
-              : message === null || captures.some((c) => c.end !== "eof")
+              : reply === null || captures.some((capture) => capture.end !== "eof")
                 ? "INDETERMINATE"
-                : taskStatus,
+                : task.status,
             "selected_task_behavior",
-            item.id === "ANT-TOOL-FORCED-001"
-              ? "get_weather with city Hanoi"
-              : item.id === "ANT-TEXT-SSE-002"
-                ? "exact text: 1 2 3 4 5"
-                : "exact text: HELLO",
-            taskStatus === "PASS" ? "observed" : text(message).slice(0, 160) || "not observed",
+            task.expected,
+            task.status === "PASS"
+              ? "observed"
+              : (task.actual ?? (text(reply).slice(0, 160) || "not observed")),
           ),
         );
+      };
+      if (item.expectedStatus || item.route) {
+        // These probes assert a wire contract without an inference task.
+      } else if (item.id === "ANT-TOOL-PARALLEL-001") {
+        const tokens = [nonce, randomUUID()];
+        const followup = captures[0]?.messageComplete
+          ? parallelFollowup(body, message, tokens)
+          : null;
+        if (followup) {
+          const reply = await exchange(followup, item, observations, captures);
+          addTask(
+            "TASK-TOOL-PARALLEL",
+            {
+              status: exactReply(reply, tokens.join(" ")),
+              expected: "both fresh tool result tokens in city order",
+            },
+            reply,
+          );
+        } else {
+          addTask(
+            "TASK-TOOL-PARALLEL",
+            {
+              status: "INDETERMINATE",
+              expected: "two distinct tool calls in one turn",
+              actual: "parallel calls not observed",
+            },
+            message,
+          );
+        }
+      } else if (
+        ["ANT-TOOL-LOOP-001", "ANT-TOOL-SSE-LOOP-001", "ANT-TOOL-RESULT-ERROR-001"].includes(
+          item.id,
+        )
+      ) {
+        const legacy = item.id === "ANT-TOOL-LOOP-001";
+        const tool = weatherTool(message, !legacy);
+        const complete = captures[0]?.messageComplete === true;
+        const protocolFault = observations.some(
+          (item) => item.dimension === "protocol" && item.status === "FAIL",
+        );
+        const streamed = item.id === "ANT-TOOL-SSE-LOOP-001";
+        const hasInputDelta = captures[0]?.events?.some(
+          ({ value }) =>
+            object(value) &&
+            object(value.delta) &&
+            value.delta.type === "input_json_delta" &&
+            typeof value.delta.partial_json === "string" &&
+            value.delta.partial_json.length > 0,
+        );
+        if (streamed && complete && tool && !hasInputDelta) {
+          observations.push(
+            observation(
+              "SSE-TOOL-INPUT-DELTA",
+              "protocol",
+              "FAIL",
+              "missing_tool_input_delta",
+              "streamed tool arguments",
+              "no nonempty input_json_delta",
+            ),
+          );
+        }
+        if (tool && (legacy || (complete && !protocolFault && (!streamed || hasInputDelta)))) {
+          const followup = weatherFollowup(
+            body,
+            message,
+            tool,
+            nonce,
+            item.id === "ANT-TOOL-RESULT-ERROR-001",
+          );
+          const reply = await exchange(followup, item, observations, captures);
+          addTask(
+            "TASK-TOOL-RESULT",
+            {
+              status: exactReply(reply, nonce),
+              expected: "fresh tool result token",
+              actual: "missing token or extra output",
+            },
+            reply,
+          );
+        } else {
+          addTask(
+            "TASK-TOOL-CALL",
+            {
+              status: "FAIL",
+              expected: "get_weather with city Hanoi",
+              actual: "expected complete call not observed",
+            },
+            message,
+          );
+        }
+      } else if (item.id === "ANT-HISTORY-001") {
+        const first = exactReply(message, "HELLO");
+        addTask("TASK-HISTORY-FIRST", { status: first, expected: "exact text: HELLO" }, message);
+        if (first === "PASS" && captures[0]?.messageComplete) {
+          const reply = await exchange(
+            historyFollowup(body, message),
+            item,
+            observations,
+            captures,
+          );
+          addTask(
+            "TASK-HISTORY-RECALL",
+            {
+              status: exactReply(reply, nonce),
+              expected: "nonce from the first user turn",
+              actual: "missing nonce or extra output",
+            },
+            reply,
+          );
+        }
+      } else if (item.id === "ANT-CACHE-001") {
+        const first = exactReply(message, "HELLO");
+        addTask("TASK-CACHE-FIRST", { status: first, expected: "exact text: HELLO" }, message);
+        if (first === "PASS" && captures[0]?.messageComplete) {
+          const reply = await exchange(body, item, observations, captures);
+          addTask(
+            "TASK-CACHE-REPEAT",
+            {
+              status: exactReply(reply, "HELLO"),
+              expected: "exact text: HELLO",
+            },
+            reply,
+          );
+          const created =
+            object(message) && object(message.usage)
+              ? message.usage.cache_creation_input_tokens
+              : undefined;
+          const read =
+            object(reply) && object(reply.usage) ? reply.usage.cache_read_input_tokens : undefined;
+          const valid = (value: unknown) =>
+            typeof value === "number" && Number.isSafeInteger(value) && value >= 0;
+          const malformed =
+            (created !== undefined && !valid(created)) || (read !== undefined && !valid(read));
+          const hit =
+            typeof created === "number" && typeof read === "number" && created > 0 && read > 0;
+          observations.push(
+            observation(
+              "CACHE-USAGE",
+              "protocol",
+              malformed ? "FAIL" : hit ? "PASS" : "INDETERMINATE",
+              malformed
+                ? "invalid_cache_counter"
+                : hit
+                  ? "cache_write_then_hit"
+                  : "cache_effect_not_observed",
+              "positive creation then read counters",
+              `created=${String(created)}, read=${String(read)}`,
+            ),
+          );
+        }
+      } else {
+        addTask("TASK-COMPLETE", checkTask(item.id, message), message);
       }
-      const result = finishCase(item.id, observations, captures);
+      const result = finishCase(item, observations, captures);
       results.push(result);
       options.onCaseComplete?.(result);
     }

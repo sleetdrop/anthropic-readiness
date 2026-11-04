@@ -55,6 +55,9 @@ probes only if its request shape and API version are relevant. Preview the selec
 profile before running it; label a preset a probe, not an exact replay. If no
 authorized, suitable probe exists, return an offline finding or a proposed
 minimal request. Stop when the symptom is explained or the agreed budget is spent.
+When the user asks for broad compatibility coverage, preview `anthropic-core`
+and add only the explicitly in-scope capability profiles. Record the API version
+and distinguish untested capabilities from failures.
 
 Return the observed evidence and scope, the smallest reproduction available,
 and one discriminating next check if the cause remains uncertain. Keep original

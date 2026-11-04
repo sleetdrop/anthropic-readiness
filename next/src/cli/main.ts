@@ -3,9 +3,10 @@ import { parseArgs } from "node:util";
 import { mkdir, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
+import { apiVersions } from "../catalog.ts";
 import { createPlan, executePlan, type RunResult } from "../runner/assessment.ts";
 
-const allProfiles = ["anthropic-basic", "anthropic-tools-smoke", "anthropic-tool-loop"];
+const defaultProfiles = ["anthropic-core"];
 function escape(value: string): string {
   return value
     .replaceAll("&", "&amp;")
@@ -78,6 +79,7 @@ export async function main(args: string[]): Promise<number> {
       options: {
         endpoint: { type: "string" },
         model: { type: "string" },
+        "api-version": { type: "string" },
         profile: { type: "string", multiple: true },
         "model-alias": { type: "string", multiple: true },
         "structure-only": { type: "boolean" },
@@ -98,7 +100,7 @@ export async function main(args: string[]): Promise<number> {
     });
     if (values.help) {
       console.log(
-        "plan|run --endpoint MESSAGES_URL_OR_BASE --model MODEL [--profile ID ...] [--out NEW_DIR --allow-live] [--auth-env ENV_NAME --auth-mode api_key|bearer] [--language zh|en] [--max-requests N --max-tokens N --run-ms N --attempt-ms N --read-ms N --connect-ms N --max-bytes N]",
+        "plan|run --endpoint MESSAGES_URL_OR_BASE --model MODEL [--profile ID ...] [--api-version 2023-06-01|2026-10-21] [--out NEW_DIR --allow-live] [--auth-env ENV_NAME --auth-mode api_key|bearer] [--language zh|en] [--max-requests N --max-tokens N --run-ms N --attempt-ms N --read-ms N --connect-ms N --max-bytes N]",
       );
       return 0;
     }
@@ -106,10 +108,15 @@ export async function main(args: string[]): Promise<number> {
     if (positionals.length !== 1 || !["plan", "run"].includes(command ?? ""))
       throw new Error("expected_plan_or_run");
     if (!values.endpoint || !values.model) throw new Error("endpoint_and_model_required");
+    const requestedVersion = values["api-version"];
+    const apiVersion = apiVersions.find((version) => version === requestedVersion);
+    if (requestedVersion !== undefined && apiVersion === undefined)
+      throw new Error("invalid_api_version");
     const plan = createPlan({
       endpoint: values.endpoint,
       model: values.model,
-      profiles: values.profile ?? allProfiles,
+      profiles: values.profile ?? defaultProfiles,
+      ...(apiVersion ? { apiVersion } : {}),
       aliases: values["model-alias"] ?? [],
       checkModelIdentity: !values["structure-only"],
       ...(values["max-requests"] !== undefined
@@ -183,6 +190,8 @@ export async function main(args: string[]): Promise<number> {
       "insufficient_request_budget",
       "empty_scope",
       "unknown_profile",
+      "invalid_api_version",
+      "profile_requires_api_version",
       "live_opt_in_required",
       "new_output_directory_required",
       "invalid_language",

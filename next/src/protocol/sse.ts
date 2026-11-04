@@ -1,7 +1,7 @@
 import type { MessageValidationContext, Observation } from "../domain.ts";
 
 type JsonObject = Record<string, unknown>;
-type BlockKind = "text" | "tool_use" | "unknown";
+type BlockKind = "text" | "tool_use" | "thinking" | "redacted_thinking" | "unknown";
 
 export interface SseEvent {
   /** Zero-based index among dispatched SSE events, including invalid/oversized ones. */
@@ -23,6 +23,7 @@ interface ActiveBlock {
   readonly value: JsonObject;
   text: string;
   partialJson: string;
+  signatureSeen: boolean;
 }
 
 const knownEvents = new Set([
@@ -285,14 +286,22 @@ export function validateSse(
         checkField(block, "id", "/content_block", (value) => typeof value === "string" && value.length > 0, "nonempty string", event.index, "SSE-BLOCK");
         checkField(block, "name", "/content_block", (value) => typeof value === "string" && value.length > 0, "nonempty string", event.index, "SSE-BLOCK");
         checkField(block, "input", "/content_block", isObject, "JSON object", event.index, "SSE-BLOCK");
+      } else if (blockType.value === "thinking") {
+        kind = "thinking";
+        const initial = checkField(block, "thinking", "/content_block", (value) => typeof value === "string", "string", event.index, "SSE-THINKING");
+        if (typeof initial.value === "string") text = initial.value;
+        checkField(block, "signature", "/content_block", (value) => value === "", "empty string before signature_delta", event.index, "SSE-THINKING");
+      } else if (blockType.value === "redacted_thinking") {
+        kind = "redacted_thinking";
+        checkField(block, "data", "/content_block", (value) => typeof value === "string" && value.length > 0, "nonempty string", event.index, "SSE-THINKING");
       } else {
         kind = "unknown";
-        add("SSE-EXTENSION", "INDETERMINATE", "unknown_block_type", "text or tool_use block", "unrecognized content block", event.index, "/content_block/type");
+        add("SSE-EXTENSION", "INDETERMINATE", "unknown_block_type", "recognized content block", "unrecognized content block", event.index, "/content_block/type");
       }
       if (blockIndex >= 0) {
         const blockValue = { ...block };
         if (kind === "tool_use" && isObject(block.input)) blockValue.input = { ...block.input };
-        active = { index: blockIndex, kind, value: blockValue, text, partialJson: "" };
+        active = { index: blockIndex, kind, value: blockValue, text, partialJson: "", signatureSeen: false };
       }
       return;
     }
@@ -331,6 +340,21 @@ export function validateSse(
         }
         const fragment = checkField(delta, "partial_json", "/delta", (value) => typeof value === "string", "string", event.index, "SSE-DELTA");
         if (fragment.valid && typeof fragment.value === "string") active.partialJson += fragment.value;
+      } else if (type.value === "thinking_delta" || type.value === "signature_delta") {
+        if (active.kind !== "thinking" || active.signatureSeen) {
+          failLifecycle(event, "unexpected_thinking_delta", "an open thinking block before its signature", `${active.kind} block or a delta after signature`);
+          return;
+        }
+        if (type.value === "thinking_delta") {
+          const thinking = checkField(delta, "thinking", "/delta", (value) => typeof value === "string", "string", event.index, "SSE-THINKING");
+          if (typeof thinking.value === "string") active.text += thinking.value;
+        } else {
+          const signature = checkField(delta, "signature", "/delta", (value) => typeof value === "string" && value.length > 0, "nonempty string", event.index, "SSE-THINKING-SIGNATURE");
+          if (signature.valid) {
+            active.value.signature = signature.value;
+            active.signatureSeen = true;
+          }
+        }
       } else {
         add("SSE-EXTENSION", "INDETERMINATE", "unknown_delta_type", "recognized delta type", "unrecognized delta type", event.index, "/delta/type");
       }
@@ -354,6 +378,11 @@ export function validateSse(
       }
       if (active.kind === "text") {
         active.value.text = active.text;
+      } else if (active.kind === "thinking") {
+        active.value.thinking = active.text;
+        add("SSE-THINKING-SIGNATURE", active.signatureSeen ? "PASS" : "FAIL",
+          active.signatureSeen ? "thinking_signature_seen" : "thinking_signature_missing",
+          "signature_delta before content_block_stop", active.signatureSeen ? "seen" : "missing", event.index, "");
       } else if (active.kind === "tool_use") {
         if (active.partialJson.length > 0) {
           try {

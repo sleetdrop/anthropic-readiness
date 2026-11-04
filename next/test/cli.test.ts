@@ -8,15 +8,19 @@ import test from "node:test";
 
 const entry = fileURLToPath(new URL("../src/cli/main.ts", import.meta.url));
 function cli(args: string[]) {
-  return spawnSync(process.execPath, [entry, ...args], { encoding: "utf8", timeout: 5000 });
+  return spawnSync(process.execPath, [entry, ...args], {
+    encoding: "utf8",
+    timeout: 5000,
+  });
 }
 const target = ["--endpoint", "http://127.0.0.1:1/v1", "--model", "synthetic"];
 test("CLI preview is usable without live consent and preserves full case/request scope", () => {
   const child = cli(["plan", ...target]);
   assert.equal(child.status, 0, child.stderr);
   const plan = JSON.parse(child.stdout);
-  assert.equal(plan.plannedRequests, 6);
-  assert.equal(plan.cases.length, 5);
+  assert.equal(plan.plannedRequests, 27);
+  assert.equal(plan.cases.length, 22);
+  assert.deepEqual(plan.profiles, ["anthropic-core"]);
 });
 test("CLI run refuses admission before creating output without explicit opt-in", (t) => {
   const root = mkdtempSync(join(tmpdir(), "readiness-cli-"));
