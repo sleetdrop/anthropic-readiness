@@ -20,17 +20,24 @@ export function reportDocument(title: string, language: ReportLanguage, body: st
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'">
 <title>${escapeHtml(title)}</title>
 <style>
-:root{color-scheme:light dark;--surface:#fcfcfc;--subtle:#f2f2f2;--text:#262626;--muted:#626262;--line:#d7d7d7;--accent:#416b7b;--fail:#984c57;--pass:#397052}
-@media(prefers-color-scheme:dark){:root{--surface:#1c1c1c;--subtle:#242424;--text:#dedede;--muted:#a8a8a8;--line:#3b3b3b;--accent:#93b6c5;--fail:#d1949e;--pass:#9bbda9}}
+:root{color-scheme:light dark;--surface:#fcfcfc;--subtle:#f2f2f2;--text:#262626;--muted:#626262;--line:#d7d7d7;--rule:#a4a4a4;--accent:#416b7b;--fail:#984c57;--pass:#397052}
+@media(prefers-color-scheme:dark){:root{--surface:#1c1c1c;--subtle:#242424;--text:#dedede;--muted:#a8a8a8;--line:#3b3b3b;--rule:#747474;--accent:#93b6c5;--fail:#d1949e;--pass:#9bbda9}}
 *{box-sizing:border-box}
 html{background:var(--surface);color:var(--text)}
 body{max-width:65rem;margin:auto;padding:2rem clamp(.85rem,4vw,2.25rem) 3rem;font:15px/1.65 system-ui,-apple-system,"PingFang SC",sans-serif;overflow-wrap:anywhere}
 h1,h2,h3{line-height:1.3;margin:0 0 .55rem;font-weight:650}
-h1{font-size:clamp(1.55rem,4vw,2rem)}
+h1{font-size:clamp(1.75rem,4vw,2.35rem);line-height:1.16}
+html[lang="en"] .report-header h1{font-family:Georgia,serif;font-weight:600}
+.report-header{border-top:2px solid var(--accent);padding-top:.85rem}
+.report-type{margin:0 0 .45rem;color:var(--muted);font-size:.85rem}
+.report-meta{display:flex;flex-wrap:wrap;gap:.4rem 2rem;margin:.8rem 0 0}
+.report-meta dt{font-size:.77rem;font-weight:500;color:var(--muted)}
+.report-meta dd{margin:0;font-size:.91rem;font-variant-numeric:tabular-nums}
 h2{font-size:1.27rem}
 h3{font-size:1.05rem}
-section{margin-top:1.7rem;padding-top:1rem;border-top:1px solid var(--line)}
+section{margin-top:1.7rem;padding-top:.9rem;border-top:1px solid var(--line)}
 article{padding:1rem 0;border-top:1px solid var(--line)}
+article h3 .finding-id{display:inline-block;min-width:2.4em;font:500 .83rem ui-monospace,monospace}
 p,ol,ul,dl{margin:.55rem 0}
 main p:not(.meta){max-inline-size:76ch}
 figure{margin:1rem 0;break-inside:avoid}
@@ -38,7 +45,8 @@ figure svg{max-inline-size:100%;height:auto}
 figcaption{margin-top:.4rem;color:var(--muted);font-size:.89rem}
 a{color:var(--accent);text-underline-offset:.2em}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-nav{display:flex;flex-wrap:wrap;gap:.35rem 1.15rem;margin-top:1rem;font-size:.9rem}
+nav{display:flex;flex-wrap:wrap;gap:.25rem 1.2rem;margin-top:.9rem;font-size:.88rem}
+nav a{display:inline-block;padding:.2rem 0}
 .muted,.finding-id,.meta{color:var(--muted)}
 .meta{font-size:.89rem}
 .status-fail{color:var(--fail)}
@@ -55,23 +63,32 @@ dt{font-weight:600}
 dd{margin:0 0 .35rem}
 .comparison{display:grid;grid-template-columns:1fr 1fr;gap:.65rem 1.25rem}
 .table-scroll{overflow-x:auto}
-table{width:100%;border-collapse:collapse;font-size:.92rem;margin:.6rem 0}
+table{width:100%;border-collapse:collapse;border-top:1px solid var(--rule);font-size:.92rem;margin:.6rem 0}
 caption{text-align:left;color:var(--muted);padding:.25rem 0}
 th,td{border-bottom:1px solid var(--line);padding:.5rem .65rem;text-align:left;vertical-align:top}
-thead th{background:var(--subtle)}
+thead th{font-size:.83rem;border-bottom-color:var(--rule)}
+.capability-table th:first-child{width:17%}
+.capability-table th:nth-child(2){width:16%}
 tbody th{font-weight:550}
 .number{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
 .matrix{min-width:39rem}
 summary{cursor:pointer;color:var(--accent);font-weight:550}
 details{margin:.6rem 0}
+.occurrences{list-style:none;padding:0;margin:.45rem 0;font-size:.87rem}
+.occurrences li{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.65fr) max-content;gap:.25rem 1rem;padding:.45rem .1rem;border-top:1px solid var(--line)}
+.occurrences li > span:last-child{text-align:right}
 :target{scroll-margin-top:1rem}
 article:target{border-top-color:var(--accent)}
 @media(max-width:34rem){
  .comparison{grid-template-columns:1fr}th,td{padding:.45rem .4rem}
- .capability-table thead th:nth-child(-n+2){width:22%}
+ .report-meta{gap:.4rem 1rem}
+ .capability-table th:first-child,.capability-table th:nth-child(2){width:25%}
+ .capability-table thead th{white-space:nowrap}
+ .occurrences li{grid-template-columns:minmax(0,1fr) max-content}
+ .occurrence-location{grid-column:1/-1;grid-row:2}
 }
 @media print{
- :root{color-scheme:light;--surface:#fff;--text:#222;--muted:#555;--subtle:#f4f4f4;--line:#ccc;--accent:#222;--fail:#222;--pass:#222}
+ :root{color-scheme:light;--surface:#fff;--text:#222;--muted:#555;--subtle:#f4f4f4;--line:#ccc;--rule:#777;--accent:#222;--fail:#222;--pass:#222}
  body{max-width:none;padding:0}
  h2,h3{break-after:avoid}
  tr{break-inside:avoid}

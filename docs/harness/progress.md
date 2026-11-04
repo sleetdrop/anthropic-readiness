@@ -116,3 +116,12 @@ Reports and evidence viewer labels default to English. The report guide calls
 for concise engineering prose tied to the observed response and applicable
 requirement. The existing GLM report was rewritten in English from retained
 captures. All local report links resolved, and the Node gate passed 71 tests.
+
+## 2026-11-04 — Technical report layout
+
+The report type, model name, and test scope now have separate places in the
+header. Tables use restrained rules and aligned numeric columns. Expanded
+findings separate the case, evidence location, and response link. The GLM
+report was checked at desktop width in light mode and at 390 pixels in dark
+mode. Local evidence links resolved, keyboard expansion worked, and all 71
+Node tests passed.

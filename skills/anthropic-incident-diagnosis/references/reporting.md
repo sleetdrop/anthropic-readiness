@@ -50,6 +50,9 @@ Where evidence stops, state which test or exchange was not run.
 
 Use the hierarchy of a short technical paper. Keep the abstract short, use
 tables for exact comparisons, and put raw observations in the appendix.
+Set the report type above the model name and give scope its own labeled line.
+Use thin table rules, keep counts right-aligned, and group case IDs, evidence
+locations, and response links into separate columns where space allows.
 Use figure captions for the reading takeaway and reserve accents for meaning.
 Avoid decorative graphics, standalone scores, and charts that restate the text.
 

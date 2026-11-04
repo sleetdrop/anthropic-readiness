@@ -43,13 +43,17 @@ function findingLabel(observation: Observation, zh: boolean): string {
         ? "未取得预期的 HTTP 响应"
         : "Expected HTTP response was unavailable";
   if (reason === "model_identity_mismatch")
-    return zh ? "响应声明的模型名与配置不符" : "Response model name differs from the configured name";
+    return zh
+      ? "响应声明的模型名与配置不符"
+      : "Response model name differs from the configured name";
   if (reason === "cache_effect_not_observed")
     return zh ? "未观察到缓存写入后命中" : "Cache write followed by a hit was not observed";
   if (reason === "request_constraint_violated" && ruleId === "STRUCTURED-SCHEMA")
     return zh ? "输出不符合所请求的 JSON 结构" : "Output violates the requested JSON shape";
   if (reason === "tool_followup_not_sent")
-    return zh ? "已观察到工具调用，后续请求未发出" : "Tool call received. Follow-up request was not sent";
+    return zh
+      ? "已观察到工具调用，后续请求未发出"
+      : "Tool call received. Follow-up request was not sent";
   if (reason === "not_run") return zh ? "用例未开始" : "Case did not start";
   if (observation.dimension === "behavior")
     return zh ? `任务检查 · ${expected}` : `Task check · ${expected}`;
@@ -182,7 +186,7 @@ export function renderReport(report: RunResult, language: ReportLanguage): strin
             : "",
           location?.missingKey ? `<code>${escape(location.missingKey)}</code>` : "",
         ].filter(Boolean);
-        return `<li><code>${escape(item.id)}</code> · <code>${escape(observation.ruleId)}</code>${capture ? ` · ${evidenceLink(capture, zh)}` : ""}${position.length ? ` · ${position.join(" · ")}` : ""}</li>`;
+        return `<li><span><code>${escape(item.id)}</code></span><span class="occurrence-location"><code>${escape(observation.ruleId)}</code>${position.length ? ` · ${position.join(" · ")}` : ""}</span><span>${capture ? evidenceLink(capture, zh) : "—"}</span></li>`;
       }),
     );
     return `<article id="${finding.id.toLowerCase()}">
@@ -190,16 +194,21 @@ export function renderReport(report: RunResult, language: ReportLanguage): strin
 <p class="meta">${dimensions[observation.dimension]} · ${status(observation.status)} · ${caseCount(affected(finding))} · ${observationCount(entries.length)}</p>
 <dl class="comparison"><div><dt>${zh ? "预期" : "Expected"}</dt><dd>${escape(observation.expected)}</dd></div><div><dt>${zh ? "代表性观测" : "Observed"}</dt><dd>${observed}</dd></div></dl>
 ${capture ? `<p class="meta">${zh ? "代表性捕获" : "Example response"} · <code>${escape(entries[0]!.item.id)}</code> · ${evidenceLink(capture, zh)}</p>` : ""}
-<details><summary>${zh ? "全部证据位置" : "All occurrences"}</summary><ul>${[...evidence].join("\n")}</ul></details>
+<details><summary>${zh ? "全部证据位置" : "All occurrences"}</summary><ul class="occurrences">${[...evidence].join("\n")}</ul></details>
 </article>`;
   });
 
   return reportDocument(
     title,
     language,
-    `<header>
-<h1>${title}</h1>
-<p class="meta"><strong>${status(report.status)}</strong> · ${escape(report.plan.model)} · API ${escape(report.plan.apiVersion)}</p>
+    `<header class="report-header">
+<p class="report-type">${title}</p>
+<h1>${escape(report.plan.model)}</h1>
+<dl class="report-meta">
+<div><dt>${zh ? "结果" : "Result"}</dt><dd>${status(report.status)}</dd></div>
+<div><dt>${zh ? "请求 API 版本" : "API version sent"}</dt><dd><code>${escape(report.plan.apiVersion)}</code></dd></div>
+<div><dt>${zh ? "用例 · 已发请求" : "Cases · Requests sent"}</dt><dd>${report.cases.length} · ${report.attemptsStarted}</dd></div>
+</dl>
 <nav aria-label="${zh ? "报告目录" : "Report sections"}">${Object.entries(titles)
       .map(([id, label]) => `<a href="#${id}">${label}</a>`)
       .join("")}</nav>
