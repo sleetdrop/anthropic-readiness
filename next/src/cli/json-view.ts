@@ -1,4 +1,8 @@
-import { escapeHtml, reportDocument, type ReportLanguage } from "./report-document.ts";
+import {
+  escapeHtml,
+  reportDocument,
+  type ReportLanguage,
+} from "../../../skills/anthropic-incident-diagnosis/scripts/report-document.mts";
 
 function highlightedJson(json: string): string {
   const tokens =

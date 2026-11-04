@@ -150,3 +150,18 @@ References were the [W3C evaluation report template](https://www.w3.org/WAI/test
 Browser checks passed at 1150, 390, and 320 pixels, including keyboard navigation,
 print, the no-script fallback, and local evidence links. All 71 Node tests
 passed. No endpoint requests were needed.
+
+## 2026-11-04 — Reusable Skill report workflow
+
+The Skill owns the assessment renderer, shared HTML layout, and navigation.
+It reads a short English assessment input and retained probe results, computes
+the scope, and resolves each finding to the named run, case, and exchange.
+The CLI check records and JSON viewer use the same layout. The example is
+synthetic and the project stores no private report or capture.
+
+A synthetic regression verified deduplicated case counts, viewer and raw
+links, and rejection of an unrecorded exchange. The renderer also processed
+three retained GLM runs offline and verified the 35 selected cases, 42 requests,
+and local evidence links. A copied renderer produced identical HTML. Browser
+checks covered the finding link, scroll navigation, and JSON viewer at 390
+pixels. All 72 Node tests passed.

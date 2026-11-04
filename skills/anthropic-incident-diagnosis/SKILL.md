@@ -62,7 +62,7 @@ and distinguish untested capabilities from failures.
 For a single symptom, return the observed evidence and scope, the smallest
 reproduction available, and one discriminating next check if the cause remains
 uncertain. For an assessment or a report to share, use the
-[report guide](references/reporting.md) to synthesize the results before attaching
-the generated check record. Keep original evidence local and review any excerpt
+[report guide](references/reporting.md) to write the evidence-backed synthesis and run the
+Skill’s HTML renderer against the saved results. Keep original evidence local and review any excerpt
 before sharing. For an offline walkthrough, use
 [the synthetic exercise](references/offline-exercise.md).

@@ -12,7 +12,9 @@ scope and observations.
 
 The probe catalog now covers 22 core cases (27 requests) and 13 separately
 selectable version or capability cases. See the [probe guide](probes.md) for
-version selection, explicit request caps and coverage boundaries.
+version selection, explicit request caps and coverage boundaries. For a shared
+assessment, follow the [Skill report guide](../skills/anthropic-incident-diagnosis/references/reporting.md)
+and render the English synthesis from retained runs.
 
 The initial Skill prototype is at `8048934`. That commit also contains the
 former standalone application, design records, and the comparison with

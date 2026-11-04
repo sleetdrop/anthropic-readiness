@@ -29,16 +29,35 @@ unavailability. A clear capability rejection tied to the tested request can
 support that finding. If a follow-up never ran, report the completed step and the
 missing step independently of its aggregate status.
 
-Write the synthesis directly as one offline HTML document. Keep the conclusion,
-capability table and evidence excerpts in the document as semantic HTML. Keep a short contents list beside or below the summary. Use native details for
-supplementary evidence.
-Keep the reading order useful without CSS or interaction. Use restrained status
-colors with visible text labels. Link JSON as evidence attachments. Keep
-remote assets, private URLs, credentials and unnecessary raw text out
-of a shared report. A small local navigation script can show the current section
-and offer a return to the top. Keep the document and its section links usable
-without it.
+## Generate the report
 
+Use [the example input](assessment-example.json) as the shape for a private JSON
+file. Supply the English summary, capability observations and findings based on
+reviewed evidence. List each run's `result.json` relative to the input file.
+Use one requested model per report. Each evidence entry names a run, case and
+one-based exchange. Add a reviewed JSON Pointer or zero-based SSE event index
+as `location` where it helps locate the evidence. Use `summary.finding` to link
+the lead to its supporting finding. A finding can include a comparison table
+with a caption, columns, and rows of strings or numbers. Include units in the
+caption or headings.
+
+From the repository root, use Node 24 to render the report offline:
+
+```sh
+node skills/anthropic-incident-diagnosis/scripts/render-assessment.mts \
+  --input /path/to/assessment.json --out /path/to/assessment.html
+```
+
+The renderer reads run metadata, counts distinct selected cases separately from
+requests, and resolves evidence links against actual exchanges. It prefers an
+existing JSON viewer and links the original JSON when the viewer is unavailable.
+The output is a new English HTML file. Keep it and the evidence files in the
+same relative layout if moving the report. The input and original attachments
+stay local. Inspect the report and evidence before sharing.
+
+Use the renderer for the document layout instead of writing one-off HTML.
+The report uses numbered sections, an inline contents list, and a small local
+navigation script. Section links remain usable without JavaScript.
 
 ## Writing style
 

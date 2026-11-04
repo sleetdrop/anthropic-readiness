@@ -1,4 +1,4 @@
-import { reportNavigation } from "./report-navigation.ts";
+import { reportNavigation } from "./report-navigation.mts";
 
 export type ReportLanguage = "zh" | "en";
 
