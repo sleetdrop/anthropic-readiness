@@ -519,6 +519,17 @@ export async function executePlan(plan: RunPlan, options: ExecutionOptions): Pro
             },
             reply,
           );
+        } else if (tool && complete) {
+          observations.push(
+            observation(
+              "TASK-TOOL-RESULT",
+              "behavior",
+              "INDETERMINATE",
+              "tool_followup_not_sent",
+              "tool result continuation",
+              "first tool call observed; follow-up not sent after a protocol fault",
+            ),
+          );
         } else {
           addTask(
             "TASK-TOOL-CALL",

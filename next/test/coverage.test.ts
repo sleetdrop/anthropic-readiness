@@ -512,10 +512,14 @@ test("request-specific wire violations stay separate from task failures", async 
       response.end(
         [
           frame("message_start", {
-            message: { ...message([]), stop_reason: null },
+            message: {
+              ...message([]),
+              stop_reason: null,
+              ...(body.tools ? { stop_sequence: undefined } : {}),
+            },
           }),
-          ...textFrames('{"greeting":"HELLO","extra":true}'),
-          ...finishFrames(),
+          ...(body.tools ? toolFrames() : textFrames('{"greeting":"HELLO","extra":true}')),
+          ...finishFrames(body.tools ? "tool_use" : "end_turn"),
         ].join(""),
       );
       return;
@@ -542,5 +546,9 @@ test("request-specific wire violations stay separate from task failures", async 
   assert.equal(find("ANT-STRUCTURED-001")?.protocolStatus, "PASS");
   assert.equal(find("ANT-STRUCTURED-001")?.behaviorStatus, "FAIL");
   assert.equal(find("ANT-STRUCTURED-SSE-001")?.protocolStatus, "FAIL");
-  assert.equal(find("ANT-TOOL-SSE-LOOP-001")?.attemptsStarted, 1);
+  const loop = find("ANT-TOOL-SSE-LOOP-001");
+  assert.equal(loop?.attemptsStarted, 1);
+  assert.equal(loop?.protocolStatus, "FAIL");
+  assert.equal(loop?.behaviorStatus, "INDETERMINATE");
+  assert.ok(loop?.observations.some((item) => item.reason === "tool_followup_not_sent"));
 });

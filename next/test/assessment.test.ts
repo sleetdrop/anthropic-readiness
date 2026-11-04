@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { createServer } from "node:http";
-import { readFileSync, mkdtempSync, rmSync } from "node:fs";
+import { existsSync, readFileSync, mkdtempSync, rmSync } from "node:fs";
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 import { tmpdir } from "node:os";
@@ -230,7 +230,10 @@ test("five selected scenarios run six requests and consume a fresh tool result",
       assert.equal(raw.bodyBase64, capture.bodyBase64);
     }
   assert.ok(!serialized.includes("synthetic-key"));
-  assert.match(readFileSync(join(output, "report.md"), "utf8"), /ANT-TOOL-LOOP-001/u);
+  const html = readFileSync(join(output, "report.html"), "utf8");
+  assert.match(html, /^<!doctype html>/u);
+  assert.match(html, /ANT-TOOL-LOOP-001/u);
+  assert.equal(existsSync(join(output, "report.md")), false);
   const count = requests.length;
   await assert.rejects(
     exec(process.execPath, args, {

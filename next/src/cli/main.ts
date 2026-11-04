@@ -6,9 +6,7 @@ import { pathToFileURL } from "node:url";
 import { apiVersions } from "../catalog.ts";
 import { createPlan, executePlan, type RunResult } from "../runner/assessment.ts";
 
-import { markdown } from "./report.ts";
-
-export { markdown } from "./report.ts";
+import { renderReport } from "./report.ts";
 
 const defaultProfiles = ["anthropic-core"];
 export async function main(args: string[]): Promise<number> {
@@ -114,7 +112,7 @@ export async function main(args: string[]): Promise<number> {
       flag: "wx",
       mode: 0o600,
     });
-    await writeFile(resolve(out, "report.md"), markdown(report, language), {
+    await writeFile(resolve(out, "report.html"), renderReport(report, language), {
       flag: "wx",
       mode: 0o600,
     });

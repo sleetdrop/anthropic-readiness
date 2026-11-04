@@ -1,6 +1,6 @@
 # Write a compatibility report
 
-The generated `report.md` is a check record. For a shared report, write a short
+The generated `report.html` is a check record. For a shared report, write a short
 synthesis in the user's language from the check record, `result.json`, and the
 relevant request/response bytes. Reconcile contradictory observations before
 summarizing. Cross-run comparisons must name the API header and keep overlapping
@@ -29,8 +29,10 @@ unavailability. A clear capability rejection tied to the tested request can
 support that finding. If a follow-up never ran, report the completed step and the
 missing step independently of its aggregate status.
 
-Use Markdown as the shareable and agent-readable source. An offline HTML view
-can use plain typography, restrained status colors and a compact capability
-table. Every label should remain meaningful without color. Keep navigation to the
-evidence and omit private URLs, credentials, and unnecessary raw text in any
-shared version.
+Write the synthesis directly as one offline HTML document. Keep the conclusion,
+capability table and evidence excerpts in the document as semantic HTML. Use
+section links for navigation and native details for supplementary evidence.
+Keep the reading order useful without CSS or interaction. Use restrained status
+colors with visible text labels. Link JSON as evidence attachments. Keep
+scripts, remote assets, private URLs, credentials and unnecessary raw text out
+of a shared report.

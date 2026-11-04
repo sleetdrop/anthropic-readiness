@@ -1,13 +1,13 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { markdown } from "../src/cli/main.ts";
+import { renderReport } from "../src/cli/report.ts";
 import type { Observation } from "../src/domain.ts";
 import { createPlan, type RunResult } from "../src/runner/assessment.ts";
 
 test("report groups repeated faults, keeps evidence navigable and separates task outcomes", () => {
   const plan = createPlan({
     endpoint: "https://private.invalid",
-    model: "example-model",
+    model: "example <script>unsafe</script>",
     profiles: ["anthropic-basic"],
   });
   const result: RunResult = {
@@ -63,15 +63,20 @@ test("report groups repeated faults, keeps evidence navigable and separates task
       };
     }),
   };
-  const en = markdown(result, "en");
+  const en = renderReport(result, "en");
+  assert.match(en, /^<!doctype html>/u);
+  assert.match(en, /<html lang="en">/u);
   assert.match(en, /2 cases with protocol deviations/u);
   assert.match(en, /2 tasks passed/u);
   assert.match(en, /1 case not started/u);
-  assert.equal([...en.matchAll(/^### F\d+$/gmu)].length, 1);
+  assert.equal([...en.matchAll(/<article id="f\d+"/gu)].length, 1);
   assert.match(en, /2 cases · 2 observations/u);
-  assert.match(en, /\[F01\]\(#f01\)/u);
-  assert.match(en, /response-capture-0\.json/u);
-  assert.match(en, /\[result\.json\]\(result\.json\)/u);
-  assert.doesNotMatch(en, /private\.invalid|untrusted response text/u);
-  assert.match(markdown(result, "zh"), /2 个用例发现协议偏差/u);
+  assert.match(en, /href="#f01"/u);
+  assert.match(en, /<details>/u);
+  assert.match(en, /href="response-capture-0\.json"/u);
+  assert.match(en, /href="response-capture-1\.json"/u);
+  assert.match(en, /href="result\.json"/u);
+  assert.match(en, /example &lt;script&gt;unsafe&lt;\/script&gt;/u);
+  assert.doesNotMatch(en, /<script|private\.invalid|untrusted response text/u);
+  assert.match(renderReport(result, "zh"), /2 个用例发现协议偏差/u);
 });

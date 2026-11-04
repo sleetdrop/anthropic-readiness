@@ -1,7 +1,7 @@
 import type { Observation, Status } from "../domain.ts";
 import type { CaptureRecord, CaseResult, RunResult } from "../runner/assessment.ts";
 
-type Language = "zh" | "en";
+import { escapeHtml as escape, reportDocument, type ReportLanguage } from "./report-document.ts";
 interface Finding {
   readonly label: string;
   readonly entries: { item: CaseResult; observation: Observation }[];
@@ -14,15 +14,6 @@ const labels: Record<Status, readonly [string, string]> = {
   INDETERMINATE: ["未能判断", "Inconclusive"],
   SKIP: ["无任务或未执行", "Not applicable or skipped"],
 };
-
-function escape(value: string): string {
-  return value
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replace(/[\\`*_\[\]|]/gu, "\\$&")
-    .replace(/[\r\n]+/gu, " ");
-}
 
 function findingKey(observation: Observation): string {
   const { dimension, status, ruleId, reason, expected, location } = observation;
@@ -57,6 +48,8 @@ function findingLabel(observation: Observation, zh: boolean): string {
     return zh ? "未观察到缓存写入后命中" : "Cache write followed by a hit was not observed";
   if (reason === "request_constraint_violated" && ruleId === "STRUCTURED-SCHEMA")
     return zh ? "输出不符合所请求的 JSON 结构" : "Output violates the requested JSON shape";
+  if (reason === "tool_followup_not_sent")
+    return zh ? "已观察到工具调用，后续请求未发出" : "Tool call observed; follow-up was not sent";
   if (reason === "not_run") return zh ? "用例未开始" : "Case did not start";
   if (observation.dimension === "behavior")
     return zh ? `任务检查 · ${expected}` : `Task check · ${expected}`;
@@ -72,14 +65,17 @@ function captureFor(item: CaseResult, observation: Observation): CaptureRecord |
   return item.captures.length === 1 ? item.captures[0] : undefined;
 }
 
-function evidenceLink(capture: CaptureRecord): string {
+function evidenceLink(capture: CaptureRecord, zh: boolean): string {
   const name = `response-${encodeURIComponent(capture.id)}.json`;
-  return `[${capture.statusCode === null ? "Capture" : `HTTP ${capture.statusCode}`}](${name})`;
+  const label =
+    capture.statusCode === null ? (zh ? "捕获记录" : "Capture") : `HTTP ${capture.statusCode}`;
+  return `<a href="${escape(name)}">${label}</a>`;
 }
 
-export function markdown(report: RunResult, language: Language): string {
+export function renderReport(report: RunResult, language: ReportLanguage): string {
   const zh = language === "zh";
-  const status = (value: Status) => labels[value][zh ? 0 : 1];
+  const status = (value: Status) =>
+    `<span class="status-${value.toLowerCase()}">${labels[value][zh ? 0 : 1]}</span>`;
   const groups = new Map<string, Finding>();
   for (const item of report.cases) {
     for (const observation of item.observations) {
@@ -101,7 +97,7 @@ export function markdown(report: RunResult, language: Language): string {
   const findings = [...groups.values()]
     .sort((a, b) => priority(a) - priority(b) || affected(b) - affected(a))
     .map((finding, index) => ({ ...finding, id: `F${String(index + 1).padStart(2, "0")}` }));
-  const link = (id: string) => `[${id}](#${id.toLowerCase()})`;
+  const link = (id: string) => `<a href="#${id.toLowerCase()}">${id}</a>`;
   const count = (predicate: (item: CaseResult) => boolean) => report.cases.filter(predicate).length;
   const deviations = count((item) => item.protocolStatus === "FAIL");
   const tasksPassed = count((item) => item.behaviorStatus === "PASS");
@@ -127,106 +123,128 @@ export function markdown(report: RunResult, language: Language): string {
       .map((finding) => link(finding.id))
       .join(", ");
     const behavior = item.behaviorStatus === "SKIP" ? "—" : status(item.behaviorStatus);
-    return `| ${escape(item.id)} | ${status(item.status)} | ${status(item.protocolStatus)} | ${behavior} | ${item.attemptsStarted} / ${max} | ${issueLinks || "—"} |`;
+    return `<tr><th scope="row"><code>${escape(item.id)}</code></th><td>${status(item.status)}</td><td>${status(item.protocolStatus)}</td><td>${behavior}</td><td class="number">${item.attemptsStarted} / ${max}</td><td>${issueLinks || "—"}</td></tr>`;
   });
-  return [
-    zh ? "# Anthropic 端点检查记录" : "# Anthropic endpoint check record",
-    "",
-    `**${status(report.status)}** · ${escape(report.plan.model)} · API ${escape(report.plan.apiVersion)}`,
-    "",
-    zh
-      ? `${deviations} 个用例发现协议偏差。任务行为通过 ${tasksPassed} 项、未通过 ${tasksFailed} 项。受阻 ${blocked} 项、未开始 ${notStarted} 项。协议与任务计数可能涉及同一用例。`
-      : `${deviations} cases with protocol deviations. ${tasksPassed} tasks passed and ${tasksFailed} failed. ${blocked} blocked, ${notStarted} ${notStarted === 1 ? "case" : "cases"} not started. Protocol and task counts may overlap.`,
-    "",
-    zh
-      ? `**范围**　${report.cases.length} 个用例 · 发起 ${report.attemptsStarted} / ${report.plan.plannedRequests} 次请求 · SDK / Claude Code 未实测`
-      : `**Scope**  ${report.cases.length} cases · ${report.attemptsStarted} / ${report.plan.plannedRequests} requests started · SDK / Claude Code not tested`,
-    `**${zh ? "响应声明的模型" : "Reported model"}**　${[...models].map(escape).join(", ") || "—"}`,
-    "",
-    zh ? "## 主要观测" : "## Findings at a glance",
-    "",
-    ...findings
-      .slice(0, 4)
-      .map((finding) =>
-        zh
-          ? `- ${link(finding.id)} ${escape(finding.label)}（涉及 ${affected(finding)} 个用例）`
-          : `- ${link(finding.id)} ${escape(finding.label)} (${affected(finding)} affected cases)`,
-      ),
-    ...(findings.length
-      ? []
-      : [zh ? "没有需要汇总的异常观测。" : "No exception observations to summarize."]),
-    "",
-    zh ? "## 发现与证据" : "## Findings and evidence",
-    "",
-    zh
-      ? "同组表示观测现象相近。用例数去重，观测数可能包含原始事件及其派生消息。证据仅列代表项。"
-      : "Groups describe similar observations. Case counts are distinct. Observation counts may include an original event and its derived message. Evidence links show representative exchanges.",
-    "",
-    ...findings.flatMap((finding) => {
-      const entries = [...finding.entries].sort(
-        (a, b) =>
-          Number(b.observation.location?.eventIndex !== undefined) -
-          Number(a.observation.location?.eventIndex !== undefined),
-      );
-      const sample = entries[0];
-      if (!sample) return [];
-      const { observation } = sample;
-      const location = observation.location;
-      const capture = captureFor(sample.item, observation);
-      const pointer = location?.pointer;
-      const place = [
-        location?.eventIndex === undefined ? "" : `SSE #${location.eventIndex}`,
-        pointer === undefined ? "" : escape(pointer || (zh ? "根对象" : "root object")),
-      ]
-        .filter(Boolean)
-        .join(" · ");
-      const observed = location?.missingKey
-        ? zh
-          ? "对应字段不存在"
-          : "Field absent"
-        : observation.reason === "thinking_signature_missing"
-          ? zh
-            ? "结束前未收到签名事件"
-            : "No signature event before block close"
-          : observation.ruleId === "HTTP-STATUS" && capture?.statusCode
-            ? `HTTP ${capture.statusCode}`
-            : "";
-      const rules = [...new Set(entries.map((entry) => entry.observation.ruleId))]
-        .map(escape)
-        .join(", ");
-      return [
-        `### ${finding.id}`,
-        "",
-        `**${escape(finding.label)}** · ${status(observation.status)} · ${affected(finding)} ${zh ? "个用例" : "cases"} · ${entries.length} ${zh ? "条观测" : "observations"}`,
-        "",
-        `- **${zh ? "预期" : "Expected"}**　${escape(observation.expected)}`,
-        ...(observed ? [`- **${zh ? "观测" : "Observed"}**　${observed}`] : []),
-        `- **${zh ? "代表性证据" : "Representative evidence"}**　${escape(sample.item.id)}${capture ? ` · ${evidenceLink(capture)}` : ""}${place ? ` · ${place}` : ""}`,
-        `- **${zh ? "规则" : "Rules"}**　${rules}`,
-        "",
-      ];
-    }),
-    zh ? "## 用例矩阵" : "## Case matrix",
-    "",
-    zh
-      ? "| 用例 | 综合状态 | 协议 | 任务 | 请求 | 发现 |"
-      : "| Case | Outcome | Protocol | Task | Requests | Findings |",
-    "| --- | --- | --- | --- | ---: | --- |",
-    ...rows,
-    "",
-    zh
-      ? "任务列的「—」表示该项无需推理任务。请求列保留已发起次数与计划上限，便于识别只执行了首轮的用例。"
-      : "A dash in the task column indicates no inference task. Request counts show started and planned exchanges, including cases that stopped after their first exchange.",
-    "",
-    zh ? "## 范围与原始资料" : "## Scope and original records",
-    "",
-    `- **${zh ? "规则快照" : "Rule snapshot"}**　${escape(report.plan.contract)}`,
-    zh
-      ? "- [result.json](result.json) 保存逐用例判断与原始证据。SSE 事件从 0 编号，派生消息与原始事件分别记录。分享前审阅捕获内容。"
-      : "- [result.json](result.json) retains per-case judgments and evidence. SSE event indices start at zero. Derived messages are recorded separately from original events. Review captures before sharing.",
-    ...report.limitations.map((item) => `- ${escape(item)}`),
-    "",
-    "[Messages API](https://platform.claude.com/docs/en/api/messages/create) · [Streaming](https://platform.claude.com/docs/en/build-with-claude/streaming)",
-    "",
-  ].join("\n");
+  const titles = zh
+    ? { overview: "结果概览", findings: "发现与证据", cases: "用例矩阵", scope: "范围与附件" }
+    : {
+        overview: "Overview",
+        findings: "Findings and evidence",
+        cases: "Case matrix",
+        scope: "Scope and attachments",
+      };
+  const title = zh ? "Anthropic 端点检查记录" : "Anthropic endpoint check record";
+  const caseCount = (value: number) =>
+    zh ? `${value} 个用例` : `${value} ${value === 1 ? "case" : "cases"}`;
+  const observationCount = (value: number) =>
+    zh ? `${value} 条观测` : `${value} ${value === 1 ? "observation" : "observations"}`;
+  const dimensions: Record<Observation["dimension"], string> = zh
+    ? { protocol: "协议", behavior: "任务", environment: "执行环境", client: "客户端" }
+    : { protocol: "Protocol", behavior: "Task", environment: "Execution", client: "Client" };
+
+  const articles = findings.map((finding) => {
+    const entries = [...finding.entries].sort(
+      (a, b) =>
+        Number(b.observation.location?.eventIndex !== undefined) -
+        Number(a.observation.location?.eventIndex !== undefined),
+    );
+    const observation = entries[0]!.observation;
+    const capture = captureFor(entries[0]!.item, observation);
+    let observed: string;
+    if (observation.location?.missingKey) {
+      observed = zh ? "对应字段不存在" : "Field absent";
+    } else if (observation.reason === "thinking_signature_missing") {
+      observed = zh ? "区块关闭前未收到签名事件" : "No signature event before block close";
+    } else if (observation.ruleId === "HTTP-STATUS" && capture?.statusCode) {
+      observed = `HTTP ${capture.statusCode}`;
+    } else if (observation.reason === "tool_followup_not_sent") {
+      observed = zh
+        ? "首轮调用已观察到，后续请求未发送"
+        : "First call observed; follow-up not sent";
+    } else {
+      observed = zh ? "详见捕获或原始检查记录" : "See the capture or original check record";
+    }
+    const evidence = new Set(
+      entries.map(({ item, observation }) => {
+        const location = observation.location;
+        const capture = captureFor(item, observation);
+        const step = capture ? item.captures.indexOf(capture) + 1 : undefined;
+        const position = [
+          step === undefined ? "" : zh ? `交换 ${step}` : `Exchange ${step}`,
+          location?.eventIndex === undefined ? "" : `SSE #${location.eventIndex}`,
+          capture && location && location.captureId === capture.derivedMessageId
+            ? zh
+              ? "派生消息"
+              : "Derived message"
+            : "",
+          location
+            ? `<code>${escape(location.pointer || (zh ? "根对象" : "root object"))}</code>`
+            : "",
+          location?.missingKey ? `<code>${escape(location.missingKey)}</code>` : "",
+        ].filter(Boolean);
+        return `<li><code>${escape(item.id)}</code> · <code>${escape(observation.ruleId)}</code>${capture ? ` · ${evidenceLink(capture, zh)}` : ""}${position.length ? ` · ${position.join(" · ")}` : ""}</li>`;
+      }),
+    );
+    return `<article id="${finding.id.toLowerCase()}">
+<h3><span class="finding-id">${finding.id}</span> ${escape(finding.label)}</h3>
+<p class="meta">${dimensions[observation.dimension]} · ${status(observation.status)} · ${caseCount(affected(finding))} · ${observationCount(entries.length)}</p>
+<dl class="comparison"><div><dt>${zh ? "预期" : "Expected"}</dt><dd>${escape(observation.expected)}</dd></div><div><dt>${zh ? "代表性观测" : "Representative observation"}</dt><dd>${observed}</dd></div></dl>
+${capture ? `<p class="meta">${zh ? "代表性捕获" : "Representative capture"} · <code>${escape(entries[0]!.item.id)}</code> · ${evidenceLink(capture, zh)}</p>` : ""}
+<details><summary>${zh ? "全部证据位置" : "All evidence locations"}</summary><ul>${[...evidence].join("\n")}</ul></details>
+</article>`;
+  });
+
+  return reportDocument(
+    title,
+    language,
+    `<header>
+<h1>${title}</h1>
+<p class="meta"><strong>${status(report.status)}</strong> · ${escape(report.plan.model)} · API ${escape(report.plan.apiVersion)}</p>
+<nav aria-label="${zh ? "报告目录" : "Report sections"}">${Object.entries(titles)
+      .map(([id, label]) => `<a href="#${id}">${label}</a>`)
+      .join("")}</nav>
+</header>
+<main>
+<section aria-labelledby="overview"><h2 id="overview">${titles.overview}</h2>
+<p>${
+      zh
+        ? `${deviations} 个用例发现协议偏差。任务行为通过 ${tasksPassed} 项、未通过 ${tasksFailed} 项。受阻 ${blocked} 项、未开始 ${notStarted} 项。`
+        : `${deviations} cases with protocol deviations. ${tasksPassed} tasks passed and ${tasksFailed} failed. ${blocked} blocked, ${caseCount(notStarted)} not started.`
+    }</p>
+<p class="muted">${
+      zh
+        ? `${caseCount(report.cases.length)} · 发起 ${report.attemptsStarted} / ${report.plan.plannedRequests} 次请求 · SDK / Claude Code 未实测。协议与任务计数可能涉及同一用例。`
+        : `${caseCount(report.cases.length)} · ${report.attemptsStarted} / ${report.plan.plannedRequests} requests started · SDK / Claude Code not tested. Protocol and task counts may overlap.`
+    }</p>
+<p>${zh ? "响应声明的模型" : "Reported model"} <code>${[...models].map(escape).join(", ") || "—"}</code></p>
+${
+  findings.length
+    ? `<ul>${findings
+        .slice(0, 4)
+        .map(
+          (finding) =>
+            `<li>${link(finding.id)} ${escape(finding.label)} <span class="muted">· ${caseCount(affected(finding))}</span></li>`,
+        )
+        .join("")}</ul>`
+    : ""
+}
+</section>
+<section aria-labelledby="findings"><h2 id="findings">${titles.findings}</h2>
+<p class="muted">${zh ? "按现象归并。观测可来自原始事件及其派生消息，用例数已去重。" : "Grouped by observation. Counts may include original events and derived messages. Case counts are distinct."}</p>
+${articles.join("\n") || `<p>${zh ? "没有需要汇总的异常观测。" : "No exception observations to summarize."}</p>`}
+</section>
+<section aria-labelledby="cases"><h2 id="cases">${titles.cases}</h2>
+<div class="table-scroll" tabindex="0" role="region" aria-labelledby="cases"><table class="matrix">
+<caption>${zh ? "请求列显示已发起次数与计划上限。「—」表示无需推理任务。" : "Requests show started and planned exchanges. A dash indicates no inference task."}</caption>
+<thead><tr>${(zh ? ["用例", "综合状态", "协议", "任务", "请求", "发现"] : ["Case", "Outcome", "Protocol", "Task", "Requests", "Findings"]).map((label) => `<th scope="col">${label}</th>`).join("")}</tr></thead>
+<tbody>${rows.join("\n")}</tbody>
+</table></div></section>
+<section aria-labelledby="scope"><h2 id="scope">${titles.scope}</h2>
+<ul><li>${zh ? "规则快照" : "Rule snapshot"} <code>${escape(report.plan.contract)}</code></li>
+<li><a href="result.json">result.json</a> · ${zh ? "逐用例判断及原始证据。SSE 事件从 0 编号。分享附件前请审阅。" : "Per-case judgments and original evidence. SSE indices start at zero. Review attachments before sharing."}</li>
+${report.limitations.map((item) => `<li>${escape(item)}</li>`).join("")}</ul>
+<p><a href="https://platform.claude.com/docs/en/api/messages/create">Messages API</a> · <a href="https://platform.claude.com/docs/en/build-with-claude/streaming">Streaming</a></p>
+</section>
+</main>`,
+  );
 }

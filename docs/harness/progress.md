@@ -84,3 +84,17 @@ The report regression failed before the presentation change and passed after
 it. The complete Node gate passed 70 tests. A private three-batch synthesis
 was rendered offline from existing captures and reviewed in a standalone
 browser at desktop light and narrow dark widths. Its nine local links resolved.
+
+## 2026-11-04 — HTML report delivery
+
+The CLI emits one human-facing `report.html`. It keeps JSON evidence attachments.
+The report uses section links, readable observations, native disclosure for
+occurrence locations, and separate protocol and task outcomes. It is bilingual,
+uses the system color scheme, and loads no external assets. The Skill guide now
+calls for a single HTML synthesis above the automated evidence.
+
+A valid first tool call followed by a protocol gate now leaves tool continuation
+inconclusive. The original protocol failure remains visible. A synthetic peer
+covers the distinction, and the CLI test checks that a fresh output contains
+HTML and no Markdown report. The existing GLM captures were used to preview
+a new synthesis and the underlying reports without contacting the endpoint.
