@@ -32,6 +32,10 @@ h3{font-size:1.05rem}
 section{margin-top:1.7rem;padding-top:1rem;border-top:1px solid var(--line)}
 article{padding:1rem 0;border-top:1px solid var(--line)}
 p,ol,ul,dl{margin:.55rem 0}
+main p:not(.meta){max-inline-size:76ch}
+figure{margin:1rem 0;break-inside:avoid}
+figure svg{max-inline-size:100%;height:auto}
+figcaption{margin-top:.4rem;color:var(--muted);font-size:.89rem}
 a{color:var(--accent);text-underline-offset:.2em}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 nav{display:flex;flex-wrap:wrap;gap:.35rem 1.15rem;margin-top:1rem;font-size:.9rem}
@@ -59,7 +63,15 @@ article:target{border-top-color:var(--accent)}
  .comparison{grid-template-columns:1fr}th,td{padding:.45rem .4rem}
  .capability-table thead th:nth-child(-n+2){width:22%}
 }
-@media print{body{max-width:none;padding:0}h2,h3{break-after:avoid}article,tr{break-inside:avoid}nav{display:none}}
+@media print{
+ :root{color-scheme:light;--surface:#fff;--text:#222;--muted:#555;--subtle:#f4f4f4;--line:#ccc;--accent:#222;--fail:#222;--pass:#222}
+ body{max-width:none;padding:0}
+ h2,h3{break-after:avoid}
+ tr{break-inside:avoid}
+ .table-scroll{overflow:visible}
+ .matrix{min-width:0}
+ nav{display:none}
+}
 </style>
 </head>
 <body>

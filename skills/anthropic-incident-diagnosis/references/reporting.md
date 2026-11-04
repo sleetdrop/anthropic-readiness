@@ -36,3 +36,21 @@ Keep the reading order useful without CSS or interaction. Use restrained status
 colors with visible text labels. Link JSON as evidence attachments. Keep
 scripts, remote assets, private URLs, credentials and unnecessary raw text out
 of a shared report.
+
+
+## Figures and presentation
+
+Use the hierarchy of a short technical paper. Keep the abstract short, use
+tables for exact comparisons, and put raw observations in the appendix.
+Use figure captions for the reading takeaway and reserve accents for meaning.
+Avoid decorative graphics, standalone scores, and charts that restate the text.
+
+Use a figure when the reader needs to see a trend, distribution, or relationship
+that is hard to extract from the table. A latency distribution requires repeated
+measurements. A before/after chart requires comparable conditions and a shared
+scale. Use one panel by default, label units and the number of observations,
+and keep missing or blocked data distinct from zero.
+
+For an offline figure, use semantic HTML with an inline SVG if needed, a visible
+caption, and the key values or a linked data table. Give the SVG an accessible
+name and use labels or shapes alongside color. Avoid scripts and external assets.
