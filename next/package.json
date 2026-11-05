@@ -1,0 +1,20 @@
+{
+  "name": "anthropic-readiness-tools",
+  "version": "0.2.0-dev",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24 <25"
+  },
+  "scripts": {
+    "check": "node scripts/check.ts",
+    "test": "node --test",
+    "test:protocol": "node --test test/protocol/*.test.ts",
+    "check:types": "tsc --noEmit",
+    "start": "node src/cli/main.ts"
+  },
+  "devDependencies": {
+    "@types/node": "24.19.2",
+    "typescript": "6.0.3"
+  }
+}

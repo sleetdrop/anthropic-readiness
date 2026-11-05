@@ -1,0 +1,42 @@
+{
+  "date": "2026-11-04",
+  "summary": {
+    "lead": "The candidate response omitted stop_sequence.",
+    "finding": "stop-sequence",
+    "detail": "The same text task completed in both runs.",
+    "scope": "This comparison covers one non-streaming Messages case per API version."
+  },
+  "runs": [
+    { "id": "baseline", "label": "Baseline", "result": "baseline/result.json" },
+    { "id": "candidate", "label": "Candidate", "result": "candidate/result.json" }
+  ],
+  "capabilities": [
+    {
+      "name": "Text generation",
+      "status": "deviation",
+      "observation": "The expected text was present. The candidate response was missing a required field.",
+      "findings": ["stop-sequence"]
+    }
+  ],
+  "findings": [
+    {
+      "id": "stop-sequence",
+      "title": "The candidate response omitted stop_sequence",
+      "expected": "A completed Messages response includes stop_sequence. Its value may be null.",
+      "observed": "The baseline returned null. The candidate omitted the field.",
+      "nextCheck": "Repeat the same request at the proxy and its direct upstream to locate the difference.",
+      "comparison": {
+        "caption": "One non-streaming response per version.",
+        "columns": ["Run", "Field"],
+        "rows": [["Baseline", "null"], ["Candidate", "Absent"]]
+      },
+      "evidence": [
+        { "run": "candidate", "case": "ANT-MESSAGE-001", "exchange": 1, "location": "Response root" },
+        { "run": "baseline", "case": "ANT-MESSAGE-001", "exchange": 1, "location": "/stop_sequence" }
+      ],
+      "references": [
+        { "title": "Messages API reference", "url": "https://platform.claude.com/docs/en/api/messages/create" }
+      ]
+    }
+  ]
+}

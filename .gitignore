@@ -1,3 +1,4 @@
+# Ignore local files left by older checkouts.
 .venv/
 __pycache__/
 .pytest_cache/
