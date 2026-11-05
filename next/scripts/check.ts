@@ -13,7 +13,7 @@ writeFileSync(
   new URL("result.json", output),
   JSON.stringify({
     schemaVersion: 1,
-    scope: "typescript-rewrite",
+    scope: "incident-diagnosis",
     startedAt,
     status: "running",
   }),
@@ -41,7 +41,7 @@ writeFileSync(
   JSON.stringify(
     {
       schemaVersion: 1,
-      scope: "typescript-rewrite",
+      scope: "incident-diagnosis",
       node: process.version,
       startedAt,
       status: passed ? "passed" : "failed",
@@ -52,5 +52,5 @@ writeFileSync(
     2,
   ) + "\n",
 );
-console.log(`Rewrite checks: ${passed ? "passed" : "failed"}; endpoint coverage is separate.`);
+console.log(`Skill checks: ${passed ? "passed" : "failed"}; endpoint coverage is separate.`);
 process.exitCode = passed ? 0 : 1;

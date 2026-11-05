@@ -48,8 +48,10 @@ and [streaming contract](https://platform.claude.com/docs/en/build-with-claude/s
 for version-sensitive interpretations; do not infer the request version from the body.
 
 If a fresh request is necessary, establish explicit permission for the target,
-a request cap and a time bound first. Keep credentials in the local environment,
-and never put them in transcripts or shared reproductions. Use the
+a request cap and a time bound first. Use the
+[connection guide](references/connection.md) for endpoint paths and API-key,
+Bearer, or unauthenticated access. Ask for the environment variable name rather
+than the secret value. Keep credentials out of transcripts and shared reproductions. Use the
 [preset probe guide](../../docs/probes.md) for targeted preset
 probes only if its request shape and API version are relevant. Preview the selected
 profile before running it; label a preset a probe, not an exact replay. If no

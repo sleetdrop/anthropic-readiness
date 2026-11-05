@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { createServer } from "node:http";
-import { existsSync, readFileSync, mkdtempSync, rmSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync, mkdtempSync, rmSync } from "node:fs";
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 import { tmpdir } from "node:os";
@@ -108,12 +108,21 @@ test("cancellation retains every selected case without admitting any request", a
 
 test("five selected scenarios run six requests and consume a fresh tool result", async (t) => {
   const requests: Record<string, unknown>[] = [];
+  let expectedAuth: "api_key" | "bearer" | "none" = "api_key";
   const server = createServer(async (req, res) => {
     let text = "";
     for await (const chunk of req) text += String(chunk);
     const body = JSON.parse(text) as Record<string, unknown>;
     requests.push(body);
     assert.equal(req.headers["anthropic-version"], "2023-06-01");
+    assert.equal(
+      req.headers["x-api-key"],
+      expectedAuth === "api_key" ? "synthetic-key" : undefined,
+    );
+    assert.equal(
+      req.headers.authorization,
+      expectedAuth === "bearer" ? "Bearer synthetic-key" : undefined,
+    );
     assert.equal(body.max_tokens, 2048);
     const messages = body.messages as { role: string; content: unknown }[];
     const last = messages.at(-1)?.content;
@@ -193,6 +202,7 @@ test("five selected scenarios run six requests and consume a fresh tool result",
       assert.match(capture.sha256, /^[a-f0-9]{64}$/u);
       assert.equal(Buffer.from(capture.bodyBase64, "base64").length, capture.retainedBytes);
     }
+  expectedAuth = "none";
   const repeated = await executePlan(plan, { allowLive: true });
   assert.equal(repeated.status, "PASS");
   assert.notEqual(verificationToken(requests[11]), nonce);
@@ -215,6 +225,7 @@ test("five selected scenarios run six requests and consume a fresh tool result",
     "SYNTHETIC_READINESS_KEY",
   ];
   const exec = promisify(execFile);
+  expectedAuth = "api_key";
   const child = await exec(process.execPath, args, {
     env: { ...process.env, SYNTHETIC_READINESS_KEY: "synthetic-key" },
     timeout: 5000,
@@ -241,6 +252,20 @@ test("five selected scenarios run six requests and consume a fresh tool result",
   assert.match(html, /<html lang="en">/u);
   assert.match(html, /ANT-TOOL-LOOP-001/u);
   assert.equal(existsSync(join(output, "report.md")), false);
+  const bearerOutput = join(directory, "bearer-assessment");
+  expectedAuth = "bearer";
+  const bearer = await exec(
+    process.execPath,
+    [...args.map((value) => (value === output ? bearerOutput : value)), "--auth-mode", "bearer"],
+    {
+      env: { ...process.env, SYNTHETIC_READINESS_KEY: "synthetic-key" },
+      timeout: 5000,
+    },
+  );
+  assert.match(bearer.stdout, /PASS/u);
+  for (const filename of readdirSync(bearerOutput)) {
+    assert.ok(!readFileSync(join(bearerOutput, filename), "utf8").includes("synthetic-key"));
+  }
   const count = requests.length;
   await assert.rejects(
     exec(process.execPath, args, {

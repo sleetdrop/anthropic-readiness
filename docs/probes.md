@@ -81,8 +81,10 @@ npm --prefix next start -- run --endpoint https://api.example.com/v1 \
   --out /tmp/incident-probe
 ```
 
-For authentication, set a local environment variable and pass its name with
-`--auth-env ENV_NAME`. Choose `--auth-mode api_key` or `bearer` for the endpoint.
+Use the [connection guide](../skills/anthropic-incident-diagnosis/references/connection.md)
+for API-key, Bearer, or unauthenticated access and custom gateway paths.
+Supply the credential through `--auth-env ENV_NAME` and select `--auth-mode api_key`
+or `bearer`. The variable must be available to the process running the probe.
 Use `--model-alias` for a known alias, or `--structure-only` when model identity
 is outside the investigation. A deadline or failed prerequisite can prevent a
 follow-up. Inspect attempts started and case outcomes before interpreting coverage.

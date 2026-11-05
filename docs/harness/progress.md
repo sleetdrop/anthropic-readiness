@@ -165,3 +165,17 @@ three retained GLM runs offline and verified the 35 selected cases, 42 requests,
 and local evidence links. A copied renderer produced identical HTML. Browser
 checks covered the finding link, scroll navigation, and JSON viewer at 390
 pixels. All 72 Node tests passed.
+
+## 2026-11-05 — Current workflow and authentication
+
+The active checkout contains the Skill, Node helpers and synthetic fixtures.
+The old application and container files remain in Git history. The residual
+pre-commit framework configuration was removed, and package/check/CI names
+now describe the Skill. One Node 24 CI job runs the shared check entry point.
+
+The connection guide documents endpoint normalization, API-key, Bearer and
+unauthenticated requests, and the environment in which credentials must be
+available. Synthetic endpoint assertions verify the actual headers for all
+three modes. An empty named credential fails before creating output. The
+Bearer run's output files were checked for the synthetic secret. All 73 tests
+passed. This validation does not establish a remote CI result.

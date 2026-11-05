@@ -1,5 +1,5 @@
 name: Protocol update
-description: Propose a reviewed protocol bundle update
+description: Propose a protocol rule or probe update
 body:
   - type: markdown
     attributes:

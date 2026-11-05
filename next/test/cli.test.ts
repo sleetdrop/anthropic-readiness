@@ -36,3 +36,21 @@ test("CLI rejects insufficient budgets instead of silently executing less", () =
   assert.equal(child.status, 2);
   assert.match(child.stderr, /insufficient_request_budget/u);
 });
+
+test("a named credential must be available before any output or request", (t) => {
+  const root = mkdtempSync(join(tmpdir(), "readiness-cli-auth-"));
+  t.after(() => rmSync(root, { recursive: true, force: true }));
+  const out = join(root, "assessment");
+  const child = spawnSync(
+    process.execPath,
+    [entry, "run", ...target, "--allow-live", "--out", out, "--auth-env", "SYNTHETIC_EMPTY_TOKEN"],
+    {
+      encoding: "utf8",
+      timeout: 5000,
+      env: { ...process.env, SYNTHETIC_EMPTY_TOKEN: "" },
+    },
+  );
+  assert.equal(child.status, 2);
+  assert.equal(child.stderr.trim(), "credential_env_unavailable");
+  assert.equal(existsSync(out), false);
+});
