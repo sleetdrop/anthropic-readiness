@@ -16,6 +16,14 @@ version selection, explicit request caps and coverage boundaries. For a shared
 assessment, follow the [Skill report guide](../skills/anthropic-readiness/references/reporting.md)
 and render the English synthesis from retained runs.
 
+A [current implementation review](reviews/2026-11-05-current-implementation.md)
+reported five correctness issues across its initial and follow-up reviews. R1–R5
+are fixed with synthetic controls. Saved response records can be inspected
+directly, including `count_tokens` captures, and capture records retain header
+and first-byte timings. The Node 24 gate passes 82 tests. See the
+[verification record](harness/progress.md) for the fixes and improvement
+assessment.
+
 The initial Skill prototype is at `8048934`. That commit also contains the
 former standalone application, design records, and the comparison with
 llm-comply. Read a particular historical reference with Git when it helps

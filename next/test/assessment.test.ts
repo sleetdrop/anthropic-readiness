@@ -91,6 +91,61 @@ test("execution requires explicit live admission before any connection", async (
   );
 });
 
+test("an exact-output response prefix cannot pass while its stream is unfinished", async (t) => {
+  const event = (type: string, value: object) =>
+    `event: ${type}\ndata: ${JSON.stringify({ type, ...value })}\n\n`;
+  const server = createServer(async (_request, response) => {
+    response.setHeader("content-type", "text/event-stream");
+    response.write(
+      event("message_start", {
+        message: {
+          id: "msg-partial",
+          type: "message",
+          role: "assistant",
+          model: "example-model",
+          content: [],
+          stop_reason: null,
+          stop_sequence: null,
+          usage: { input_tokens: 2, output_tokens: 0 },
+        },
+      }) +
+        event("content_block_start", {
+          index: 0,
+          content_block: { type: "text", text: "" },
+        }) +
+        event("content_block_delta", { index: 0, delta: { type: "text_delta", text: "HELLO" } }) +
+        event("content_block_stop", { index: 0 }),
+    );
+  });
+  await new Promise<void>((resolve, reject) => {
+    server.once("error", reject);
+    server.listen(0, "127.0.0.1", resolve);
+  });
+  t.after(async () => {
+    server.closeAllConnections();
+    await new Promise<void>((resolve) => server.close(() => resolve()));
+  });
+  const address = server.address();
+  if (!address || typeof address === "string") throw new Error("fixture_address");
+  const plan = createPlan({
+    endpoint: `http://127.0.0.1:${address.port}/v1/messages`,
+    model: "example-model",
+    profiles: ["anthropic-basic"],
+    readMs: 50,
+    attemptMs: 250,
+  });
+  const selected = plan.cases.find((item) => item.id === "ANT-TEXT-SSE-001");
+  assert.ok(selected);
+  const result = await executePlan(
+    { ...plan, cases: [selected], plannedRequests: 1, maxRequests: 1 },
+    { allowLive: true, authMode: "none" },
+  );
+  const item = result.cases[0];
+  assert.equal(item?.captures[0]?.messageComplete, false);
+  assert.equal(item?.behaviorStatus, "INDETERMINATE");
+  assert.equal(item?.observations.find((value) => value.ruleId === "TASK-COMPLETE")?.status, "INDETERMINATE");
+});
+
 test("cancellation retains every selected case without admitting any request", async () => {
   const controller = new AbortController();
   controller.abort();
@@ -201,6 +256,8 @@ test("five selected scenarios run six requests and consume a fresh tool result",
     for (const capture of item.captures) {
       assert.match(capture.sha256, /^[a-f0-9]{64}$/u);
       assert.equal(Buffer.from(capture.bodyBase64, "base64").length, capture.retainedBytes);
+      assert.equal(typeof capture.headersMs, "number");
+      assert.equal(typeof capture.firstByteMs, "number");
     }
   expectedAuth = "none";
   const repeated = await executePlan(plan, {

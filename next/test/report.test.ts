@@ -59,6 +59,8 @@ test("report groups repeated faults, keeps evidence navigable and separates task
                 requestSha256: "",
                 sha256: "",
                 elapsedMs: 125,
+                headersMs: 20,
+                firstByteMs: 30,
               },
             ]
           : [],

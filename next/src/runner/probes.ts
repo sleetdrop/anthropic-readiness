@@ -422,11 +422,18 @@ export function checkResponseContract(
   id: string,
   message: unknown,
   captureId: string,
+  requestedMaxTokens?: number,
 ): Observation[] {
   if (!object(message)) return [];
   const blocks = content(message);
   const findings: Observation[] = [];
-  const check = (ruleId: string, valid: boolean, expected: string, pointer: string) => {
+  const check = (
+    ruleId: string,
+    valid: boolean,
+    expected: string,
+    pointer: string,
+    actual?: string,
+  ) => {
     findings.push({
       ruleId,
       ruleVersion: 1,
@@ -435,10 +442,24 @@ export function checkResponseContract(
       status: valid ? "PASS" : "FAIL",
       reason: valid ? "request_constraint_satisfied" : "request_constraint_violated",
       expected,
-      actual: valid ? "observed" : "response violates request constraint",
+      actual: actual ?? (valid ? "observed" : "response violates request constraint"),
       location: { captureId, pointer },
     });
   };
+  if (
+    ["ANT-MAX-TOKENS-001", "ANT-MAX-TOKENS-SSE-001"].includes(id) &&
+    requestedMaxTokens !== undefined
+  ) {
+    const usage = object(message.usage) ? message.usage : {};
+    const outputTokens = usage.output_tokens;
+    check(
+      "OUTPUT-TOKEN-LIMIT",
+      typeof outputTokens === "number" && Number.isInteger(outputTokens) && outputTokens <= requestedMaxTokens,
+      `usage.output_tokens <= requested max_tokens (${requestedMaxTokens})`,
+      "/usage/output_tokens",
+      `requested ${requestedMaxTokens}, reported ${String(outputTokens)}`,
+    );
+  }
   if (id === "ANT-TOOL-NONE-001") {
     check(
       "TOOL-CHOICE-NONE",

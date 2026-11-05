@@ -36,12 +36,18 @@ node next/src/cli/inspect.ts --file "$BODY" --format sse --capture partial
 
 Use `--format message` for a JSON success body. Use `--capture complete` only
 when there is evidence of complete capture; unknown completeness means
-`partial`. For a repository `response-*.json` record, decode `bodyBase64`
-locally, verify `sha256`, and check `end` and the content encoding before
-classifying it. The helper exits zero when inspection succeeds; read JSON `status`
-and the individual `findings`, including their dimensions. A `PASS` means only
+`partial`. For a repository `response-*.json` record, use the record adapter:
+
+```sh
+node next/src/cli/inspect.ts --record "$RESPONSE_RECORD"
+```
+
+It verifies the retained body hash, successful HTTP status, content encoding
+and content type, then derives the format and completeness from the record. The
+helper exits zero when inspection succeeds; read JSON `status` and the
+individual `findings`, including their dimensions. A `PASS` means only
 the checked rules passed. SSE event indexes are zero-based. The helper does not
-check model identity, HTTP headers, client compatibility, or a complete versioned
+check model identity, client compatibility, or a complete versioned
 specification. A hash identifies the inspected bytes, not the source provider.
 Consult the relevant [official version history](https://platform.claude.com/docs/en/api/versioning)
 and [streaming contract](https://platform.claude.com/docs/en/build-with-claude/streaming)
