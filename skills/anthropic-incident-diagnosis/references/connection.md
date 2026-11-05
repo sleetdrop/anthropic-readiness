@@ -22,9 +22,14 @@ bounded command to run in a shell that has access to it.
 
 | Endpoint requirement | Arguments | Header sent |
 | --- | --- | --- |
-| Anthropic API key | `--auth-env DIAG_API_TOKEN --auth-mode api_key` | `x-api-key: <value>` |
-| Bearer token | `--auth-env DIAG_API_TOKEN --auth-mode bearer` | `Authorization: Bearer <value>` |
+| Anthropic API key | `--auth-env ANTHROPIC_DIAGNOSIS_API_TOKEN --auth-mode api_key` | `x-api-key: <value>` |
+| Bearer token | `--auth-env ANTHROPIC_DIAGNOSIS_API_TOKEN --auth-mode bearer` | `Authorization: Bearer <value>` |
 | No authentication | Omit `--auth-env` | Neither authentication header |
+
+`ANTHROPIC_DIAGNOSIS_API_TOKEN` is the recommended project-specific name.
+`--auth-env` accepts another explicitly chosen name, including separate names
+for separate targets. The helper reads no credential variable unless the user
+selects it with `--auth-env`. It does not reuse an agent host's own API key.
 
 The default mode is `api_key`. An explicitly named empty or unavailable
 variable stops the run before the output directory is created or a request
@@ -32,16 +37,6 @@ is sent. The tool reads the variable for each invocation. It does not obtain,
 refresh, or persist credentials. Arbitrary authentication headers, simultaneous
 key-plus-token authentication, OAuth login, and mTLS configuration have no
 CLI options.
-
-In a Bash shell, enter a token without displaying it or placing its value in
-the command history:
-
-```bash
-printf 'API token: '
-IFS= read -r -s DIAG_API_TOKEN
-printf '\n'
-export DIAG_API_TOKEN
-```
 
 Preview a three-request text probe. Planning needs no credential:
 
@@ -51,25 +46,59 @@ node next/src/cli/main.ts plan \
   --profile anthropic-basic --max-requests 3 --run-ms 90000
 ```
 
-With the user's live authorization, run the same selection. The parent of
-the new output directory must already exist:
+For a one-off Bash run, let the user enter the secret in their own terminal.
+The subshell limits the variable's lifetime to this command group. The parent
+of the new output directory must already exist.
 
-```sh
-node next/src/cli/main.ts run \
-  --endpoint https://gateway.example.com/v1 --model YOUR_MODEL \
-  --profile anthropic-basic --max-requests 3 --run-ms 90000 \
-  --auth-env DIAG_API_TOKEN --auth-mode api_key \
-  --allow-live --out /tmp/diagnosis-run
+```bash
+(
+  set +x
+  printf 'Endpoint API token: '
+  IFS= read -r -s ANTHROPIC_DIAGNOSIS_API_TOKEN
+  printf '\n'
+  export ANTHROPIC_DIAGNOSIS_API_TOKEN
+
+  node next/src/cli/main.ts run \
+    --endpoint https://gateway.example.com/v1 --model YOUR_MODEL \
+    --profile anthropic-basic --max-requests 3 --run-ms 90000 \
+    --auth-env ANTHROPIC_DIAGNOSIS_API_TOKEN --auth-mode api_key \
+    --allow-live --out /tmp/diagnosis-run
+)
 ```
 
 For a Bearer endpoint, change `--auth-mode api_key` to `--auth-mode bearer`.
-For an unauthenticated endpoint, omit both authentication arguments.
-Remove the temporary variable from the shell when finished:
+For an unauthenticated endpoint, omit the token prompt and authentication
+arguments. In an agent session, provide the endpoint, mode and chosen variable
+name. Confirm availability without printing the value or dumping the environment.
 
-```sh
-unset DIAG_API_TOKEN
-```
+For repeated use, store the credential in an OS credential store or the
+organization's secret manager. Have that system supply the chosen variable to
+the probe process when needed. The Skill defines the variable interface and
+does not implement a vault, OS keychain integration, or token refresh.
+In CI, inject only a dedicated test credential into the authorized live-probe
+step. The repository's normal checks need no endpoint secrets.
+
+## Security boundary
+
+An environment variable is plaintext in the process environment. Code running
+with sufficient local permissions, including an agent's shell tools, may read
+it. A namespace prevents accidental naming overlap but does not provide access
+control. A subshell reduces exposure time and inherited scope. It does not
+isolate a secret from other authorized code running in that environment.
+
+Use a credential restricted to the target service and the required access,
+with a short lifetime or easy revocation when supported. Use HTTPS for remote
+authenticated endpoints. The probe does not follow redirects, so it does not
+forward the credential to a redirect target. If the host provides vault-based
+header injection restricted to an exact hostname, prefer that mechanism when
+available. The current local helper consumes a real environment value.
 
 Request authorization headers are not included in captured request records.
 Response headers and bodies remain original evidence and may contain
 server-returned sensitive content. Review them before sharing.
+
+
+See [Anthropic's Skill credential guidance](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/enterprise),
+[host-side header injection](https://platform.claude.com/docs/en/managed-agents/secure-deployment),
+[Codex environment filtering](https://learn.chatgpt.com/docs/config-file/config-advanced),
+and [process-scoped automation credentials](https://learn.chatgpt.com/docs/non-interactive-mode).
