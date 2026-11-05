@@ -50,7 +50,7 @@ for version-sensitive interpretations; do not infer the request version from the
 If a fresh request is necessary, establish explicit permission for the target,
 a request cap and a time bound first. Use the
 [connection guide](references/connection.md) for endpoint paths and API-key,
-Bearer, or unauthenticated access. Use a project-specific variable name such as `ANTHROPIC_DIAGNOSIS_API_TOKEN`.
+Bearer, or unauthenticated access. Use a project-specific variable name such as `LLM_DIAG_TARGET_TOKEN`.
 Ask for its name rather than the secret value, and check availability without
 printing credentials or dumping the environment. Keep credentials out of transcripts and shared reproductions. Use the
 [preset probe guide](../../docs/probes.md) for targeted preset
