@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { createServer } from "node:http";
 import { createPlan, executePlan } from "../src/runner/assessment.ts";
+import { checkResponseContract } from "../src/runner/probes.ts";
 import { validateSse } from "../src/protocol/sse.ts";
 
 test("documented core includes count tokens, negative cases, and a streamed tool round trip", () => {
@@ -14,6 +15,28 @@ test("documented core includes count tokens, negative cases, and a streamed tool
   assert.ok(plan.cases.some((item) => item.id === "ANT-ERROR-MISSING-001"));
   assert.equal(plan.cases.find((item) => item.id === "ANT-TOOL-SSE-LOOP-001")?.maxRequests, 2);
   assert.ok(plan.plannedRequests > 6);
+});
+
+test("one-token request contract rejects reported output usage above the requested maximum", () => {
+  const message = {
+    stop_reason: "max_tokens",
+    content: [{ type: "text", text: Array.from({ length: 50 }, (_, index) => index + 1).join("\n") }],
+    usage: { input_tokens: 2, output_tokens: 100 },
+  };
+  for (const id of ["ANT-MAX-TOKENS-001", "ANT-MAX-TOKENS-SSE-001"]) {
+    const finding = checkResponseContract(id, message, `capture-${id}`, 1).find(
+      (item) => item.ruleId === "OUTPUT-TOKEN-LIMIT",
+    );
+    assert.equal(finding?.status, "FAIL", id);
+    assert.equal(finding?.expected, "usage.output_tokens <= requested max_tokens (1)");
+    assert.match(finding?.actual ?? "", /requested 1, reported 100/u);
+    assert.equal(finding?.location?.pointer, "/usage/output_tokens");
+  }
+  const control = checkResponseContract("ANT-MAX-TOKENS-001", {
+    ...message,
+    usage: { input_tokens: 2, output_tokens: 1 },
+  }, "normal", 1);
+  assert.equal(control.find((item) => item.ruleId === "OUTPUT-TOKEN-LIMIT")?.status, "PASS");
 });
 
 test("documented thinking streams retain text and signature in the assembled message", () => {
@@ -103,11 +126,11 @@ function textFrames(text: string, index = 0): string[] {
     frame("content_block_stop", { index }),
   ];
 }
-function finishFrames(stop = "end_turn", sequence: string | null = null): string[] {
+function finishFrames(stop = "end_turn", sequence: string | null = null, outputTokens = 3): string[] {
   return [
     frame("message_delta", {
       delta: { stop_reason: stop, stop_sequence: sequence },
-      usage: { output_tokens: 3 },
+      usage: { output_tokens: outputTokens },
     }),
     frame("message_stop"),
   ];
@@ -245,6 +268,7 @@ test("all documented presets execute their bounded synthetic exchanges", async (
       assert.equal(body.max_tokens, 1);
       stop = "max_tokens";
       reply = "1";
+      usage = { output_tokens: 1 };
     }
     if (id === "ANT-TOOL-NONE-001") assert.equal(body.tool_choice.type, "none");
     if (id === "ANT-TOOL-ANY-001") {
@@ -356,7 +380,7 @@ test("all documented presets execute their bounded synthetic exchanges", async (
             message: { ...message([]), stop_reason: null },
           }),
           ...(toolCalls.length ? toolFrames() : textFrames(reply)),
-          ...finishFrames(stop, stopSequence),
+          ...finishFrames(stop, stopSequence, id.includes("-MAX-TOKENS-") ? 1 : 3),
         ].join(""),
       );
     } else {

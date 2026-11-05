@@ -1,5 +1,84 @@
 # Verification record
 
+## 2026-11-05 — Saved count-token record inspection
+
+Fixed follow-up finding R5. The record adapter preserves `route: "count_tokens"`
+and dispatches JSON to the existing auxiliary response validator. A valid
+`{"input_tokens":42}` capture now passes with no findings; a string token count
+fails at `/input_tokens`; and a valid-looking body from a non-EOF capture stays
+INDETERMINATE. Normal Message records continue to pass, and unsupported route
+values are rejected by the adapter.
+
+The new count-token regression first failed before the code change: its normal
+control was reported as a Message protocol failure. It passes after the fix.
+The original retained count-token and normal-Message records were also
+inspected directly; both returned PASS. Node `v24.22.2`: `npm run check` passed
+all 82 tests, with no skipped, cancelled or TODO tests, and strict types passed.
+`git diff --check` passed. Only synthetic local records and loopback peers were
+used; no real endpoint, credential or remote write was involved. No commit was
+made, pending the requested follow-up review.
+
+## 2026-11-05 — Independent follow-up review
+
+Reviewed the uncommitted R1–R4 implementation and associated improvements.
+Node 24.22.2 strict types and all 81 tests passed. The original bounded review
+driver made seven loopback requests and confirmed the corrected token-limit,
+final-stop, partial-task, and cumulative-usage outcomes with passing controls.
+
+An offline additional control found R5: the new `--record` adapter treats a
+complete HTTP 200 `count_tokens` record as a Message and emits eight missing
+Message-field failures. The existing auxiliary validator passes the same
+`{"input_tokens":42}` body; a normal Message record also passes the adapter.
+Synthetic records and inspection outputs are retained under ignored
+`artifacts/review-followup-2026-11-05/`. See the follow-up section of the
+[review](../reviews/2026-11-05-current-implementation.md) for the reproduction
+and requested correction. Commit approval was withheld pending R5. No
+production code, remote writes, or real endpoint calls were made.
+
+## 2026-11-05 — Current implementation review fixes
+
+Fixed all four findings in `docs/reviews/2026-11-05-current-implementation.md`.
+The token-limit presets now emit a request-aware protocol observation comparing
+`usage.output_tokens` with the sent `max_tokens`; normal one-token controls
+report one output token, while both JSON and SSE overrun controls fail at
+`/usage/output_tokens`. SSE validation now requires a non-null final stop reason
+at `message_stop`, with the finding linked to the final delta. The offline
+inspector and online validator agree on identical faulty bytes, while a stream
+without a terminal event remains inconclusive. Exact-output task passes now
+require the latest exchange to have a complete message and EOF. SSE usage
+assembly validates and replaces supplied input, cache creation, cache read, and
+output counters without mutating retained event data.
+
+The offline inspector accepts `--record RESPONSE_RECORD`; it verifies the body
+hash, success status, content encoding and media type, then derives format and
+capture completeness. `CaptureRecord` now retains the HTTP adapter's
+`headersMs` and `firstByteMs` values. No chunk or event arrival series was added.
+
+The review's six improvement proposals were evaluated individually:
+
+1. Implemented the saved-record adapter because it removes manual decoding and
+   hash checks without moving I/O into protocol validators.
+2. Deferred single-case selection and request preview. This needs coordinated
+   changes to catalog selection, request construction and preview safety; it is
+   broader than the current correctness and evidence work.
+3. Deferred decoded event views and exchange-linked report navigation. They
+   require coordinated report, viewer and evidence-identity changes.
+4. Implemented retention of existing header and first-byte timings. Deferred
+   chunk/event timing because it adds per-capture data and boundedness questions
+   without an identified incident needing that detail.
+5. Added paired normal/fault controls and an offline/online parity invariant
+   for the repaired rules. Deferred a repository-wide rule-to-fixture ledger
+   and retrieval metadata framework; the current fix does not need one to keep
+   its evidence independent.
+6. Kept the existing architecture small. No plugin system, standalone web app,
+   generic orchestration layer or shared evaluation abstraction was introduced.
+
+Node `v24.22.2`: `npm run check` passed all 81 tests, with no skipped, cancelled
+or TODO tests, and strict types passed. Loopback HTTP checks used bounded
+synthetic peers only. A first restricted run could not bind loopback; rerunning
+the same check with local server access passed. No real endpoint, credentials,
+hosted CI or browser workflow was used. No Git commit was made.
+
 ## 2026-11-04: Repository transition to the diagnosis Skill
 
 The Skill, Node helpers, contract fixtures, and Node CI are the active
@@ -201,3 +280,25 @@ unauthenticated runs, explicit credential overrides, suppression of a supplied
 token in none mode, missing credentials before output creation, and exclusion
 of the synthetic secret from generated files. All 75 tests passed. Connection
 examples passed shell syntax checks.
+
+## 2026-11-05 — Current implementation review
+
+Reviewed the active Skill, helpers, validators, execution flow, reporting,
+tests, CI configuration, and documentation at `3503816`. Installed the locked
+tools and passed strict types and all 75 tests on Node 24.22.2. The restricted
+first attempt could not bind loopback servers; the same gate passed when
+allowed to run its synthetic peers.
+
+An additional synthetic driver ran twice with seven loopback requests per
+invocation and a two-second deadline per engine run. The final run compared
+identical SSE bytes through offline inspection and online evaluation. It
+confirmed four open issues: token-limit overruns pass both JSON and SSE probes;
+offline inspection passes a null final stop reason that online protocol
+validation rejects; a stalled partial stream earns a task pass; and assembled
+SSE usage omits final input/cache counter updates. Normal controls were retained.
+
+See the [review](../reviews/2026-11-05-current-implementation.md) for priorities,
+source locations, official references, and improvements. Reproduction code and
+results remain local under ignored `artifacts/review-2026-11-05/`. Production
+code and existing tests were unchanged. No real endpoint, SDK/client workflow,
+hosted CI, or browser layout check was run, and endpoint coverage did not grow.

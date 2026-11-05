@@ -66,6 +66,8 @@ export interface CaptureRecord {
   requestSha256: string;
   sha256: string;
   elapsedMs: number;
+  headersMs: number | null;
+  firstByteMs: number | null;
   message?: unknown;
   derivedMessageId?: string;
   messageComplete?: boolean;
@@ -276,6 +278,8 @@ export async function executePlan(plan: RunPlan, options: ExecutionOptions): Pro
       requestSha256: createHash("sha256").update(requestBytes).digest("hex"),
       sha256: createHash("sha256").update(captured.body).digest("hex"),
       elapsedMs: captured.elapsedMs,
+      headersMs: captured.headersMs,
+      firstByteMs: captured.firstByteMs,
     };
     captures.push(record);
     await options.onCapture?.(record);
@@ -399,7 +403,14 @@ export async function executePlan(plan: RunPlan, options: ExecutionOptions): Pro
       }
     }
     if (!auxiliary && record.messageComplete && captured.end === "eof")
-      observations.push(...checkResponseContract(item.id, message, record.derivedMessageId ?? id));
+      observations.push(
+        ...checkResponseContract(
+          item.id,
+          message,
+          record.derivedMessageId ?? id,
+          typeof body.max_tokens === "number" ? body.max_tokens : undefined,
+        ),
+      );
     return message;
   }
   try {
@@ -429,7 +440,9 @@ export async function executePlan(plan: RunPlan, options: ExecutionOptions): Pro
             rule,
             "behavior",
             task.status === "PASS"
-              ? "PASS"
+              ? captures.at(-1)?.end === "eof" && captures.at(-1)?.messageComplete === true
+                ? "PASS"
+                : "INDETERMINATE"
               : reply === null || captures.some((capture) => capture.end !== "eof")
                 ? "INDETERMINATE"
                 : task.status,

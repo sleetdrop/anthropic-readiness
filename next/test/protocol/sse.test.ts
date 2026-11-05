@@ -580,6 +580,44 @@ test("intermediate null stop reasons can precede the final message_delta", () =>
   assert.equal(result.message?.stop_reason, "end_turn");
 });
 
+test("message_stop requires the final message_delta to carry a stop reason", () => {
+  const valid = textEvents("Hello.");
+  const invalid = valid.replace('"stop_reason":"end_turn"', '"stop_reason":null');
+  const result = run(invalid);
+  const finding = result.observations.find((item) => item.reason === "final_stop_reason_missing");
+  assert.equal(finding?.status, "FAIL");
+  assert.equal(finding?.location?.eventIndex, 4);
+  assert.equal(finding?.location?.pointer, "/delta/stop_reason");
+
+  const partial = run(invalid.slice(0, invalid.lastIndexOf("event: message_stop")), {
+    completeCapture: false,
+  });
+  assert.equal(summarize(partial.observations), "INDETERMINATE");
+});
+
+test("final usage updates overwrite supplied counters without mutating raw events", () => {
+  const body = textEvents("Hello.").replace(
+    '"usage":{"output_tokens":1}',
+    '"usage":{"input_tokens":9,"output_tokens":1,"cache_creation_input_tokens":4,"cache_read_input_tokens":7}',
+  );
+  const result = run(body);
+  assert.equal(summarize(result.observations), "PASS");
+  assert.deepEqual(result.message?.usage, {
+    input_tokens: 9,
+    output_tokens: 1,
+    cache_creation_input_tokens: 4,
+    cache_read_input_tokens: 7,
+  });
+  assert.deepEqual(
+    (result.events.at(-2)?.value as { usage: Record<string, unknown> }).usage,
+    { input_tokens: 9, output_tokens: 1, cache_creation_input_tokens: 4, cache_read_input_tokens: 7 },
+  );
+  assert.deepEqual(
+    (result.events[0]?.value as { message: { usage: Record<string, unknown> } }).message.usage,
+    { input_tokens: 3, output_tokens: 0 },
+  );
+});
+
 test("whitespace around JSON null still exposes a proven known-event envelope fault", () => {
   const stop = wireEvent("message_stop", { type: "message_stop" });
   const result = run(textEvents("Hello").replace(stop, "event: ping\ndata:  null  \n\n" + stop));

@@ -82,6 +82,8 @@ export function validateSse(
   let assembled: JsonObject | null = null;
   let started = false;
   let deltaSeen = false;
+  let finalStopReason: unknown = null;
+  let finalStopReasonEventIndex: number | undefined;
   let stopped = false;
   let errorTerminated = false;
   let active: ActiveBlock | null = null;
@@ -240,6 +242,17 @@ export function validateSse(
       if (!started) failLifecycle(event, "message_stop_before_start", "message_start before message_stop", "message_stop before start");
       if (active !== null) failLifecycle(event, "message_stop_with_open_block", "all blocks stopped before message_stop", "content block still open");
       if (!deltaSeen) failLifecycle(event, "message_stop_before_delta", "message_delta before message_stop", "message_delta missing");
+      if (deltaSeen && (typeof finalStopReason !== "string" || finalStopReason.length === 0)) {
+        add(
+          "SSE-STOP-FINAL",
+          "FAIL",
+          "final_stop_reason_missing",
+          "non-null final stop_reason before message_stop",
+          describe(finalStopReason),
+          finalStopReasonEventIndex ?? event.index,
+          "/delta/stop_reason",
+        );
+      }
       if (data !== null) stopped = true;
       return;
     }
@@ -409,6 +422,10 @@ export function validateSse(
       if (!deltaField.valid || !isObject(deltaField.value)) return;
       const delta = deltaField.value;
       const stopReason = checkField(delta, "stop_reason", "/delta", (value) => value === null || typeof value === "string" && value.length > 0, "string stop reason or intermediate null", event.index, "SSE-MESSAGE-DELTA");
+      if (stopReason.valid) {
+        finalStopReason = stopReason.value;
+        finalStopReasonEventIndex = event.index;
+      }
       const stopSequence = checkField(delta, "stop_sequence", "/delta", (value) => value === null || typeof value === "string", "string or null", event.index, "SSE-MESSAGE-DELTA");
       if (assembled !== null) {
         if (stopReason.valid) assembled.stop_reason = stopReason.value;
@@ -429,8 +446,18 @@ export function validateSse(
       const usageField = checkField(data, "usage", "", isObject, "JSON object", event.index, "SSE-USAGE");
       if (!usageField.valid || !isObject(usageField.value)) return;
       const outputTokens = checkField(usageField.value, "output_tokens", "/usage", isNonnegativeInteger, "nonnegative integer", event.index, "SSE-USAGE");
+      const cumulativeUsage: Record<string, unknown> = {};
+      for (const key of ["input_tokens", "cache_creation_input_tokens", "cache_read_input_tokens"]) {
+        if (Object.hasOwn(usageField.value, key)) {
+          const field = checkField(usageField.value, key, "/usage", isNonnegativeInteger, "nonnegative integer", event.index, "SSE-USAGE");
+          if (field.valid) cumulativeUsage[key] = field.value;
+        }
+      }
       if (assembled !== null) {
-        if (isObject(assembled.usage) && outputTokens.valid) assembled.usage.output_tokens = outputTokens.value;
+        if (isObject(assembled.usage)) {
+          if (outputTokens.valid) assembled.usage.output_tokens = outputTokens.value;
+          Object.assign(assembled.usage, cumulativeUsage);
+        }
       }
       return;
     }
