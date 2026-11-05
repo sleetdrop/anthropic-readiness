@@ -8,7 +8,7 @@ import { fileURLToPath } from "node:url";
 
 const entry = fileURLToPath(
   new URL(
-    "../../skills/anthropic-incident-diagnosis/scripts/render-assessment.mts",
+    "../../skills/anthropic-readiness/scripts/render-assessment.mts",
     import.meta.url,
   ),
 );
@@ -19,7 +19,7 @@ test("the Skill renders one report from overlapping runs and links the retained 
   const source = JSON.parse(
     readFileSync(
       new URL(
-        "../../skills/anthropic-incident-diagnosis/references/assessment-example.json",
+        "../../skills/anthropic-readiness/references/assessment-example.json",
         import.meta.url,
       ),
       "utf8",

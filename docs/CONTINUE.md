@@ -1,9 +1,9 @@
 # Current work
 
 The repository delivers the
-[Anthropic Incident Diagnosis Skill](../skills/anthropic-incident-diagnosis/SKILL.md).
+[Anthropic Readiness Skill](../skills/anthropic-readiness/SKILL.md).
 Start with its offline inspector and a saved response. Use
-[the exercise](../skills/anthropic-incident-diagnosis/references/offline-exercise.md)
+[the exercise](../skills/anthropic-readiness/references/offline-exercise.md)
 to verify the workflow on synthetic evidence.
 
 An independent offline walkthrough passed on a saved real SSE response and
@@ -13,7 +13,7 @@ scope and observations.
 The probe catalog now covers 22 core cases (27 requests) and 13 separately
 selectable version or capability cases. See the [probe guide](probes.md) for
 version selection, explicit request caps and coverage boundaries. For a shared
-assessment, follow the [Skill report guide](../skills/anthropic-incident-diagnosis/references/reporting.md)
+assessment, follow the [Skill report guide](../skills/anthropic-readiness/references/reporting.md)
 and render the English synthesis from retained runs.
 
 The initial Skill prototype is at `8048934`. That commit also contains the

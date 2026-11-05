@@ -44,7 +44,7 @@ caption or headings.
 From the repository root, use Node 24 to render the report offline:
 
 ```sh
-node skills/anthropic-incident-diagnosis/scripts/render-assessment.mts \
+node skills/anthropic-readiness/scripts/render-assessment.mts \
   --input /path/to/assessment.json --out /path/to/assessment.html
 ```
 

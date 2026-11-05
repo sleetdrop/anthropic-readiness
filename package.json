@@ -1,5 +1,5 @@
 {
-  "name": "anthropic-incident-diagnosis-workspace",
+  "name": "anthropic-readiness-workspace",
   "private": true,
   "scripts": {
     "check": "npm --prefix next run check",

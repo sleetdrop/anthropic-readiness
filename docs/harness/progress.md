@@ -179,3 +179,11 @@ available. Synthetic endpoint assertions verify the actual headers for all
 three modes. An empty named credential fails before creating output. The
 Bearer run's output files were checked for the synthetic secret. All 73 tests
 passed. This validation does not establish a remote CI result.
+
+## 2026-11-05 — Restore the repository's established name
+
+The project and Skill use Anthropic Readiness and the identifier
+`anthropic-readiness`. The unapproved diagnosis-specific product name was
+removed from active documentation, package metadata and import paths.
+The Skill directory is `skills/anthropic-readiness`. All 73 tests passed
+after the path correction.

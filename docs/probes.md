@@ -81,7 +81,7 @@ npm --prefix next start -- run --endpoint https://api.example.com/v1 \
   --out /tmp/incident-probe
 ```
 
-Use the [connection guide](../skills/anthropic-incident-diagnosis/references/connection.md)
+Use the [connection guide](../skills/anthropic-readiness/references/connection.md)
 for API-key, Bearer, or unauthenticated access and custom gateway paths.
 Supply the credential through `--auth-env ENV_NAME` and select `--auth-mode api_key`
 or `bearer`. The variable must be available to the process running the probe.
@@ -93,7 +93,7 @@ The output contains `result.json`, an HTML check record (`report.html`), and the
 request and response bytes per exchange. Reports and JSON viewer labels default
 to English. Use `--language zh` for Chinese. Report links open offline syntax-highlighted
 JSON views with a link to open the original attachment. For a human-facing assessment across
-one or more runs, use the [Skill report guide](../skills/anthropic-incident-diagnosis/references/reporting.md)
+one or more runs, use the [Skill report guide](../skills/anthropic-readiness/references/reporting.md)
 to write a synthesis above those records. Preset probes generate diagnostic requests and
 cannot reproduce an original incident byte for byte. Share evidence only after
 reviewing it for sensitive content.

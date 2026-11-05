@@ -1,5 +1,5 @@
 {
-  "name": "anthropic-incident-diagnosis-tools",
+  "name": "anthropic-readiness-tools",
   "version": "0.2.0-dev",
   "private": true,
   "type": "module",

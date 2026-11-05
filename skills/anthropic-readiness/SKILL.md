@@ -1,9 +1,9 @@
 ---
-name: anthropic-incident-diagnosis
+name: anthropic-readiness
 description: Investigate a concrete failure on an Anthropic Messages-compatible endpoint, such as stalled streaming or a broken tool continuation. Use saved request/response evidence first, run only relevant probes when authorized, and explain the smallest reproducible issue. Use for troubleshooting, not model rankings or blanket compatibility certification.
 ---
 
-# Diagnose a Messages incident
+# Anthropic Readiness
 
 Work in the checkout containing this skill. Use Node 24. Respond in the user's
 language. Start from the observed symptom and a failing request or capture when

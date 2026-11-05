@@ -12,6 +12,6 @@ A report should point to the observed event or field and separate protocol,
 task, and client outcomes.
 
 The deliverable is the repository-scoped
-[diagnosis Skill](skills/anthropic-incident-diagnosis/SKILL.md), its Node
+[diagnosis Skill](skills/anthropic-readiness/SKILL.md), its Node
 helpers, and synthetic examples. The investigation requires explicit opt-in
 and request/time bounds before making live endpoint calls.
