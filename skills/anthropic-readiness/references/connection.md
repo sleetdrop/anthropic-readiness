@@ -12,74 +12,87 @@ its full Messages URL, such as `https://gateway.example.com/anthropic/v1/message
 The count probes append `/count_tokens` to the Messages path. The URL must
 not contain credentials, a query string, or a fragment.
 
-## Authentication
+## Select the target configuration
 
-Ask the user for the credential's environment variable name and the expected
-header, rather than the secret value. The variable must be available to the
-process that starts the probe. A `.env` file is not loaded automatically.
-If the agent cannot read the variable in its environment, give the user the
-bounded command to run in a shell that has access to it.
+Add `--use-env` to explicitly read this group. Without that option, target
+settings come from the command line. Neither mode reads the agent host's own
+provider settings.
 
-| Endpoint requirement | Arguments | Header sent |
+| Variable | Purpose | Values |
 | --- | --- | --- |
-| Anthropic API key | `--auth-env READINESS_ENDPOINT_TOKEN --auth-mode api_key` | `x-api-key: <value>` |
-| Bearer token | `--auth-env READINESS_ENDPOINT_TOKEN --auth-mode bearer` | `Authorization: Bearer <value>` |
-| No authentication | Omit `--auth-env` | Neither authentication header |
+| `AR_DIAG_ENDPOINT_URL` | Endpoint under test | HTTP or HTTPS Messages URL or supported base URL |
+| `AR_DIAG_MODEL` | Model under test | Exact model name accepted by the endpoint |
+| `AR_DIAG_AUTH_MODE` | Authentication mode | `api_key`, `bearer`, `none` |
+| `AR_DIAG_AUTH_TOKEN` | Credential for the target | Supplied locally by the user or secret manager |
+| `AR_DIAG_API_VERSION` | API version sent | `2023-06-01` or `2026-10-21` |
 
-`READINESS_ENDPOINT_TOKEN` is the recommended name. `READINESS` identifies
-this project, Anthropic Readiness. `ENDPOINT_TOKEN` identifies the credential
-for the endpoint under test. It applies to both supported authentication modes.
-Keep it separate from credentials used by the agent host itself.
-`--auth-env` accepts another explicitly chosen name, including separate names
-for separate targets. The helper reads no credential variable unless the user
-selects it with `--auth-env`. It does not reuse an agent host's own API key.
+A command-line `--endpoint`, `--model`, `--auth-mode` or `--api-version`
+overrides the corresponding environment value. The API version defaults to
+`2023-06-01` and the authentication mode to `api_key` when not supplied.
+Endpoint and model are required.
 
-The default mode is `api_key`. An explicitly named empty or unavailable
-variable stops the run before the output directory is created or a request
-is sent. The tool reads the variable for each invocation. It does not obtain,
-refresh, or persist credentials. Arbitrary authentication headers, simultaneous
-key-plus-token authentication, OAuth login, and mTLS configuration have no
-CLI options.
+| Selected mode | Request header | Credential |
+| --- | --- | --- |
+| `api_key` | `x-api-key: <value>` | Required for an environment-configured run |
+| `bearer` | `Authorization: Bearer <value>` | Required for an environment-configured run |
+| `none` | Neither authentication header | Ignored, including an explicit `--auth-env` |
 
-Preview a three-request text probe. Planning needs no credential:
+With `--use-env`, the selected credential source is `AR_DIAG_AUTH_TOKEN`.
+An explicit `--auth-env OTHER_VARIABLE` selects that variable instead.
+This lets the user reuse an existing credential without copying its value.
+A named empty or unavailable credential stops an authenticated run before
+creating output or making a request. Planning does not need a credential.
 
-```sh
-node next/src/cli/main.ts plan \
-  --endpoint https://gateway.example.com/v1 --model YOUR_MODEL \
-  --profile anthropic-basic --max-requests 3 --run-ms 90000
-```
+In command-line-only mode, `--auth-env VARIABLE_NAME` explicitly selects the
+credential. Omitting it sends no authentication header, preserving the direct
+CLI workflow. Use `--auth-mode none` to explicitly select unauthenticated access.
 
-For a one-off Bash run, let the user enter the secret in their own terminal.
-The subshell limits the variable's lifetime to this command group. The parent
-of the new output directory must already exist.
+## Supply the values
+
+Ask for the endpoint, model, mode and credential variable name, rather than
+the secret value. The variables must be available to the process that starts
+the probe. A `.env` file is not loaded automatically. If the agent cannot
+access that process environment, give the user the bounded command to run
+in a shell that has access.
+
+For a one-off Bash run, let the user enter the token in their own terminal.
+The subshell limits the variables' lifetime to this command group.
+The output directory must be new and its parent must already exist.
 
 ```bash
 (
   set +x
-  printf 'Endpoint API token: '
-  IFS= read -r -s READINESS_ENDPOINT_TOKEN
-  printf '\n'
-  export READINESS_ENDPOINT_TOKEN
+  export AR_DIAG_ENDPOINT_URL='https://gateway.example.com/v1'
+  export AR_DIAG_MODEL='YOUR_MODEL'
+  export AR_DIAG_AUTH_MODE='api_key'
+  export AR_DIAG_API_VERSION='2023-06-01'
 
-  node next/src/cli/main.ts run \
-    --endpoint https://gateway.example.com/v1 --model YOUR_MODEL \
+  printf 'Endpoint API token: '
+  IFS= read -r -s AR_DIAG_AUTH_TOKEN
+  printf '\n'
+  export AR_DIAG_AUTH_TOKEN
+
+  node next/src/cli/main.ts plan --use-env \
+    --profile anthropic-basic --max-requests 3 --run-ms 90000
+
+  node next/src/cli/main.ts run --use-env \
     --profile anthropic-basic --max-requests 3 --run-ms 90000 \
-    --auth-env READINESS_ENDPOINT_TOKEN --auth-mode api_key \
     --allow-live --out /tmp/diagnosis-run
 )
 ```
 
-For a Bearer endpoint, change `--auth-mode api_key` to `--auth-mode bearer`.
-For an unauthenticated endpoint, omit the token prompt and authentication
-arguments. In an agent session, provide the endpoint, mode and chosen variable
-name. Confirm availability without printing the value or dumping the environment.
+For a Bearer endpoint, set `AR_DIAG_AUTH_MODE=bearer`.
+For an unauthenticated endpoint, set `AR_DIAG_AUTH_MODE=none` and omit the
+token prompt. In an agent session, provide the selected target and authorize
+the request/time bounds. Confirm variable availability without printing
+values or dumping the environment.
 
 For repeated use, store the credential in an OS credential store or the
-organization's secret manager. Have that system supply the chosen variable to
-the probe process when needed. The Skill defines the variable interface and
-does not implement a vault, OS keychain integration, or token refresh.
-In CI, inject only a dedicated test credential into the authorized live-probe
-step. The repository's normal checks need no endpoint secrets.
+organization's secret manager and supply it to the probe process when needed.
+The Skill does not implement a vault, OS keychain integration, OAuth login,
+or token refresh. Arbitrary headers, simultaneous key-plus-token authentication
+and mTLS have no CLI options. In CI, inject a dedicated test credential only
+into the authorized live-probe step. Normal repository checks need no secrets.
 
 ## Security boundary
 

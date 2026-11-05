@@ -50,7 +50,9 @@ for version-sensitive interpretations; do not infer the request version from the
 If a fresh request is necessary, establish explicit permission for the target,
 a request cap and a time bound first. Use the
 [connection guide](references/connection.md) for endpoint paths and API-key,
-Bearer, or unauthenticated access. Use a project-specific variable name such as `READINESS_ENDPOINT_TOKEN`.
+Bearer, or unauthenticated access. Use `--use-env` to select the `AR_DIAG_`
+target configuration, or pass target arguments explicitly. Use
+`AR_DIAG_AUTH_TOKEN` or explicitly reference an existing credential variable.
 Ask for its name rather than the secret value, and check availability without
 printing credentials or dumping the environment. Keep credentials out of transcripts and shared reproductions. Use the
 [preset probe guide](../../docs/probes.md) for targeted preset

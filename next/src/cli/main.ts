@@ -17,6 +17,7 @@ export async function main(args: string[]): Promise<number> {
       allowPositionals: true,
       options: {
         endpoint: { type: "string" },
+        "use-env": { type: "boolean" },
         model: { type: "string" },
         "api-version": { type: "string" },
         profile: { type: "string", multiple: true },
@@ -39,21 +40,29 @@ export async function main(args: string[]): Promise<number> {
     });
     if (values.help) {
       console.log(
-        "plan|run --endpoint MESSAGES_URL_OR_BASE --model MODEL [--profile ID ...] [--api-version 2023-06-01|2026-10-21] [--out NEW_DIR --allow-live] [--auth-env ENV_NAME --auth-mode api_key|bearer] [--language en|zh (default: en)] [--max-requests N --max-tokens N --run-ms N --attempt-ms N --read-ms N --connect-ms N --max-bytes N]",
+        "plan|run [--use-env] [--endpoint MESSAGES_URL_OR_BASE --model MODEL] [--profile ID ...] [--api-version 2023-06-01|2026-10-21] [--out NEW_DIR --allow-live] [--auth-env ENV_NAME --auth-mode api_key|bearer|none] [--language en|zh (default: en)] [--max-requests N --max-tokens N --run-ms N --attempt-ms N --read-ms N --connect-ms N --max-bytes N]",
       );
       return 0;
     }
     const command = positionals[0];
     if (positionals.length !== 1 || !["plan", "run"].includes(command ?? ""))
       throw new Error("expected_plan_or_run");
-    if (!values.endpoint || !values.model) throw new Error("endpoint_and_model_required");
-    const requestedVersion = values["api-version"];
+    const useEnv = values["use-env"] === true;
+    const endpoint = values.endpoint ?? (useEnv ? process.env.AR_DIAG_ENDPOINT_URL : undefined);
+    const model = values.model ?? (useEnv ? process.env.AR_DIAG_MODEL : undefined);
+    const requestedVersion =
+      values["api-version"] ?? (useEnv ? process.env.AR_DIAG_API_VERSION : undefined);
+    const authMode =
+      values["auth-mode"] ?? (useEnv ? process.env.AR_DIAG_AUTH_MODE : undefined) ?? "api_key";
+    if (!endpoint || !model) throw new Error("endpoint_and_model_required");
+    if (authMode !== "api_key" && authMode !== "bearer" && authMode !== "none")
+      throw new Error("invalid_auth_mode");
     const apiVersion = apiVersions.find((version) => version === requestedVersion);
     if (requestedVersion !== undefined && apiVersion === undefined)
       throw new Error("invalid_api_version");
     const plan = createPlan({
-      endpoint: values.endpoint,
-      model: values.model,
+      endpoint,
+      model,
       profiles: values.profile ?? defaultProfiles,
       ...(apiVersion ? { apiVersion } : {}),
       aliases: values["model-alias"] ?? [],
@@ -76,10 +85,12 @@ export async function main(args: string[]): Promise<number> {
     if (!values.out) throw new Error("new_output_directory_required");
     const language = values.language ?? "en";
     if (language !== "zh" && language !== "en") throw new Error("invalid_language");
-    const authMode = values["auth-mode"] ?? "api_key";
-    if (authMode !== "api_key" && authMode !== "bearer") throw new Error("invalid_auth_mode");
-    const token = values["auth-env"] ? process.env[values["auth-env"]] : undefined;
-    if (values["auth-env"] && !token) throw new Error("credential_env_unavailable");
+    const credentialEnv =
+      authMode === "none"
+        ? undefined
+        : (values["auth-env"] ?? (useEnv ? "AR_DIAG_AUTH_TOKEN" : undefined));
+    const token = credentialEnv ? process.env[credentialEnv] : undefined;
+    if (credentialEnv !== undefined && !token) throw new Error("credential_env_unavailable");
     const out = resolve(values.out);
     try {
       await mkdir(out, { mode: 0o700 });

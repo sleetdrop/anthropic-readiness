@@ -94,7 +94,7 @@ export interface RunResult {
 export interface ExecutionOptions {
   allowLive: boolean;
   token?: string;
-  authMode?: "api_key" | "bearer";
+  authMode?: "api_key" | "bearer" | "none";
   signal?: AbortSignal;
   onCaseComplete?: (result: CaseResult) => void;
   onCapture?: (capture: Readonly<CaptureRecord>) => Promise<void>;
@@ -240,7 +240,7 @@ export async function executePlan(plan: RunPlan, options: ExecutionOptions): Pro
       ["anthropic-version", plan.apiVersion],
       ["accept", item.response === "sse" ? "text/event-stream" : "application/json"],
     ];
-    if (options.token)
+    if (options.token && options.authMode !== "none")
       headers.push(
         options.authMode === "bearer"
           ? ["authorization", `Bearer ${options.token}`]

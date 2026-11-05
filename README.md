@@ -15,8 +15,10 @@ For a live endpoint, provide the agent with the endpoint URL, model name,
 authentication mode, credential environment variable name, and an agreed
 request/time limit. The [connection guide](skills/anthropic-readiness/references/connection.md)
 covers remote API keys, Bearer tokens and unauthenticated local proxies.
-Use `READINESS_ENDPOINT_TOKEN` for the target credential and select it with
-`--auth-env READINESS_ENDPOINT_TOKEN`. Keep its value in the local environment.
+Use `--use-env` to read `AR_DIAG_ENDPOINT_URL`, `AR_DIAG_MODEL`,
+`AR_DIAG_AUTH_MODE`, `AR_DIAG_AUTH_TOKEN` and `AR_DIAG_API_VERSION`.
+Command-line arguments override their corresponding values. Keep the token
+in the local environment.
 
 For a saved response, the offline inspector reads JSON or server-sent events
 (SSE) without contacting the endpoint.

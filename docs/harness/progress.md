@@ -187,3 +187,17 @@ The project and Skill use Anthropic Readiness and the identifier
 removed from active documentation, package metadata and import paths.
 The Skill directory is `skills/anthropic-readiness`. All 73 tests passed
 after the path correction.
+
+## 2026-11-05 — Explicit AR_DIAG target configuration
+
+The approved target variables are AR_DIAG_ENDPOINT_URL, AR_DIAG_MODEL,
+AR_DIAG_AUTH_MODE, AR_DIAG_AUTH_TOKEN and AR_DIAG_API_VERSION.
+The CLI reads the group only with --use-env. Explicit target arguments take
+precedence, and --auth-env can select an existing credential variable.
+Authentication mode none ignores credentials in both the CLI and engine.
+
+Synthetic endpoint checks covered environment-only API-key, Bearer and
+unauthenticated runs, explicit credential overrides, suppression of a supplied
+token in none mode, missing credentials before output creation, and exclusion
+of the synthetic secret from generated files. All 75 tests passed. Connection
+examples passed shell syntax checks.

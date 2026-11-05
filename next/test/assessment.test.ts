@@ -203,7 +203,11 @@ test("five selected scenarios run six requests and consume a fresh tool result",
       assert.equal(Buffer.from(capture.bodyBase64, "base64").length, capture.retainedBytes);
     }
   expectedAuth = "none";
-  const repeated = await executePlan(plan, { allowLive: true });
+  const repeated = await executePlan(plan, {
+    allowLive: true,
+    authMode: "none",
+    token: "synthetic-key",
+  });
   assert.equal(repeated.status, "PASS");
   assert.notEqual(verificationToken(requests[11]), nonce);
   const directory = mkdtempSync(join(tmpdir(), "readiness-cli-positive-"));
@@ -266,6 +270,71 @@ test("five selected scenarios run six requests and consume a fresh tool result",
   for (const filename of readdirSync(bearerOutput)) {
     assert.ok(!readFileSync(join(bearerOutput, filename), "utf8").includes("synthetic-key"));
   }
+  for (const mode of ["api_key", "bearer", "none"] as const) {
+    expectedAuth = mode;
+    const envOutput = join(directory, `environment-${mode}`);
+    const envArgs = [
+      cli,
+      "run",
+      "--use-env",
+      "--profile",
+      "anthropic-basic",
+      "--allow-live",
+      "--max-requests",
+      "3",
+      "--out",
+      envOutput,
+    ];
+    if (mode === "none") envArgs.push("--auth-env", "SYNTHETIC_MISSING_TOKEN");
+    const result = await exec(process.execPath, envArgs, {
+      env: {
+        ...process.env,
+        AR_DIAG_ENDPOINT_URL: plan.endpoint,
+        AR_DIAG_MODEL: "synthetic",
+        AR_DIAG_API_VERSION: "2023-06-01",
+        AR_DIAG_AUTH_MODE: mode,
+        AR_DIAG_AUTH_TOKEN: "synthetic-key",
+      },
+      timeout: 5000,
+    });
+    assert.match(result.stdout, /PASS/u);
+    for (const filename of readdirSync(envOutput))
+      assert.ok(!readFileSync(join(envOutput, filename), "utf8").includes("synthetic-key"));
+  }
+  const overrideOutput = join(directory, "environment-credential-override");
+  expectedAuth = "bearer";
+  const override = await exec(
+    process.execPath,
+    [
+      cli,
+      "run",
+      "--use-env",
+      "--profile",
+      "anthropic-basic",
+      "--allow-live",
+      "--max-requests",
+      "3",
+      "--out",
+      overrideOutput,
+      "--auth-env",
+      "SYNTHETIC_READINESS_KEY",
+      "--auth-mode",
+      "bearer",
+    ],
+    {
+      env: {
+        ...process.env,
+        AR_DIAG_ENDPOINT_URL: plan.endpoint,
+        AR_DIAG_MODEL: "synthetic",
+        AR_DIAG_API_VERSION: "2023-06-01",
+        AR_DIAG_AUTH_MODE: "api_key",
+        AR_DIAG_AUTH_TOKEN: "synthetic-unused-key",
+        SYNTHETIC_READINESS_KEY: "synthetic-key",
+      },
+      timeout: 5000,
+    },
+  );
+  assert.match(override.stdout, /PASS/u);
   const count = requests.length;
   await assert.rejects(
     exec(process.execPath, args, {

@@ -83,8 +83,11 @@ npm --prefix next start -- run --endpoint https://api.example.com/v1 \
 
 Use the [connection guide](../skills/anthropic-readiness/references/connection.md)
 for API-key, Bearer, or unauthenticated access and custom gateway paths.
-Supply the credential through `--auth-env ENV_NAME` and select `--auth-mode api_key`
-or `bearer`. The variable must be available to the process running the probe.
+Select `--use-env` to read the five `AR_DIAG_` target variables.
+Alternatively, supply the target through command-line arguments and select a
+credential with `--auth-env ENV_NAME`. Use `--auth-mode api_key`, `bearer`
+or `none`. Explicit arguments take precedence. The selected credential
+variable must be available to the process running the probe.
 Use `--model-alias` for a known alias, or `--structure-only` when model identity
 is outside the investigation. A deadline or failed prerequisite can prevent a
 follow-up. Inspect attempts started and case outcomes before interpreting coverage.
