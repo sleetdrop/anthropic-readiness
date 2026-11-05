@@ -22,13 +22,12 @@ bounded command to run in a shell that has access to it.
 
 | Endpoint requirement | Arguments | Header sent |
 | --- | --- | --- |
-| Anthropic API key | `--auth-env AID_ENDPOINT_TOKEN --auth-mode api_key` | `x-api-key: <value>` |
-| Bearer token | `--auth-env AID_ENDPOINT_TOKEN --auth-mode bearer` | `Authorization: Bearer <value>` |
+| Anthropic API key | `--auth-env INCIDENT_DIAGNOSIS_ENDPOINT_TOKEN --auth-mode api_key` | `x-api-key: <value>` |
+| Bearer token | `--auth-env INCIDENT_DIAGNOSIS_ENDPOINT_TOKEN --auth-mode bearer` | `Authorization: Bearer <value>` |
 | No authentication | Omit `--auth-env` | Neither authentication header |
 
-`AID_ENDPOINT_TOKEN` is the recommended name. `AID` refers to this Skill,
-Anthropic Incident Diagnosis, and `ENDPOINT_TOKEN` identifies the tested
-endpoint credential.
+`INCIDENT_DIAGNOSIS_ENDPOINT_TOKEN` is the recommended name. The full words
+identify its purpose as the credential for an endpoint being diagnosed.
 Keep it separate from credentials used by the agent host itself.
 `--auth-env` accepts another explicitly chosen name, including separate names
 for separate targets. The helper reads no credential variable unless the user
@@ -57,14 +56,14 @@ of the new output directory must already exist.
 (
   set +x
   printf 'Endpoint API token: '
-  IFS= read -r -s AID_ENDPOINT_TOKEN
+  IFS= read -r -s INCIDENT_DIAGNOSIS_ENDPOINT_TOKEN
   printf '\n'
-  export AID_ENDPOINT_TOKEN
+  export INCIDENT_DIAGNOSIS_ENDPOINT_TOKEN
 
   node next/src/cli/main.ts run \
     --endpoint https://gateway.example.com/v1 --model YOUR_MODEL \
     --profile anthropic-basic --max-requests 3 --run-ms 90000 \
-    --auth-env AID_ENDPOINT_TOKEN --auth-mode api_key \
+    --auth-env INCIDENT_DIAGNOSIS_ENDPOINT_TOKEN --auth-mode api_key \
     --allow-live --out /tmp/diagnosis-run
 )
 ```
