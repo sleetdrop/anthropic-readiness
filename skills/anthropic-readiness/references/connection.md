@@ -22,12 +22,13 @@ bounded command to run in a shell that has access to it.
 
 | Endpoint requirement | Arguments | Header sent |
 | --- | --- | --- |
-| Anthropic API key | `--auth-env INCIDENT_DIAGNOSIS_ENDPOINT_TOKEN --auth-mode api_key` | `x-api-key: <value>` |
-| Bearer token | `--auth-env INCIDENT_DIAGNOSIS_ENDPOINT_TOKEN --auth-mode bearer` | `Authorization: Bearer <value>` |
+| Anthropic API key | `--auth-env READINESS_ENDPOINT_TOKEN --auth-mode api_key` | `x-api-key: <value>` |
+| Bearer token | `--auth-env READINESS_ENDPOINT_TOKEN --auth-mode bearer` | `Authorization: Bearer <value>` |
 | No authentication | Omit `--auth-env` | Neither authentication header |
 
-`INCIDENT_DIAGNOSIS_ENDPOINT_TOKEN` is the recommended name. The full words
-identify its purpose as the credential for an endpoint being diagnosed.
+`READINESS_ENDPOINT_TOKEN` is the recommended name. `READINESS` identifies
+this project, Anthropic Readiness. `ENDPOINT_TOKEN` identifies the credential
+for the endpoint under test. It applies to both supported authentication modes.
 Keep it separate from credentials used by the agent host itself.
 `--auth-env` accepts another explicitly chosen name, including separate names
 for separate targets. The helper reads no credential variable unless the user
@@ -56,14 +57,14 @@ of the new output directory must already exist.
 (
   set +x
   printf 'Endpoint API token: '
-  IFS= read -r -s INCIDENT_DIAGNOSIS_ENDPOINT_TOKEN
+  IFS= read -r -s READINESS_ENDPOINT_TOKEN
   printf '\n'
-  export INCIDENT_DIAGNOSIS_ENDPOINT_TOKEN
+  export READINESS_ENDPOINT_TOKEN
 
   node next/src/cli/main.ts run \
     --endpoint https://gateway.example.com/v1 --model YOUR_MODEL \
     --profile anthropic-basic --max-requests 3 --run-ms 90000 \
-    --auth-env INCIDENT_DIAGNOSIS_ENDPOINT_TOKEN --auth-mode api_key \
+    --auth-env READINESS_ENDPOINT_TOKEN --auth-mode api_key \
     --allow-live --out /tmp/diagnosis-run
 )
 ```
