@@ -5,9 +5,9 @@ description: Investigate a concrete failure on an Anthropic Messages-compatible 
 
 # Anthropic Readiness
 
-Work in the checkout containing this skill. Use Node 24. Respond in the user's
-language. Start from the observed symptom and a failing request or capture when
-available. Ask for missing facts only when they change the next diagnostic step.
+Respond in the user's language. Start from the observed symptom and a failing
+request or capture when available. Ask for missing facts only when they change
+the next diagnostic step.
 
 1. **Preserve the incident.** Note the observed HTTP status, content type,
    request API version/betas, model, stream mode and whether the capture is
@@ -28,18 +28,23 @@ available. Ask for missing facts only when they change the next diagnostic step.
 
 ## Tools
 
-From the repository root, inspect a saved body without networking:
+Use Node 24 LTS. Set `SKILL_DIR` to the absolute directory containing the
+selected `SKILL.md`. Run the bundled scripts from the project that owns the
+evidence and outputs. Relative command-line paths are resolved in that working
+directory.
+
+Inspect a saved body without networking:
 
 ```sh
-node next/src/cli/inspect.ts --file "$BODY" --format sse --capture partial
+node "$SKILL_DIR/scripts/src/cli/inspect.ts" --file "$BODY" --format sse --capture partial
 ```
 
 Use `--format message` for a JSON success body. Use `--capture complete` only
 when there is evidence of complete capture; unknown completeness means
-`partial`. For a repository `response-*.json` record, use the record adapter:
+`partial`. For a saved `response-*.json` record from the probe runner:
 
 ```sh
-node next/src/cli/inspect.ts --record "$RESPONSE_RECORD"
+node "$SKILL_DIR/scripts/src/cli/inspect.ts" --record "$RESPONSE_RECORD"
 ```
 
 It verifies the retained body hash, successful HTTP status, content encoding
@@ -61,7 +66,7 @@ target configuration, or pass target arguments explicitly. Use
 `AR_DIAG_AUTH_TOKEN` or explicitly reference an existing credential variable.
 Ask for its name rather than the secret value, and check availability without
 printing credentials or dumping the environment. Keep credentials out of transcripts and shared reproductions. Use the
-[preset probe guide](../../docs/probes.md) for targeted preset
+[preset probe guide](references/probes.md) for targeted preset
 probes only if its request shape and API version are relevant. Preview the selected
 profile before running it; label a preset a probe, not an exact replay. If no
 authorized, suitable probe exists, return an offline finding or a proposed
@@ -74,6 +79,5 @@ For a single symptom, return the observed evidence and scope, the smallest
 reproduction available, and one discriminating next check if the cause remains
 uncertain. For an assessment or a report to share, use the
 [report guide](references/reporting.md) to write the evidence-backed synthesis and run the
-Skill’s HTML renderer against the saved results. Keep original evidence local and review any excerpt
-before sharing. For an offline walkthrough, use
-[the synthetic exercise](references/offline-exercise.md).
+Skill’s HTML renderer against the saved results. Keep original evidence local
+and review any excerpt before sharing.

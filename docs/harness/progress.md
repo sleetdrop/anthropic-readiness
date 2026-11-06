@@ -302,3 +302,25 @@ source locations, official references, and improvements. Reproduction code and
 results remain local under ignored `artifacts/review-2026-11-05/`. Production
 code and existing tests were unchanged. No real endpoint, SDK/client workflow,
 hosted CI, or browser layout check was run, and endpoint coverage did not grow.
+
+## 2026-11-06 — Project-local Skill installation
+
+The Skill directory now contains the Node runtime, the probe reference,
+and the MIT notice. The development toolchain and synthetic fixtures stay
+in the source repository. The install instructions extract one selected
+Git revision into a consumer project's `.agents/skills/` directory.
+
+The new isolated check reproduced the missing inspector before the runtime
+move. It also exposed a probe entry point that silently exited when its
+path passed through a symlink. The check now runs in a temporary consumer
+with a CommonJS package and a path containing spaces. It verifies a normal
+stream, a duplicate start at event index 1, a partial stream, a one-request
+probe preview invoked through a symlink, and offline report evidence links.
+The preview sends no requests.
+
+On Node 24.22.2, strict types and all 83 tests passed, with zero skipped
+or cancelled. The first restricted run could not start the existing
+loopback peers. The full gate passed with local loopback access. Skill
+metadata, all bundled relative links, and shell example syntax were checked.
+Codex discovery and diagnosis in a fresh consumer chat remain for the
+[offline exercise](../offline-exercise.md). No real endpoint was called.

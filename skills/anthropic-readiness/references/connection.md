@@ -58,6 +58,7 @@ in a shell that has access.
 For a one-off Bash run, let the user enter the token in their own terminal.
 The subshell limits the variables' lifetime to this command group.
 The output directory must be new and its parent must already exist.
+Set `SKILL_DIR` as described in the [skill instructions](../SKILL.md) first.
 
 ```bash
 (
@@ -72,10 +73,10 @@ The output directory must be new and its parent must already exist.
   printf '\n'
   export AR_DIAG_AUTH_TOKEN
 
-  node next/src/cli/main.ts plan --use-env \
+  node "$SKILL_DIR/scripts/src/cli/main.ts" plan --use-env \
     --profile anthropic-basic --max-requests 3 --run-ms 90000
 
-  node next/src/cli/main.ts run --use-env \
+  node "$SKILL_DIR/scripts/src/cli/main.ts" run --use-env \
     --profile anthropic-basic --max-requests 3 --run-ms 90000 \
     --allow-live --out /tmp/diagnosis-run
 )

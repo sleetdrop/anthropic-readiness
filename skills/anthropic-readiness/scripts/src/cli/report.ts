@@ -7,7 +7,7 @@ import {
   reportDocument,
   reportHeading,
   type ReportLanguage,
-} from "../../../skills/anthropic-readiness/scripts/report-document.mts";
+} from "../../report-document.mts";
 interface Finding {
   readonly label: string;
   readonly entries: { item: CaseResult; observation: Observation }[];

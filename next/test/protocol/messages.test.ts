@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { validateMessage } from "../../src/protocol/messages.ts";
-import { summarize, type MessageValidationContext, type Observation } from "../../src/domain.ts";
+import { validateMessage } from "../../../skills/anthropic-readiness/scripts/src/protocol/messages.ts";
+import { summarize, type MessageValidationContext, type Observation } from "../../../skills/anthropic-readiness/scripts/src/domain.ts";
 
 const context: MessageValidationContext = {
   captureId: "capture-1",

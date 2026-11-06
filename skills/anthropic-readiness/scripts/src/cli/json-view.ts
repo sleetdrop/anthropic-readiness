@@ -2,7 +2,7 @@ import {
   escapeHtml,
   reportDocument,
   type ReportLanguage,
-} from "../../../skills/anthropic-readiness/scripts/report-document.mts";
+} from "../../report-document.mts";
 
 function highlightedJson(json: string): string {
   const tokens =

@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
-import { summarize, type MessageValidationContext, type Observation } from "../../src/domain.ts";
-import { validateSse } from "../../src/protocol/sse.ts";
+import { summarize, type MessageValidationContext, type Observation } from "../../../skills/anthropic-readiness/scripts/src/domain.ts";
+import { validateSse } from "../../../skills/anthropic-readiness/scripts/src/protocol/sse.ts";
 
 const context: MessageValidationContext = {
   captureId: "sse-capture",

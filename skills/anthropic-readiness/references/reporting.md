@@ -41,10 +41,11 @@ the lead to its supporting finding. A finding can include a comparison table
 with a caption, columns, and rows of strings or numbers. Include units in the
 caption or headings.
 
-From the repository root, use Node 24 to render the report offline:
+Use Node 24 LTS and `SKILL_DIR` from the
+[skill instructions](../SKILL.md) to render the report offline:
 
 ```sh
-node skills/anthropic-readiness/scripts/render-assessment.mts \
+node "$SKILL_DIR/scripts/render-assessment.mts" \
   --input /path/to/assessment.json --out /path/to/assessment.html
 ```
 

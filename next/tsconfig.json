@@ -13,5 +13,10 @@
     "types": ["node"],
     "skipLibCheck": true
   },
-  "include": ["src/**/*.ts", "test/**/*.ts", "scripts/**/*.ts", "../skills/*/scripts/**/*.mts"]
+  "include": [
+    "test/**/*.ts",
+    "scripts/**/*.ts",
+    "../skills/anthropic-readiness/scripts/**/*.ts",
+    "../skills/anthropic-readiness/scripts/**/*.mts"
+  ]
 }

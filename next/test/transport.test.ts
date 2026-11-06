@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
 import { createServer as createTcpServer, type Socket } from "node:net";
 import test, { type TestContext } from "node:test";
-import { captureHttp, type HttpLimits } from "../src/runner/http.ts";
+import { captureHttp, type HttpLimits } from "../../skills/anthropic-readiness/scripts/src/runner/http.ts";
 
 async function peer(t: TestContext, handler: (req: IncomingMessage, res: ServerResponse) => void) {
   const server = createServer(handler);

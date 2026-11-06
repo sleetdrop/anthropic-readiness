@@ -2,7 +2,6 @@
 import { parseArgs } from "node:util";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
-import { pathToFileURL } from "node:url";
 import { apiVersions } from "../catalog.ts";
 import { createPlan, executePlan, type RunResult } from "../runner/assessment.ts";
 
@@ -178,5 +177,4 @@ export async function main(args: string[]): Promise<number> {
     return 4;
   }
 }
-if (process.argv[1] && pathToFileURL(process.argv[1]).href === import.meta.url)
-  process.exitCode = await main(process.argv.slice(2));
+if (import.meta.main) process.exitCode = await main(process.argv.slice(2));

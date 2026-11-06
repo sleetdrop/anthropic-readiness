@@ -1,10 +1,11 @@
 # Anthropic Messages probes
 
 Use a saved capture first for incident diagnosis. For an endpoint assessment,
-preview the core suite without sending requests:
+preview the core suite without sending requests. Use `SKILL_DIR` from the
+[skill instructions](../SKILL.md):
 
 ```sh
-npm --prefix next start -- plan --endpoint https://api.example.com/v1 \
+node "$SKILL_DIR/scripts/src/cli/main.ts" plan --endpoint https://api.example.com/v1 \
   --model YOUR_MODEL --profile anthropic-core --api-version 2023-06-01
 ```
 
@@ -75,13 +76,13 @@ cryptographically verified.
 After explicit authorization, use a fresh output directory whose parent exists:
 
 ```sh
-npm --prefix next start -- run --endpoint https://api.example.com/v1 \
+node "$SKILL_DIR/scripts/src/cli/main.ts" run --endpoint https://api.example.com/v1 \
   --model YOUR_MODEL --profile anthropic-core --api-version 2023-06-01 \
   --allow-live --max-requests 27 --run-ms 600000 --attempt-ms 90000 \
   --out /tmp/incident-probe
 ```
 
-Use the [connection guide](../skills/anthropic-readiness/references/connection.md)
+Use the [connection guide](connection.md)
 for API-key, Bearer, or unauthenticated access and custom gateway paths.
 Select `--use-env` to read the five `AR_DIAG_` target variables.
 Alternatively, supply the target through command-line arguments and select a
@@ -96,7 +97,7 @@ The output contains `result.json`, an HTML check record (`report.html`), and the
 request and response bytes per exchange. Reports and JSON viewer labels default
 to English. Use `--language zh` for Chinese. Report links open offline syntax-highlighted
 JSON views with a link to open the original attachment. For a human-facing assessment across
-one or more runs, use the [Skill report guide](../skills/anthropic-readiness/references/reporting.md)
+one or more runs, use the [Skill report guide](reporting.md)
 to write a synthesis above those records. Preset probes generate diagnostic requests and
 cannot reproduce an original incident byte for byte. Share evidence only after
 reviewing it for sensitive content.
