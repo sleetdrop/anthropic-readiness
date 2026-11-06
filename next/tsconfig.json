@@ -16,7 +16,7 @@
   "include": [
     "test/**/*.ts",
     "scripts/**/*.ts",
-    "../skills/anthropic-readiness/scripts/**/*.ts",
-    "../skills/anthropic-readiness/scripts/**/*.mts"
+    "../scaffold/skills/anthropic-readiness/scripts/**/*.ts",
+    "../scaffold/skills/anthropic-readiness/scripts/**/*.mts"
   ]
 }

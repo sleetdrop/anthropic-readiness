@@ -20,7 +20,7 @@ function installSkill(t: TestContext) {
   t.after(() => rmSync(root, { recursive: true, force: true }));
   const skill = join(root, ".agents", "skills", "anthropic-readiness");
   mkdirSync(join(root, ".agents", "skills"), { recursive: true });
-  cpSync(new URL("../../skills/anthropic-readiness/", import.meta.url), skill, {
+  cpSync(new URL("../../scaffold/skills/anthropic-readiness/", import.meta.url), skill, {
     recursive: true,
   });
   writeFileSync(join(root, "package.json"), '{"type":"commonjs"}\n');

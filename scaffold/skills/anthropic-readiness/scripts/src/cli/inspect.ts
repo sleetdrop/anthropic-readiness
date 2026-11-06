@@ -1,12 +1,11 @@
 /** Offline inspection of one successful Messages response body. */
 import { createHash } from "node:crypto";
-import { constants } from "node:fs";
-import { open } from "node:fs/promises";
 import { parseArgs } from "node:util";
 import { summarize, type MessageValidationContext, type Observation } from "../domain.ts";
 import { validateAuxiliary } from "../protocol/auxiliary.ts";
 import { validateMessage } from "../protocol/messages.ts";
 import { validateSse } from "../protocol/sse.ts";
+import { readBoundedFile } from "./local-file.ts";
 
 const maxBytes = 2 * 1024 * 1024;
 const maxRecordBytes = 3 * 1024 * 1024;
@@ -20,32 +19,13 @@ const stopReasons = [
   "model_context_window_exceeded",
 ];
 
-async function readBody(file: string, limit = maxBytes): Promise<Buffer> {
-  const handle = await open(file, constants.O_RDONLY | constants.O_NONBLOCK);
-  try {
-    const stat = await handle.stat();
-    if (!stat.isFile() || stat.size > limit) throw new Error("unreadable_or_oversize_capture");
-    const buffer = Buffer.alloc(limit + 1);
-    let size = 0;
-    while (size < buffer.length) {
-      const { bytesRead } = await handle.read(buffer, size, buffer.length - size, size);
-      if (!bytesRead) break;
-      size += bytesRead;
-    }
-    if (size > limit) throw new Error("unreadable_or_oversize_capture");
-    return buffer.subarray(0, size);
-  } finally {
-    await handle.close();
-  }
-}
-
 async function readRecord(file: string): Promise<{
   body: Buffer;
   format: "message" | "sse";
   complete: boolean;
   route?: "count_tokens";
 }> {
-  const bytes = await readBody(file, maxRecordBytes);
+  const bytes = await readBoundedFile(file, maxRecordBytes);
   const value: unknown = JSON.parse(new TextDecoder("utf-8", { fatal: true }).decode(bytes));
   if (typeof value !== "object" || value === null || Array.isArray(value))
     throw new Error("invalid_capture_record");
@@ -192,7 +172,7 @@ async function main(): Promise<void> {
       throw new Error("invalid_arguments");
     }
     const complete = capture === "complete";
-    const body = await readBody(file);
+    const body = await readBoundedFile(file, maxBytes);
     const sha256 = createHash("sha256").update(body).digest("hex");
     const context: MessageValidationContext = {
       captureId: sha256,

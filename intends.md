@@ -11,8 +11,9 @@ and identifies the next discriminating check when the cause remains uncertain.
 A report should point to the observed event or field and separate protocol,
 task, and client outcomes.
 
-The deliverable is an installable
-[diagnosis Skill](skills/anthropic-readiness/SKILL.md) with bundled Node
-helpers. This repository maintains the Skill and its synthetic test evidence.
+The deliverable is the `@sleetdrop/anthropic-readiness` npm scaffold. It
+creates a project for one target with a local configuration, the bundled
+[diagnosis Skill](scaffold/skills/anthropic-readiness/SKILL.md), and Node
+helpers. The user's agent drives the investigation.
 The investigation requires explicit opt-in and request/time bounds before
 making live endpoint calls.

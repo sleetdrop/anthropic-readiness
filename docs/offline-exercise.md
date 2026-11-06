@@ -1,9 +1,10 @@
 # Offline incident exercise
 
-Install the Skill from a fixed commit in a separate Codex project using the
-[standalone installation instructions](../README.md#standalone-skill). Open a
-fresh chat in the consumer project. Keep the source checkout, fixture names,
-and expected findings out of the chat.
+Generate a separate project from a fixed version using the
+[npm scaffold](../README.md#create-a-test-project) or a
+[local tarball](development.md#try-the-npm-package-locally). Open a fresh chat
+in that project. Keep the source checkout, fixture names, and expected
+findings out of the chat.
 
 Copy these synthetic captures from
 [`tests/fixtures/contracts/core-1.0.0/`](../tests/fixtures/contracts/core-1.0.0/)

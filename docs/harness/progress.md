@@ -350,3 +350,27 @@ Separately, the consumer project reported that the standalone install from
 chats. Both used the installed checker and located the duplicate start.
 The normal and partial controls, offline preview, and report rendering also
 matched their expected results.
+
+## 2026-11-07 — npm scaffold as the distribution entry point
+
+The package source is `scaffold/` and its command is
+`npx @sleetdrop/anthropic-readiness init <directory>`. One generated project
+holds one target, local credential and evidence paths, run output, and a
+copy of the bundled Skill. The initializer uses `.agents/skills/` by default
+and supports `--claude-code` for `.claude/skills/`. The earlier standalone
+Skill and plugin distribution entries are retained in Git history at
+`4d8d105`.
+
+The first target-directory regression failed on the previous CLI's unknown
+option. The new mode previews without reading a credential and requires
+explicit live consent plus request and time bounds for execution. It rejects
+mixed connection settings and reads the local token only for an
+authenticated run.
+
+The Node 24.22.2 gate passed strict types and all 85 tests. The package test
+packed and invoked the executable offline, checked both output layouts and
+repeat initialization, verified that preview made zero requests, and ran one
+authenticated request against a synthetic loopback endpoint. The token was
+absent from retained outputs. A separate `npx` run created a project from the
+local tarball, and Codex discovered its project-level Skill. A model-driven
+chat with the new scaffold and registry publication remain unverified.

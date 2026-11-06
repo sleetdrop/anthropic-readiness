@@ -1,9 +1,6 @@
 {
   "name": "anthropic-readiness-workspace",
   "private": true,
-  "exports": {
-    ".": "./integrations/opencode/server.mjs"
-  },
   "scripts": {
     "check": "npm --prefix next run check",
     "test": "npm --prefix next test"

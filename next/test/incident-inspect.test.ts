@@ -6,10 +6,10 @@ import { join } from "node:path";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
-import { summarize } from "../../skills/anthropic-readiness/scripts/src/domain.ts";
-import { validateSse } from "../../skills/anthropic-readiness/scripts/src/protocol/sse.ts";
+import { summarize } from "../../scaffold/skills/anthropic-readiness/scripts/src/domain.ts";
+import { validateSse } from "../../scaffold/skills/anthropic-readiness/scripts/src/protocol/sse.ts";
 
-const entry = fileURLToPath(new URL("../../skills/anthropic-readiness/scripts/src/cli/inspect.ts", import.meta.url));
+const entry = fileURLToPath(new URL("../../scaffold/skills/anthropic-readiness/scripts/src/cli/inspect.ts", import.meta.url));
 const fixture = (name: string) =>
   fileURLToPath(new URL(`../../tests/fixtures/contracts/core-1.0.0/${name}`, import.meta.url));
 

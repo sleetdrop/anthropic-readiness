@@ -7,6 +7,7 @@ import { createPlan, executePlan, type RunResult } from "../runner/assessment.ts
 
 import { renderJsonView } from "./json-view.ts";
 import { renderReport } from "./report.ts";
+import { readTarget, readTargetToken } from "./target-directory.ts";
 
 const defaultProfiles = ["anthropic-core"];
 export async function main(args: string[]): Promise<number> {
@@ -16,6 +17,7 @@ export async function main(args: string[]): Promise<number> {
       allowPositionals: true,
       options: {
         endpoint: { type: "string" },
+        "target-dir": { type: "string" },
         "use-env": { type: "boolean" },
         model: { type: "string" },
         "api-version": { type: "string" },
@@ -39,20 +41,28 @@ export async function main(args: string[]): Promise<number> {
     });
     if (values.help) {
       console.log(
-        "plan|run [--use-env] [--endpoint MESSAGES_URL_OR_BASE --model MODEL] [--profile ID ...] [--api-version 2023-06-01|2026-10-21] [--out NEW_DIR --allow-live] [--auth-env ENV_NAME --auth-mode api_key|bearer|none] [--language en|zh (default: en)] [--max-requests N --max-tokens N --run-ms N --attempt-ms N --read-ms N --connect-ms N --max-bytes N]",
+        "plan|run [--target-dir DIR | --use-env | --endpoint MESSAGES_URL_OR_BASE --model MODEL] [--profile ID ...] [--api-version 2023-06-01|2026-10-21] [--out NEW_DIR --allow-live] [--auth-env ENV_NAME --auth-mode api_key|bearer|none] [--language en|zh (default: en)] [--max-requests N --max-tokens N --run-ms N --attempt-ms N --read-ms N --connect-ms N --max-bytes N]",
       );
       return 0;
     }
     const command = positionals[0];
     if (positionals.length !== 1 || !["plan", "run"].includes(command ?? ""))
       throw new Error("expected_plan_or_run");
+    const targetDirectory = values["target-dir"];
     const useEnv = values["use-env"] === true;
-    const endpoint = values.endpoint ?? (useEnv ? process.env.AR_DIAG_ENDPOINT_URL : undefined);
-    const model = values.model ?? (useEnv ? process.env.AR_DIAG_MODEL : undefined);
+    if (targetDirectory !== undefined) {
+      if (!targetDirectory) throw new Error("target_directory_required");
+      if (useEnv || ["endpoint", "model", "api-version", "auth-mode", "auth-env"].some(
+        (key) => Object.hasOwn(values, key),
+      )) throw new Error("conflicting_target_options");
+    }
+    const target = targetDirectory === undefined ? undefined : await readTarget(targetDirectory);
+    const endpoint = target?.endpoint ?? values.endpoint ?? (useEnv ? process.env.AR_DIAG_ENDPOINT_URL : undefined);
+    const model = target?.model ?? values.model ?? (useEnv ? process.env.AR_DIAG_MODEL : undefined);
     const requestedVersion =
-      values["api-version"] ?? (useEnv ? process.env.AR_DIAG_API_VERSION : undefined);
+      target?.apiVersion ?? values["api-version"] ?? (useEnv ? process.env.AR_DIAG_API_VERSION : undefined);
     const authMode =
-      values["auth-mode"] ?? (useEnv ? process.env.AR_DIAG_AUTH_MODE : undefined) ?? "api_key";
+      target?.authMode ?? values["auth-mode"] ?? (useEnv ? process.env.AR_DIAG_AUTH_MODE : undefined) ?? "api_key";
     if (!endpoint || !model) throw new Error("endpoint_and_model_required");
     if (authMode !== "api_key" && authMode !== "bearer" && authMode !== "none")
       throw new Error("invalid_auth_mode");
@@ -81,6 +91,8 @@ export async function main(args: string[]): Promise<number> {
       return 0;
     }
     if (values["allow-live"] !== true) throw new Error("live_opt_in_required");
+    if (targetDirectory !== undefined && (values["max-requests"] === undefined || values["run-ms"] === undefined))
+      throw new Error("target_run_limits_required");
     if (!values.out) throw new Error("new_output_directory_required");
     const language = values.language ?? "en";
     if (language !== "zh" && language !== "en") throw new Error("invalid_language");
@@ -88,7 +100,9 @@ export async function main(args: string[]): Promise<number> {
       authMode === "none"
         ? undefined
         : (values["auth-env"] ?? (useEnv ? "AR_DIAG_AUTH_TOKEN" : undefined));
-    const token = credentialEnv ? process.env[credentialEnv] : undefined;
+    const token = targetDirectory !== undefined && authMode !== "none"
+      ? await readTargetToken(targetDirectory)
+      : credentialEnv ? process.env[credentialEnv] : undefined;
     if (credentialEnv !== undefined && !token) throw new Error("credential_env_unavailable");
     const out = resolve(values.out);
     try {
@@ -145,6 +159,13 @@ export async function main(args: string[]): Promise<number> {
   } catch (error) {
     const known = new Set([
       "expected_plan_or_run",
+      "target_directory_required",
+      "conflicting_target_options",
+      "target_config_unreadable_or_invalid",
+      "target_config_unknown_field",
+      "target_endpoint_and_model_required",
+      "target_run_limits_required",
+      "target_token_unavailable",
       "endpoint_and_model_required",
       "invalid_url",
       "invalid_model",

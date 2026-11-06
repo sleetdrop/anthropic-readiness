@@ -11,7 +11,7 @@
     "test": "node --test",
     "test:protocol": "node --test test/protocol/*.test.ts",
     "check:types": "tsc --noEmit",
-    "start": "node ../skills/anthropic-readiness/scripts/src/cli/main.ts"
+    "start": "node ../scaffold/skills/anthropic-readiness/scripts/src/cli/main.ts"
   },
   "devDependencies": {
     "@types/node": "24.19.2",

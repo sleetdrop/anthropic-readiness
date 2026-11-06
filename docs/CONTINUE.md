@@ -1,17 +1,17 @@
 # Current work
 
-The repository delivers the
-[Anthropic Readiness Skill](../skills/anthropic-readiness/SKILL.md) as a
-self-contained directory. The [installation instructions](../README.md#install)
-cover the Codex, Claude Code, and OpenCode 2 plugins and standalone Skill
-installation for other agents. All entry points use the same bundled Skill.
-The local check exercises the installed helpers in isolation.
+The repository delivers the `@sleetdrop/anthropic-readiness` npm scaffold.
+Each [generated project](../README.md#create-a-test-project) contains a
+local target configuration and the bundled
+[Anthropic Readiness Skill](../scaffold/skills/anthropic-readiness/SKILL.md).
+Use the [local tarball workflow](development.md#try-the-npm-package-locally)
+to try the package from the current checkout.
 
-The standalone [offline exercise](offline-exercise.md) passed for explicit
-and implicit invocation in separate Codex CLI chats. Plugin packaging checks
-verified Codex inventory discovery, Claude Code manifest validation, and
-OpenCode 2 registration. See the [verification record](harness/progress.md)
-for the tested scope.
+The local check covers offline npm packaging, project creation, and one
+bounded authenticated request against a synthetic endpoint. Codex discovered
+the Skill from a generated project. The
+[offline exercise](offline-exercise.md) covers model-driven diagnosis.
+See the [verification record](harness/progress.md) for the tested scope.
 
 An independent offline walkthrough passed on a saved real SSE response and
 two controls. See [the verification record](harness/progress.md) for the
@@ -19,9 +19,9 @@ scope and observations.
 
 The probe catalog now covers 22 core cases (27 requests) and 13 separately
 selectable version or capability cases. See the
-[probe guide](../skills/anthropic-readiness/references/probes.md) for version
+[probe guide](../scaffold/skills/anthropic-readiness/references/probes.md) for version
 selection, explicit request caps and coverage boundaries. For a shared
-assessment, follow the [Skill report guide](../skills/anthropic-readiness/references/reporting.md)
+assessment, follow the [Skill report guide](../scaffold/skills/anthropic-readiness/references/reporting.md)
 and render the English synthesis from retained runs.
 
 A [current implementation review](reviews/2026-11-05-current-implementation.md)

@@ -1,9 +1,0 @@
-{
-  "name": "messages-readiness",
-  "version": "0.2.0",
-  "description": "Diagnose failures on Anthropic Messages-compatible endpoints.",
-  "author": {
-    "name": "sleetdrop"
-  },
-  "license": "MIT"
-}

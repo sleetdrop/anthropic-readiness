@@ -7,7 +7,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
-import { createPlan, executePlan } from "../../skills/anthropic-readiness/scripts/src/runner/assessment.ts";
+import { createPlan, executePlan } from "../../scaffold/skills/anthropic-readiness/scripts/src/runner/assessment.ts";
 
 const profiles = ["anthropic-basic", "anthropic-tools-smoke", "anthropic-tool-loop"];
 const input = { endpoint: "http://127.0.0.1:1/v1/messages", model: "synthetic", profiles };
@@ -270,7 +270,7 @@ test("five selected scenarios run six requests and consume a fresh tool result",
   const directory = mkdtempSync(join(tmpdir(), "readiness-cli-positive-"));
   t.after(() => rmSync(directory, { recursive: true, force: true }));
   const output = join(directory, "assessment");
-  const cli = fileURLToPath(new URL("../../skills/anthropic-readiness/scripts/src/cli/main.ts", import.meta.url));
+  const cli = fileURLToPath(new URL("../../scaffold/skills/anthropic-readiness/scripts/src/cli/main.ts", import.meta.url));
   const args = [
     cli,
     "run",

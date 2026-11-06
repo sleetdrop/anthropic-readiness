@@ -1,10 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { createHash } from "node:crypto";
-import { renderReport } from "../../skills/anthropic-readiness/scripts/src/cli/report.ts";
-import { renderJsonView } from "../../skills/anthropic-readiness/scripts/src/cli/json-view.ts";
-import type { Observation } from "../../skills/anthropic-readiness/scripts/src/domain.ts";
-import { createPlan, type RunResult } from "../../skills/anthropic-readiness/scripts/src/runner/assessment.ts";
+import { renderReport } from "../../scaffold/skills/anthropic-readiness/scripts/src/cli/report.ts";
+import { renderJsonView } from "../../scaffold/skills/anthropic-readiness/scripts/src/cli/json-view.ts";
+import type { Observation } from "../../scaffold/skills/anthropic-readiness/scripts/src/domain.ts";
+import { createPlan, type RunResult } from "../../scaffold/skills/anthropic-readiness/scripts/src/runner/assessment.ts";
 
 test("report groups repeated faults, keeps evidence navigable and separates task outcomes", () => {
   const plan = createPlan({

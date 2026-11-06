@@ -1,7 +1,0 @@
-{
-  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
-  "name": "messages-readiness",
-  "version": "0.2.0",
-  "description": "Diagnose failures on Anthropic Messages-compatible endpoints.",
-  "license": "MIT"
-}

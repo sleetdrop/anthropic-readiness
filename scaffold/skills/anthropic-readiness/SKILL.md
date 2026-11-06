@@ -59,16 +59,17 @@ and [streaming contract](https://platform.claude.com/docs/en/build-with-claude/s
 for version-sensitive interpretations; do not infer the request version from the body.
 
 If a fresh request is necessary, establish explicit permission for the target,
-a request cap and a time bound first. Use the
-[connection guide](references/connection.md) for endpoint paths and API-key,
-Bearer, or unauthenticated access. Use `--use-env` to select the `AR_DIAG_`
-target configuration, or pass target arguments explicitly. Use
-`AR_DIAG_AUTH_TOKEN` or explicitly reference an existing credential variable.
-Ask for its name rather than the secret value, and check availability without
-printing credentials or dumping the environment. Keep credentials out of transcripts and shared reproductions. Use the
-[preset probe guide](references/probes.md) for targeted preset
-probes only if its request shape and API version are relevant. Preview the selected
-profile before running it; label a preset a probe, not an exact replay. If no
+a request cap and a time bound first. In a generated test project, use
+`--target-dir` with the directory containing `target.json`. The runner reads
+`token.txt` only during an authorized authenticated run. Keep credentials
+out of the conversation and let the runner read them directly. The
+[connection guide](references/connection.md) shows the project workflow and
+the environment and explicit argument modes.
+
+Use the [preset probe guide](references/probes.md) for targeted presets only
+if the request shape and API version are relevant. Preview the selected
+profile before running it, and confirm the plan's target and limits match
+the authorization. Label a preset a probe, not an exact replay. If no
 authorized, suitable probe exists, return an offline finding or a proposed
 minimal request. Stop when the symptom is explained or the agreed budget is spent.
 When the user asks for broad compatibility coverage, preview `anthropic-core`

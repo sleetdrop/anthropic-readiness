@@ -4,19 +4,47 @@ For a live probe, establish the endpoint, model, API version, authentication
 mode, request cap, and time bound. Use the supplied model name exactly.
 The same HTTP client supports local and remote HTTP or HTTPS endpoints.
 
-## Endpoint
+## Use a test project
 
-Pass `--endpoint URL` and `--model NAME`. A root URL or a URL ending in
-`/v1` selects `/v1/messages`. If a gateway uses a different prefix, supply
+The project contains `target.json`, `token.txt`, `evidence/` and `runs/`.
+Fill in `endpoint`, `model`, `apiVersion`, and `authMode` in `target.json`.
+Use `api_key`, `bearer`, or `none` for the mode. For authenticated runs,
+put the credential on one line in the local `token.txt` file.
+
+A root URL or a URL ending in `/v1` selects `/v1/messages`. If a gateway uses a different prefix, supply
 its full Messages URL, such as `https://gateway.example.com/anthropic/v1/messages`.
 The count probes append `/count_tokens` to the Messages path. The URL must
 not contain credentials, a query string, or a fragment.
 
-## Select the target configuration
+Use `SKILL_DIR` from the [skill instructions](../SKILL.md). From the target
+project, preview the smallest relevant profile with the agreed limits:
 
-Add `--use-env` to explicitly read this group. Without that option, target
-settings come from the command line. Neither mode reads the agent host's own
-provider settings.
+```sh
+node "$SKILL_DIR/scripts/src/cli/main.ts" plan --target-dir . \
+  --profile anthropic-basic --max-requests 3 --run-ms 90000
+```
+
+Preview reads the target without reading credentials or making requests.
+After explicit authorization for that target and those limits, use a fresh
+output directory under `runs/`:
+
+```sh
+node "$SKILL_DIR/scripts/src/cli/main.ts" run --target-dir . \
+  --profile anthropic-basic --max-requests 3 --run-ms 90000 \
+  --allow-live --out runs/first-probe
+```
+
+The project mode requires both limits for execution and reads the token
+directly only for `api_key` or `bearer`. Ask the user to fix missing files
+locally. Keep the token file out of the conversation. Select one target
+source per invocation. Project mode takes all connection settings from the
+directory.
+
+## Use environment variables or explicit arguments
+
+Pass `--endpoint URL` and `--model NAME` to configure the target explicitly,
+or add `--use-env` to read the following variables. Target selection is
+independent of the agent host's provider settings.
 
 | Variable | Purpose | Values |
 | --- | --- | --- |
@@ -47,68 +75,23 @@ In command-line-only mode, `--auth-env VARIABLE_NAME` explicitly selects the
 credential. Omitting it sends no authentication header, preserving the direct
 CLI workflow. Use `--auth-mode none` to explicitly select unauthenticated access.
 
-## Supply the values
-
-Ask for the endpoint, model, mode and credential variable name, rather than
-the secret value. The variables must be available to the process that starts
-the probe. A `.env` file is not loaded automatically. If the agent cannot
-access that process environment, give the user the bounded command to run
-in a shell that has access.
-
-For a one-off Bash run, let the user enter the token in their own terminal.
-The subshell limits the variables' lifetime to this command group.
-The output directory must be new and its parent must already exist.
-Set `SKILL_DIR` as described in the [skill instructions](../SKILL.md) first.
-
-```bash
-(
-  set +x
-  export AR_DIAG_ENDPOINT_URL='https://gateway.example.com/v1'
-  export AR_DIAG_MODEL='YOUR_MODEL'
-  export AR_DIAG_AUTH_MODE='api_key'
-  export AR_DIAG_API_VERSION='2023-06-01'
-
-  printf 'Endpoint API token: '
-  IFS= read -r -s AR_DIAG_AUTH_TOKEN
-  printf '\n'
-  export AR_DIAG_AUTH_TOKEN
-
-  node "$SKILL_DIR/scripts/src/cli/main.ts" plan --use-env \
-    --profile anthropic-basic --max-requests 3 --run-ms 90000
-
-  node "$SKILL_DIR/scripts/src/cli/main.ts" run --use-env \
-    --profile anthropic-basic --max-requests 3 --run-ms 90000 \
-    --allow-live --out /tmp/diagnosis-run
-)
-```
-
-For a Bearer endpoint, set `AR_DIAG_AUTH_MODE=bearer`.
-For an unauthenticated endpoint, set `AR_DIAG_AUTH_MODE=none` and omit the
-token prompt. In an agent session, provide the selected target and authorize
-the request/time bounds. Confirm variable availability without printing
-values or dumping the environment.
-
-For repeated use, store the credential in an OS credential store or the
-organization's secret manager and supply it to the probe process when needed.
-The Skill does not implement a vault, OS keychain integration, OAuth login,
-or token refresh. Arbitrary headers, simultaneous key-plus-token authentication
-and mTLS have no CLI options. In CI, inject a dedicated test credential only
-into the authorized live-probe step. Normal repository checks need no secrets.
+Ask for the credential variable name and check availability without printing
+values or dumping the environment. The variables must be available to the
+agent process that starts the probe. The helper does not load `.env` files.
 
 ## Security boundary
 
-An environment variable is plaintext in the process environment. Code running
-with sufficient local permissions, including an agent's shell tools, may read
-it. A namespace prevents accidental naming overlap but does not provide access
-control. A subshell reduces exposure time and inherited scope. It does not
-isolate a secret from other authorized code running in that environment.
+The token file and environment values are plaintext. Keep test projects local
+and use their Git ignore rules for target details, tokens, evidence, and run
+records. Code with sufficient local permissions can read credentials from
+these sources.
 
 Use a credential restricted to the target service and the required access,
 with a short lifetime or easy revocation when supported. Use HTTPS for remote
 authenticated endpoints. The probe does not follow redirects, so it does not
 forward the credential to a redirect target. If the host provides vault-based
 header injection restricted to an exact hostname, prefer that mechanism when
-available. The current local helper consumes a real environment value.
+available.
 
 Request authorization headers are not included in captured request records.
 Response headers and bodies remain original evidence and may contain

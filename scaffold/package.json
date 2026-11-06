@@ -1,0 +1,20 @@
+{
+  "name": "@sleetdrop/anthropic-readiness",
+  "version": "0.2.0",
+  "description": "Scaffold an agent-driven diagnostic project for an Anthropic Messages-compatible endpoint.",
+  "license": "MIT",
+  "bin": {
+    "anthropic-readiness": "./init.mjs"
+  },
+  "engines": {
+    "node": ">=24 <25"
+  },
+  "files": [
+    "init.mjs",
+    "project/README.md",
+    "skills/anthropic-readiness/"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}
