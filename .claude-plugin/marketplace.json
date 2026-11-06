@@ -1,0 +1,13 @@
+{
+  "name": "anthropic-readiness-local",
+  "description": "Local installation of the Anthropic Readiness diagnostic skill.",
+  "owner": {
+    "name": "sleetdrop"
+  },
+  "plugins": [
+    {
+      "name": "messages-readiness",
+      "source": "./"
+    }
+  ]
+}

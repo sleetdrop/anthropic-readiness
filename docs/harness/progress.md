@@ -324,3 +324,29 @@ loopback peers. The full gate passed with local loopback access. Skill
 metadata, all bundled relative links, and shell example syntax were checked.
 Codex discovery and diagnosis in a fresh consumer chat remain for the
 [offline exercise](../offline-exercise.md). No real endpoint was called.
+
+## 2026-11-07 — Plugin entry points for three agent hosts
+
+The repository provides one distributable directory with an Agent Plugins
+1.0 manifest for Codex, a Claude Code manifest and marketplace, and an
+OpenCode 2 server entry point. The plugin ID is `messages-readiness` because
+Claude Code reserves the `anthropic-` plugin prefix. The Skill remains
+`anthropic-readiness`. The OpenCode entry point registers the bundled Skill
+and a slash command that forwards the user's request to the agent.
+The README shows how to export only the distributable files and how to
+invoke the standalone Skill with natural-language keywords.
+
+Codex 0.167.0-alpha.3.2 read the local marketplace and listed the bundled
+Skill. Claude Code 2.1.318 passed strict manifest and marketplace validation
+on a clean bundle. OpenCode 2.2.5 loaded that bundle in a temporary consumer
+project, where its local server listed the Skill and slash command. The
+bundled inspector found the duplicate start at event index 1. The Node
+24.22.2 gate passed strict types and all 84 tests, including slash-command
+forwarding. These plugin checks did not run a model-driven plugin chat,
+test a desktop installation flow, or call a real diagnostic endpoint.
+
+Separately, the consumer project reported that the standalone install from
+`166e485` passed explicit and implicit invocation in two fresh Codex CLI
+chats. Both used the installed checker and located the duplicate start.
+The normal and partial controls, offline preview, and report rendering also
+matched their expected results.

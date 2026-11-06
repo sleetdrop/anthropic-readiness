@@ -2,10 +2,16 @@
 
 The repository delivers the
 [Anthropic Readiness Skill](../skills/anthropic-readiness/SKILL.md) as a
-self-contained directory. Use the [installation instructions](../README.md#install-in-a-codex-project)
-to copy a fixed commit into another Codex project. The local check exercises
-the installed helpers in isolation. Use the [offline exercise](offline-exercise.md)
-for the remaining Codex discovery and diagnosis walkthrough in a new project.
+self-contained directory. The [installation instructions](../README.md#install)
+cover the Codex, Claude Code, and OpenCode 2 plugins and standalone Skill
+installation for other agents. All entry points use the same bundled Skill.
+The local check exercises the installed helpers in isolation.
+
+The standalone [offline exercise](offline-exercise.md) passed for explicit
+and implicit invocation in separate Codex CLI chats. Plugin packaging checks
+verified Codex inventory discovery, Claude Code manifest validation, and
+OpenCode 2 registration. See the [verification record](harness/progress.md)
+for the tested scope.
 
 An independent offline walkthrough passed on a saved real SSE response and
 two controls. See [the verification record](harness/progress.md) for the

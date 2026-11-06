@@ -1,7 +1,7 @@
 # Offline incident exercise
 
 Install the Skill from a fixed commit in a separate Codex project using the
-[installation instructions](../README.md#install-in-a-codex-project). Open a
+[standalone installation instructions](../README.md#standalone-skill). Open a
 fresh chat in the consumer project. Keep the source checkout, fixture names,
 and expected findings out of the chat.
 
