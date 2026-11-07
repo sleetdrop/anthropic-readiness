@@ -11,8 +11,8 @@ evidence/run directories, and a self-contained Skill.
 
 ## Verification
 
-- Node 24.22.2 strict types and all 93 tests passed, including generated
-  workbenches, reports, and eight simulated publish-helper checks.
+- Node 24.22.2 strict types and all 94 tests passed, including generated
+  workbenches, reports, and nine simulated publish-helper checks.
 - The npm archive has 30 files and excludes development tools, tests,
   historical records, and local artifacts.
 - Independent consumer trials covered Skill use, full core execution, and
@@ -26,8 +26,8 @@ Private targets and original live captures stay outside this repository.
 
 ## Before publication
 
-Use the [publish helper](releasing.md#publish-helper) for checks, current-package
-packing, interactive npm authentication, publication, and registry validation.
-Git tagging and pushing are independent source-management actions. The helper
-does not use Git or require a tag.
+Use the [publish helper](releasing.md#publish-helper) for checks, packing from
+an existing version tag, interactive npm authentication, publication, and
+registry validation. Git tagging and pushing are independent source-management
+actions. The helper only reads Git data; it never creates or pushes tags.
 Registry installation remains unverified.

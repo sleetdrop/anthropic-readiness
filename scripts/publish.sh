@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Publish the current npm package, with npm handling interactive login and OTP.
+# Publish an existing Git tag to npm, with interactive login and OTP.
 set -euo pipefail
 
 fail() { printf 'error: %s\n' "$*" >&2; exit 1; }
@@ -34,6 +34,12 @@ export npm_config_cache="$REPO_ROOT/artifacts/npm-cache"
 PACKAGE="$(node -p 'require("./package.json").name')"
 VERSION="$(node -p 'require("./package.json").version')"
 [[ "$PACKAGE" == '@sleetdrop/anthropic-readiness' ]] || fail "Unexpected package: $PACKAGE"
+VERSION_TAG="v$VERSION"
+SOURCE_COMMIT="$(git rev-parse --verify "refs/tags/$VERSION_TAG^{commit}" 2>/dev/null)" ||
+  fail "Prepare the $VERSION_TAG source tag separately. This helper does not create Git tags."
+git diff --quiet "$SOURCE_COMMIT" -- package.json package-lock.json bin templates README.md LICENSE ||
+  fail "Package inputs differ from $VERSION_TAG. Review the intended source release first."
+
 if [[ -z "$DIST_TAG" ]]; then
   case "$VERSION" in *-*) DIST_TAG=next ;; *) DIST_TAG=latest ;; esac
 fi
@@ -56,15 +62,17 @@ if [[ "$DRY_RUN" == false ]]; then
   [[ "$identity" == sleetdrop ]] || fail "Expected npm account sleetdrop, got $identity."
 fi
 
-echo "Checking $PACKAGE@$VERSION (npm tag: $DIST_TAG)..."
+echo "Checking $PACKAGE@$VERSION ($VERSION_TAG, npm tag: $DIST_TAG)..."
 npm ci --ignore-scripts --registry "$REGISTRY"
 npm run check
 
 publish_tmp="$(mktemp -d "${TMPDIR:-/tmp}/anthropic-readiness-publish.XXXXXX")"
 trap 'rm -rf "$publish_tmp"' EXIT
+mkdir "$publish_tmp/source"
+git archive "$SOURCE_COMMIT" | tar -x -C "$publish_tmp/source"
 RELEASE_DIR="$REPO_ROOT/artifacts/releases/$VERSION"
 mkdir -p "$RELEASE_DIR"
-npm pack "$REPO_ROOT" --ignore-scripts --json --pack-destination "$RELEASE_DIR" > "$publish_tmp/pack.json"
+npm pack "$publish_tmp/source" --ignore-scripts --json --pack-destination "$RELEASE_DIR" > "$publish_tmp/pack.json"
 archive_name="$(node -p 'JSON.parse(require("node:fs").readFileSync(process.argv[1], "utf8"))[0].filename' "$publish_tmp/pack.json")"
 integrity="$(node -p 'JSON.parse(require("node:fs").readFileSync(process.argv[1], "utf8"))[0].integrity' "$publish_tmp/pack.json")"
 [[ "$archive_name" == "sleetdrop-anthropic-readiness-$VERSION.tgz" && "$integrity" == sha512-* ]] ||

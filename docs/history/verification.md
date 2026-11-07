@@ -661,3 +661,25 @@ Strict types and all 93 executed tests passed. Bash syntax and ShellCheck
 passed, and the dry-run archive contained the expected 30 files. Temporary
 source files were removed after preserving local check results and the archive.
 No sign-in, OTP exchange, actual npm publication, or Git tag change occurred.
+
+## 2026-11-08 — Read-only source tag contract
+
+The owner clarified that reading Git metadata is allowed. Creating or pushing
+source tags must remain separate from npm publication. Restored the existing
+`v<package.json version>` tag contract without requiring the tag to be pushed.
+The helper resolves that tag to a commit, checks package inputs against it,
+and packs an exported snapshot. It never creates, moves, fetches, or pushes
+Git references. Node selection remains portable and contains no local paths.
+
+A failing control first showed that working-directory packing included an
+untracked file. Nine simulated helper tests now pass, including missing tags,
+changed package inputs, snapshot packing, and unchanged Git references.
+The test Git wrapper rejects commands outside its read-only allowlist.
+
+Node 24.22.2 strict types and all 94 executed tests passed with no failures,
+skips, or cancellations. Bash syntax and ShellCheck passed. A full helper
+dry-run produced the expected 30-file archive with the previously validated
+`v0.1.0` SHA-256. Git references were identical before and after the dry-run;
+package inputs and the existing source tag are unchanged. No sign-in, OTP
+exchange, actual npm publication, remote write, or diagnostic endpoint request
+was performed.

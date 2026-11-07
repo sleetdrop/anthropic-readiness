@@ -17,9 +17,12 @@ from PATH, with an optional lookup through `brew --prefix node@24` when
 Homebrew is available. It contains no machine-specific paths and does not
 install Node or change shell configuration.
 
-The helper confirms the `sleetdrop` npm account, installs locked tools, runs
-repository checks, and packs the current working directory. npm handles
-login, OTP, and browser verification directly. Registry operations target
+The helper reads the existing `v<package.json version>` Git tag and checks
+that the package inputs match it. It confirms the `sleetdrop` npm account,
+installs locked tools, runs repository checks, and packs a snapshot of the
+tagged commit. Later changes to the helper or development documentation do
+not require moving the source tag. npm handles login, OTP, and browser
+verification directly. Registry operations target
 npmjs.org; a conflicting `@sleetdrop:registry` setting stops the script.
 
 After publication, it checks the registered version, archive integrity, and
@@ -40,9 +43,12 @@ publishes that package version; it does not choose a new version for you.
 ## Git tags and source changes
 
 Git tagging, merging, and pushing are separate from npm publication. They can
-happen at different times. The helper does not read or modify Git state, and
-it works without a Git checkout or a version tag.
+happen at different times. The helper only reads Git data; it never creates,
+moves, or pushes tags, commits, or branches. A local checkout with the existing
+version tag is required. The helper does not fetch tags or require a remote
+push before publishing to npm.
 
 When recording a source release, select the intended commit and create a
-version tag as a separate Git operation. Do not move a published tag. Remote
+version tag as a separate Git operation. If the tag is missing or package
+inputs differ, the helper stops for review. Do not move a published tag. Remote
 Git writes and npm publication each require authorization.
