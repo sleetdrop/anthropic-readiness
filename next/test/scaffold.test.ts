@@ -3,7 +3,7 @@ import { execFile, spawnSync } from "node:child_process";
 import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { createServer } from "node:http";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { join, resolve } from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 import { promisify } from "node:util";
@@ -25,6 +25,7 @@ test("the packed initializer creates an isolated project that can run a bounded 
   const [pkg] = JSON.parse(packed.stdout);
   assert.equal(pkg.name, "@sleetdrop/anthropic-readiness");
   assert.ok(pkg.files.some((item: { path: string }) => item.path === "skills/anthropic-readiness/SKILL.md"));
+  assert.ok(pkg.files.some((item: { path: string }) => item.path === "project/AGENTS.md"));
   assert.ok(!pkg.files.some((item: { path: string }) => /(?:^|\/)(?:token\.txt|target\.json|runs|evidence)(?:\/|$)/u.test(item.path)));
 
   const init = (...args: string[]) => npm([
@@ -41,6 +42,16 @@ test("the packed initializer creates an isolated project that can run a bounded 
   const claude = init("claude-project", "--claude-code");
   assert.equal(claude.status, 0, claude.stderr);
   assert.ok(existsSync(join(root, "claude-project", ".claude", "skills", "anthropic-readiness", "SKILL.md")));
+
+  for (const [directory, skillDirectory] of [
+    [project, skill],
+    [join(root, "claude-project"), join(root, "claude-project", ".claude", "skills", "anthropic-readiness")],
+  ] as const) {
+    const guidance = readFileSync(join(directory, "AGENTS.md"), "utf8");
+    const links = [...guidance.matchAll(/\]\(([^)]+)\)/gu)].map((match) => match[1]!);
+    assert.ok(links.some((link) => resolve(directory, link) === join(skillDirectory, "SKILL.md")));
+    for (const link of links) assert.ok(existsSync(resolve(directory, link)), link);
+  }
 
   const response = JSON.parse(readFileSync(
     new URL("../../tests/fixtures/contracts/core-1.0.0/message-valid-tool.json", import.meta.url),

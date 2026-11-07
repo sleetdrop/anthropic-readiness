@@ -1,11 +1,12 @@
 #!/usr/bin/env node
-import { copyFile, cp, mkdir, rm, writeFile } from "node:fs/promises";
+import { copyFile, cp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { parseArgs } from "node:util";
 
 const usage = "Usage: npx @sleetdrop/anthropic-readiness init <directory> [--claude-code]";
 const skillSource = new URL("./skills/anthropic-readiness/", import.meta.url);
 const readmeSource = new URL("./project/README.md", import.meta.url);
+const agentsSource = new URL("./project/AGENTS.md", import.meta.url);
 const target = { endpoint: "", model: "", apiVersion: "2023-06-01", authMode: "api_key" };
 
 async function main() {
@@ -38,6 +39,9 @@ async function main() {
     await mkdir(join(root, "runs"), { mode: 0o700 });
     await copyFile(readmeSource, join(root, "README.md"));
     await cp(skillSource, join(root, skillPath), { recursive: true, errorOnExist: true, force: false });
+    const guidance = (await readFile(agentsSource, "utf8"))
+      .replaceAll("{{SKILL_PATH}}", skillPath.replaceAll("\\", "/"));
+    await writeFile(join(root, "AGENTS.md"), guidance, { flag: "wx" });
   } catch (error) {
     await rm(root, { recursive: true, force: true });
     throw error;

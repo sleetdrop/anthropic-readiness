@@ -1,7 +1,7 @@
 {
   "name": "@sleetdrop/anthropic-readiness",
-  "version": "0.2.1",
-  "description": "Scaffold an agent-driven project to assess an endpoint's Anthropic Messages protocol implementation.",
+  "version": "0.1.0",
+  "description": "Scaffold a portable agent workbench to assess an endpoint's Anthropic Messages protocol implementation.",
   "license": "MIT",
   "bin": {
     "anthropic-readiness": "./init.mjs"
@@ -12,6 +12,7 @@
   "files": [
     "init.mjs",
     "project/README.md",
+    "project/AGENTS.md",
     "skills/anthropic-readiness/"
   ],
   "publishConfig": {

@@ -1,9 +1,13 @@
 # Current work
 
 The repository delivers the `@sleetdrop/anthropic-readiness` npm scaffold.
-Each [generated project](../README.md#create-a-test-project) contains a
-local target configuration and the bundled
+Each [generated workbench](../README.md#create-a-test-project) contains an
+`AGENTS.md` entry point, a local target configuration, and the bundled
 [Anthropic Readiness Skill](../scaffold/skills/anthropic-readiness/SKILL.md).
+The entry point links to the selected Skill directory for both default and
+Claude Code layouts. Agents can read it explicitly when instruction or Skill
+discovery is unavailable. The workbench requires file access and Node 24,
+without a dependency on a particular agent framework.
 Use the [local tarball workflow](development.md#try-the-npm-package-locally)
 to try the package from the current checkout.
 
@@ -20,8 +24,12 @@ session independently checked the saved outcomes, distinct case count, and all
 The [offline exercise](offline-exercise.md) describes the diagnosis controls.
 See the [verification record](harness/progress.md) for the tested scope.
 
-The next npm package candidate is `0.2.1`, with assessment-oriented Skill and
-project instructions. The existing local `v0.2.0` tag is unchanged. Follow the
+The first public npm package candidate is `0.1.0`. No previous design was
+released; the retained commits, earlier package numbers, and local test
+archives document exploration and verification rather than a published
+release line. The mistaken, unpublished local `v0.2.0` tag has been removed;
+the exploration commits and test artifacts remain. Work continues on
+`feat/agent-workbench`. Follow the
 [release sequence](development.md#release-the-npm-package): pass acceptance,
 merge into `main`, create the matching annotated version tag, then publish
 the inspected package from that revision after explicit authorization for

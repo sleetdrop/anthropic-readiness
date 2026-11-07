@@ -1,7 +1,7 @@
 # Anthropic Readiness
 
-Anthropic Readiness generates a local project for assessing the Anthropic
-Messages API exposed by your combination of model, inference software, and
+Anthropic Readiness generates a local agent workbench for assessing the
+Anthropic Messages API exposed by your combination of model, inference software, and
 API conversion software. Your agent selects tests, reviews retained evidence,
 and reports protocol differences and coverage gaps alongside task outcomes.
 It can also investigate individual failures using saved captures.
@@ -23,6 +23,15 @@ Fill in the generated `target.json` with the endpoint, exact model name,
 API version, and authentication mode. For authenticated targets, enter the
 credential in the local `token.txt` file. Add any saved capture to
 `evidence/` and open the directory in your agent.
+
+The workbench includes `AGENTS.md` with its purpose, file layout, and a link
+to the bundled Skill. Agents that load `AGENTS.md` can use that entry point;
+otherwise, ask your agent to read it explicitly. The agent needs file access
+and Node 24 execution, with no dependency on a particular agent framework.
+Instruction discovery follows the host's version and settings; see the
+official [Codex](https://learn.chatgpt.com/docs/agent-configuration/agents-md),
+[OpenCode](https://opencode.ai/docs/instructions/), and
+[Claude Code](https://code.claude.com/docs/en/memory#agentsmd) documentation.
 
 The project puts the Skill in `.agents/skills/` by default. For Claude Code,
 append `--claude-code` to generate it in `.claude/skills/`. For other agents,

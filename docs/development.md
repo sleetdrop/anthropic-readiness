@@ -21,7 +21,7 @@ From the repository root, use Node 24 LTS and run:
 
 ```sh
 npm pack ./scaffold --pack-destination /tmp
-npx --offline --package=/tmp/sleetdrop-anthropic-readiness-0.2.1.tgz \
+npx --offline --package=/tmp/sleetdrop-anthropic-readiness-0.1.0.tgz \
   anthropic-readiness init gateway-test
 ```
 
@@ -36,6 +36,12 @@ and a synthetic loopback endpoint.
 The public package lives in `scaffold/`; the repository root and `next/`
 remain private development packages. Use `scaffold/package.json` as the
 release version, and use `v<version>` for the matching annotated Git tag.
+The scaffold's release sequence starts with its first public package.
+Exploratory commits, internal package numbers, and local test archives are
+retained evidence, not earlier public releases. Private development packages
+do not carry a product release version.
+Probe-contract and fixture versions identify rules and evidence independently
+of the npm package's release version.
 
 1. Pass `npm run check` on Node 24 and complete the generated-project
    acceptance. Retain the tested scope, controls, and report checks in

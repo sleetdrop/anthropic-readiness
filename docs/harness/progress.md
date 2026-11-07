@@ -530,3 +530,35 @@ unchanged. The next package candidate is `0.2.1`; the local `v0.2.0` tag was
 not moved. Node 24.22.2 strict types and all 85 executed tests passed with no
 failures, skips, or cancellations. Skill metadata and local documentation
 links validated. No remote push, new release tag, or npm publication occurred.
+
+## 2026-11-07 — First portable workbench release candidate
+
+The owner clarified that previous designs and version numbers documented
+unreleased exploration. The scaffold's first public release candidate is
+therefore `0.1.0`, rather than a continuation of the internal `0.2.x` numbers.
+Private development-package version fields were removed without changing
+locked dependencies. The locked tools installed successfully with Node 24
+using offline `npm ci`. Protocol-contract identifiers and original test
+archives keep their existing meaning and were not rewritten.
+
+A read-only remote tag query found no remote `v0.2.0` tag.
+The mistaken local tag was removed after saving its annotation locally.
+All commits, prior verification records, and test artifacts were preserved.
+The working branch was renamed to `feat/agent-workbench` to describe the
+portable generated workspace rather than a host-specific adaptation.
+
+The initializer now generates a root `AGENTS.md` describing the workbench,
+configuration and evidence paths, authorization bounds, and bundled Skill
+entry point. Its link uses the selected `.agents/skills/` or `.claude/skills/`
+location and portable forward slashes. The npm package includes the template.
+The generated README explains explicit loading when the agent does not
+automatically discover instructions or skills. No agent framework, provider
+configuration, or extra credential service is required.
+
+The package regression first failed because the packed archive omitted
+`project/AGENTS.md`. After the implementation, the actual packed initializer
+generated valid Skill links under both layouts, and the existing bounded
+synthetic probe passed. Node 24.22.2 strict types and all 85 executed tests
+passed, with no failures, skips, or cancellations. This check sent no new
+requests to a real diagnostic endpoint. No replacement release tag, remote
+write, or npm publication was performed.

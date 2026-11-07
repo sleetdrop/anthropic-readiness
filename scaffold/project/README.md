@@ -1,4 +1,4 @@
-# Anthropic Readiness test project
+# Anthropic Readiness workbench
 
 Use this directory to assess one Anthropic Messages endpoint exposed by your
 model, inference software, and API conversion software.
@@ -8,8 +8,10 @@ model, inference software, and API conversion software.
    or `none` for `authMode`.
 2. For `api_key` or `bearer`, put the credential on one line in `token.txt`.
    It is a local plaintext file. The runner reads it at execution time.
-3. Open this project in an agent that can load the `anthropic-readiness` Skill
-   and run Node 24 LTS. Ask for a protocol assessment and provide known
+3. Open this workbench in an agent that can read files and run Node 24 LTS.
+   Its [AGENTS.md](AGENTS.md) points to the bundled `anthropic-readiness`
+   Skill. If instructions are not loaded automatically, ask the agent to
+   read `AGENTS.md` first. Ask for a protocol assessment and provide known
    inference and conversion software versions. For an individual failure,
    give it the symptom and any capture under `evidence/`.
    For a live run, explicitly authorize the target, maximum request count,
