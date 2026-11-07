@@ -1,13 +1,38 @@
 ---
 name: anthropic-readiness
-description: Investigate a concrete failure on an Anthropic Messages-compatible endpoint, such as stalled streaming or a broken tool continuation. Use saved request/response evidence first, run only relevant probes when authorized, and explain the smallest reproducible issue. Use for troubleshooting, not model rankings or blanket compatibility certification.
+description: Assess an endpoint's Anthropic Messages protocol implementation across a model, inference server, and API conversion software. Use for compatibility coverage, evidence-based reports, and diagnosis of failures such as stalled streaming or broken tool continuation.
 ---
 
 # Anthropic Readiness
 
-Respond in the user's language. Start from the observed symptom and a failing
-request or capture when available. Ask for missing facts only when they change
-the next diagnostic step.
+Respond in the user's language. Assess the externally exposed API, including
+when the underlying inference service uses another protocol. Keep protocol,
+task behavior, and actual client outcomes separate.
+
+## Assess a configured endpoint
+
+For an implementation assessment, preview `anthropic-core` and select additional
+capability profiles from the [probe guide](references/probes.md) according to
+the requested scope and version prerequisites. Establish a request cap and time
+bound before live execution. Complete the agreed scope rather than stopping at
+the first deviation; report cases prevented by prerequisites or deadlines.
+Unrun or inconclusive checks do not establish a pass.
+
+Record the model, inference software, and API conversion software and versions
+when supplied; leave unknown components explicit. A differing response model
+identifier can reflect mapping or routing and does not establish a configuration
+mistake or backend identity. Do not attribute a deviation to one component
+without evidence that distinguishes it. Compare combinations using named API
+versions, case revisions, and actual completed checks.
+
+Review the retained evidence and produce the assessment using the
+[report guide](references/reporting.md). State the verified coverage and gaps;
+do not infer complete protocol conformance from the selected checks.
+
+## Investigate a failure
+
+Start from the symptom and a failing request or capture when available. Ask
+for missing facts only when they change the next diagnostic step.
 
 1. **Preserve the incident.** Note the observed HTTP status, content type,
    request API version/betas, model, stream mode and whether the capture is
@@ -58,7 +83,7 @@ Consult the relevant [official version history](https://platform.claude.com/docs
 and [streaming contract](https://platform.claude.com/docs/en/build-with-claude/streaming)
 for version-sensitive interpretations; do not infer the request version from the body.
 
-If a fresh request is necessary, establish explicit permission for the target,
+Before a live run, establish explicit permission for the target,
 a request cap and a time bound first. In a generated test project, use
 `--target-dir` with the directory containing `target.json`. The runner reads
 `token.txt` only during an authorized authenticated run. Keep credentials
@@ -66,15 +91,13 @@ out of the conversation and let the runner read them directly. The
 [connection guide](references/connection.md) shows the project workflow and
 the environment and explicit argument modes.
 
-Use the [preset probe guide](references/probes.md) for targeted presets only
-if the request shape and API version are relevant. Preview the selected
+Use the [preset probe guide](references/probes.md) for the selected scope
+when its request shapes and API version are relevant. Preview the selected
 profile before running it, and confirm the plan's target and limits match
 the authorization. Label a preset a probe, not an exact replay. If no
 authorized, suitable probe exists, return an offline finding or a proposed
-minimal request. Stop when the symptom is explained or the agreed budget is spent.
-When the user asks for broad compatibility coverage, preview `anthropic-core`
-and add only the explicitly in-scope capability profiles. Record the API version
-and distinguish untested capabilities from failures.
+minimal request. For diagnosis, stop when the symptom is explained. For either
+workflow, stop when the agreed budget is spent and record unfinished checks.
 
 For a single symptom, return the observed evidence and scope, the smallest
 reproduction available, and one discriminating next check if the cause remains

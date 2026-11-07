@@ -21,7 +21,7 @@ From the repository root, use Node 24 LTS and run:
 
 ```sh
 npm pack ./scaffold --pack-destination /tmp
-npx --offline --package=/tmp/sleetdrop-anthropic-readiness-0.2.0.tgz \
+npx --offline --package=/tmp/sleetdrop-anthropic-readiness-0.2.1.tgz \
   anthropic-readiness init gateway-test
 ```
 

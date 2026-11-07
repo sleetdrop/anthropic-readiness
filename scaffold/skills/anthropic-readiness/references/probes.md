@@ -60,6 +60,9 @@ The error and count probes have no inference task, so task status is `SKIP`.
 There are **35 presets** across these profiles. Model-dependent profiles should
 be selected according to the endpoint's declared capabilities. A generic
 rejection or an unobserved effect does not establish unsupported capability.
+For an explicitly requested exploration of all listed capabilities under
+`2023-06-01`, the core plus all non-migration profiles select 32 cases with a
+maximum of 38 requests. The three migration cases require `2026-10-21`.
 The adaptive probe requires a model that accepts `thinking.type=adaptive`.
 Thinking signatures are checked for wire shape and sequence, not
 cryptographically verified.

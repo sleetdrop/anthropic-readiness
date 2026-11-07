@@ -474,3 +474,59 @@ status remains `not_tested`. Private configuration, original captures, and
 the local trial record remain outside the source repository. No full core
 suite, remote push, npm publication, or product change occurred in this
 trial.
+
+## 2026-11-07 — Full private protocol assessment
+
+The owner described a self-hosted inference stack using an OpenAI-native
+interface and API conversion software to expose Anthropic Messages. The
+assessment target was the resulting external API; exact component versions
+and backend identity were not independently established. The owner authorized
+a full assessment of the existing configured target. Configuration and
+credential files were preserved, with no aliases added to suppress identity
+findings and no automatic retries.
+
+The consumer selected the complete core and every non-migration capability
+profile under the configured `2023-06-01` header: 32 cases reserving at most
+38 requests. The three `2026-10-21` migration cases were explicitly untested.
+The run was admitted with a ceiling of 41 attempts and 600000 ms overall,
+45000 ms per attempt, 10000 ms to connect, and 30000 ms between reads.
+All 32 cases received results. Actual execution started 36 attempts in
+approximately 87.5 seconds. The streamed tool loop and error-result
+continuation each lacked a prerequisite for its second request; neither was
+sent or counted as passing coverage.
+
+All 36 captures ended at EOF. HTTP results were 31 status 200, three status
+404, and two status 400. Aggregate case results were 27 FAIL and 5 BLOCKED;
+protocol results were 27 FAIL and 5 INDETERMINATE. Task behavior was reported
+separately: 15 PASS, 7 FAIL, 4 INDETERMINATE, and 6 SKIP. These counts do not
+mean every capability failed: successful behavior coexisted with repeated
+wire deviations and an unverified response-model mapping.
+
+Verified findings included missing stop and thinking-signature fields,
+stream-start and delta deviations, output usage above the one-token test
+limit, invalid requests receiving successful responses, and structured-output
+differences. The count-token route returned 404 for the selected requests.
+The complete image and PDF error responses rejected the supplied input and
+declared text-only support. Cache responses reported read counters but did not
+establish the selected creation-then-hit condition, so the report retained an
+inconclusive capability conclusion. No individual stack component was blamed
+without a distinguishing comparison.
+
+The consumer generated a formal English synthesis using the bundled renderer.
+The source session independently checked every request and response hash,
+case and task counts, all 82 selected evidence references, and all 107 local
+links and anchors in the main report. Original captures, private target and
+model values, report input, and HTML remain outside the source repository.
+The consumer also checked 451 links across the local report set and inspected
+desktop and mobile layouts. Actual SDK/client behavior remains `not_tested`.
+
+The workflow completed the requested scope, retained complete evidence, and
+distinguished endpoint deviations from successful task behavior and uncertain
+coverage. No product defect was identified in these checks. The project
+intent, generated README, Skill entry point, and reporting guide now make
+protocol implementation assessment the primary workflow, with focused
+diagnosis available for individual findings. The runner and validators are
+unchanged. The next package candidate is `0.2.1`; the local `v0.2.0` tag was
+not moved. Node 24.22.2 strict types and all 85 executed tests passed with no
+failures, skips, or cancellations. Skill metadata and local documentation
+links validated. No remote push, new release tag, or npm publication occurred.

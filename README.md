@@ -1,9 +1,10 @@
 # Anthropic Readiness
 
-Anthropic Readiness generates a local project for diagnosing an Anthropic
-Messages-compatible endpoint with your agent. The bundled Skill starts from
-saved evidence, identifies the smallest reproducible protocol deviation,
-and separates that finding from task or client behavior.
+Anthropic Readiness generates a local project for assessing the Anthropic
+Messages API exposed by your combination of model, inference software, and
+API conversion software. Your agent selects tests, reviews retained evidence,
+and reports protocol differences and coverage gaps alongside task outcomes.
+It can also investigate individual failures using saved captures.
 
 ## Create a test project
 
@@ -28,13 +29,20 @@ append `--claude-code` to generate it in `.claude/skills/`. For other agents,
 load the generated Skill using their local discovery settings or point the
 agent to its `SKILL.md`.
 
-In chat, mention **Anthropic Messages** and the symptom, such as a stalled
-**SSE stream** or a broken **tool continuation**. For example:
+In chat, ask for an **Anthropic Messages** protocol assessment. Include known
+inference and conversion software versions so the report can identify the
+tested combination. For example:
+
+> Assess the configured endpoint's Anthropic Messages implementation. Preview
+> the full core suite, then run it with at most 27 requests within 10 minutes.
+> Report protocol differences, task outcomes, evidence, and untested scope.
+
+For an individual failure, provide the symptom and saved evidence:
 
 > Diagnose why this Anthropic Messages stream stalls. Inspect the saved
 > `evidence/response.sse` offline. The capture is partial.
 
-## Diagnose and report
+## Assess and report
 
 For a live probe, authorize the configured target, a maximum request count,
 and a total time limit. The agent previews the selected probes, executes
@@ -47,6 +55,12 @@ to see the workflow on a known fault and a comparison sample. If the capture
 leaves a specific question open, the
 [preset probe guide](scaffold/skills/anthropic-readiness/references/probes.md)
 describes the available request shapes and how to bound an authorized run.
+
+The core suite contains 22 cases with a maximum of 27 requests. Select
+additional capability profiles according to the assessment scope and their
+prerequisites. A compatibility assessment records the tested API version and
+the checks actually completed; it does not establish complete conformance
+from a partial run.
 
 For an assessment across one or more runs, the
 [report guide](scaffold/skills/anthropic-readiness/references/reporting.md)
@@ -61,4 +75,4 @@ are retained in Git history at `8048934`.
 
 For development, see [contributing](CONTRIBUTING.md) and
 [local checks](docs/development.md). The [project intent](intends.md) defines
-what a useful diagnosis should establish.
+what an assessment and a focused diagnosis should establish.

@@ -6,6 +6,15 @@ relevant request/response bytes. Reconcile contradictory observations before
 summarizing. Cross-run comparisons must name the API header and keep overlapping
 case counts separate from request counts.
 
+Identify the tested combination of model, inference software, and API
+conversion software, with versions when supplied. Use the existing summary
+and findings fields for this context; leave unknown components explicit.
+A response model label does not establish backend identity. Preserve unknown
+name mappings as findings rather than treating them as configuration mistakes.
+When comparing combinations, name the case revisions, API headers, selected
+scope, and completed checks. Attribute a difference to an individual layer
+only when a controlled comparison distinguishes that layer.
+
 1. **Conclusion.** State what worked, the most consequential verified difference,
    and one important evidence boundary. Name the tested model and versions.
 2. **Capability table.** Summarize by tested capability. Distinguish observed

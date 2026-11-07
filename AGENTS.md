@@ -1,7 +1,8 @@
 # Repository guide
 
 Read [intends.md](intends.md) and [current status](docs/CONTINUE.md). Follow
-the [Skill](scaffold/skills/anthropic-readiness/SKILL.md) for incident work.
+the [Skill](scaffold/skills/anthropic-readiness/SKILL.md) for assessments and
+incident work.
 The standalone assessment application is historical. Its records are indexed
 in [current status](docs/CONTINUE.md).
 
