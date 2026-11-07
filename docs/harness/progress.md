@@ -446,3 +446,31 @@ merging to `main`, an annotated tag matching the `0.2.0` package version, and
 packing from that revision before any authorized remote push or npm publish.
 No registry installation, real diagnostic endpoint, optional capability
 profile, or actual SDK client was tested in this acceptance.
+
+## 2026-11-07 — Private configuration smoke check
+
+After the owner supplied target and credential files in the generated
+consumer project, the execution session validated the configuration and
+completed a zero-request preview. It then used the unchanged bundled runner
+on Node 24 for one authorized `anthropic-tools-smoke` attempt, capped at one
+request and 45000 ms overall, with a 30000 ms attempt deadline. The request
+returned a complete HTTP 200 response in approximately 2.56 seconds. No retry
+was made, and the owner-supplied files were not changed.
+
+The selected forced-tool task passed, with no explicit authentication or
+model rejection. Protocol status failed on three observations:
+`MSG-STOP-SEQUENCE-FIELD` for the missing root field, `MSG-MODEL` for a
+response identifier different from the configured model, and
+`MSG-THINKING-SIGNATURE` for the missing signature in the first thinking
+block. The execution session checked the original response hash and fields
+and independently inspected the retained response record. The source
+session verified the saved attempt count, limits, task status, failing rules,
+and evidence locations without copying private target or model values.
+
+The configured target completed this task; the evidence does not verify the
+requested model routing, establish broad protocol compatibility, or show
+that the owner filled in the configuration incorrectly. Actual SDK/client
+status remains `not_tested`. Private configuration, original captures, and
+the local trial record remain outside the source repository. No full core
+suite, remote push, npm publication, or product change occurred in this
+trial.

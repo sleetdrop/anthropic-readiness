@@ -24,8 +24,14 @@ The npm package version is `0.2.0`. Follow the
 [release sequence](development.md#release-the-npm-package): pass acceptance,
 merge into `main`, create the matching annotated `v0.2.0` tag, then publish
 the inspected package from that revision after explicit authorization for
-remote writes. Registry installation and real diagnostic endpoints remain
-unverified.
+remote writes. Registry installation remains unverified.
+
+An owner-authorized private configuration check completed one real request:
+HTTP 200 and the forced-tool task passed, but response checks found a model
+identifier mismatch, missing `stop_sequence`, and a thinking block without
+`signature`. This confirms the configured target can complete that task;
+the requested model routing and broader compatibility remain unverified.
+Original evidence and target details stay in the local consumer project.
 
 An independent offline walkthrough passed on a saved real SSE response and
 two controls. See [the verification record](harness/progress.md) for the
