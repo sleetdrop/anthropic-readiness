@@ -610,3 +610,33 @@ The remote branch was checked and can be fast-forwarded; no remote tag with
 that name exists. The changelog now identifies the first source release.
 Only documentation changed after the recorded 85-test repository check.
 The npm package remains unpublished; registry installation is unverified.
+
+## 2026-11-08 — Interactive npm publish helper
+
+Added `scripts/publish.sh`, following the registry, login, interactive publish,
+and verification workflow used by `sleetdrop/dsh-plugin-topology`. The helper
+finds the repository root, selects Node 24 from PATH or an installed Homebrew
+formula, checks the annotated version tag and package inputs, and requires the
+`sleetdrop` npm account. Registry operations target npmjs.org; a conflicting
+scope registry is rejected before authentication or publication.
+
+The helper installs locked tools, runs repository checks, and packs the Git
+tag. npm keeps its terminal input and output for login, OTP, and browser
+verification. After publishing, bounded read-only checks compare the registry
+version, archive integrity, and npm dist-tag. A registry-package initialization
+check runs in an empty temporary directory. Publication itself is never
+retried automatically. `--dry-run` skips sign-in and actual publication.
+
+Eight tests use temporary Git repositories and a simulated npm command.
+They cover normal publication, dry-run, missing tags, changed package inputs,
+account mismatch, publish failure, prerelease tags, integrity mismatch, Node
+selection, scope-registry overrides, and isolated registry installation.
+Controls first reproduced the scope-override and non-isolated-installation
+failures before the corresponding guards were added.
+
+Node 24.22.2 strict types and all 93 executed tests passed with no skipped or
+cancelled checks. Bash syntax and ShellCheck passed. A full helper dry-run
+completed without sign-in or publication, and its 30-file archive retained the
+validated `v0.1.0` SHA-256. Package inputs and the existing source tag were not
+changed. No actual npm publish, OTP exchange, or diagnostic endpoint request
+was performed.

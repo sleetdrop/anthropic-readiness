@@ -11,8 +11,8 @@ evidence/run directories, and a self-contained Skill.
 
 ## Verification
 
-- Node 24.22.2 strict types and all 85 synthetic tests passed after the
-  repository cleanup, including both generated Skill layouts and reports.
+- Node 24.22.2 strict types and all 93 tests passed, including generated
+  workbenches, reports, and eight simulated publish-helper checks.
 - The npm archive has 30 files and excludes development tools, tests,
   historical records, and local artifacts.
 - Independent consumer trials covered Skill use, full core execution, and
@@ -28,4 +28,6 @@ Private targets and original live captures stay outside this repository.
 
 Complete the [release sequence](releasing.md): validate the package, merge to
 `main`, create the version tag, then push and publish with authorization.
+The [publish helper](releasing.md#publish-helper) combines checks, tagged
+packaging, interactive npm authentication, publication, and registry validation.
 Registry installation remains unverified.
