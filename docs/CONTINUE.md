@@ -1,7 +1,7 @@
 # Maintainer status
 
-The portable agent workbench is preparing its first public npm release,
-`0.1.0`. No version has been published. Exploratory commits and earlier test
+The first workbench release is `0.1.0`. The npm package has not yet been
+published. Exploratory commits and earlier test
 archives remain available in [development history](history/README.md).
 
 The repository is one npm package. The command is in `bin/`, copied workbench

@@ -601,3 +601,12 @@ saved evidence, rendered reports, and used bounded synthetic HTTP peers.
 The 30-file npm archive contains only `bin/`, `templates/`, package metadata,
 README, and license. No real endpoint request, remote push, release tag, or
 npm publication was performed.
+
+
+## 2026-11-08 — Source release preparation
+
+The owner authorized pushing `main` and creating the annotated `v0.1.0` tag.
+The remote branch was checked and can be fast-forwarded; no remote tag with
+that name exists. The changelog now identifies the first source release.
+Only documentation changed after the recorded 85-test repository check.
+The npm package remains unpublished; registry installation is unverified.

@@ -1,8 +1,6 @@
 # Changelog
 
-## Unreleased
-
-Initial public release candidate: `0.1.0`.
+## 0.1.0 - 2026-11-08
 
 - Generate a local workbench with target configuration, a credential file,
   `AGENTS.md`, and a bundled Anthropic Readiness Skill.

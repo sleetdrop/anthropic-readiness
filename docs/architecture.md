@@ -13,10 +13,10 @@ comparison. Record known stack components and versions; leave unknowns explicit.
 
 ```text
 bin/                     npm command
-templates/              files copied into each workbench
+templates/               files copied into each workbench
    skills/               bundled Skill and its runtime
 scripts/                 repository checks
-tests/                  tests and synthetic protocol fixtures
+tests/                   tests and synthetic protocol fixtures
 docs/                    development and release guides
    history/              earlier reviews and verification records
 ```
