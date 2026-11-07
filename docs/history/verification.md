@@ -640,3 +640,24 @@ completed without sign-in or publication, and its 30-file archive retained the
 validated `v0.1.0` SHA-256. Package inputs and the existing source tag were not
 changed. No actual npm publish, OTP exchange, or diagnostic endpoint request
 was performed.
+
+
+## 2026-11-08 — Separate npm publication from Git
+
+The owner clarified that source tagging and npm publication are independent.
+Removed all Git commands and tag requirements from `scripts/publish.sh`.
+It now packs the current project directory, with archives stored by npm
+version. Authentication, repository checks, public-registry guards, publication,
+and registry-installation verification remain part of the npm workflow.
+
+Node 24 is found through PATH or an optional dynamic Homebrew lookup. There
+are no machine-specific user directories or installation prefixes. A failed
+Homebrew lookup no longer supplies an empty prefix to the Node search.
+
+The regression fixture has no Git repository and rejects any Git invocation;
+publication succeeds using its current package files. A full helper dry-run
+also passed from an isolated source copy without `.git`, using Node 24.22.2.
+Strict types and all 93 executed tests passed. Bash syntax and ShellCheck
+passed, and the dry-run archive contained the expected 30 files. Temporary
+source files were removed after preserving local check results and the archive.
+No sign-in, OTP exchange, actual npm publication, or Git tag change occurred.

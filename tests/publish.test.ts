@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
-import { execFileSync, spawnSync } from "node:child_process";
-import { copyFileSync, mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
+import { spawnSync } from "node:child_process";
+import { copyFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import test, { type TestContext } from "node:test";
@@ -22,8 +22,7 @@ switch (args[0]) {
     break;
   case "login": fs.writeFileSync(path.join(state, "identity"), "sleetdrop"); break;
   case "pack": {
-    if (fs.readFileSync(path.join(args[1], "templates/marker"), "utf8") !== "tagged") process.exit(8);
-    if (fs.existsSync(path.join(args[1], "local-notes"))) process.exit(9);
+    if (fs.readFileSync(path.join(args[1], "templates/marker"), "utf8") !== "working-tree") process.exit(8);
     const filename = "sleetdrop-anthropic-readiness-" + settings.version + ".tgz";
     fs.writeFileSync(path.join(option("--pack-destination"), filename), "synthetic archive");
     console.log(JSON.stringify([{ filename, integrity: "sha512-synthetic" }]));
@@ -54,8 +53,8 @@ switch (args[0]) {
 `;
 
 function fixture(t: TestContext, options: {
-  version?: string; user?: string; noTag?: boolean; publishFails?: boolean;
-  badIntegrity?: boolean; node26?: boolean; scopeRegistry?: string;
+  version?: string; user?: string; publishFails?: boolean;
+  badIntegrity?: boolean; node26?: boolean; noNode24?: boolean; scopeRegistry?: string;
 } = {}) {
   const temp = mkdtempSync(join(tmpdir(), "readiness publish "));
   t.after(() => rmSync(temp, { recursive: true, force: true }));
@@ -68,25 +67,21 @@ function fixture(t: TestContext, options: {
   copyFileSync(new URL("../scripts/publish.sh", import.meta.url), helper);
   const version = options.version ?? "0.1.0";
   writeFileSync(join(root, "package.json"), JSON.stringify({ name: "@sleetdrop/anthropic-readiness", version }));
-  writeFileSync(join(root, "templates", "marker"), "tagged");
+  writeFileSync(join(root, "templates", "marker"), "working-tree");
   writeFileSync(join(state, "settings.json"), JSON.stringify({ ...options, version }));
   if (options.user) writeFileSync(join(state, "identity"), options.user);
   writeFileSync(join(mockBin, "npm"), fakeNpm, { mode: 0o755 });
   writeFileSync(join(mockBin, "sleep"), "#!/bin/sh\nexit 0\n", { mode: 0o755 });
-  const git = (...args: string[]) => execFileSync("git", [
-    "-c", "user.name=Release Test", "-c", "user.email=release@example.invalid",
-    "-c", "commit.gpgsign=false", "-c", "tag.gpgSign=false", ...args,
-  ], { cwd: root, stdio: "pipe" });
-  git("init", "-q"); git("add", "."); git("commit", "-qm", "Synthetic release");
-  if (!options.noTag) git("tag", "-a", `v${version}`, "-m", "Synthetic release tag");
-  writeFileSync(join(root, "local-notes"), "not part of the tagged source");
-  if (options.node26) {
+  writeFileSync(join(mockBin, "git"), '#!/bin/sh\necho called >> "$PUBLISH_TEST_STATE/git-calls"\nexit 99\n', { mode: 0o755 });
+  if (options.node26 || options.noNode24) {
     const runtime = join(temp, "node24");
     mkdirSync(join(runtime, "bin"), { recursive: true });
     symlinkSync(process.execPath, join(runtime, "bin", "node"));
     const quote = (value: string) => "'" + value.replaceAll("'", "'\\''") + "'";
     writeFileSync(join(mockBin, "node"), `#!/bin/sh\nif [ "$1" = "-p" ] && [ "$2" = 'process.versions.node.split(".")[0]' ]; then echo 26; else exec ${quote(process.execPath)} "$@"; fi\n`, { mode: 0o755 });
-    writeFileSync(join(mockBin, "brew"), `#!/bin/sh\nprintf '%s\\n' ${quote(runtime)}\n`, { mode: 0o755 });
+    writeFileSync(join(mockBin, "brew"), options.noNode24
+      ? "#!/bin/sh\nexit 1\n"
+      : `#!/bin/sh\nprintf '%s\\n' ${quote(runtime)}\n`, { mode: 0o755 });
   }
   const calls = (): string[][] => {
     try { return readFileSync(join(state, "calls.jsonl"), "utf8").trim().split("\n").filter(Boolean).map((line) => JSON.parse(line)); }
@@ -96,16 +91,18 @@ function fixture(t: TestContext, options: {
     cwd: dirname(root), encoding: "utf8", timeout: 20_000,
     env: { ...process.env, PATH: `${mockBin}:${dirname(process.execPath)}:${process.env.PATH}`, PUBLISH_TEST_STATE: state },
   });
-  return { root, calls, run };
+  return { root, calls, run, usedGit: () => existsSync(join(state, "git-calls")) };
 }
 
-test("publish helper checks, logs in, publishes the tagged archive, and verifies registry installation", (t) => {
-  const { run, calls } = fixture(t);
+test("publish helper publishes the current working directory without Git and verifies registry installation", (t) => {
+  const { root, run, calls, usedGit } = fixture(t);
   const result = run();
   assert.equal(result.status, 0, result.stderr);
   const commands = calls();
   assert.deepEqual(commands.filter((c) => c[0] === "run"), [["run", "check"]]);
   assert.equal(commands.filter((c) => c[0] === "login").length, 1);
+  assert.equal(commands.find((c) => c[0] === "pack")?.[1], root);
+  assert.equal(usedGit(), false);
   const publishes = commands.filter((c) => c[0] === "publish");
   assert.equal(publishes.length, 1);
   assert.match(publishes[0]![1]!, /sleetdrop-anthropic-readiness-0\.1\.0\.tgz$/u);
@@ -123,14 +120,12 @@ test("publish dry-run skips sign-in, registry verification, and real publication
   assert.ok(!calls().some((c) => ["whoami", "login", "view", "exec"].includes(c[0]!)));
 });
 
-test("publish helper refuses missing tags and changed package inputs before npm actions", (t) => {
-  for (const missing of [true, false]) {
-    const { root, run, calls } = fixture(t, { noTag: missing });
-    if (!missing) writeFileSync(join(root, "templates", "marker"), "changed");
-    const result = run();
-    assert.notEqual(result.status, 0);
-    assert.deepEqual(calls(), []);
-  }
+test("publish helper stops before npm actions when Node 24 is unavailable", (t) => {
+  const { run, calls } = fixture(t, { noNode24: true });
+  const result = run();
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /Node 24 LTS is required/u);
+  assert.deepEqual(calls(), []);
 });
 
 test("publish helper refuses a different account and never retries a failed publish", (t) => {

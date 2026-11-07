@@ -26,8 +26,8 @@ Private targets and original live captures stay outside this repository.
 
 ## Before publication
 
-Complete the [release sequence](releasing.md): validate the package, merge to
-`main`, create the version tag, then push and publish with authorization.
-The [publish helper](releasing.md#publish-helper) combines checks, tagged
-packaging, interactive npm authentication, publication, and registry validation.
+Use the [publish helper](releasing.md#publish-helper) for checks, current-package
+packing, interactive npm authentication, publication, and registry validation.
+Git tagging and pushing are independent source-management actions. The helper
+does not use Git or require a tag.
 Registry installation remains unverified.

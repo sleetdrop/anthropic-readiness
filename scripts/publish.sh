@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Publish the versioned Git source, with npm handling interactive login and OTP.
+# Publish the current npm package, with npm handling interactive login and OTP.
 set -euo pipefail
 
 fail() { printf 'error: %s\n' "$*" >&2; exit 1; }
@@ -23,7 +23,7 @@ is_node24() {
 }
 if ! is_node24 && command -v brew >/dev/null 2>&1; then
   node_prefix="$(brew --prefix node@24 2>/dev/null || true)"
-  if [[ -x "$node_prefix/bin/node" ]]; then export PATH="$node_prefix/bin:$PATH"; fi
+  if [[ -n "$node_prefix" && -x "$node_prefix/bin/node" ]]; then export PATH="$node_prefix/bin:$PATH"; fi
 fi
 is_node24 || fail "Node 24 LTS is required. Activate it and run this script again."
 command -v npm >/dev/null 2>&1 || fail "npm is required."
@@ -34,12 +34,6 @@ export npm_config_cache="$REPO_ROOT/artifacts/npm-cache"
 PACKAGE="$(node -p 'require("./package.json").name')"
 VERSION="$(node -p 'require("./package.json").version')"
 [[ "$PACKAGE" == '@sleetdrop/anthropic-readiness' ]] || fail "Unexpected package: $PACKAGE"
-VERSION_TAG="v$VERSION"
-git rev-parse --verify "$VERSION_TAG^{commit}" >/dev/null 2>&1 || fail "Create and push the $VERSION_TAG source tag first."
-[[ "$(git cat-file -t "$VERSION_TAG")" == tag ]] || fail "$VERSION_TAG must be an annotated Git tag."
-git diff --quiet "$VERSION_TAG" -- package.json package-lock.json bin templates README.md LICENSE ||
-  fail "Package inputs differ from $VERSION_TAG. Commit and tag the intended release first."
-
 if [[ -z "$DIST_TAG" ]]; then
   case "$VERSION" in *-*) DIST_TAG=next ;; *) DIST_TAG=latest ;; esac
 fi
@@ -62,17 +56,15 @@ if [[ "$DRY_RUN" == false ]]; then
   [[ "$identity" == sleetdrop ]] || fail "Expected npm account sleetdrop, got $identity."
 fi
 
-echo "Checking $PACKAGE@$VERSION ($VERSION_TAG, npm tag: $DIST_TAG)..."
+echo "Checking $PACKAGE@$VERSION (npm tag: $DIST_TAG)..."
 npm ci --ignore-scripts --registry "$REGISTRY"
 npm run check
 
 publish_tmp="$(mktemp -d "${TMPDIR:-/tmp}/anthropic-readiness-publish.XXXXXX")"
 trap 'rm -rf "$publish_tmp"' EXIT
-mkdir "$publish_tmp/source"
-git archive "$VERSION_TAG" | tar -x -C "$publish_tmp/source"
-RELEASE_DIR="$REPO_ROOT/artifacts/releases/$VERSION_TAG"
+RELEASE_DIR="$REPO_ROOT/artifacts/releases/$VERSION"
 mkdir -p "$RELEASE_DIR"
-npm pack "$publish_tmp/source" --ignore-scripts --json --pack-destination "$RELEASE_DIR" > "$publish_tmp/pack.json"
+npm pack "$REPO_ROOT" --ignore-scripts --json --pack-destination "$RELEASE_DIR" > "$publish_tmp/pack.json"
 archive_name="$(node -p 'JSON.parse(require("node:fs").readFileSync(process.argv[1], "utf8"))[0].filename' "$publish_tmp/pack.json")"
 integrity="$(node -p 'JSON.parse(require("node:fs").readFileSync(process.argv[1], "utf8"))[0].integrity' "$publish_tmp/pack.json")"
 [[ "$archive_name" == "sleetdrop-anthropic-readiness-$VERSION.tgz" && "$integrity" == sha512-* ]] ||
