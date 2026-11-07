@@ -1,18 +1,13 @@
-## Outcome
+## Problem
 
-What concrete diagnostic capability or usability defect does this change address?
+What problem does this change solve?
 
-## Validation
+## Changes
 
-- TypeScript check entry point: command and actual outcome
-- Relevant fault/control tests: what they establish
-- Real endpoint checks, when applicable: scope and outcome, or not_run
+Describe the resulting behavior and any relevant tradeoff.
 
-Keep endpoint scenarios, assertions and tool self-test counts separate. For
-supporting-only work, explicitly say endpoint coverage did not increase.
+## Verification
 
-## Limits and review focus
-
-Remaining gaps, changed contracts and known failures. Use public IDs and synthetic
-reproduction only; never attach credentials, private endpoints or original logs.
-See AGENTS.md for current development instructions.
+List the checks run and their results. Note any untested scope. Use synthetic
+examples and keep credentials, private targets, and original service logs out
+of the pull request.

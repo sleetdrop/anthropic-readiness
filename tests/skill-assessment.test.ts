@@ -20,7 +20,7 @@ function installSkill(t: TestContext) {
   t.after(() => rmSync(root, { recursive: true, force: true }));
   const skill = join(root, ".agents", "skills", "anthropic-readiness");
   mkdirSync(join(root, ".agents", "skills"), { recursive: true });
-  cpSync(new URL("../../scaffold/skills/anthropic-readiness/", import.meta.url), skill, {
+  cpSync(new URL("../templates/skills/anthropic-readiness/", import.meta.url), skill, {
     recursive: true,
   });
   writeFileSync(join(root, "package.json"), '{"type":"commonjs"}\n');
@@ -41,7 +41,7 @@ test("an installed Skill inspects local evidence and previews a probe from a con
     ["stream-invalid-tail.sse", "partial", "INDETERMINATE"],
   ] as const) {
     copyFileSync(
-      new URL(`../../tests/fixtures/contracts/core-1.0.0/${fixture}`, import.meta.url),
+      new URL(`./fixtures/contracts/core-1.0.0/${fixture}`, import.meta.url),
       join(root, "response.sse"),
     );
     const inspected = invoke("src/cli/inspect.ts", [

@@ -1,4 +1,4 @@
-/** Small shared check entry point for local use, hooks and CI. */
+/** Shared strict-type and executed-test gate for local use and CI. */
 import { spawnSync } from "node:child_process";
 import { createRequire } from "node:module";
 import { mkdirSync, writeFileSync } from "node:fs";
@@ -13,7 +13,7 @@ writeFileSync(
   new URL("result.json", output),
   JSON.stringify({
     schemaVersion: 1,
-    scope: "incident-diagnosis",
+    scope: "repository-checks",
     startedAt,
     status: "running",
   }),
@@ -33,7 +33,7 @@ function run(name: string, args: string[], timeout: number) {
 }
 const types = run("types", [require.resolve("typescript/bin/tsc"), "--noEmit"], 60_000);
 const tests =
-  types.exitCode === 0 ? run("tests", ["--test", "--test-reporter=tap"], 120_000) : null;
+  types.exitCode === 0 ? run("tests", ["--test", "--test-reporter=tap", "tests/**/*.test.ts"], 120_000) : null;
 const judged = tests ? verifyTests(tests.log, tests.exitCode) : null;
 const passed = types.exitCode === 0 && judged?.passed === true;
 writeFileSync(
@@ -41,7 +41,7 @@ writeFileSync(
   JSON.stringify(
     {
       schemaVersion: 1,
-      scope: "incident-diagnosis",
+      scope: "repository-checks",
       node: process.version,
       startedAt,
       status: passed ? "passed" : "failed",
@@ -52,5 +52,5 @@ writeFileSync(
     2,
   ) + "\n",
 );
-console.log(`Skill checks: ${passed ? "passed" : "failed"}; endpoint coverage is separate.`);
+console.log(`Repository checks: ${passed ? "passed" : "failed"}; endpoint coverage is separate.`);
 process.exitCode = passed ? 0 : 1;

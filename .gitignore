@@ -1,18 +1,7 @@
-# Ignore local files left by older checkouts.
-.venv/
-__pycache__/
-.pytest_cache/
-.mypy_cache/
-.ruff_cache/
-.coverage*
-htmlcov/
-dist/
-artifacts/
-.superpowers/
 node_modules/
-playwright-report/
-test-results/
+artifacts/
+coverage/
+*.tgz
 .env*
 target.local.*
-*.egg-info/
 .DS_Store

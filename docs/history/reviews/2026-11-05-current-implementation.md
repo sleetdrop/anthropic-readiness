@@ -1,5 +1,9 @@
 # Current implementation review — 2026-11-05
 
+This is a historical review. Its findings were addressed in subsequent work;
+see the [verification record](../verification.md). Paths and commands below
+refer to the reviewed checkout.
+
 Reviewed commit: `3503816`. Scope: the active diagnosis Skill, Node CLI,
 transport, protocol validators, probe execution, report generation, tests,
 development checks, and current documentation. The historical application is
@@ -182,7 +186,7 @@ and a script-hash CSP are also useful properties; this was not a security audit.
 4. Add evidence navigation and timing only where incident work benefits.
 
 All four findings were open at review time. They were repaired and covered by
-synthetic regressions on 2026-11-05; see the [verification record](../harness/progress.md)
+synthetic regressions on 2026-11-05; see the [verification record](../verification.md)
 for the fixes and final gate. This review makes no blanket compatibility claim.
 
 ## Follow-up review — 2026-11-05
@@ -225,4 +229,4 @@ Resolution — the adapter now retains `route: "count_tokens"` and uses the
 existing auxiliary validator. Synthetic controls cover valid, malformed and
 incomplete count-token records; the existing Message path remains passing. The
 regression failed before the fix and the Node 24.22.2 gate passes all 82 tests
-afterward. See the [verification record](../harness/progress.md).
+afterward. See the [verification record](../verification.md).

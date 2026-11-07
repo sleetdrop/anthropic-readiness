@@ -7,7 +7,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
-import { createPlan, executePlan } from "../../scaffold/skills/anthropic-readiness/scripts/src/runner/assessment.ts";
+import { createPlan, executePlan } from "../templates/skills/anthropic-readiness/scripts/src/runner/assessment.ts";
 
 const profiles = ["anthropic-basic", "anthropic-tools-smoke", "anthropic-tool-loop"];
 const input = { endpoint: "http://127.0.0.1:1/v1/messages", model: "synthetic", profiles };
@@ -32,12 +32,12 @@ test("literal JSON null is a structural fault, while a legal SSE error is not a 
   let mode = "null";
   const valid = JSON.parse(
     readFileSync(
-      new URL("../../tests/fixtures/contracts/core-1.0.0/message-valid.json", import.meta.url),
+      new URL("./fixtures/contracts/core-1.0.0/message-valid.json", import.meta.url),
       "utf8",
     ),
   );
   const stream = readFileSync(
-    new URL("../../tests/fixtures/contracts/core-1.0.0/stream-valid.sse", import.meta.url),
+    new URL("./fixtures/contracts/core-1.0.0/stream-valid.sse", import.meta.url),
     "utf8",
   );
   const server = createServer(async (req, res) => {
@@ -270,7 +270,7 @@ test("five selected scenarios run six requests and consume a fresh tool result",
   const directory = mkdtempSync(join(tmpdir(), "readiness-cli-positive-"));
   t.after(() => rmSync(directory, { recursive: true, force: true }));
   const output = join(directory, "assessment");
-  const cli = fileURLToPath(new URL("../../scaffold/skills/anthropic-readiness/scripts/src/cli/main.ts", import.meta.url));
+  const cli = fileURLToPath(new URL("../templates/skills/anthropic-readiness/scripts/src/cli/main.ts", import.meta.url));
   const args = [
     cli,
     "run",
@@ -424,7 +424,7 @@ test("controlled tasks reject incidental digits, non-greetings and extra tool ca
     res.setHeader("content-type", body.stream ? "text/event-stream" : "application/json");
     if (body.stream) {
       const fixture = readFileSync(
-        new URL("../../tests/fixtures/contracts/core-1.0.0/stream-valid.sse", import.meta.url),
+        new URL("./fixtures/contracts/core-1.0.0/stream-valid.sse", import.meta.url),
         "utf8",
       );
       res.end(fixture.replaceAll("example-model", "synthetic").replaceAll("Hello.", bad));

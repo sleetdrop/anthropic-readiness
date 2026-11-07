@@ -1,0 +1,2 @@
+# Preserve exact protocol bytes and trailing SSE framing on every platform.
+tests/fixtures/contracts/** -text

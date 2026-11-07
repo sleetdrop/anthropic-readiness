@@ -1,20 +1,17 @@
 name: Feature request
-description: Propose a bounded improvement
+description: Suggest an improvement
 body:
-  - type: markdown
-    attributes:
-      value: "Use public IDs and synthetic data. Never attach credentials, private endpoints, original logs or private chats. unknown/not_run are valid."
   - type: textarea
-    id: context
+    id: problem
     attributes:
-      label: Context and outcome
-      description: "User outcome, intended scope, acceptance evidence and alternatives"
+      label: Problem
+      description: "What are you trying to do, and what prevents it today?"
     validations:
       required: true
   - type: textarea
-    id: evidence
+    id: proposal
     attributes:
-      label: Validation evidence
-      description: "Checks run, versions, sanitized reproduction and remaining unknown or not_run checks. See CONTRIBUTING.md."
+      label: Proposed change
+      description: "Describe the useful outcome and any alternatives considered."
     validations:
       required: true

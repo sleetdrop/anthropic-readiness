@@ -1,8 +1,38 @@
 {
-  "name": "anthropic-readiness-workspace",
-  "private": true,
+  "name": "@sleetdrop/anthropic-readiness",
+  "version": "0.1.0",
+  "description": "Scaffold a portable agent workbench to assess an endpoint's Anthropic Messages protocol implementation.",
+  "license": "MIT",
+  "bin": {
+    "anthropic-readiness": "./bin/anthropic-readiness.mjs"
+  },
+  "engines": {
+    "node": ">=24 <25"
+  },
+  "files": [
+    "bin/",
+    "templates/"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "type": "module",
   "scripts": {
-    "check": "npm --prefix next run check",
-    "test": "npm --prefix next test"
-  }
+    "check": "node scripts/check.ts",
+    "test": "node --test \"tests/**/*.test.ts\"",
+    "test:protocol": "node --test tests/protocol/*.test.ts",
+    "check:types": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "24.19.2",
+    "typescript": "6.0.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sleetdrop/anthropic-readiness.git"
+  },
+  "bugs": {
+    "url": "https://github.com/sleetdrop/anthropic-readiness/issues"
+  },
+  "homepage": "https://github.com/sleetdrop/anthropic-readiness#readme"
 }

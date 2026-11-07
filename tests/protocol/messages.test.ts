@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { validateMessage } from "../../../scaffold/skills/anthropic-readiness/scripts/src/protocol/messages.ts";
-import { summarize, type MessageValidationContext, type Observation } from "../../../scaffold/skills/anthropic-readiness/scripts/src/domain.ts";
+import { validateMessage } from "../../templates/skills/anthropic-readiness/scripts/src/protocol/messages.ts";
+import { summarize, type MessageValidationContext, type Observation } from "../../templates/skills/anthropic-readiness/scripts/src/domain.ts";
 
 const context: MessageValidationContext = {
   captureId: "capture-1",

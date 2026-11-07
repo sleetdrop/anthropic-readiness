@@ -21,11 +21,11 @@ test("only a complete executed test report can pass the check gate", () => {
 });
 
 test("CI uses the Node check without a legacy hook or runtime gate", () => {
-  const root = new URL("../../", import.meta.url);
+  const root = new URL("../", import.meta.url);
   const ci = readFileSync(new URL(".github/workflows/ci.yml", root), "utf8");
   assert.equal(existsSync(new URL(".pre-commit-config.yaml", root)), false);
   assert.doesNotMatch(ci, /\b(?:uv|python3?|docker|devcontainer)\b/iu);
   assert.match(ci, /npm run check/u);
-  assert.match(ci, /next\/package-lock\.json/u);
+  assert.match(ci, /cache-dependency-path: package-lock\.json/u);
   assert.deepEqual(readdirSync(new URL(".github/workflows/", root)).sort(), ["ci.yml"]);
 });

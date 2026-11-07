@@ -1,20 +1,17 @@
 name: Protocol update
-description: Propose a protocol rule or probe update
+description: Propose a rule or probe change
 body:
-  - type: markdown
-    attributes:
-      value: "Use public IDs and synthetic data. Never attach credentials, private endpoints, original logs or private chats. unknown/not_run are valid."
   - type: textarea
-    id: context
+    id: contract
     attributes:
-      label: Context and outcome
-      description: "Official source links, retrieval date, old/new API and beta dimensions, rule differences and positive/negative fixtures"
+      label: Contract change
+      description: "Link the official source and name the API version or capability affected."
     validations:
       required: true
   - type: textarea
-    id: evidence
+    id: behavior
     attributes:
-      label: Validation evidence
-      description: "Checks run, versions, sanitized reproduction and remaining unknown or not_run checks. See CONTRIBUTING.md."
+      label: Expected behavior and coverage
+      description: "Describe the rule difference and the normal and faulty controls needed to verify it. Use synthetic data."
     validations:
       required: true

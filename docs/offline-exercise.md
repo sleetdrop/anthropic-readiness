@@ -1,8 +1,8 @@
 # Offline incident exercise
 
 Generate a separate project from a fixed version using the
-[npm scaffold](../README.md#create-a-test-project) or a
-[local tarball](development.md#try-the-npm-package-locally). Open a fresh chat
+[npm scaffold](../README.md#quick-start) or a
+[local tarball](development.md#try-the-package-locally). Open a fresh chat
 in that project. Keep the source checkout, fixture names, and expected
 findings out of the chat.
 
@@ -30,5 +30,5 @@ reported client symptom. Treat client execution as unverified.
 
 To check implicit selection, open another fresh chat in the consumer project
 with the same model. Give it the same incident request and failing capture
-without mentioning the Skill. Record whether Codex selected the installed Skill,
+without mentioning the Skill. Record whether the agent selected the bundled Skill,
 the observed findings, and the installed commit.

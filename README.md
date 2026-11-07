@@ -1,87 +1,104 @@
 # Anthropic Readiness
 
-Anthropic Readiness generates a local agent workbench for assessing the
-Anthropic Messages API exposed by your combination of model, inference software, and
-API conversion software. Your agent selects tests, reviews retained evidence,
-and reports protocol differences and coverage gaps alongside task outcomes.
-It can also investigate individual failures using saved captures.
+Create a local agent workbench for testing an Anthropic Messages API. The
+endpoint may combine a model, inference server, and protocol adapter. The
+agent runs selected checks and explains the results using saved requests and
+responses. Protocol findings, task behavior, and actual client outcomes are
+reported separately.
 
-## Create a test project
+## Quick start
 
-Use Node 24 LTS. One project contains one target, the diagnostic helpers, and
-the Anthropic Readiness Skill for your agent.
+Use Node 24 LTS and an agent that can read local files and run commands.
 
 ```sh
 npx @sleetdrop/anthropic-readiness init gateway-test
 ```
 
-Choose a new directory name in place of `gateway-test`. This registry command
-requires a published package version. To try the current checkout before
-publication, [pack it locally](docs/development.md#try-the-npm-package-locally).
+The first release is in preparation. Until it is published, use the
+[local package workflow](docs/development.md#try-the-package-locally).
 
-Fill in the generated `target.json` with the endpoint, exact model name,
-API version, and authentication mode. For authenticated targets, enter the
-credential in the local `token.txt` file. Add any saved capture to
-`evidence/` and open the directory in your agent.
+The command creates:
 
-The workbench includes `AGENTS.md` with its purpose, file layout, and a link
-to the bundled Skill. Agents that load `AGENTS.md` can use that entry point;
-otherwise, ask your agent to read it explicitly. The agent needs file access
-and Node 24 execution, with no dependency on a particular agent framework.
-Instruction discovery follows the host's version and settings; see the
-official [Codex](https://learn.chatgpt.com/docs/agent-configuration/agents-md),
+```text
+gateway-test/
+  AGENTS.md
+  README.md
+  target.json
+  token.txt
+  evidence/
+  runs/
+  .agents/skills/anthropic-readiness/
+```
+
+Fill in `target.json`:
+
+```json
+{
+  "endpoint": "https://api.example.com/v1/messages",
+  "model": "YOUR_MODEL",
+  "apiVersion": "2023-06-01",
+  "authMode": "api_key"
+}
+```
+
+For `api_key` or `bearer` authentication, put the credential on one line in
+`token.txt`. These local files and the evidence directories are ignored by
+Git. Keep credentials and unredacted service logs out of shared reports.
+
+Open the workbench in your agent. If it does not load `AGENTS.md`
+automatically, ask it to read that file. For example:
+
+> Assess this endpoint's Anthropic Messages implementation. Preview the full
+> core suite, then run it with at most 27 requests within 10 minutes. Report
+> protocol differences, task outcomes, supporting evidence, and untested scope.
+
+The agent previews the plan before making requests. Each run uses a new
+subdirectory under `runs/`.
+
+## Agent support
+
+The workbench uses local Markdown instructions, a bundled Skill, and Node
+helpers. It does not require a particular agent framework or model provider.
+Instruction discovery depends on the host's version and settings. See the
+[Codex](https://learn.chatgpt.com/docs/agent-configuration/agents-md),
 [OpenCode](https://opencode.ai/docs/instructions/), and
 [Claude Code](https://code.claude.com/docs/en/memory#agentsmd) documentation.
 
-The project puts the Skill in `.agents/skills/` by default. For Claude Code,
-append `--claude-code` to generate it in `.claude/skills/`. For other agents,
-load the generated Skill using their local discovery settings or point the
-agent to its `SKILL.md`.
+The default Skill location is `.agents/skills/`. For Claude Code's Skill
+layout, use `init gateway-test --claude-code`; it writes `.claude/skills/`
+and updates the link in `AGENTS.md`.
 
-In chat, ask for an **Anthropic Messages** protocol assessment. Include known
-inference and conversion software versions so the report can identify the
-tested combination. For example:
+## Checks and reports
 
-> Assess the configured endpoint's Anthropic Messages implementation. Preview
-> the full core suite, then run it with at most 27 requests within 10 minutes.
-> Report protocol differences, task outcomes, evidence, and untested scope.
+The core suite has 22 cases and reserves up to 27 requests. Optional profiles
+cover structured output, thinking, images, PDF input, citations, caching,
+prefill, and API-version migration. Select them according to the assessment
+scope and their prerequisites.
 
-For an individual failure, provide the symptom and saved evidence:
+Each run retains `result.json`, an HTML check record, and request/response
+captures. The agent can combine those records into an English assessment
+with findings and evidence links. A passing check establishes only the rules
+and behavior actually tested; it does not certify the whole API.
 
-> Diagnose why this Anthropic Messages stream stalls. Inspect the saved
-> `evidence/response.sse` offline. The capture is partial.
+- [Connection and authentication](templates/skills/anthropic-readiness/references/connection.md)
+- [Probe catalog and coverage limits](templates/skills/anthropic-readiness/references/probes.md)
+- [Assessment reports](templates/skills/anthropic-readiness/references/reporting.md)
+- [Offline exercise](docs/offline-exercise.md)
 
-## Assess and report
+## Development
 
-For a live probe, authorize the configured target, a maximum request count,
-and a total time limit. The agent previews the selected probes, executes
-within those bounds, and stores the run under `runs/`. The
-[connection guide](scaffold/skills/anthropic-readiness/references/connection.md)
-describes the file format and the environment and explicit argument modes.
+```sh
+npm ci
+npm run check
+```
 
-Try the [offline exercise](docs/offline-exercise.md)
-to see the workflow on a known fault and a comparison sample. If the capture
-leaves a specific question open, the
-[preset probe guide](scaffold/skills/anthropic-readiness/references/probes.md)
-describes the available request shapes and how to bound an authorized run.
+The check runs strict TypeScript validation and synthetic tests, including
+packing the npm package and creating isolated workbenches. It does not call
+real diagnostic endpoints.
 
-The core suite contains 22 cases with a maximum of 27 requests. Select
-additional capability profiles according to the assessment scope and their
-prerequisites. A compatibility assessment records the tested API version and
-the checks actually completed; it does not establish complete conformance
-from a partial run.
+See [development](docs/development.md), [architecture](docs/architecture.md),
+[contributing](CONTRIBUTING.md), and [release instructions](docs/releasing.md).
 
-For an assessment across one or more runs, the
-[report guide](scaffold/skills/anthropic-readiness/references/reporting.md)
-explains how the agent writes an English synthesis and uses the Skill's
-renderer to generate HTML with evidence links and JSON viewers.
+## License
 
-## Develop
-
-The checkout contains the npm scaffold, its bundled Skill, and synthetic
-tests. The standalone Python/Web application and container configuration
-are retained in Git history at `8048934`.
-
-For development, see [contributing](CONTRIBUTING.md) and
-[local checks](docs/development.md). The [project intent](intends.md) defines
-what an assessment and a focused diagnosis should establish.
+[MIT](LICENSE).

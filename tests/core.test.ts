@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { selectCases } from "../../scaffold/skills/anthropic-readiness/scripts/src/catalog.ts";
-import { summarize, type Observation } from "../../scaffold/skills/anthropic-readiness/scripts/src/domain.ts";
+import { selectCases } from "../templates/skills/anthropic-readiness/scripts/src/catalog.ts";
+import { summarize, type Observation } from "../templates/skills/anthropic-readiness/scripts/src/domain.ts";
 
 const profiles = ["anthropic-basic", "anthropic-tools-smoke", "anthropic-tool-loop"];
 

@@ -1,34 +1,27 @@
 name: Compatibility report
-description: Share a scoped endpoint observation
+description: Report an observed Anthropic API difference
 body:
   - type: markdown
     attributes:
-      value: "Use public IDs and synthetic data. Never attach credentials, private endpoints, original logs or private chats. unknown/not_run are valid."
+      value: "Use a synthetic reproduction. Do not attach credentials, private endpoint URLs, or original service logs."
   - type: textarea
-    id: context
+    id: setup
     attributes:
-      label: Context and outcome
-      description: "User symptom, expected and observed behavior, model alias, request API version, betas and capture completeness"
+      label: Tested setup
+      description: "Public component names and versions, API header, selected probes, and capture completeness. Leave unknown details explicit."
     validations:
       required: true
   - type: textarea
-    id: evidence
+    id: finding
     attributes:
-      label: Validation evidence
-      description: "Checks run, versions, sanitized reproduction and remaining unknown or not_run checks. See CONTRIBUTING.md."
+      label: Observed difference
+      description: "Expected and actual behavior, rule or case ID, and the relevant JSON field or SSE event index."
     validations:
       required: true
   - type: textarea
-    id: location
+    id: reproduction
     attributes:
-      label: Evidence location
-      description: "Relevant event index or JSON field, applicable rule ID, and a synthetic excerpt that reproduces the finding"
+      label: Synthetic reproduction and checks
+      description: "A minimal example and the checks actually run. Distinguish protocol, task, and client outcomes."
     validations:
       required: true
-  - type: textarea
-    id: repair_comparison
-    attributes:
-      label: Repair verification, when applicable
-      description: "Compare the same request and relevant observation before and after the change"
-    validations:
-      required: false

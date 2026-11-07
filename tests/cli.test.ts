@@ -6,7 +6,7 @@ import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
 
-const entry = fileURLToPath(new URL("../../scaffold/skills/anthropic-readiness/scripts/src/cli/main.ts", import.meta.url));
+const entry = fileURLToPath(new URL("../templates/skills/anthropic-readiness/scripts/src/cli/main.ts", import.meta.url));
 function cli(args: string[], env: NodeJS.ProcessEnv = process.env) {
   return spawnSync(process.execPath, [entry, ...args], {
     encoding: "utf8",

@@ -1,9 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { createServer } from "node:http";
-import { createPlan, executePlan } from "../../scaffold/skills/anthropic-readiness/scripts/src/runner/assessment.ts";
-import { checkResponseContract } from "../../scaffold/skills/anthropic-readiness/scripts/src/runner/probes.ts";
-import { validateSse } from "../../scaffold/skills/anthropic-readiness/scripts/src/protocol/sse.ts";
+import { createPlan, executePlan } from "../templates/skills/anthropic-readiness/scripts/src/runner/assessment.ts";
+import { checkResponseContract } from "../templates/skills/anthropic-readiness/scripts/src/runner/probes.ts";
+import { validateSse } from "../templates/skills/anthropic-readiness/scripts/src/protocol/sse.ts";
 
 test("documented core includes count tokens, negative cases, and a streamed tool round trip", () => {
   const plan = createPlan({

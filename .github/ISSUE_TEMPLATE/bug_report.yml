@@ -1,20 +1,25 @@
 name: Bug report
-description: Report a reproducible defect
+description: Report a problem with the command, checks, or reports
 body:
   - type: markdown
     attributes:
-      value: "Use public IDs and synthetic data. Never attach credentials, private endpoints, original logs or private chats. unknown/not_run are valid."
+      value: "Use a synthetic example. Do not include credentials, private URLs, or unredacted logs."
   - type: textarea
-    id: context
+    id: reproduction
     attributes:
-      label: Context and outcome
-      description: "Minimal synthetic reproduction and expected versus observed behavior"
+      label: Reproduction
+      description: "Commands or inputs, package and Node versions, and relevant operating system or agent details."
     validations:
       required: true
   - type: textarea
-    id: evidence
+    id: result
     attributes:
-      label: Validation evidence
-      description: "Checks run, versions, sanitized reproduction and remaining unknown or not_run checks. See CONTRIBUTING.md."
+      label: Expected and actual results
     validations:
       required: true
+  - type: textarea
+    id: checks
+    attributes:
+      label: Checks or workarounds tried
+    validations:
+      required: false

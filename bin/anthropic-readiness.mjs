@@ -4,9 +4,9 @@ import { join, resolve } from "node:path";
 import { parseArgs } from "node:util";
 
 const usage = "Usage: npx @sleetdrop/anthropic-readiness init <directory> [--claude-code]";
-const skillSource = new URL("./skills/anthropic-readiness/", import.meta.url);
-const readmeSource = new URL("./project/README.md", import.meta.url);
-const agentsSource = new URL("./project/AGENTS.md", import.meta.url);
+const skillSource = new URL("../templates/skills/anthropic-readiness/", import.meta.url);
+const readmeSource = new URL("../templates/README.md", import.meta.url);
+const agentsSource = new URL("../templates/AGENTS.md", import.meta.url);
 const target = { endpoint: "", model: "", apiVersion: "2023-06-01", authMode: "api_key" };
 
 async function main() {

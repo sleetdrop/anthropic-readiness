@@ -31,7 +31,7 @@ Message-field failures. The existing auxiliary validator passes the same
 `{"input_tokens":42}` body; a normal Message record also passes the adapter.
 Synthetic records and inspection outputs are retained under ignored
 `artifacts/review-followup-2026-11-05/`. See the follow-up section of the
-[review](../reviews/2026-11-05-current-implementation.md) for the reproduction
+[review](reviews/2026-11-05-current-implementation.md) for the reproduction
 and requested correction. Commit approval was withheld pending R5. No
 production code, remote writes, or real endpoint calls were made.
 
@@ -134,7 +134,7 @@ endpoint cases. The Skill and inspector code were unchanged.
 Expanded the preset catalog from 5 to 35 cases. The 22-case core group reserves
 27 requests. The remaining cases cover version migration and opt-in model
 capabilities. Selection sends either `2023-06-01` or `2026-10-21`, without betas.
-See [the coverage and usage guide](../probes.md) for the case groups and exclusions.
+See [the coverage and usage guide](../../templates/skills/anthropic-readiness/references/probes.md) for the case groups and exclusions.
 
 The new synthetic checks first reproduced the missing core profile and the
 missing SSE thinking assembly. The full synthetic endpoint then exercised every
@@ -297,7 +297,7 @@ offline inspection passes a null final stop reason that online protocol
 validation rejects; a stalled partial stream earns a task pass; and assembled
 SSE usage omits final input/cache counter updates. Normal controls were retained.
 
-See the [review](../reviews/2026-11-05-current-implementation.md) for priorities,
+See the [review](reviews/2026-11-05-current-implementation.md) for priorities,
 source locations, official references, and improvements. Reproduction code and
 results remain local under ignored `artifacts/review-2026-11-05/`. Production
 code and existing tests were unchanged. No real endpoint, SDK/client workflow,
@@ -571,4 +571,33 @@ first public `0.1.0` candidate and includes the generated `AGENTS.md` entry
 point. The previously recorded Node 24.22.2 strict-type check and all 85
 executed tests cover the merged implementation. This status update changes
 documentation only. No new release tag, endpoint request, remote push, or
+npm publication was performed.
+
+
+## 2026-11-08 — Repository layout cleanup
+
+The repository is now one npm package. The command moved to `bin/`, workbench
+files to `templates/`, and all tests to `tests/`. Development checks, the lock
+file, TypeScript configuration, and Node version pin now live at the root.
+CI uses the same root-level install and check commands. Test discovery is
+limited to `tests/` so local archives are not executed as tests.
+
+Removed the obsolete `next/` package and duplicate scaffold metadata, README,
+and license. Deleted the old Python environment and caches. Earlier local
+check logs, coverage data, and UI prototypes were archived under ignored
+`artifacts/archive/`. Historical reviews and verification records moved to
+`docs/history/`; their original paths and commands remain historical context.
+
+Rewrote the current README and contributor guide and added architecture,
+release, fixture, and initial changelog documentation. Local Markdown links
+and GitHub YAML syntax validated. The 24 bundled Skill files and 10 original
+protocol fixtures are byte-identical to the pre-cleanup copies. Fixture text
+conversion is disabled to preserve exact framing across platforms.
+
+Node 24.22.2 installed the locked root dependencies offline and passed strict
+types and all 85 executed tests, with no failures, skips, or cancellations.
+The tests packed the root package, created both workbench layouts, inspected
+saved evidence, rendered reports, and used bounded synthetic HTTP peers.
+The 30-file npm archive contains only `bin/`, `templates/`, package metadata,
+README, and license. No real endpoint request, remote push, release tag, or
 npm publication was performed.

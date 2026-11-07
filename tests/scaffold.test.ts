@@ -19,13 +19,13 @@ test("the packed initializer creates an isolated project that can run a bounded 
       env: { ...process.env, npm_config_cache: join(root, "cache") },
       timeout: 15_000,
     });
-  const scaffold = fileURLToPath(new URL("../../scaffold/", import.meta.url));
-  const packed = npm(["pack", scaffold, "--offline", "--json"]);
+  const packageRoot = fileURLToPath(new URL("../", import.meta.url));
+  const packed = npm(["pack", packageRoot, "--offline", "--json"]);
   assert.equal(packed.status, 0, packed.stderr);
   const [pkg] = JSON.parse(packed.stdout);
   assert.equal(pkg.name, "@sleetdrop/anthropic-readiness");
-  assert.ok(pkg.files.some((item: { path: string }) => item.path === "skills/anthropic-readiness/SKILL.md"));
-  assert.ok(pkg.files.some((item: { path: string }) => item.path === "project/AGENTS.md"));
+  assert.ok(pkg.files.some((item: { path: string }) => item.path === "templates/skills/anthropic-readiness/SKILL.md"));
+  assert.ok(pkg.files.some((item: { path: string }) => item.path === "templates/AGENTS.md"));
   assert.ok(!pkg.files.some((item: { path: string }) => /(?:^|\/)(?:token\.txt|target\.json|runs|evidence)(?:\/|$)/u.test(item.path)));
 
   const init = (...args: string[]) => npm([
@@ -54,7 +54,7 @@ test("the packed initializer creates an isolated project that can run a bounded 
   }
 
   const response = JSON.parse(readFileSync(
-    new URL("../../tests/fixtures/contracts/core-1.0.0/message-valid-tool.json", import.meta.url),
+    new URL("./fixtures/contracts/core-1.0.0/message-valid-tool.json", import.meta.url),
     "utf8",
   ));
   response.content[0].input = { city: "Hanoi" };
