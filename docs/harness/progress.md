@@ -374,3 +374,31 @@ authenticated request against a synthetic loopback endpoint. The token was
 absent from retained outputs. A separate `npx` run created a project from the
 local tarball, and Codex discovered its project-level Skill. A model-driven
 chat with the new scaffold and registry publication remain unverified.
+
+## 2026-11-07 — Independent acceptance of the generated project
+
+The consumer-project session byte-matched all 29 npm package files against
+`1bd9aaa`. It verified and removed the 25 unchanged legacy test files, then
+used the actual local tarball through `npx` to regenerate the same project
+directory. Configuration defaults, private-file permissions, Git ignore
+behavior, bundled Skill contents, and repeat-initialization protection passed.
+
+Two fresh ephemeral Codex CLI conversations used the same default model
+settings, one with explicit Skill invocation and one with a natural incident
+request. Both read the generated Skill and executed its inspector on neutral
+normal, faulty, and partial captures. They returned the expected FAIL, PASS,
+and INDETERMINATE results, located the duplicate start at event index 1, and
+verified the one-frame difference against the raw evidence. The exact backend
+model identifier was not recorded.
+
+A separate agent read `--target-dir`, completed a zero-request preview, and
+executed one authenticated request to a synthetic loopback service under a
+one-request, 5000 ms authorization. The retained result records one attempt,
+protocol PASS, task PASS, and clientStatus not_tested. The token was absent
+from agent transcripts and retained outputs. The service was stopped after
+the run. The source session also read the acceptance report and checked the
+saved result's request count, limits, profile, and status.
+
+No source defect was identified. This acceptance covers the local npm tarball
+and Codex CLI. Registry installation, Claude Code's generated layout, desktop
+selection, real endpoints, and actual client replay were outside this run.

@@ -8,9 +8,11 @@ Use the [local tarball workflow](development.md#try-the-npm-package-locally)
 to try the package from the current checkout.
 
 The local check covers offline npm packaging, project creation, and one
-bounded authenticated request against a synthetic endpoint. Codex discovered
-the Skill from a generated project. The
-[offline exercise](offline-exercise.md) covers model-driven diagnosis.
+bounded authenticated request against a synthetic endpoint. Independent
+acceptance regenerated the consumer project from the npm tarball and passed
+explicit and implicit Skill use in fresh Codex CLI chats. A separate agent
+previewed the configured target and completed one bounded synthetic request.
+The [offline exercise](offline-exercise.md) describes the diagnosis controls.
 See the [verification record](harness/progress.md) for the tested scope.
 
 An independent offline walkthrough passed on a saved real SSE response and
