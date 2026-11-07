@@ -29,7 +29,7 @@ released; the retained commits, earlier package numbers, and local test
 archives document exploration and verification rather than a published
 release line. The mistaken, unpublished local `v0.2.0` tag has been removed;
 the exploration commits and test artifacts remain. Work continues on
-`feat/agent-workbench`. Follow the
+local `main` after merging `feat/agent-workbench` at `3fdf2d0`. Follow the
 [release sequence](development.md#release-the-npm-package): pass acceptance,
 merge into `main`, create the matching annotated version tag, then publish
 the inspected package from that revision after explicit authorization for

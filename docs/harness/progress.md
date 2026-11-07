@@ -562,3 +562,13 @@ synthetic probe passed. Node 24.22.2 strict types and all 85 executed tests
 passed, with no failures, skips, or cancellations. This check sent no new
 requests to a real diagnostic endpoint. No replacement release tag, remote
 write, or npm publication was performed.
+
+## 2026-11-08 — Local workbench merge
+
+The validated `feat/agent-workbench` branch was fast-forward merged into
+local `main` at `3fdf2d0`, without conflicts. The merged package remains the
+first public `0.1.0` candidate and includes the generated `AGENTS.md` entry
+point. The previously recorded Node 24.22.2 strict-type check and all 85
+executed tests cover the merged implementation. This status update changes
+documentation only. No new release tag, endpoint request, remote push, or
+npm publication was performed.
