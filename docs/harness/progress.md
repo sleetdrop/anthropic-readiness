@@ -402,3 +402,47 @@ saved result's request count, limits, profile, and status.
 No source defect was identified. This acceptance covers the local npm tarball
 and Codex CLI. Registry installation, Claude Code's generated layout, desktop
 selection, real endpoints, and actual client replay were outside this run.
+
+## 2026-11-07 — Full core acceptance and release preparation
+
+The independent consumer project continued using the unchanged npm package
+from `1bd9aaa`. A fresh Codex CLI chat used only the generated Skill and
+helpers on Node 24.22.2. Both previews completed with zero HTTP requests.
+The normal synthetic target passed all 22 core cases in 27 requests; protocol
+status passed for every case, with 16 task passes and 6 task skips for the
+count and error cases. The service checked request paths, version, synthetic
+authentication, model, request-specific fields, actual tool-ID round trips,
+fresh history and tool-result tokens, parallel results, and error recovery.
+
+The separate one-request forced-tool control omitted `stop_sequence`.
+The generated checker reported exactly one failing rule,
+`MSG-STOP-SEQUENCE-FIELD`, at the response root with the missing key named.
+Task behavior passed while protocol status failed, as expected. Across both
+corrected runs, 23 case executions represent 22 distinct case IDs and 28
+requests. Actual SDK/client behavior remains `not_tested`.
+
+The agent reviewed retained evidence and generated the English synthesis with
+the bundled assessment renderer. The source session independently verified
+the saved case outcomes, task counts, overlap accounting, and all 57 local
+report links and anchors. The report separates the expected faulty control,
+successful core coverage, and untested capabilities. The consumer retained
+the report, run evidence, and transcripts locally; none were added to source.
+
+The first acceptance fixture misread two plan outputs in one command as a
+single preview and shut down early. Its 23 attempts produced one received
+HTTP request and blocked results, which remain separate from successful
+coverage. After an offline control fixed the observer, the corrected round
+completed 28 attempts and 28 received requests. Both rounds total 51 attempts
+and 29 received HTTP requests, within the explicit 32-HTTP-request ceiling.
+The corrected service completed within its 180-second window and was stopped.
+The consumer audit found no synthetic credential in transcripts or reports.
+No product defect was identified.
+
+The source Node 24.22.2 check passed strict types and all 85 executed tests,
+with no failures, skips, or cancellations. Local loopback tests required the
+execution environment to permit listening; the initial restricted invocation
+could not start those peers. The release guide now requires validation,
+merging to `main`, an annotated tag matching the `0.2.0` package version, and
+packing from that revision before any authorized remote push or npm publish.
+No registry installation, real diagnostic endpoint, optional capability
+profile, or actual SDK client was tested in this acceptance.

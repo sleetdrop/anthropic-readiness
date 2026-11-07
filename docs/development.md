@@ -30,3 +30,24 @@ initialization command from the parent directory where you want the test
 project. Open the generated project in your agent for the offline exercise.
 The check suite packs and runs the local tarball using an isolated npm cache
 and a synthetic loopback endpoint.
+
+## Release the npm package
+
+The public package lives in `scaffold/`; the repository root and `next/`
+remain private development packages. Use `scaffold/package.json` as the
+release version, and use `v<version>` for the matching annotated Git tag.
+
+1. Pass `npm run check` on Node 24 and complete the generated-project
+   acceptance. Retain the tested scope, controls, and report checks in
+   `docs/harness/progress.md`.
+2. Merge the validated changes into `main`, with a clean working tree.
+3. Create the annotated version tag on that `main` commit. Do not move an
+   existing release tag to different code.
+4. Pack `scaffold/` from the tagged revision and inspect the resulting
+   tarball. The package version, tag, and tested package contents must agree.
+5. After explicit authorization for remote writes, push `main` and the
+   release tag, then publish the inspected tarball to npm with public access.
+
+Local validation, merging, and tagging do not publish the package. Record
+registry installation separately after publication; local tarball acceptance
+does not establish that the registry command works.

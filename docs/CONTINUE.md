@@ -12,8 +12,20 @@ bounded authenticated request against a synthetic endpoint. Independent
 acceptance regenerated the consumer project from the npm tarball and passed
 explicit and implicit Skill use in fresh Codex CLI chats. A separate agent
 previewed the configured target and completed one bounded synthetic request.
+A subsequent fresh chat completed all 22 core cases in 27 synthetic requests,
+detected an intentional missing-field control in one additional request, and
+generated the formal English assessment with the bundled renderer. The source
+session independently checked the saved outcomes, distinct case count, and all
+57 local report links and anchors. No actual SDK client was exercised.
 The [offline exercise](offline-exercise.md) describes the diagnosis controls.
 See the [verification record](harness/progress.md) for the tested scope.
+
+The npm package version is `0.2.0`. Follow the
+[release sequence](development.md#release-the-npm-package): pass acceptance,
+merge into `main`, create the matching annotated `v0.2.0` tag, then publish
+the inspected package from that revision after explicit authorization for
+remote writes. Registry installation and real diagnostic endpoints remain
+unverified.
 
 An independent offline walkthrough passed on a saved real SSE response and
 two controls. See [the verification record](harness/progress.md) for the
