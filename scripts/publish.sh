@@ -5,15 +5,20 @@ set -euo pipefail
 fail() { printf 'error: %s\n' "$*" >&2; exit 1; }
 
 DRY_RUN=false
+VERIFY_ONLY=false
 DIST_TAG=""
 for argument in "$@"; do
   case "$argument" in
     --dry-run) DRY_RUN=true ;;
+    --verify-only) VERIFY_ONLY=true ;;
     latest|next) [[ -z "$DIST_TAG" ]] || fail "Specify one npm dist-tag."; DIST_TAG="$argument" ;;
-    -h|--help) echo "Usage: ./scripts/publish.sh [--dry-run] [latest|next]"; exit 0 ;;
+    -h|--help) echo "Usage: ./scripts/publish.sh [--dry-run | --verify-only] [latest|next]"; exit 0 ;;
     *) fail "Unknown argument: $argument" ;;
   esac
 done
+if [[ "$DRY_RUN" == true && "$VERIFY_ONLY" == true ]]; then
+  fail "Choose either --dry-run or --verify-only."
+fi
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$REPO_ROOT"
@@ -53,6 +58,40 @@ case "${scope_registry%/}" in
   *) fail "The @sleetdrop scope overrides npmjs.org. Check npm registry configuration before publishing." ;;
 esac
 
+RELEASE_DIR="$REPO_ROOT/artifacts/releases/$VERSION"
+archive="$RELEASE_DIR/sleetdrop-anthropic-readiness-$VERSION.tgz"
+
+if [[ "$VERIFY_ONLY" == true ]]; then
+  [[ -f "$archive" ]] || fail "Saved publish archive is missing: $archive. Use --dry-run to recreate it from the source tag."
+  integrity="$(node -p '"sha512-" + require("node:crypto").createHash("sha512").update(require("node:fs").readFileSync(process.argv[1])).digest("base64")' "$archive")"
+  echo "Verifying the published version, archive integrity, and npm tag..."
+  fetch_args=(--registry "$REGISTRY" --prefer-online --fetch-retries=0 --fetch-timeout=15000)
+  registry_version="$(npm view "$PACKAGE@$VERSION" version "${fetch_args[@]}" 2>/dev/null || true)"
+  registry_integrity="$(npm view "$PACKAGE@$VERSION" dist.integrity "${fetch_args[@]}" 2>/dev/null || true)"
+  registry_tag="$(npm view "$PACKAGE" "dist-tags.$DIST_TAG" "${fetch_args[@]}" 2>/dev/null || true)"
+  if [[ -z "$registry_version" || -z "$registry_integrity" || -z "$registry_tag" ]]; then
+    echo "Verification pending: registry metadata is unavailable. npm may still be processing the package."
+    echo "Try ./scripts/publish.sh --verify-only $DIST_TAG later. Do not republish."
+    exit 2
+  fi
+  [[ "$registry_version" == "$VERSION" ]] || fail "Version mismatch: expected $VERSION, found $registry_version. Do not republish."
+  [[ "$registry_integrity" == "$integrity" ]] || fail "Archive integrity mismatch. Check the published package; do not republish."
+  [[ "$registry_tag" == "$VERSION" ]] || fail "npm tag $DIST_TAG points to $registry_tag, not $VERSION. Check the registry tag; do not republish."
+
+  echo "Checking workbench creation from the registry package..."
+  publish_tmp="$(mktemp -d "${TMPDIR:-/tmp}/anthropic-readiness-verify.XXXXXX")"
+  trap 'rm -rf "$publish_tmp"' EXIT
+  (
+    cd "$publish_tmp"
+    npm exec --yes "${fetch_args[@]}" --package "$PACKAGE@$VERSION" -- \
+      anthropic-readiness init "$publish_tmp/workbench"
+  ) || fail "Registry installation could not be verified. Rerun --verify-only later; do not republish."
+  [[ -f "$publish_tmp/workbench/AGENTS.md" && -f "$publish_tmp/workbench/.agents/skills/anthropic-readiness/SKILL.md" ]] ||
+    fail "Registry package did not create the expected workbench."
+  echo "Verified $PACKAGE@$VERSION ($DIST_TAG)."
+  exit 0
+fi
+
 if [[ "$DRY_RUN" == false ]]; then
   if ! identity="$(npm whoami --registry "$REGISTRY" 2>/dev/null)"; then
     echo "Sign in to npm to continue..."
@@ -70,14 +109,12 @@ publish_tmp="$(mktemp -d "${TMPDIR:-/tmp}/anthropic-readiness-publish.XXXXXX")"
 trap 'rm -rf "$publish_tmp"' EXIT
 mkdir "$publish_tmp/source"
 git archive "$SOURCE_COMMIT" | tar -x -C "$publish_tmp/source"
-RELEASE_DIR="$REPO_ROOT/artifacts/releases/$VERSION"
 mkdir -p "$RELEASE_DIR"
 npm pack "$publish_tmp/source" --ignore-scripts --json --pack-destination "$RELEASE_DIR" > "$publish_tmp/pack.json"
 archive_name="$(node -p 'JSON.parse(require("node:fs").readFileSync(process.argv[1], "utf8"))[0].filename' "$publish_tmp/pack.json")"
 integrity="$(node -p 'JSON.parse(require("node:fs").readFileSync(process.argv[1], "utf8"))[0].integrity' "$publish_tmp/pack.json")"
 [[ "$archive_name" == "sleetdrop-anthropic-readiness-$VERSION.tgz" && "$integrity" == sha512-* ]] ||
   fail "Unexpected npm archive metadata."
-archive="$RELEASE_DIR/$archive_name"
 publish_args=("$archive" --access public --registry "$REGISTRY" --tag "$DIST_TAG")
 
 if [[ "$DRY_RUN" == true ]]; then
@@ -90,26 +127,5 @@ echo "Publishing $PACKAGE@$VERSION as $identity. Complete npm's verification pro
 # Keep stdin and stdout attached so npm can request OTP or browser verification.
 npm publish "${publish_args[@]}"
 
-echo "Verifying the published version, archive integrity, and npm tag..."
-verified=false
-for attempt in 1 2 3; do
-  registry_version="$(npm view "$PACKAGE@$VERSION" version --registry "$REGISTRY" 2>/dev/null || true)"
-  registry_integrity="$(npm view "$PACKAGE@$VERSION" dist.integrity --registry "$REGISTRY" 2>/dev/null || true)"
-  registry_tag="$(npm view "$PACKAGE" "dist-tags.$DIST_TAG" --registry "$REGISTRY" 2>/dev/null || true)"
-  if [[ "$registry_version" == "$VERSION" && "$registry_integrity" == "$integrity" && "$registry_tag" == "$VERSION" ]]; then
-    verified=true
-    break
-  fi
-  if [[ "$attempt" != 3 ]]; then sleep 2; fi
-done
-[[ "$verified" == true ]] || fail "Publication may have succeeded, but registry verification failed. Check npm before retrying."
-
-echo "Checking workbench creation from the registry package..."
-(
-  cd "$publish_tmp"
-  npm exec --yes --registry "$REGISTRY" --package "$PACKAGE@$VERSION" -- \
-    anthropic-readiness init "$publish_tmp/workbench"
-)
-[[ -f "$publish_tmp/workbench/AGENTS.md" && -f "$publish_tmp/workbench/.agents/skills/anthropic-readiness/SKILL.md" ]] ||
-  fail "Published package did not create the expected workbench."
-echo "Published and verified $PACKAGE@$VERSION ($DIST_TAG)."
+echo "Publication submitted: $PACKAGE@$VERSION ($DIST_TAG). npm may take a few minutes to make it available."
+echo "Registry verification has not run. Later, run: ./scripts/publish.sh --verify-only $DIST_TAG"

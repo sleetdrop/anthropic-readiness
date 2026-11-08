@@ -8,11 +8,13 @@ import test, { type TestContext } from "node:test";
 const fakeNpm = String.raw`#!/usr/bin/env node
 import fs from "node:fs";
 import path from "node:path";
+import { createHash } from "node:crypto";
 const args = process.argv.slice(2);
 const state = process.env.PUBLISH_TEST_STATE;
 const settings = JSON.parse(fs.readFileSync(path.join(state, "settings.json"), "utf8"));
 fs.appendFileSync(path.join(state, "calls.jsonl"), JSON.stringify(args) + "\n");
 const option = (name) => args[args.indexOf(name) + 1];
+const integrity = "sha512-" + createHash("sha512").update("synthetic archive").digest("base64");
 switch (args[0]) {
   case "config": console.log(settings.scopeRegistry ?? "undefined"); break;
   case "ci": case "run": break;
@@ -26,7 +28,7 @@ switch (args[0]) {
     if (fs.existsSync(path.join(args[1], "local-notes"))) process.exit(9);
     const filename = "sleetdrop-anthropic-readiness-" + settings.version + ".tgz";
     fs.writeFileSync(path.join(option("--pack-destination"), filename), "synthetic archive");
-    console.log(JSON.stringify([{ filename, integrity: "sha512-synthetic" }]));
+    console.log(JSON.stringify([{ filename, integrity }]));
     break;
   }
   case "publish":
@@ -36,9 +38,9 @@ switch (args[0]) {
     }
     break;
   case "view":
-    if (!fs.existsSync(path.join(state, "published"))) process.exit(1);
+    if (settings.registryPending || !fs.existsSync(path.join(state, "published"))) process.exit(1);
     console.log(args[2] === "dist.integrity"
-      ? (settings.badIntegrity ? "sha512-other" : "sha512-synthetic")
+      ? (settings.badIntegrity ? "sha512-other" : integrity)
       : settings.version);
     break;
   case "exec": {
@@ -55,7 +57,7 @@ switch (args[0]) {
 
 function fixture(t: TestContext, options: {
   version?: string; user?: string; publishFails?: boolean; noTag?: boolean;
-  badIntegrity?: boolean; node26?: boolean; noNode24?: boolean; scopeRegistry?: string;
+  badIntegrity?: boolean; registryPending?: boolean; node26?: boolean; noNode24?: boolean; scopeRegistry?: string;
 } = {}) {
   const temp = mkdtempSync(join(tmpdir(), "readiness publish "));
   t.after(() => rmSync(temp, { recursive: true, force: true }));
@@ -104,6 +106,12 @@ function fixture(t: TestContext, options: {
     root, calls, run,
     wroteGit: () => existsSync(join(state, "git-writes")),
     refs: () => git("show-ref"),
+    seedPublication: () => {
+      const release = join(root, "artifacts", "releases", version);
+      mkdirSync(release, { recursive: true });
+      writeFileSync(join(release, `sleetdrop-anthropic-readiness-${version}.tgz`), "synthetic archive");
+      writeFileSync(join(state, "published"), "yes");
+    },
   };
 }
 
@@ -122,9 +130,28 @@ test("publish helper reads an existing version tag without changing Git refs", (
   assert.equal(publishes.length, 1);
   assert.match(publishes[0]![1]!, /sleetdrop-anthropic-readiness-0\.1\.0\.tgz$/u);
   assert.ok(publishes[0]!.includes("public") && publishes[0]!.includes("latest"));
-  assert.ok(commands.some((c) => c[0] === "exec" && c.includes("@sleetdrop/anthropic-readiness@0.1.0")));
+  assert.ok(!commands.some((c) => ["view", "exec"].includes(c[0]!)));
   for (const command of commands.filter((c) => ["ci", "login", "whoami", "publish", "view", "exec"].includes(c[0]!)))
     assert.ok(command.includes("https://registry.npmjs.org/"), command.join(" "));
+
+  const verification = run("--verify-only");
+  assert.equal(verification.status, 0, verification.stderr);
+  const verificationCommands = calls().slice(commands.length);
+  assert.ok(verificationCommands.some((c) => c[0] === "exec" && c.includes("@sleetdrop/anthropic-readiness@0.1.0")));
+  assert.ok(!verificationCommands.some((c) => ["whoami", "login", "ci", "run", "pack", "publish"].includes(c[0]!)));
+  assert.equal(wroteGit(), false);
+  assert.equal(refs(), before);
+});
+
+test("successful publication does not query a registry that is still processing", (t) => {
+  const { run, calls } = fixture(t, { registryPending: true });
+  const result = run();
+  assert.equal(result.status, 0, result.stderr);
+  assert.match(result.stdout, /Publication submitted/u);
+  assert.match(result.stdout, /--verify-only/u);
+  assert.ok(!/Published and verified|verification failed/u.test(result.stdout + result.stderr));
+  assert.equal(calls().filter((c) => c[0] === "publish").length, 1);
+  assert.ok(!calls().some((c) => ["view", "exec"].includes(c[0]!)));
 });
 
 test("missing tags and mismatched package inputs stop publication without creating tags", (t) => {
@@ -174,13 +201,35 @@ test("prereleases use next and cannot move latest", (t) => {
   assert.ok(calls().find((c) => c[0] === "publish")?.includes("next"));
 });
 
-test("registry integrity mismatch fails verification without repeating publication", (t) => {
-  const { run, calls } = fixture(t, { user: "sleetdrop", badIntegrity: true });
-  const result = run();
-  assert.notEqual(result.status, 0);
-  assert.match(result.stderr, /may have succeeded/u);
-  assert.equal(calls().filter((c) => c[0] === "publish").length, 1);
+test("verify-only reports an integrity mismatch without publishing", (t) => {
+  const { run, calls, seedPublication } = fixture(t, { badIntegrity: true });
+  seedPublication();
+  const result = run("--verify-only");
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Archive integrity mismatch/u);
+  assert.ok(!calls().some((c) => ["whoami", "login", "publish"].includes(c[0]!)));
   assert.ok(!calls().some((c) => c[0] === "exec"));
+});
+
+test("verify-only reports unavailable metadata as pending without republishing", (t) => {
+  const { run, calls, seedPublication } = fixture(t, { registryPending: true });
+  seedPublication();
+  const result = run("--verify-only");
+  assert.equal(result.status, 2);
+  assert.match(result.stdout, /Verification pending/u);
+  assert.ok(!/error:|verification failed/u.test(result.stdout + result.stderr));
+  assert.ok(!calls().some((c) => ["whoami", "login", "ci", "run", "pack", "publish", "exec"].includes(c[0]!)));
+});
+
+test("verification requires the saved archive and cannot be combined with dry-run", (t) => {
+  const { run, calls } = fixture(t);
+  const result = run("--verify-only");
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Saved publish archive is missing/u);
+  assert.ok(!calls().some((c) => ["whoami", "login", "publish"].includes(c[0]!)));
+  const before = calls().length;
+  assert.equal(run("--verify-only", "--dry-run").status, 1);
+  assert.equal(calls().length, before);
 });
 
 test("publish helper can select an installed Homebrew Node 24", (t) => {

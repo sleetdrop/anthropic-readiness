@@ -683,3 +683,31 @@ dry-run produced the expected 30-file archive with the previously validated
 package inputs and the existing source tag are unchanged. No sign-in, OTP
 exchange, actual npm publication, remote write, or diagnostic endpoint request
 was performed.
+
+## 2026-11-08 — Deferred npm publication verification
+
+The owner submitted `@sleetdrop/anthropic-readiness@0.1.0` from their terminal.
+npm accepted the upload and reported that processing might take a few minutes.
+The old helper exhausted three immediate queries and incorrectly treated
+temporary unavailability as a verification failure. A read-only query found
+the version record and matching archive integrity while the package index
+still returned 404; installation was not yet possible at that point.
+
+A synthetic pending-registry control reproduced that false failure before
+the fix. Normal publication now ends successfully when npm accepts the
+submission, without querying or installing the package afterward. The
+separate `--verify-only` mode compares registry metadata with the saved
+archive and tests initialization in an empty temporary directory. It never
+signs in, publishes, or reruns repository checks. Unavailable metadata is
+reported as pending with exit code 2; metadata mismatches remain errors.
+Verification requests use online metadata, a 15-second request timeout,
+and no automatic retries.
+
+Node 24.22.2 strict types and all 97 executed tests passed, including twelve
+simulated publish-helper checks. There were no failures, skips, or cancelled
+checks. Bash syntax, ShellCheck, and whitespace checks passed. A later real
+`--verify-only` run completed successfully after the registry became ready:
+version `0.1.0`, archive integrity, and `latest` matched, and the registry
+package created the expected workbench. This run did not publish or change
+Git tags. Package inputs remain unchanged from `v0.1.0`. No diagnostic
+endpoint calls or remote Git writes were performed.
