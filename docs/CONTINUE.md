@@ -5,11 +5,12 @@ integrity, `latest` tag, and workbench initialization from the registry were
 verified after npm finished processing the publication. Exploratory commits
 and earlier test archives remain in [development history](history/README.md).
 
-The unreleased working version broadens consumer runtime requirements to
+The prepared `0.1.1` release broadens consumer runtime requirements to
 `^22.18.0 || >=24.2.0`. The initializer accepts supported older and future
 stable releases instead of requiring Node 24. Development and publication
-remain on Node 24. The published `0.1.0` package and its source tag are
-unchanged; this compatibility change needs a new package release.
+remain on Node 24. npm publication of `0.1.1` is pending; the owner will run
+the interactive publish helper. The published `0.1.0` package and its source
+tag are unchanged.
 
 The repository is one npm package. The command is in `bin/`, copied workbench
 files are in `templates/`, and checks and tests run from the repository root.

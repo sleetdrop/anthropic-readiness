@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.1.1 - 2026-11-09
 
 - Support Node.js 22.18+ on 22.x and 24.2+ on newer release lines, removing
   the initializer's Node 24-only restriction and upper engine bound.

@@ -753,3 +753,22 @@ the locked tools and an offline cache. Whitespace checks passed. The package
 version remains `0.1.0` with an Unreleased changelog entry; the published
 package and existing source tag were not modified. No real diagnostic
 endpoint calls, authentication, npm publication, or remote Git writes occurred.
+
+## 2026-11-09 — Prepare npm 0.1.1
+
+Prepared the patch release for broader Node compatibility. Package and lock
+versions are `0.1.1`; the changelog and local package example use that version.
+Read-only remote checks found `main` at `9e1a21d`, the existing `v0.1.0` tag,
+and npm's `latest` at `0.1.0`; npm had no `0.1.1` version.
+
+On the prepared `0.1.1` source, Node 24.22.2 passed strict types and all 99
+executed tests, with zero failures, skips, cancellations, or todos. The
+previously recorded Node 22.23.4 and 26.13.0 checks cover the same runtime
+implementation. The new-version package preview contains the expected 30
+files and excludes tests, development tools, history, and local artifacts.
+Check output and the inventory are under ignored `artifacts/releases/0.1.1/`.
+
+The owner authorized the Git push and release tag, and requested guidance
+for their own interactive npm publication. The package is prepared for a
+new `v0.1.1` source tag; npm publication and registry verification remain
+pending. The existing `v0.1.0` tag and npm package are unchanged.

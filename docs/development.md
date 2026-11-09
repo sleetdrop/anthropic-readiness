@@ -42,7 +42,7 @@ From the repository root:
 ```sh
 npm pack --pack-destination /tmp
 cd /tmp
-npx --offline --package=/tmp/sleetdrop-anthropic-readiness-0.1.0.tgz \
+npx --offline --package=/tmp/sleetdrop-anthropic-readiness-0.1.1.tgz \
   anthropic-readiness init gateway-test
 ```
 
