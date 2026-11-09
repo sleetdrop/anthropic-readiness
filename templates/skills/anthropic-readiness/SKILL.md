@@ -53,7 +53,9 @@ for missing facts only when they change the next diagnostic step.
 
 ## Tools
 
-Use Node 24 LTS. Set `SKILL_DIR` to the absolute directory containing the
+Use Node.js 22.18+ (22.x) or 24.2+, preferably the latest patch of a maintained
+LTS release. Compatibility checks cover Node 22, 24, and 26.
+Set `SKILL_DIR` to the absolute directory containing the
 selected `SKILL.md`. Run the bundled scripts from the project that owns the
 evidence and outputs. Relative command-line paths are resolved in that working
 directory.

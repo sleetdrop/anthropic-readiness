@@ -20,7 +20,13 @@ async function main() {
   }
   const [command, directory] = positionals;
   if (command !== "init" || !directory || positionals.length !== 2) throw new Error(usage);
-  if (process.versions.node.split(".")[0] !== "24") throw new Error("Use Node 24 LTS.");
+  const version = process.versions.node;
+  const stable = /^(\d+)\.(\d+)\.\d+$/u.exec(version);
+  const major = Number(stable?.[1]);
+  const minor = Number(stable?.[2]);
+  if (!stable || !(major === 22 && minor >= 18 || major === 24 && minor >= 2 || major > 24)) {
+    throw new Error(`Requires Node.js 22.18+ (22.x) or 24.2+; found ${version}. Use a maintained LTS release.`);
+  }
 
   const root = resolve(directory);
   try {

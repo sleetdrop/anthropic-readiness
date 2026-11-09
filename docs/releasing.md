@@ -17,6 +17,9 @@ from PATH, with an optional lookup through `brew --prefix node@24` when
 Homebrew is available. It contains no machine-specific paths and does not
 install Node or change shell configuration.
 
+This publish-time requirement is separate from consumer runtime support for
+Node 22.18+ (22.x) or 24.2+. Compatibility checks cover Node 22, 24, and 26.
+
 The helper reads the existing `v<package.json version>` Git tag and checks
 that the package inputs match it. It confirms the `sleetdrop` npm account,
 installs locked tools, runs repository checks, and packs a snapshot of the

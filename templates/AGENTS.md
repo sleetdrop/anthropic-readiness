@@ -2,7 +2,8 @@
 
 This directory assesses the Anthropic Messages API exposed by one configured
 combination of model, inference software, and API conversion software.
-Use Node 24 LTS and the bundled helpers from this directory.
+Use Node.js 22.18+ (22.x) or 24.2+ and the bundled helpers from this directory.
+Prefer the latest patch of a maintained LTS release; checks cover 22, 24, and 26.
 
 Read the [Anthropic Readiness Skill]({{SKILL_PATH}}/SKILL.md) before an
 assessment or diagnosis, even if your agent does not discover skills

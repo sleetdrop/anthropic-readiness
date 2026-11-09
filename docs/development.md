@@ -2,7 +2,9 @@
 
 ## Setup and checks
 
-Use Node 24 LTS, as pinned in `.node-version`.
+Use Node 24 LTS for development and publication, as pinned in `.node-version`.
+Consumer runtime support covers Node 22.18+ (22.x) or 24.2+; use the latest
+patch of a maintained LTS release.
 
 ```sh
 npm ci
@@ -13,7 +15,12 @@ npm run check
 It checks the actual npm archive, generated workbenches, offline inspection,
 HTTP capture, protocol rules, task behavior, and reports. Network tests use
 synthetic loopback services. Results are written to `artifacts/checks/`.
-GitHub Actions runs the same command.
+GitHub Actions runs the same command on the latest Node 22, 24, and 26 releases.
+The `ci-required` job requires all three matrix runs to succeed. The packed
+consumer test uses strict engine checks and executes initialization, preview,
+and a bounded synthetic probe using that job's Node version. Historical minor
+releases are not part of this matrix. Version-guard tests simulate unsupported
+and future versions; those simulations do not establish runtime compatibility.
 
 For a focused change:
 

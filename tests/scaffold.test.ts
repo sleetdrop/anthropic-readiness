@@ -16,7 +16,7 @@ test("the packed initializer creates an isolated project that can run a bounded 
     spawnSync(npmCli ? process.execPath : "npm", npmCli ? [npmCli, ...args] : args, {
       cwd: root,
       encoding: "utf8",
-      env: { ...process.env, npm_config_cache: join(root, "cache") },
+      env: { ...process.env, npm_config_cache: join(root, "cache"), npm_config_engine_strict: "true" },
       timeout: 15_000,
     });
   const packageRoot = fileURLToPath(new URL("../", import.meta.url));

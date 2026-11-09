@@ -8,7 +8,9 @@ model, inference software, and API conversion software.
    or `none` for `authMode`.
 2. For `api_key` or `bearer`, put the credential on one line in `token.txt`.
    It is a local plaintext file. The runner reads it at execution time.
-3. Open this workbench in an agent that can read files and run Node 24 LTS.
+3. Open this workbench in an agent that can read files and run Node.js
+   22.18+ (22.x) or 24.2+. Prefer the latest patch of a maintained LTS
+   release; compatibility checks cover Node 22, 24, and 26.
    Its [AGENTS.md](AGENTS.md) points to the bundled `anthropic-readiness`
    Skill. If instructions are not loaded automatically, ask the agent to
    read `AGENTS.md` first. Ask for a protocol assessment and provide known

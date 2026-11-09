@@ -711,3 +711,45 @@ version `0.1.0`, archive integrity, and `latest` matched, and the registry
 package created the expected workbench. This run did not publish or change
 Git tags. Package inputs remain unchanged from `v0.1.0`. No diagnostic
 endpoint calls or remote Git writes were performed.
+
+## 2026-11-09 — Consumer Node compatibility
+
+Broadened the npm engine declaration from `>=24 <25` to
+`^22.18.0 || >=24.2.0` and aligned the initializer's runtime check. Unsupported
+releases report the required range and detected version before any workbench
+directory is created. Future stable major versions are no longer blocked;
+prerelease runtimes remain outside the declared range. Workbench guidance,
+the Skill, and runtime documentation now distinguish consumer compatibility
+from the Node 24 development and publication environment.
+
+Before the change, the real packed-consumer test on Node 22.23.4 failed with
+`EBADENGINE` for the old range. A version-guard control simulating Node 28.0.0
+also failed with `Use Node 24 LTS.` before the implementation changed. The
+new guard tests exercise future-version acceptance and explicit rejection of
+unsupported stable and prerelease versions. These simulations only test the
+guard and do not establish runtime compatibility with future versions.
+
+Installed Homebrew Node 22.23.4, 24.22.2, and 26.13.0 each passed strict
+TypeScript validation and all 99 executed tests, with no failures, skips,
+cancellations, or todos. Each run packed the actual source and used npm's
+strict engine checking to initialize both workbench layouts, preview a plan,
+and execute a bounded synthetic loopback probe. The suite also exercised
+offline inspectors and HTML reports. The twelve publish-helper simulations
+now model publish-time Node selection independently of the test runner's
+Node version, while preserving the publisher's Node 24 requirement.
+
+An actual Node 20.20.2 initialization attempt exited with code 1, reported its
+unsupported version, and created no directory. Per the owner's requested
+scope, historical minor releases, including the precise 22.18.0 and 24.2.0
+feature floors, were not downloaded or executed. No additional Node
+installation was required. CI now checks the latest 22, 24, and 26 releases
+and retains the `ci-required` aggregate check; remote CI has not run yet.
+
+The locally packed archive still has 30 files and excludes development
+tools, tests, history, and local artifacts. Per-version check logs, executed
+test summaries, the Node 20 rejection record, and the package inventory are
+saved under ignored `artifacts/node-compat/`. Dependency installation used
+the locked tools and an offline cache. Whitespace checks passed. The package
+version remains `0.1.0` with an Unreleased changelog entry; the published
+package and existing source tag were not modified. No real diagnostic
+endpoint calls, authentication, npm publication, or remote Git writes occurred.

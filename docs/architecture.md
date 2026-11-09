@@ -31,7 +31,11 @@ The canonical runtime lives under
 `templates/skills/anthropic-readiness/scripts/`. Workbenches receive that
 complete directory, so they can run without the source repository or an npm
 install. The initializer is JavaScript; the copied TypeScript helpers run
-with Node 24's native type stripping outside `node_modules`.
+with native type stripping outside `node_modules`. Runtime requirements are
+Node.js 22.18+ on 22.x or 24.2+ on newer release lines, including
+`import.meta.main` support. Checks cover recent Node 22, 24, and 26 releases;
+the initializer also accepts future stable major versions. Development and
+publication use the Node 24 version pinned in `.node-version`.
 
 Within the Skill's `scripts/src/`:
 

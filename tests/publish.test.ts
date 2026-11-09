@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { execFileSync, spawnSync } from "node:child_process";
-import { copyFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
+import { copyFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import test, { type TestContext } from "node:test";
@@ -85,11 +85,13 @@ function fixture(t: TestContext, options: {
   if (!options.noTag) git("tag", "-a", `v${version}`, "-m", "Synthetic release tag");
   writeFileSync(join(root, "local-notes"), "not part of the versioned source");
   writeFileSync(join(mockBin, "git"), `#!/bin/sh\ncase "$1" in\n  rev-parse|show|cat-file|diff|archive|describe|status|show-ref) ;;\n  *) echo "$1" >> "$PUBLISH_TEST_STATE/git-writes"; exit 99 ;;\nesac\nexec ${quote(realGit)} "$@"\n`, { mode: 0o755 });
+  // Model publish-time Node selection independently of the test runner's Node version.
+  const nodeWrapper = (major: number) => `#!/bin/sh\nif [ "$1" = "-p" ] && [ "$2" = 'process.versions.node.split(".")[0]' ]; then echo ${major}; else exec ${quote(process.execPath)} "$@"; fi\n`;
+  writeFileSync(join(mockBin, "node"), nodeWrapper(options.node26 || options.noNode24 ? 26 : 24), { mode: 0o755 });
   if (options.node26 || options.noNode24) {
     const runtime = join(temp, "node24");
     mkdirSync(join(runtime, "bin"), { recursive: true });
-    symlinkSync(process.execPath, join(runtime, "bin", "node"));
-    writeFileSync(join(mockBin, "node"), `#!/bin/sh\nif [ "$1" = "-p" ] && [ "$2" = 'process.versions.node.split(".")[0]' ]; then echo 26; else exec ${quote(process.execPath)} "$@"; fi\n`, { mode: 0o755 });
+    writeFileSync(join(runtime, "bin", "node"), nodeWrapper(24), { mode: 0o755 });
     writeFileSync(join(mockBin, "brew"), options.noNode24
       ? "#!/bin/sh\nexit 1\n"
       : `#!/bin/sh\nprintf '%s\\n' ${quote(runtime)}\n`, { mode: 0o755 });

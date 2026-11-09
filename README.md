@@ -8,13 +8,16 @@ reported separately.
 
 ## Quick start
 
-Use Node 24 LTS and an agent that can read local files and run commands.
+Use Node.js 22.18+ on the 22.x line, or 24.2+ on newer release lines, and an
+agent that can read local files and run commands. Use the latest patch of a
+maintained LTS release. Compatibility checks cover Node 22, 24, and 26;
+newer stable major versions are accepted without an upper version limit.
 
 ```sh
 npx @sleetdrop/anthropic-readiness init gateway-test
 ```
 
-The first release is in preparation. Until it is published, use the
+For an unpublished local change, use the
 [local package workflow](docs/development.md#try-the-package-locally).
 
 The command creates:

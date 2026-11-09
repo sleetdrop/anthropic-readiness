@@ -50,7 +50,7 @@ the lead to its supporting finding. A finding can include a comparison table
 with a caption, columns, and rows of strings or numbers. Include units in the
 caption or headings.
 
-Use Node 24 LTS and `SKILL_DIR` from the
+Use the Node.js version requirements and `SKILL_DIR` from the
 [skill instructions](../SKILL.md) to render the report offline:
 
 ```sh
