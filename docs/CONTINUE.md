@@ -24,8 +24,9 @@ evidence/run directories, and a self-contained Skill.
   publish-helper checks. Per the owner's scope, historical minor releases
   were not tested. Version-guard simulations do not establish compatibility
   with future Node releases.
-- CI now checks the latest 22, 24, and 26 release lines and requires all three
-  to pass. This workflow change has been checked locally, not run on GitHub.
+- CI checks the latest 22, 24, and 26 release lines and requires all three
+  to pass. All three jobs and `ci-required` passed on GitHub for the
+  `v0.1.1` source commit `8089e7b`.
 - The npm archive has 30 files and excludes development tools, tests,
   historical records, and local artifacts.
 - Independent consumer trials covered Skill use, full core execution, and
@@ -38,6 +39,11 @@ Detailed results are in the [verification record](history/verification.md).
 Private targets and original live captures stay outside this repository.
 
 ## Publication
+
+The `v0.1.1` annotated tag points to `8089e7b` and is pushed to GitHub.
+The tagged-source publish dry-run passed and saved the 30-file archive under
+`artifacts/releases/0.1.1/`. The owner can now run `./scripts/publish.sh`
+from a terminal, then verify registry availability separately.
 
 Use the [publish helper](releasing.md#publish-helper) for checks, packing from
 an existing version tag, interactive npm authentication, and publication.

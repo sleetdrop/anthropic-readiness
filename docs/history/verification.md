@@ -772,3 +772,25 @@ The owner authorized the Git push and release tag, and requested guidance
 for their own interactive npm publication. The package is prepared for a
 new `v0.1.1` source tag; npm publication and registry verification remain
 pending. The existing `v0.1.0` tag and npm package are unchanged.
+
+## 2026-11-09 — Push and verify the 0.1.1 source release
+
+Created release commit `8089e7b` and the annotated `v0.1.1` tag. The actual
+publish helper's offline `--dry-run` passed its tagged-source checks, locked
+tool installation, strict types, all 99 tests, archive packing, and npm
+publication preview. The archive has 30 files and is saved at
+`artifacts/releases/0.1.1/sleetdrop-anthropic-readiness-0.1.1.tgz`.
+
+Pushed `main` and `v0.1.1` atomically, as authorized by the owner. A remote
+read confirmed that the branch and peeled tag both pointed to
+`8089e7b78ec27acd1f77aa8287b75e6c06d5d3eb`. GitHub Actions
+[run 42586118958](https://github.com/sleetdrop/anthropic-readiness/actions/runs/42586118958)
+completed successfully: `node-compatibility (22)`, `node-compatibility (24)`,
+`node-compatibility (26)`, and `ci-required` all passed. The compact job
+summary is retained at `artifacts/releases/0.1.1/github-ci.json`.
+
+Actual npm publication was left to the owner's interactive terminal, as
+requested. The dry-run did not sign in or publish. npm availability,
+registered integrity, dist-tag, and installation of `0.1.1` remain unverified
+until publication and the separate `--verify-only` step complete. This
+verification-record update changes no tagged package inputs.
