@@ -40,6 +40,10 @@ locally. Keep the token file out of the conversation. Select one target
 source per invocation. Project mode takes all connection settings from the
 directory.
 
+`--max-bytes` bounds the retained response body per request. The default is
+2 MiB (`2097152` bytes); the maximum is 8 MiB (`8388608` bytes). Use the same
+value when previewing, running, and inspecting a larger saved response offline.
+
 ## Use environment variables or explicit arguments
 
 Pass `--endpoint URL` and `--model NAME` to configure the target explicitly,

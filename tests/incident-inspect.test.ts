@@ -160,6 +160,45 @@ test("record inspection preserves count-token route and capture completeness", (
   }
 });
 
+test("inspection can opt into a larger bounded response for records and raw files", (t) => {
+  const directory = mkdtempSync(join(tmpdir(), "readiness-large-inspect-"));
+  t.after(() => rmSync(directory, { recursive: true, force: true }));
+  const size = 3 * 1024 * 1024 + 1;
+  const message = readFileSync(fixture("message-valid.json"));
+  const body = Buffer.concat([message, Buffer.alloc(size - message.length, " ")]);
+  const digest = createHash("sha256").update(body).digest("hex");
+  const rawPath = join(directory, "message.json");
+  const recordPath = join(directory, "response-record.json");
+  writeFileSync(rawPath, body);
+  writeFileSync(recordPath, JSON.stringify({
+    statusCode: 200,
+    headers: [["content-type", "application/json"]],
+    end: "eof",
+    bodyBase64: body.toString("base64"),
+    sha256: digest,
+  }));
+
+  const run = (args: string[], maxBytes?: number) => spawnSync(
+    process.execPath,
+    [entry, ...args, ...(maxBytes === undefined ? [] : ["--max-bytes", String(maxBytes)])],
+    { encoding: "utf8", timeout: 5000 },
+  );
+  for (const args of [
+    ["--record", recordPath],
+    ["--file", rawPath, "--format", "message", "--capture", "complete"],
+  ]) {
+    assert.equal(run(args).status, 2);
+    const accepted = run(args, size);
+    assert.equal(accepted.status, 0, accepted.stderr);
+    const result = JSON.parse(accepted.stdout);
+    assert.equal(result.status, "PASS");
+    assert.equal(result.capture.bytes, size);
+    assert.equal(result.capture.sha256, digest);
+    assert.equal(run(args, size - 1).status, 2);
+    assert.equal(run(args, 8 * 1024 * 1024 + 1).status, 2);
+  }
+});
+
 function inspectPath(path: string, format: string, capture: string) {
   const child = spawnSync(
     process.execPath,

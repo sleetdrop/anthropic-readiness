@@ -16,6 +16,9 @@ assessments and incident work.
   request/time bounds. Use synthetic services for repository checks.
 - Write source, comments, machine fields, and commits in English. Respond to
   Skill users in their language.
+- Make scoped local commits on a topic branch, not on `main`. Use a
+  [pull request targeting `main`](CONTRIBUTING.md#pull-request-workflow)
+  by default. Remote writes require explicit authorization, and a direct push
+  to `main` requires explicit authorization for that exception.
 - Keep `docs/CONTINUE.md` current. Record material verification results in
   `docs/history/verification.md`. Put large local logs in ignored `artifacts/`.
-  Make scoped local commits. Remote writes require explicit authorization.

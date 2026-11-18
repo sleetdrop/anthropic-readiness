@@ -2,7 +2,13 @@
 import { createHash, randomUUID } from "node:crypto";
 import { performance } from "node:perf_hooks";
 import { apiVersions, selectCases, type ApiVersion, type CaseDefinition } from "../catalog.ts";
-import { summarize, type Observation, type Status } from "../domain.ts";
+import {
+  defaultCaptureBytes,
+  maxCaptureBytes,
+  summarize,
+  type Observation,
+  type Status,
+} from "../domain.ts";
 import { validateAuxiliary } from "../protocol/auxiliary.ts";
 import { validateMessage } from "../protocol/messages.ts";
 import { validateSse } from "../protocol/sse.ts";
@@ -142,11 +148,14 @@ export function createPlan(input: PlanInput): RunPlan {
   const maxRequests = input.maxRequests ?? plannedRequests;
   const runMs = input.runMs ?? 300_000;
   const attemptMs = input.attemptMs ?? 30_000;
-  const maxBytes = input.maxBytes ?? 2 * 1024 * 1024;
+  const maxBytes = input.maxBytes ?? defaultCaptureBytes;
   const maxTokens = input.maxTokens ?? 2048;
   const readMs = input.readMs ?? attemptMs;
   const connectMs = input.connectMs ?? Math.min(attemptMs, 5000);
-  if (![maxRequests, runMs, attemptMs, maxBytes, maxTokens, readMs, connectMs].every(positive))
+  if (
+    ![maxRequests, runMs, attemptMs, maxBytes, maxTokens, readMs, connectMs].every(positive) ||
+    maxBytes > maxCaptureBytes
+  )
     throw new Error("invalid_limits");
   if (maxRequests < plannedRequests) throw new Error("insufficient_request_budget");
   return {
@@ -195,11 +204,15 @@ function finishCase(
   observations: readonly Observation[],
   captures: readonly CaptureRecord[],
 ): CaseResult {
+  const protocolStatus = summarize(observations.filter((item) => item.dimension === "protocol"));
   return {
     id: item.id,
     lifecycle: captures.length ? "finished" : "not_run",
     status: summarize(observations),
-    protocolStatus: summarize(observations.filter((item) => item.dimension === "protocol")),
+    protocolStatus:
+      protocolStatus === "PASS" && captures.some((capture) => capture.end !== "eof")
+        ? "INDETERMINATE"
+        : protocolStatus,
     behaviorStatus:
       item.expectedStatus || item.route
         ? "SKIP"

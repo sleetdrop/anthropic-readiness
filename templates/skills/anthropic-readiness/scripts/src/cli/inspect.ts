@@ -1,14 +1,19 @@
 /** Offline inspection of one successful Messages response body. */
 import { createHash } from "node:crypto";
 import { parseArgs } from "node:util";
-import { summarize, type MessageValidationContext, type Observation } from "../domain.ts";
+import {
+  defaultCaptureBytes,
+  maxCaptureBytes,
+  summarize,
+  type MessageValidationContext,
+  type Observation,
+} from "../domain.ts";
 import { validateAuxiliary } from "../protocol/auxiliary.ts";
 import { validateMessage } from "../protocol/messages.ts";
 import { validateSse } from "../protocol/sse.ts";
 import { readBoundedFile } from "./local-file.ts";
 
-const maxBytes = 2 * 1024 * 1024;
-const maxRecordBytes = 3 * 1024 * 1024;
+const recordEnvelopeBytes = 1024 * 1024;
 const stopReasons = [
   "end_turn",
   "max_tokens",
@@ -19,13 +24,14 @@ const stopReasons = [
   "model_context_window_exceeded",
 ];
 
-async function readRecord(file: string): Promise<{
+async function readRecord(file: string, maxBytes: number): Promise<{
   body: Buffer;
   format: "message" | "sse";
   complete: boolean;
   route?: "count_tokens";
 }> {
-  const bytes = await readBoundedFile(file, maxRecordBytes);
+  const maxBase64Bytes = 4 * Math.ceil(maxBytes / 3);
+  const bytes = await readBoundedFile(file, maxBase64Bytes + recordEnvelopeBytes);
   const value: unknown = JSON.parse(new TextDecoder("utf-8", { fatal: true }).decode(bytes));
   if (typeof value !== "object" || value === null || Array.isArray(value))
     throw new Error("invalid_capture_record");
@@ -39,7 +45,7 @@ async function readRecord(file: string): Promise<{
     !["eof", "connect_timeout", "read_timeout", "attempt_timeout", "response_limit", "cancelled", "network_error", "observer_error"].includes(String(record.end)) ||
     !Array.isArray(record.headers) ||
     typeof record.bodyBase64 !== "string" ||
-    !/^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/u.test(record.bodyBase64) ||
+    record.bodyBase64.length > maxBase64Bytes ||
     typeof record.sha256 !== "string" ||
     !/^[a-f0-9]{64}$/u.test(record.sha256)
   ) throw new Error("invalid_capture_record");
@@ -126,12 +132,18 @@ async function main(): Promise<void> {
         record: { type: "string" },
         format: { type: "string" },
         capture: { type: "string" },
+        "max-bytes": { type: "string" },
       },
     });
     const { file, record, format, capture } = values;
+    const maxBytes = values["max-bytes"] === undefined
+      ? defaultCaptureBytes
+      : Number(values["max-bytes"]);
+    if (!Number.isSafeInteger(maxBytes) || maxBytes < 1 || maxBytes > maxCaptureBytes)
+      throw new Error("invalid_limits");
     if (record) {
       if (file || format || capture) throw new Error("invalid_arguments");
-      const inspected = await readRecord(record);
+      const inspected = await readRecord(record, maxBytes);
       const body = inspected.body;
       const sha256 = createHash("sha256").update(body).digest("hex");
       const context: MessageValidationContext = {
@@ -210,7 +222,8 @@ async function main(): Promise<void> {
   } catch {
     process.stderr.write(
       "Could not inspect capture. Use --file FILE --format message|sse --capture complete|partial, " +
-      "or --record RESPONSE_RECORD (successful record, at most 2 MiB decoded body).\n",
+      "or --record RESPONSE_RECORD (successful record). Both accept --max-bytes N " +
+      `(default ${defaultCaptureBytes}, maximum ${maxCaptureBytes} body bytes).\n`,
     );
     process.exitCode = 2;
   }

@@ -794,3 +794,25 @@ requested. The dry-run did not sign in or publish. npm availability,
 registered integrity, dist-tag, and installation of `0.1.1` remain unverified
 until publication and the separate `--verify-only` step complete. This
 verification-record update changes no tagged package inputs.
+
+## 2026-11-18 — Incomplete protocol results and bounded offline inspection
+
+The new regressions first reproduced a protocol `PASS` on a non-EOF JSON
+response and the rejection of a larger saved record by the offline inspector.
+The probe now reports an otherwise passing protocol result as `INDETERMINATE`
+if any response for the case is incomplete. A paired control using identical
+JSON bytes still passes at EOF, and a known `/role` defect still fails in an
+incomplete capture. An unfinished SSE case remains inconclusive.
+
+The probe and inspector keep the 2 MiB default and share an 8 MiB hard ceiling.
+With explicit `--max-bytes`, both inspector modes verify a synthetic body just
+over 3 MiB; the default and a one-byte-short limit reject it. The inspector
+also bounds the record envelope separately from the decoded response body.
+
+Node 24.22.2 passed `npm run check`: strict types and all 101 tests, with zero
+failures, skips, cancellations, or TODOs. The four focused tests also passed
+on Node 22.23.4 and 26.13.0. No real diagnostic endpoint was used.
+
+Public npm registry metadata confirmed that `0.1.1` was published on
+November 9, 2026 and was `latest` when checked on November 18, 2026. This
+check did not fetch the archive or verify a registry installation.

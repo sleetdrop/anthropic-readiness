@@ -22,6 +22,12 @@ test("plan reserves the full scope and rejects insufficient budgets or invalid c
   assert.throws(() => createPlan({ ...input, maxRequests: 5 }), /insufficient_request_budget/);
   assert.throws(() => createPlan({ ...input, model: "" }), /invalid_model/);
   assert.throws(() => createPlan({ ...input, runMs: 0 }), /invalid_limits/);
+  const maximumCaptureBytes = 8 * 1024 * 1024;
+  assert.equal(
+    createPlan({ ...input, maxBytes: maximumCaptureBytes }).limits.maxBytes,
+    maximumCaptureBytes,
+  );
+  assert.throws(() => createPlan({ ...input, maxBytes: maximumCaptureBytes + 1 }), /invalid_limits/);
   assert.equal(
     createPlan({ ...input, endpoint: "http://127.0.0.1:1/v1" }).endpoint,
     input.endpoint,
@@ -91,6 +97,68 @@ test("execution requires explicit live admission before any connection", async (
   );
 });
 
+test("partial JSON cannot establish a protocol pass but retains observed faults", async (t) => {
+  const fixture = new URL("./fixtures/contracts/core-1.0.0/message-valid.json", import.meta.url);
+  const normal = Buffer.from(readFileSync(fixture, "utf8").replace("Hello.", "HELLO"));
+  const faulty = Buffer.from(normal.toString().replace('"role": "assistant"', '"role": "user"'));
+  let responseBody = normal;
+  let complete = true;
+  const server = createServer((_request, response) => {
+    response.setHeader("content-type", "application/json");
+    response.setHeader("content-length", responseBody.length + (complete ? 0 : 1));
+    if (complete) response.end(responseBody);
+    else response.write(responseBody);
+  });
+  await new Promise<void>((resolve, reject) => {
+    server.once("error", reject);
+    server.listen(0, "127.0.0.1", resolve);
+  });
+  t.after(async () => {
+    server.closeAllConnections();
+    await new Promise<void>((resolve) => server.close(() => resolve()));
+  });
+  const address = server.address();
+  assert.ok(address && typeof address !== "string");
+  const plan = createPlan({
+    endpoint: `http://127.0.0.1:${address.port}/v1/messages`,
+    model: "example-model",
+    profiles: ["anthropic-basic"],
+    readMs: 150,
+    attemptMs: 1500,
+  });
+  const selected = plan.cases.find((item) => item.id === "ANT-MESSAGE-001");
+  assert.ok(selected);
+  const run = async () => {
+    const result = await executePlan(
+      { ...plan, cases: [selected], plannedRequests: 1, maxRequests: 1 },
+      { allowLive: true, authMode: "none" },
+    );
+    const item = result.cases[0];
+    assert.ok(item);
+    return item;
+  };
+
+  const ended = await run();
+  assert.equal(ended.captures[0]?.end, "eof");
+  assert.equal(ended.protocolStatus, "PASS");
+  assert.equal(ended.behaviorStatus, "PASS");
+
+  complete = false;
+  const partial = await run();
+  assert.equal(partial.captures[0]?.end, "read_timeout");
+  assert.equal(partial.captures[0]?.sha256, ended.captures[0]?.sha256);
+  assert.equal(partial.behaviorStatus, "INDETERMINATE");
+  assert.equal(partial.protocolStatus, "INDETERMINATE");
+
+  responseBody = faulty;
+  const fault = await run();
+  assert.equal(fault.captures[0]?.end, "read_timeout");
+  assert.equal(fault.protocolStatus, "FAIL");
+  assert.ok(
+    fault.observations.some((item) => item.status === "FAIL" && item.location?.pointer === "/role"),
+  );
+});
+
 test("an exact-output response prefix cannot pass while its stream is unfinished", async (t) => {
   const event = (type: string, value: object) =>
     `event: ${type}\ndata: ${JSON.stringify({ type, ...value })}\n\n`;
@@ -142,6 +210,7 @@ test("an exact-output response prefix cannot pass while its stream is unfinished
   );
   const item = result.cases[0];
   assert.equal(item?.captures[0]?.messageComplete, false);
+  assert.equal(item?.protocolStatus, "INDETERMINATE");
   assert.equal(item?.behaviorStatus, "INDETERMINATE");
   assert.equal(item?.observations.find((value) => value.ruleId === "TASK-COMPLETE")?.status, "INDETERMINATE");
 });
