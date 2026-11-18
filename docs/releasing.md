@@ -67,6 +67,11 @@ Each registry request has a 15-second timeout and no automatic retries.
 
 ## Git tags and source changes
 
+Prepare and merge release changes using the standard
+[pull request workflow](../CONTRIBUTING.md#pull-request-workflow) before
+tagging the release commit on `main`. A release does not authorize a direct
+push to `main`.
+
 Git tagging, merging, and pushing are separate from npm publication. They can
 happen at different times. The helper only reads Git data; it never creates,
 moves, or pushes tags, commits, or branches. A local checkout with the existing

@@ -17,6 +17,9 @@ files are in `templates/`, and checks and tests run from the repository root.
 Generated workbenches include `AGENTS.md`, target and credential files,
 evidence/run directories, and a self-contained Skill.
 
+Source changes, including release preparation, follow the
+[pull request workflow](../CONTRIBUTING.md#pull-request-workflow) by default.
+
 ## Verification
 
 - The current source prevents a protocol pass on incomplete captures without
