@@ -2,6 +2,9 @@
 export type Status = "PASS" | "FAIL" | "INDETERMINATE" | "BLOCKED" | "SKIP";
 export type Dimension = "protocol" | "behavior" | "client" | "environment";
 
+export const defaultCaptureBytes = 2 * 1024 * 1024;
+export const maxCaptureBytes = 8 * 1024 * 1024;
+
 export interface EvidenceLocation {
   readonly captureId: string;
   /** RFC 6901 pointer into a real JSON object; empty string denotes its root. */

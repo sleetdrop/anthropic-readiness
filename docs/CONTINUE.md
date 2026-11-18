@@ -5,12 +5,12 @@ integrity, `latest` tag, and workbench initialization from the registry were
 verified after npm finished processing the publication. Exploratory commits
 and earlier test archives remain in [development history](history/README.md).
 
-The prepared `0.1.1` release broadens consumer runtime requirements to
+The published `0.1.1` release broadens consumer runtime requirements to
 `^22.18.0 || >=24.2.0`. The initializer accepts supported older and future
 stable releases instead of requiring Node 24. Development and publication
-remain on Node 24. npm publication of `0.1.1` is pending; the owner will run
-the interactive publish helper. The published `0.1.0` package and its source
-tag are unchanged.
+remain on Node 24. npm registry metadata verified on November 18, 2026
+records publication on November 9, 2026 and lists `0.1.1` as `latest`.
+Registry installation and archive integrity were not re-verified.
 
 The repository is one npm package. The command is in `bin/`, copied workbench
 files are in `templates/`, and checks and tests run from the repository root.
@@ -19,7 +19,12 @@ evidence/run directories, and a self-contained Skill.
 
 ## Verification
 
-- Node 22.23.4, 24.22.2, and 26.13.0 each passed strict types and all 99 tests,
+- The current source prevents a protocol pass on incomplete captures without
+  suppressing observed failures. Probe capture and offline inspection share a
+  2 MiB default and an 8 MiB ceiling. Node 24.22.2 passed strict types and all
+  101 tests; Node 22.23.4 and 26.13.0 passed the four focused regressions.
+- On the `0.1.1` release source, Node 22.23.4, 24.22.2, and 26.13.0 each
+  passed strict types and all 99 tests,
   including strict-engine packed workbenches, reports, and twelve simulated
   publish-helper checks. Per the owner's scope, historical minor releases
   were not tested. Version-guard simulations do not establish compatibility
@@ -42,8 +47,7 @@ Private targets and original live captures stay outside this repository.
 
 The `v0.1.1` annotated tag points to `8089e7b` and is pushed to GitHub.
 The tagged-source publish dry-run passed and saved the 30-file archive under
-`artifacts/releases/0.1.1/`. The owner can now run `./scripts/publish.sh`
-from a terminal, then verify registry availability separately.
+`artifacts/releases/0.1.1/` before publication.
 
 Use the [publish helper](releasing.md#publish-helper) for checks, packing from
 an existing version tag, interactive npm authentication, and publication.
